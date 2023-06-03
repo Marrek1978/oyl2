@@ -1,0 +1,32 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+
+.side-nav {
+
+  /* background-color: red !important;
+  font-weight: bold; */
+  @apply 
+  
+  flex h-12 
+  cursor-pointer items-center truncate 
+  px-6 py-4 
+  text-primary font-mont 
+  font-normal  hover:font-medium
+  hover:bg-white hover:outline-none 
+
+  outline-none transition-all duration-300 ease-linear 
+
+  focus:bg-white focus:text-primary-focus focus:font-semibold focus:outline-none 
+
+  motion-reduce:transition-none
+
+  dark:text-gray-300 dark:hover:bg-white/10 
+  dark:focus:bg-white/10 dark:active:bg-white/10
+}
+
+.side-nav .active {
+  @apply bg-white text-primary-focus font-semibold outline-none  ;
+}
+
