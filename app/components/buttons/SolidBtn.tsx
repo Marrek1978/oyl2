@@ -1,17 +1,17 @@
 import React from 'react'
 
-interface OutlinedBtnProps {
+interface SolidBtnProps {
   text:string;
   onClickFunction: (event: React.MouseEvent<HTMLButtonElement>) => void;
   icon?: React.ReactNode;
   daisyUIBtnColor?: string;
 }
 
-function OutlinedBtn({ text, onClickFunction, icon, daisyUIBtnColor }: OutlinedBtnProps) {
+function SolidBtn({ text, onClickFunction, icon, daisyUIBtnColor }: SolidBtnProps) {
   return (
     <>
      <button
-        className={`btn btn-outline btn-${daisyUIBtnColor} font-mont rounded-none w-full px-4 py-2 border-1 `}
+        className={`btn btn-${daisyUIBtnColor} font-mont rounded-none w-full px-4 py-2 border-1`}
         type="submit"
         onClick={onClickFunction}
       >
@@ -25,4 +25,4 @@ function OutlinedBtn({ text, onClickFunction, icon, daisyUIBtnColor }: OutlinedB
   )
 }
 
-export default OutlinedBtn
+export default SolidBtn

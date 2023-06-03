@@ -1,4 +1,4 @@
-import React, { useEffect} from 'react'
+import React, { useEffect } from 'react'
 import { Link, useLoaderData } from "@remix-run/react";
 import type { LoaderArgs } from '@remix-run/node';
 import { getUserId } from "~/session.server";
@@ -7,14 +7,11 @@ import { Form } from "@remix-run/react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun, faMoon } from "@fortawesome/free-solid-svg-icons";
-
-// import { ClientOnly } from "remix-utils";
-// import MyButtonOutlined from './MyButtonOutlined.client';
-// import ThemeSwitcher from './ThemeSwitcher';
-import { useTheme } from '~/styles/ThemeContext';
-
 import { themeChange } from 'theme-change'
-import OutlinedBtn from './buttons/OutlinedBtn';
+
+import { useTheme } from '~/styles/ThemeContext';
+import OutlinedBtnGold from '~/components/buttons/OutlinedBtnGold';
+import { LogoutIcon } from '~/components/icons';
 
 export const loader = async ({ request }: LoaderArgs) => {
   let userId = await getUserId(request);
@@ -34,32 +31,30 @@ function Navbar() {
   return (
     <>
       <nav>
-        <div className="navbar h-20 bg-base-content text-goldText justify-between ">
-          <div className='flex gap-2 uppercase font-nanum'>
-            <div id='logo'>
-              <img src='/gold_lion.png' alt='logo' className='w-14 h-14' />
+        <div className="navbar h-24 bg-base-content text-goldText justify-between ">
+          <Link className="  text-3xl tracking-wide" to="/" >
+            <div className='flex gap-2 uppercase font-nanum'>
+              <div id='logo'>
+                <img src='/gold_lion.png' alt='logo' className='w-14 h-14' />
+              </div>
+              <div className=''>
+                OYL
+                <div className='text-sm'>Organize your life</div>
+              </div>
             </div>
-            <div className=''>
-              <Link className="
-                  text-3xl tracking-wide"
-                to="/"
-              >OYL</Link>
-              <div className='text-sm'>Organize your life</div>
-            </div>
-          </div>
+          </Link>
 
           {user && (<span className='text-base-200 text-md font-poppins font-normal '> Hi, {user.name} </span>)}
           <div className='flex items-center' >
             {user && (
               <>
                 <Form method="post" action="/logout">
-                  <OutlinedBtn
+                  <OutlinedBtnGold
                     text='Logout'
                     onClickFunction={() => { }}
-                    daisyUIBtnColor='warning'
+                    icon={LogoutIcon}
                   />
                 </Form>
-               
               </>
             )}
 

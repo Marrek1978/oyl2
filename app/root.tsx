@@ -9,7 +9,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-import Navbar from './components/Navbar';
+import Navbar from './components/nav/Navbar';
 
 import { getUser } from "~/session.server";
 

@@ -1,138 +1,177 @@
-import type { V2_MetaFunction } from "@remix-run/node";
-import { Link } from "@remix-run/react";
+import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
+import { useEffect, useRef } from "react";
 
-import { useOptionalUser } from "~/utils";
+import { verifyLogin } from "~/models/user.server";
+import { createUserSession, getUserId } from "~/session.server";
+import { safeRedirect, validateEmail } from "~/utils";
 
-export const meta: V2_MetaFunction = () => [{ title: "Remix Notes" }];
+export const loader = async ({ request }: LoaderArgs) => {
+  const userId = await getUserId(request);
+  if (userId) return redirect("/dashboard");
+  return json({});
+};
+
+export const action = async ({ request }: ActionArgs) => {
+  const formData = await request.formData();
+  const email = formData.get("email");
+  const password = formData.get("password");
+  const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
+  const remember = formData.get("remember");
+
+  if (!validateEmail(email)) {
+    return json(
+      { errors: { email: "Email is invalid", password: null } },
+      { status: 400 }
+    );
+  }
+
+  if (typeof password !== "string" || password.length === 0) {
+    return json(
+      { errors: { email: null, password: "Password is required" } },
+      { status: 400 }
+    );
+  }
+
+  if (password.length < 8) {
+    return json(
+      { errors: { email: null, password: "Password is too short" } },
+      { status: 400 }
+    );
+  }
+
+  const user = await verifyLogin(email, password);
+
+  if (!user) {
+    return json(
+      { errors: { email: "Invalid email or password", password: null } },
+      { status: 400 }
+    );
+  }
+
+  return createUserSession({
+    redirectTo,
+    remember: remember === "on" ? true : false,
+    request,
+    userId: user.id,
+  });
+};
+
+export const meta: V2_MetaFunction = () => [{ title: "Login" }];
+
 
 export default function Index() {
-  const user = useOptionalUser();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get("redirectTo") || "/";       //!  login redirect
+  const actionData = useActionData<typeof action>();
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (actionData?.errors?.email) {
+      emailRef.current?.focus();
+    } else if (actionData?.errors?.password) {
+      passwordRef.current?.focus();
+    }
+  }, [actionData]);
+
   return (
-    <main className="relative min-h-screen bg-white sm:flex sm:items-center sm:justify-center">
-      <div className="relative sm:pb-16 sm:pt-8">
-        <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="relative shadow-xl sm:overflow-hidden sm:rounded-2xl">
-            <div className="absolute inset-0">
-              <img
-                className="h-full w-full object-cover"
-                src="https://user-images.githubusercontent.com/1500684/158276320-c46b661b-8eff-4a4d-82c6-cf296c987a12.jpg"
-                alt="BB King playing blues on his Gibson 'Lucille' guitar"
-              />
-              <div className="absolute inset-0 bg-[color:rgba(27,167,254,0.5)] mix-blend-multiply" />
-            </div>
-            <div className="relative px-4 pb-8 pt-16 sm:px-6 sm:pb-14 sm:pt-24 lg:px-8 lg:pb-20 lg:pt-32">
-              <h1 className="text-center text-6xl font-extrabold tracking-tight sm:text-8xl lg:text-9xl">
-                <span className="block uppercase text-blue-500 drop-shadow-md">
-                  Blues Stack
-                </span>
-              </h1>
-              <p className="mx-auto mt-6 max-w-lg text-center text-xl text-white sm:max-w-3xl">
-                Check the README.md file for instructions on how to get this
-                project deployed.
-              </p>
-              <div className="mx-auto mt-10 max-w-sm sm:flex sm:max-w-none sm:justify-center">
-                {user ? (
-                  <Link
-                    to="/notes"
-                    className="flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-3 text-base font-medium text-blue-700 shadow-sm hover:bg-blue-50 sm:px-8"
-                  >
-                    View Notes for {user.email}
-                  </Link>
-                ) : (
-                  <div className="space-y-4 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5 sm:space-y-0">
+    <main className="relative min-h-[90vh] bg-base-100 grid p-2 sm:p-6 ">
+      <div className="card card-side bg-base-100 shadow-xl 
+        m-auto  ">
+        <figure className="hidden object-fill sm:block"><img src="https://picsum.photos/id/237/300/500" alt="Movie" className="hidden object-fill  sm:block" /></figure>
+        <div className="card-body px-0 sm:px-4 max-w-lg">
+          <div className="flex min-h-full flex-col justify-center">
+            <div className="mx-auto w-full max-w-md px-8">
+              <h1 className="card-title text-3xl">Welcome!</h1>
+              <p className="mt-2">Organize your Life.  Achieve your Desires</p>
+              <Form method="post" className="space-y-6 mt-8 form-control w-full max-w-xs">
+                <div>
+                  <label className="label pl-0" htmlFor="email" >
+                    <span className="label-text" >Email Address</span>
+                  </label>
+                  <input
+                    ref={emailRef}
+                    id="email"
+                    required
+                    autoFocus={true}
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    aria-invalid={actionData?.errors?.email ? true : undefined}
+                    aria-describedby="email-error"
+                    placeholder="john@example.com"
+                    className="input input-bordered w-full max-w-xs"
+                  />
+                  {actionData?.errors?.email ? (
+                    <div className="pt-1 text-red-700" id="email-error">
+                      {actionData.errors.email}
+                    </div>
+                  ) : null}
+                </div>
+
+                <div>
+
+                  <label className="label pl-0" htmlFor="password" >
+                    <span className="label-text" >Password</span>
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="password"
+                      ref={passwordRef}
+                      name="password"
+                      type="password"
+                      autoComplete="current-password"
+                      aria-invalid={actionData?.errors?.password ? true : undefined}
+                      aria-describedby="password-error"
+                      className="input input-bordered w-full max-w-xs"
+                      placeholder="******"
+                    />
+                    {actionData?.errors?.password ? (
+                      <div className="pt-1 text-red-700" id="password-error">
+                        {actionData.errors.password}
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    id="remember"
+                    name="remember"
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+
+                  <label className="label" htmlFor="remember" >
+                    <span className="label-text" >Remember me</span>
+                  </label>
+                </div>
+                <input type="hidden" name="redirectTo" value={redirectTo} />
+                <button
+                  type="submit"
+                  // className="w-full rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:bg-blue-400"
+                  className="btn btn-primary btn-block"
+                >
+                  Log in
+                </button>
+                <div className="flex items-center justify-between">
+                  <div className="text-center text-sm text-gray-500">
+                    Don't have an account?{" "}
                     <Link
-                      to="/join"
-                      className="flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-3 text-base font-medium text-blue-700 shadow-sm hover:bg-blue-50 sm:px-8"
+                      className="text-blue-500 underline"
+                      to={{
+                        pathname: "/join",
+                        search: searchParams.toString(),
+                      }}
                     >
                       Sign up
                     </Link>
-                    <Link
-                      to="/login"
-                      className="flex items-center justify-center rounded-md bg-blue-500 px-4 py-3 font-medium text-white hover:bg-blue-600"
-                    >
-                      Log In
-                    </Link>
                   </div>
-                )}
-              </div>
-              <a href="https://remix.run">
-                <img
-                  src="https://user-images.githubusercontent.com/1500684/158298926-e45dafff-3544-4b69-96d6-d3bcc33fc76a.svg"
-                  alt="Remix"
-                  className="mx-auto mt-16 w-full max-w-[12rem] md:max-w-[16rem]"
-                />
-              </a>
+                </div>
+              </Form>
             </div>
-          </div>
-        </div>
-
-        <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
-          <div className="mt-6 flex flex-wrap justify-center gap-8">
-            {[
-              {
-                src: "https://user-images.githubusercontent.com/1500684/157764397-ccd8ea10-b8aa-4772-a99b-35de937319e1.svg",
-                alt: "Fly.io",
-                href: "https://fly.io",
-              },
-              {
-                src: "https://user-images.githubusercontent.com/1500684/158238105-e7279a0c-1640-40db-86b0-3d3a10aab824.svg",
-                alt: "PostgreSQL",
-                href: "https://www.postgresql.org/",
-              },
-              {
-                src: "https://user-images.githubusercontent.com/1500684/157764484-ad64a21a-d7fb-47e3-8669-ec046da20c1f.svg",
-                alt: "Prisma",
-                href: "https://prisma.io",
-              },
-              {
-                src: "https://user-images.githubusercontent.com/1500684/157764276-a516a239-e377-4a20-b44a-0ac7b65c8c14.svg",
-                alt: "Tailwind",
-                href: "https://tailwindcss.com",
-              },
-              {
-                src: "https://user-images.githubusercontent.com/1500684/157764454-48ac8c71-a2a9-4b5e-b19c-edef8b8953d6.svg",
-                alt: "Cypress",
-                href: "https://www.cypress.io",
-              },
-              {
-                src: "https://user-images.githubusercontent.com/1500684/157772386-75444196-0604-4340-af28-53b236faa182.svg",
-                alt: "MSW",
-                href: "https://mswjs.io",
-              },
-              {
-                src: "https://user-images.githubusercontent.com/1500684/157772447-00fccdce-9d12-46a3-8bb4-fac612cdc949.svg",
-                alt: "Vitest",
-                href: "https://vitest.dev",
-              },
-              {
-                src: "https://user-images.githubusercontent.com/1500684/157772662-92b0dd3a-453f-4d18-b8be-9fa6efde52cf.png",
-                alt: "Testing Library",
-                href: "https://testing-library.com",
-              },
-              {
-                src: "https://user-images.githubusercontent.com/1500684/157772934-ce0a943d-e9d0-40f8-97f3-f464c0811643.svg",
-                alt: "Prettier",
-                href: "https://prettier.io",
-              },
-              {
-                src: "https://user-images.githubusercontent.com/1500684/157772990-3968ff7c-b551-4c55-a25c-046a32709a8e.svg",
-                alt: "ESLint",
-                href: "https://eslint.org",
-              },
-              {
-                src: "https://user-images.githubusercontent.com/1500684/157773063-20a0ed64-b9f8-4e0b-9d1e-0b65a3d4a6db.svg",
-                alt: "TypeScript",
-                href: "https://typescriptlang.org",
-              },
-            ].map((img) => (
-              <a
-                key={img.href}
-                href={img.href}
-                className="flex h-16 w-32 justify-center p-1 grayscale transition hover:grayscale-0 focus:grayscale-0"
-              >
-                <img alt={img.alt} src={img.src} className="object-contain" />
-              </a>
-            ))}
           </div>
         </div>
       </div>
