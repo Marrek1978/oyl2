@@ -151,9 +151,7 @@ const CheckBoxModal: React.FC<CheckCompleteModal> = ({ listItem, closeModal, ope
                 htmlFor={'delete-list-modal'}
                 icon={trashIcon}
                 onClickFunction={openDeleteListModal}
-                // daisyUIBtnColor={'error'}
               />
-
             </div>
           </div>
         </div>
