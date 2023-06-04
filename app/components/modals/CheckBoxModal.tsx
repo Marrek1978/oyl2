@@ -7,7 +7,7 @@ import { useList } from '../list/ListContext';
 import CloseLabelBtn from '../buttons/SolidLabelClose';
 import HeaderLabel from '../buttons/LabelCardHeader';
 import TextBtn from '../buttons/TextBtn';
-import ErrorLabelBtnOutlined from '../buttons/OutlinedLabelBtn';
+import OutlinedLabelBtn from '../buttons/OutlinedLabelBtn';
 import { trashIcon, downArrowsIcon } from '../icons';
 import Divider from '~/components/Divider';
 
@@ -146,11 +146,12 @@ const CheckBoxModal: React.FC<CheckCompleteModal> = ({ listItem, closeModal, ope
             </div>
 
             <div className=' w-full mt-6 '>
-              <ErrorLabelBtnOutlined
+              <OutlinedLabelBtn
                 text={'Delete this List'}
                 htmlFor={'delete-list-modal'}
                 icon={trashIcon}
                 onClickFunction={openDeleteListModal}
+                // daisyUIBtnColor={'error'}
               />
 
             </div>
