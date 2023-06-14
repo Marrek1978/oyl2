@@ -1,5 +1,5 @@
 import React from 'react'
-import { editIcon } from '~/components/icons';
+import { EditIcon } from '~/components/icons';
 
 interface LabelCardHeaderProps {
   text: string;
@@ -33,7 +33,7 @@ function LabelCardHeader({htmlFor,
       >
         <div className=' flex gap-2 items-center'>
          {text}
-          {editIcon}
+          {EditIcon}
         </div>
       </label>
     </>

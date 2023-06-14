@@ -2,13 +2,20 @@ import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction, LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
+  Link,
   Links,
   LiveReload,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  isRouteErrorResponse,
+  useRouteError,
 } from "@remix-run/react";
+import Error from '~/components/utilities/Error'
+import { CustomError } from "./types/ErrorTypes";
+
+
 import Navbar from './components/nav/Navbar';
 
 import { getUser } from "~/models/session.server";
@@ -79,4 +86,59 @@ function AppContent() {
       </body>
     </html>
   );
+}
+
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      // <Documents title={error.statusText}>
+        <main>
+          <Error title={error.statusText}>
+            <p>
+              {error.data?.message ||
+                "Something went wrong. Please try again later."}
+            </p>
+            <p>
+              Back to <Link to="/"> Safety</Link>
+            </p>
+          </Error>
+        </main>
+    );
+      {/* </Documents> */}
+  } else if (error instanceof Error) {
+    return (
+      // <Documents title={error.statusText}>
+        <main>
+          <Error title={(error as CustomError).statusText} >
+            <p>
+              "Something went wrong. Please try again later."
+              {error instanceof Error && (error as Error).message || "Something went wrong. Please try again later."}
+            </p>
+            <p>
+              Back to <Link to="/"> Safety</Link>
+            </p>
+          </Error>
+        </main>
+    );
+      {/* </Documents> */}
+  } else {
+    return (
+      // <Documents title="Unknown Error">
+        <main>
+          <Error title="Unknown Error">
+            <p>
+              Something went wrong. Please try again later.
+               {error instanceof Error && (error as Error).message}
+            </p>
+            <p>
+              Back to <Link to="/"> Safety</Link>
+            </p>
+          </Error>
+        </main>
+      // </Documents>
+    );
+  }
 }
