@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useFetcher, useLoaderData, } from "@remix-run/react";
 import { redirect, json } from "@remix-run/node";
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
-import { requireUserId } from '~/session.server';
+import { requireUserId } from '~/models/session.server';
 import {
   createListAndTodos, getListAndTodos, updateToDoComplete,
   updateListAndTodos, deleteList, deleteCompletedToDosFromList
@@ -15,6 +15,8 @@ import { useList } from '~/components/list/ListContext';
 import CheckBoxModal from '~/components/modals/CheckBoxModal';
 import EditListModal from '~/components/modals/EditListModal';
 import DeleteListModal from '~/components/modals/DeleteListModal';
+
+import {transformData} from '~/utils/functions'
 
 //* delete lists
 
@@ -204,7 +206,6 @@ const TodosPage = () => {
     setOpenEditListModalBool(false)
   }
 
-  //! turn into context?? maybe not... depends on how / if i use List Cards elsewhere
   async function triggerRefreshRouteData() {
     fetcher.submit(null, { method: 'GET' })
   }

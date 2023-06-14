@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Link, useLoaderData } from "@remix-run/react";
 import type { LoaderArgs } from '@remix-run/node';
-import { getUserId } from "~/session.server";
+import { getUserId } from "~/models/session.server";
 import { json } from "@remix-run/node";
 import { Form } from "@remix-run/react";
 

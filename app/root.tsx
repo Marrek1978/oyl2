@@ -11,7 +11,7 @@ import {
 } from "@remix-run/react";
 import Navbar from './components/nav/Navbar';
 
-import { getUser } from "~/session.server";
+import { getUser } from "~/models/session.server";
 
 // import stylesheet from "~/tailwind.css";
 import tailwindStylesheetUrl from "~/styles/tailwind.css";

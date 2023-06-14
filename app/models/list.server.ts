@@ -43,8 +43,6 @@ export function getListAndTodos({ userId }: { userId: User["id"] }) {
   });
 }
 
-
-
 //update the todo table based on it's id, the list id, adn teh user id
 export async function updateToDoComplete({
   id,
@@ -71,9 +69,7 @@ export async function updateToDoComplete({
   }
 }
 // Delete a list by id and userId
-export function deleteList({
-  id,
-}: Pick<List, "id"> ) {
+export function deleteList({ id }: Pick<List, "id">) {
   return prisma.list.delete({
     where: { id },
   });
@@ -84,7 +80,9 @@ export async function createListAndTodos({
   userId,
   todos,
   is_recurring,
-}: Pick<List, "title" | "is_recurring"> & { userId: User["id"] } & {todos: CreateTodo[]}) {
+}: Pick<List, "title" | "is_recurring"> & { userId: User["id"] } & {
+  todos: CreateTodo[];
+}) {
   return await prisma.list.create({
     data: {
       title,
@@ -99,56 +97,138 @@ export async function createListAndTodos({
   });
 }
 
-
 export async function updateListAndTodos({
   id,
   title,
   userId,
   todos,
   is_recurring,
-}: Pick<List, "id" | "title" | "is_recurring"> & { userId: User["id"] } & { todos: Todo[]}) {
- 
-  const updateList =  prisma.list.update({
-    where:{id},
-    data:{
-      title, 
+}: Pick<List, "id" | "title" | "is_recurring"> & { userId: User["id"] } & {
+  todos: Todo[];
+}) {
+  const updateList = prisma.list.update({
+    where: { id },
+    data: {
+      title,
       is_recurring,
-    }
-  })
+    },
+  });
 
   const updateTodos = todos.map((todo) => {
     return prisma.toDo.upsert({
-      where:{id: todo.id},
-      create:{
+      where: { id: todo.id },
+      create: {
         body: todo.body,
         urgent: todo.urgent,
         important: todo.important,
         complete: todo.complete,
         dueDate: todo.dueDate,
         sortOrder: todo.sortOrder !== null ? todo.sortOrder : 0,
-        list:{connect:{id}},
+        list: { connect: { id } },
       },
-      update:{
+      update: {
         body: todo.body,
         urgent: todo.urgent,
         important: todo.important,
         complete: todo.complete,
         dueDate: todo.dueDate,
         sortOrder: todo.sortOrder !== null ? todo.sortOrder : 0,
-      }
-    })
-  })
+      },
+    });
+  });
   await Promise.all(updateTodos);
-  return {updateList, updateTodos}
+  return { updateList, updateTodos };
 }
 
-export async function deleteCompletedToDosFromList({id}: Pick<List, "id"> ) {
+export async function deleteCompletedToDosFromList({ id }: Pick<List, "id">) {
   return await prisma.toDo.deleteMany({
-    where:{
+    where: {
       listId: id,
       complete: true,
-    }
-  })
+    },
+  });
+}
+
+type ToDoCondition = Partial<
+  Pick<
+    ToDo,
+    | "id"
+    | "body"
+    | "urgent"
+    | "important"
+    | "complete"
+    | "dueDate"
+    | "sortOrder"
+  >
+>;
+export async function getToDosWhere(
+  { userId }: { userId: User["id"] },
+  condition: ToDoCondition
+): Promise<ToDo[]> {
+  const user  = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      lists: {
+        select: {
+          todos: {
+            where: condition,
+          },
+        },
+      },
+    },
+  });
+
+  // Handle the error or return an empty array
+  if (!user || !user.lists) {
+    return [];
+  }
+  
+  // Flatten the todos into a single array
+  const flattenedTodos = user.lists.flatMap((list) => list.todos);
+  return flattenedTodos;
+}
+
+export async function getToDosWhereDueDate( { userId }: { userId: User["id"] }){
+  const user  = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      lists: {
+        select: {
+          todos: {
+            where: {
+              dueDate: {
+                not: null,
+              },
+              complete: false,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // Handle the error or return an empty array
+  if (!user || !user.lists) {
+    return [];
+  }
+  
+  // Flatten the todos into a single array
+  const flattenedTodos = user.lists.flatMap((list) => list.todos);
+  return flattenedTodos;
+}
+
+export async function deleteCompletedToDosFromPriorityList( completedTodoIds:string[] ) {
+  const deleteCompletedToDos = completedTodoIds.map((id) => {
+    return prisma.toDo.delete({
+      where: { id: id },
+    });
+  });
+  await Promise.all(deleteCompletedToDos);
+  return { deleteCompletedToDos };
 }
 
 

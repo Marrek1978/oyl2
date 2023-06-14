@@ -1,23 +1,44 @@
-import type { ListAndToDos } from '~/types/listTypes' // adjust the path according to your project structure
+import React from 'react'
+import type { ListAndToDos, Todo } from '~/types/listTypes' // adjust the path according to your project structure
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { ToDoItemStylesNoBg } from '../../styles/ToDoItemStyles';
 import LabelCardHeader from '../buttons/LabelCardHeader';
-interface ListCardProps {
-  listItem: ListAndToDos;
-  openCheckBoxModal: () => void;
-  setOpenCheckboxModalId: (id: string | null) => void;
-  openCheckboxModalId: string | null;
-  triggerRefreshRouteData: () => void;
+
+// need to open a modal, from route    
+interface DashPrioritiesCardProps {
+  title: string;
+  todos:Todo[];
+  htmlFor: string;
+  onOpenFunction: () => void;
+  setPriorityModalTitle: (title:string | null) => void;
+  setPriorityModalTodos: (todos:Todo[] | null) => void;
+  headerColor?:string;
+  textColor?:string;
+  labelHoverColor?:string;
 }
 
-//? dashboard -> dashboard/todos -> dashboard/todos
+const DashPrioritiesCard: React.FC<DashPrioritiesCardProps> = ({ 
+   title,
+   todos,
+   htmlFor,
+   onOpenFunction,
+   setPriorityModalTitle,
+   setPriorityModalTodos,
+   headerColor='bg-base-content',
+   textColor='text-primary-300',
+   labelHoverColor='text-primary-100'
+ }) => {
 
-const ListCard: React.FC<ListCardProps> = ({ listItem, openCheckBoxModal, setOpenCheckboxModalId, openCheckboxModalId, triggerRefreshRouteData }) => {
+  const todosArray = todos
 
-  const listTitle = listItem.title
-  const todosArray = listItem.todos
-
+  console.log('textcolor is', textColor)
+  const onClickFunction = () => {
+    onOpenFunction()
+    setPriorityModalTitle(title)
+    setPriorityModalTodos(todos)
+  }
+  
   return (
     <>
       <div
@@ -28,21 +49,25 @@ const ListCard: React.FC<ListCardProps> = ({ listItem, openCheckBoxModal, setOpe
           shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] 
         ">
         <div
-          className=" flex justify-between items-center w-full 
-          bg-base-content 
+          className={`flex justify-between items-center w-full 
+          ${headerColor} 
           py-2 px-6
-          ">
-          <div className='
-            text-primary-300 font-mont uppercase font-medium tracking-widest 
-            truncate overflow-ellipsis w-2/3'>
-            {listTitle}
+          `}
+          >
+          <div className={`
+            ${textColor} font-mont uppercase font-medium tracking-widest 
+            truncate overflow-ellipsis w-2/3`}
+            >
+            {title}
           </div>
 
           <LabelCardHeader
             text='Open'
-            htmlFor={`checkboxes-${listItem.id}`}
-            onClickFunction={openCheckBoxModal}
+            htmlFor={htmlFor}
+            onClickFunction={onClickFunction}
             textSizeTailwindClasses='text-xs'
+            textColor={textColor}
+            labelHoverColor={labelHoverColor}
           />
 
         </div >
@@ -91,5 +116,4 @@ const ListCard: React.FC<ListCardProps> = ({ listItem, openCheckBoxModal, setOpe
   )
 }
 
-
-export default ListCard
+export default DashPrioritiesCard
