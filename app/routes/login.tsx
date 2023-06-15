@@ -4,21 +4,13 @@ import { verifyLogin } from "~/models/user.server";
 import { createUserSession, getUserId } from "~/models/session.server";
 import { safeRedirect, validateEmail } from "~/utils";
 import AuthForm from "~/components/auth/AuthForm";
-import { z } from 'zod'
 import { ca } from "date-fns/locale";
 import { validateCredentials } from "~/models/validation.server";
-
-// const loginSchema = z.object({
-//   email: z.string().email(),
-//   password: z.string().min(7)
-// })
-
 
 export const loader = async ({ request }: LoaderArgs) => {
   const userId = await getUserId(request);
   if (userId) return redirect("/dashboard");
   return null;
-  // return json({});
 };
 
 export const action = async ({ request }: ActionArgs) => {
@@ -37,53 +29,32 @@ export const action = async ({ request }: ActionArgs) => {
   let validated = null
 
   try{
-
     validated =  validateCredentials({email,password})
   }catch(validationError){
-    console.log('validated error',validationError)
     return json({errors:validationError})
   }
-  console.log('validated', validated)
 
+
+  //!  put create session in signup and login
   // try {
-  //   validated = loginSchema.safeParse({ email, password })
+  //   if (authMode === 'login') {
+  //     console.log('in auth mode login')
+  //     return await login(creddentials);
+  //   } else {
+  //     return await signup(creddentials);
+  //   }
   // } catch (error) {
-  //   return json(
-  //     { errors: { email: "There was a problem with Zod validator", password: null } },
-  //     { status: 400 }
-  //   );
-  // }
-
-  // if (validated.success) {
-  //   try {
-  //     user = await verifyLogin(email, password);
-  //   } catch (error) {
-  //     return json(
-  //       {errors:error},
-  //       {status:400}
-  //     )
+  //   if(error.status === 422){
+  //     return {creddentials: error.message}
   //   }
   // }
 
-  // if (!validated.success) {
-  //   const fieldErrors = validated.error.errors.reduce((acc, err) => {
-  //     const fieldName = err.path[0] as 'email' | 'password'; // assuming path is ["email"] or ["password"]
-  //     acc[fieldName] = err.message; // using the error message
-  //     return acc;
-  //   }, {} as { email?: string, password?: string });
-
+  // if (!user) {
   //   return json(
-  //     { errors: fieldErrors },
+  //     { errors: { email: "Invalid email or password", password: null } },
   //     { status: 400 }
   //   );
   // }
-
-  if (!user) {
-    return json(
-      { errors: { email: "Invalid email or password", password: null } },
-      { status: 400 }
-    );
-  }
 
   // return createUserSession({
   //   redirectTo,
