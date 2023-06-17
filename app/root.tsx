@@ -96,10 +96,11 @@ export function ErrorBoundary() {
     return (
       // <Documents title={error.statusText}>
         <main>
+          <h1>The Catch Boundry was reached. </h1>
           <Error title={error.statusText}>
             <p>
               {error.data?.message ||
-                "Something went wrong. Please try again later."}
+                "Something went wrong.  Please try again later."}
             </p>
             <p>
               Back to <Link to="/"> Safety</Link>
@@ -114,7 +115,7 @@ export function ErrorBoundary() {
         <main>
           <Error title={(error as CustomError).statusText} >
             <p>
-              "Something went wrong. Please try again later."
+              "Something went wrong.  The Error Boundry was reached. Please try again later."
               {error instanceof Error && (error as Error).message || "Something went wrong. Please try again later."}
             </p>
             <p>
@@ -130,7 +131,7 @@ export function ErrorBoundary() {
         <main>
           <Error title="Unknown Error">
             <p>
-              Something went wrong. Please try again later.
+              Something went wrong. An Unknown Error was created.  Please try again later.
                {error instanceof Error && (error as Error).message}
             </p>
             <p>

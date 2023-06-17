@@ -17,9 +17,9 @@ export const action = async ({ request }: ActionArgs) => {
     const formBody = await request.text();
     console.log('formBody', formBody)
     const parsedBody = parse(formBody);
-    const listTitle = typeof parsedBody.listTitle === 'string' ? parsedBody.listTitle : '';
-    const isRecurring = typeof parsedBody.isRecurringString === 'string' ? JSON.parse(parsedBody.isRecurringString) : false;
-    const todos = typeof parsedBody.todosString === 'string' ? JSON.parse(parsedBody.todosString) : [];
+    const listTitle =  parsedBody.listTitle as string;
+    const isRecurring = JSON.parse(parsedBody.isRecurringString as string) ;
+    const todos = JSON.parse(parsedBody.todosString as string);
 
     await createListAndTodos({ title: listTitle, userId, todos, is_recurring: isRecurring })
     return null

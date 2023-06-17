@@ -1,9 +1,11 @@
 import React from 'react'
-import { ListAndToDos } from '~/types/listTypes';
+import type { ListAndToDos } from '~/types/listTypes';
 import CardHeader from '../CardHeader';
 import { ToDoItemStylesNoBg } from '~/styles/ToDoItemStyles';
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
+import { EditIcon } from '../utilities/icons';
+import { Link } from '@remix-run/react';
 
 
 
@@ -17,17 +19,18 @@ interface ListCardProps {
 
 
 
-const ListCardV2: React.FC<ListCardProps> = ({ 
-  listItem, 
+const ListCardV2: React.FC<ListCardProps> = ({
+  listItem,
   // openCheckBoxModal, 
   // setOpenCheckboxModalId,
   //  openCheckboxModalId, 
   //  triggerRefreshRouteData 
-  }) => {
-  
+}) => {
+
   const listTitle = listItem.title
   const todosArray = listItem.todos
-  
+  const id = listItem.id
+
   return (
     <>
       <div
@@ -48,12 +51,14 @@ const ListCardV2: React.FC<ListCardProps> = ({
             {listTitle}
           </div>
 
-          <CardHeader
-            text='Open'
-            htmlFor={`checkboxes-${listItem.id}`}
-            // onClickFunction={openCheckBoxModal}
-            textSizeTailwindClasses='text-xs'
-          />
+          <Link to={id}>
+            <div className='flex gap-2  
+            font-bold font-mont text-xs  uppercase     
+            cursor-pointer 
+            text-primary-300
+            '>  OPEN  {EditIcon}   </div>
+          </Link>
+
 
         </div >
 

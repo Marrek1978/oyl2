@@ -1,7 +1,4 @@
 
- // adjust the path according to your project structure
-
-import { ToDo } from "@prisma/client";
 
 export function transformData(data: any) {
 

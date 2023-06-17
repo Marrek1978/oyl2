@@ -16,7 +16,6 @@ import CheckBoxModal from '~/components/modals/CheckBoxModal';
 import EditListModal from '~/components/modals/EditListModal';
 import DeleteListModal from '~/components/modals/DeleteListModal';
 
-import {transformData} from '~/utils/functions'
 
 //* delete lists
 

@@ -1,14 +1,16 @@
 import React from 'react'
-import type { LoaderArgs } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
+import type { LoaderArgs } from '@remix-run/server-runtime';
+import { Link, Outlet, useLoaderData } from '@remix-run/react';
+
 import { getListAndTodos } from '~/models/list.server';
 import { requireUserId } from '~/models/session.server';
-import ListCardV2 from '~/components/list/ListCardV2';
-import { transformDataDates } from '~/components/utilities/helperFunctions';
-import { Link, Outlet, useLoaderData } from '@remix-run/react';
-import type { ListAndToDos } from '~/types/listTypes';
-import { EditIcon } from '~/components/utilities/icons';
 
+import ListCardV2 from '~/components/list/ListCardV2';
+import { EditIcon } from '~/components/utilities/icons';
+import { transformDataDates } from '~/components/utilities/helperFunctions';
+
+import type { ListAndToDos } from '~/types/listTypes';
 export const loader = async ({ request }: LoaderArgs) => {
 
   try {
@@ -16,7 +18,6 @@ export const loader = async ({ request }: LoaderArgs) => {
     const todoLists = await getListAndTodos({ userId });
     return json({ todoLists });
   } catch (error) {
-    console.log('todos thorw error')
     throw error
   }
 }
@@ -24,12 +25,8 @@ export const loader = async ({ request }: LoaderArgs) => {
 function TodosPage() {
 
   const initialData = useLoaderData<typeof loader>();
-
-  // const allLists = transformDataDates(fetcher.data?.todoLists || initialData.todoLists);
   const allLists = transformDataDates(initialData.todoLists);
-  // const recurringLists = allLists.filter((list: ListAndToDos) => list.is_recurring === true);
   const nonRecurringLists = allLists.filter((list: ListAndToDos) => list.is_recurring === false);
-
 
   return (
     <>

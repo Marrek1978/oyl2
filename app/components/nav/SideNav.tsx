@@ -18,7 +18,7 @@ const SideNav = () => {
           <li className="">
             <NavLink
               className='side-nav'
-              to='/dashboard/todos' end
+              to='/dash/todos' end
             >
               <span>To-Dos</span>
             </NavLink>

@@ -141,6 +141,23 @@ export async function updateListAndTodos({
   return { updateList, updateTodos };
 }
 
+export async function reorderCompletedToDos({ todos}: {todos: ToDo[] }){
+
+  //update the sort order of the todos
+  const updateTodos = todos.map((todo) => {
+    return prisma.toDo.update({
+      where: { id: todo.id },
+      data: {
+        sortOrder: todo.sortOrder,
+      },
+    });
+  })
+
+  await Promise.all(updateTodos);
+  return { updateTodos };
+
+}
+
 export async function deleteCompletedToDosFromList({ id }: Pick<List, "id">) {
   return await prisma.toDo.deleteMany({
     where: {
@@ -231,5 +248,6 @@ export async function deleteCompletedToDosFromPriorityList( completedTodoIds:str
   await Promise.all(deleteCompletedToDos);
   return { deleteCompletedToDos };
 }
+
 
 

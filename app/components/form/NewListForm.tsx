@@ -2,36 +2,38 @@ import React, { useRef, useState } from 'react'
 import { useFetcher, useNavigate } from '@remix-run/react';
 import { v4 as uuidv4 } from "uuid";
 
+import Modal from '~/components/modals/Modal';
+import DndTodos from '~/components/dnd/DndTodos';
+import SolidBtn from '~/components/buttons/SolidBtn';
+import Divider from '~/components/utilities/Divider';
 import DatePicker from '~/components/list/DatePicker'
 import { useList } from '~/components/list/ListContext';
-import { ArrowIcon45deg, ArrowIconUp, closeIcon, dbIcon } from '~/components/utilities/icons';
-import Divider from '~/components/utilities/Divider';
 import OutlinedBtn from '~/components/buttons/OutlinedBtn';
-import SolidBtn from '~/components/buttons/SolidBtn';
-import SolidBtnGreyBlue from '~/components/buttons/SolidBtnGreyBlue';
-import Modal from '~/components/modals/Modal';
-import SuccessMessage from '~/components/modals/SuccessMessage';
 import EditToDoModal from '~/components/modals/EditToDoModal';
-import DndTodos from '../dnd/DndTodos';
+import SuccessMessage from '~/components/modals/SuccessMessage';
+import { sortTodos, resetTodoSortOrder } from '~/components/utilities/helperFunctions';
+import SolidBtnGreyBlue from '~/components/buttons/SolidBtnGreyBlue';
+import { ArrowIcon45deg, ArrowIconUp, closeIcon, dbIcon } from '~/components/utilities/icons';
 
 import type { CreationTodo } from '~/types/listTypes';
 
 function NewListForm() {
-  const { listTitle, setListTitle, isRecurring, setIsRecurring, todos, setTodos } = useList();
-
+  
+  const fetcher = useFetcher();
+  const navigate = useNavigate();
   const inputToDoRef = useRef<HTMLInputElement>(null);
-  const [selectedTodo, setSelectedTodo] = useState<CreationTodo | null>(null);
-  const [selectedTodoIndex, setSelectedTodoIndex] = useState<number | null>(null);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const { listTitle, setListTitle, isRecurring, setIsRecurring, todos, setTodos } = useList();
+  
+  const [successMessage, setSuccessMessage] = useState('');
   const [isUrgent, setIsUrgent] = useState<boolean>(false);
   const [isImportant, setIsImportant] = useState<boolean>(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [isEditToDoModalOpen, setIsEditToDoModalOpen] = useState(false);
+  const [selectedTodo, setSelectedTodo] = useState<CreationTodo | null>(null);
+  const [selectedTodoIndex, setSelectedTodoIndex] = useState<number | null>(null);
+
   let disableSaveBtn = !listTitle || todos.length === 0;
 
-  const [successMessage, setSuccessMessage] = useState('');
-
-  const navigate = useNavigate();
-  const fetcher = useFetcher();
 
   const handleSaveListToDb = async () => {
     const isRecurringString = JSON.stringify(isRecurring);
@@ -102,37 +104,9 @@ function NewListForm() {
     setIsRecurring(e.target.checked)
   }
 
-
   const updateTodo = (index: number | null, updatedTodo: CreationTodo) => {
     setTodos(todos.map((todo, i) => (i === index ? updatedTodo : todo)));
   };
-
-  function sortTodos(todos: CreationTodo[]): CreationTodo[] {
-    todos.sort((a, b) => {
-      if (a.urgent && !b.urgent) {
-        return -1;
-      } else if (!a.urgent && b.urgent) {
-        return 1;
-      } else if (a.important && !b.important) {
-        return -1;
-      } else if (!a.important && b.important) {
-        return 1;
-      } else {
-        return 0
-      }
-    });
-
-    return setTodoSortOrder(todos)
-  }
-
-  function setTodoSortOrder(todos: CreationTodo[]): CreationTodo[] {
-    return todos.map((todo, index) => {
-      return {
-        ...todo,
-        sortOrder: index,
-      }
-    })
-  }
 
   return (
     <>
@@ -281,7 +255,7 @@ function NewListForm() {
               <DndTodos
                 setTodos={setTodos}
                 todos={todos}
-                setTodoSortOrder={setTodoSortOrder}
+                setTodoSortOrder={resetTodoSortOrder}
                 setIsEditToDoModalOpen={setIsEditToDoModalOpen}
                 setSelectedTodoIndex={setSelectedTodoIndex}
                 setSelectedTodo={setSelectedTodo} />
