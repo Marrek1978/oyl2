@@ -2,6 +2,8 @@ import type { Password, User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "~/db.server";
+import { createUserSession } from "./session.server";
+// import { request } from "http";
 
 export type { User } from "@prisma/client";
 
@@ -13,10 +15,21 @@ export async function getUserByEmail(email: User["email"]) {
   return prisma.user.findUnique({ where: { email } });
 }
 
-export async function createUser(email: User["email"], password: string) {
+export async function createUser(
+  email: User["email"],
+  password: string,
+  remember: boolean
+) {
+  //check for existing email
+  const existingUser = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (existingUser) throw new Error("A user with that email already exists");
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  return prisma.user.create({
+  const newUser = await prisma.user.create({
     data: {
       email,
       password: {
@@ -26,6 +39,13 @@ export async function createUser(email: User["email"], password: string) {
       },
     },
   });
+
+  if (!newUser) throw new Error("Could not create user");
+
+  return createUserSession({
+    userId: newUser.id,
+    remember,
+  });
 }
 
 export async function deleteUserByEmail(email: User["email"]) {
@@ -34,7 +54,8 @@ export async function deleteUserByEmail(email: User["email"]) {
 
 export async function verifyLogin(
   email: User["email"],
-  password: Password["hash"]
+  password: Password["hash"],
+  remember: boolean
 ) {
   const userWithPassword = await prisma.user.findUnique({
     where: { email },
@@ -44,7 +65,7 @@ export async function verifyLogin(
   });
 
   if (!userWithPassword || !userWithPassword.password) {
-    return null;
+    throw new Error("The provided credentials are invalid");
   }
 
   const isValid = await bcrypt.compare(
@@ -52,11 +73,12 @@ export async function verifyLogin(
     userWithPassword.password.hash
   );
 
-  if (!isValid) {
-    return null;
-  }
+  if (!isValid) throw new Error("The provided credentials are invalid");
 
   const { password: _password, ...userWithoutPassword } = userWithPassword;
 
-  return userWithoutPassword;
+  return createUserSession({
+    userId: userWithoutPassword.id,
+    remember,
+  });
 }

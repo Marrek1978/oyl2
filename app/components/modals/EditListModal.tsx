@@ -16,8 +16,8 @@ import {
   verticalListSortingStrategy
 } from "@dnd-kit/sortable";
 import CloseLabelBtn from '../buttons/SolidLabelClose';
-import { dbIcon, trashIcon, downArrowsIcon, ArrowIcon45deg, ArrowIconUp } from '../icons';
-import Divider from '../Divider';
+import { dbIcon, trashIcon, downArrowsIcon, ArrowIcon45deg, ArrowIconUp } from '../utilities/icons';
+import Divider from '../utilities/Divider';
 import OutlinedBtn from '../buttons/OutlinedBtn';
 import SolidLabelBtn from '../buttons/SolidLabelBtn';
 

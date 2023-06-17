@@ -87,7 +87,7 @@ const TodosPage = () => {
     refreshOpenListData();
   }, [fetcher.data]);
 
-  function transformData(data: any) {
+  function transformDataDates(data: any) {
     return data.map((item: any) => ({
       ...item,
       createdAt: new Date(item.createdAt!),
@@ -101,7 +101,7 @@ const TodosPage = () => {
     }));
   }
 
-  const allLists = transformData(fetcher.data?.todoLists || initialData.todoLists);
+  const allLists = transformDataDates(fetcher.data?.todoLists || initialData.todoLists);
   const recurringLists = allLists.filter((list: ListAndToDos) => list.is_recurring === true);
   const nonRecurringLists = allLists.filter((list: ListAndToDos) => list.is_recurring === false);
 

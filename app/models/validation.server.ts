@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+// import { json } from "@remix-run/node";
 
 interface CredentialsProps {
   email: string | null;
@@ -29,7 +29,7 @@ export function validateCredentials(input: CredentialsProps) {
     validationErrors.password = 'Invalid password. Must be at least 7 characters long.'
   }
 
-  if (Object.keys(validationErrors).length > 0) {
+  if (validationErrors.email || validationErrors.password) {
     throw validationErrors;
   }
 }

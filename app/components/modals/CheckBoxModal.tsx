@@ -5,11 +5,11 @@ import { sortTodos } from './EditListModal';
 import { useEffect, useState } from 'react';
 import { useList } from '../list/ListContext';
 import CloseLabelBtn from '../buttons/SolidLabelClose';
-import HeaderLabel from '../buttons/LabelCardHeader';
+import HeaderLabel from '../LabelCardHeader';
 import TextBtn from '../buttons/TextBtn';
 import OutlinedLabelBtn from '../buttons/OutlinedLabelBtn';
-import { trashIcon, downArrowsIcon } from '../icons';
-import Divider from '~/components/Divider';
+import { trashIcon, downArrowsIcon } from '../utilities/icons';
+import Divider from '~/components/utilities/Divider';
 
 interface CheckCompleteModal {
   listItem: ListAndToDos;

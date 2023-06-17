@@ -1,23 +1,33 @@
-import type { ListAndToDos } from '~/types/listTypes' // adjust the path according to your project structure
+import React from 'react'
+import { ListAndToDos } from '~/types/listTypes';
+import CardHeader from '../CardHeader';
+import { ToDoItemStylesNoBg } from '~/styles/ToDoItemStyles';
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import { ToDoItemStylesNoBg } from '../../styles/ToDoItemStyles';
-import LabelCardHeader from '../LabelCardHeader';
+
+
+
 interface ListCardProps {
   listItem: ListAndToDos;
-  openCheckBoxModal: () => void;
-  setOpenCheckboxModalId: (id: string | null) => void;
-  openCheckboxModalId: string | null;
-  triggerRefreshRouteData: () => void;
+  // openCheckBoxModal: () => void;
+  // setOpenCheckboxModalId: (id: string | null) => void;
+  // openCheckboxModalId: string | null;
+  // triggerRefreshRouteData: () => void;
 }
 
-//? dashboard -> dashboard/todos -> dashboard/todos
 
-const ListCard: React.FC<ListCardProps> = ({ listItem, openCheckBoxModal, setOpenCheckboxModalId, openCheckboxModalId, triggerRefreshRouteData }) => {
 
+const ListCardV2: React.FC<ListCardProps> = ({ 
+  listItem, 
+  // openCheckBoxModal, 
+  // setOpenCheckboxModalId,
+  //  openCheckboxModalId, 
+  //  triggerRefreshRouteData 
+  }) => {
+  
   const listTitle = listItem.title
   const todosArray = listItem.todos
-
+  
   return (
     <>
       <div
@@ -38,10 +48,10 @@ const ListCard: React.FC<ListCardProps> = ({ listItem, openCheckBoxModal, setOpe
             {listTitle}
           </div>
 
-          <LabelCardHeader
+          <CardHeader
             text='Open'
             htmlFor={`checkboxes-${listItem.id}`}
-            onClickFunction={openCheckBoxModal}
+            // onClickFunction={openCheckBoxModal}
             textSizeTailwindClasses='text-xs'
           />
 
@@ -91,5 +101,4 @@ const ListCard: React.FC<ListCardProps> = ({ listItem, openCheckBoxModal, setOpe
   )
 }
 
-
-export default ListCard
+export default ListCardV2

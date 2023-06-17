@@ -33,6 +33,7 @@ export function getListItems({ userId }: { userId: User["id"] }) {
 
 export function getListAndTodos({ userId }: { userId: User["id"] }) {
   return prisma.list.findMany({
+    // where: { userId },
     where: { userId },
     include: {
       todos: {

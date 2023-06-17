@@ -11,12 +11,21 @@ function HomePage() {
   return (
     <>
       <NavBar />
-      <HeroSection />
-      <BenefitsSection />
-      <AboutSection />
-      <PricingSection />
-      <CTASection />
-      <Footer />
+      <div className='mt-8'>
+        <HeroSection />
+      </div>
+      <div className='mt-8'>
+        <BenefitsSection />
+      </div>
+      <div className='mt-8'>
+        <AboutSection />
+      </div>
+      <div className='mt-8'>
+        <PricingSection />
+      </div>
+      <div className='mt-8'><CTASection />
+        <Footer />
+      </div>
     </ >
   )
 }

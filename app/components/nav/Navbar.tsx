@@ -11,7 +11,7 @@ import { themeChange } from 'theme-change'
 
 import { useTheme } from '~/styles/ThemeContext';
 import OutlinedBtnGold from '~/components/buttons/OutlinedBtnGold';
-import { LogoutIcon } from '~/components/icons';
+import { LogoutIcon } from '~/components/utilities/icons';
 
 export const loader = async ({ request }: LoaderArgs) => {
   let userId = await getUserId(request);

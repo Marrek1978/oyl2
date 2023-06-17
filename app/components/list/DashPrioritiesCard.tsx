@@ -3,7 +3,7 @@ import type { ListAndToDos, Todo } from '~/types/listTypes' // adjust the path a
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { ToDoItemStylesNoBg } from '../../styles/ToDoItemStyles';
-import LabelCardHeader from '../buttons/LabelCardHeader';
+import LabelCardHeader from '../LabelCardHeader';
 
 // need to open a modal, from route    
 interface DashPrioritiesCardProps {

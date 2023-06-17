@@ -20,7 +20,7 @@ export function SortableItem(props) {
         key={props.todo.id}
         id={props.todo.id}
         removeTodo={props.removeTodo}
-        editTodo={props.handleOpenModal}
+        editTodo={props.handleOpenEditModal}
       />
     </div>
   );

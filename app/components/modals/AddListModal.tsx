@@ -16,9 +16,9 @@ import {
 import type { CreationTodo } from '~/types/listTypes';
 import { v4 as uuidv4 } from "uuid";
 import { useList } from '../list/ListContext';
-import { ArrowIcon45deg, ArrowIconUp, dbIcon } from '../icons';
+import { ArrowIcon45deg, ArrowIconUp, dbIcon } from '../utilities/icons';
 import CloseLabelBtn from '../buttons/SolidLabelClose';
-import Divider from '../Divider';
+import Divider from '../utilities/Divider';
 import OutlinedBtn from '../buttons/OutlinedBtn';
 import SolidBtn from '../buttons/SolidBtn';
 

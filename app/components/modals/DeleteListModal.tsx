@@ -1,6 +1,6 @@
 import React from 'react'
 import CloseLabelBtn from '../buttons/SolidLabelClose'
-import { trashIcon } from '../icons'
+import { trashIcon } from '../utilities/icons'
 import SolidLabelBtn from '../buttons/SolidLabelBtn'
 
 

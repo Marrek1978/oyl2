@@ -1,16 +1,21 @@
 import React from 'react'
-import { EditIcon } from '~/components/icons';
+import { EditIcon } from '~/components/utilities/icons';
+//!formerly LabelCardHeader
+
+
 
 interface LabelCardHeaderProps {
   text: string;
   htmlFor: string;
-  onClickFunction: () => void;
+  // onClickFunction: () => void;
   textSizeTailwindClasses?: string;
   textColor?: string;
   labelHoverColor?: string;
 }
-function LabelCardHeader({htmlFor, 
-  onClickFunction, text,
+
+function CardHeader({htmlFor, 
+  // onClickFunction,
+   text,
   textSizeTailwindClasses='text-xs',
   textColor='text-primary-300',
   labelHoverColor='text-primary-100'
@@ -29,7 +34,8 @@ function LabelCardHeader({htmlFor,
             hover:scale-105
             transition-all duration-300 ease-linear 
             `}
-        onClick={onClickFunction}
+        onClick={()=>{}}
+        // onClick={onClickFunction}
       >
         <div className=' flex gap-2 items-center'>
          {text}
@@ -40,4 +46,4 @@ function LabelCardHeader({htmlFor,
   )
 }
 
-export default LabelCardHeader
+export default CardHeader

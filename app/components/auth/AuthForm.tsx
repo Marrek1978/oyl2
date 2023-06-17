@@ -2,7 +2,7 @@ import { Form, Link, useActionData, useNavigation } from '@remix-run/react'
 import React from 'react'
 import SolidBtn from '../buttons/SolidBtn'
 import { useSearchParams } from '@remix-run/react';
-import { SignUp, LoginIcon } from '~/components/icons';
+import { SignUp, LoginIcon } from '~/components/utilities/icons';
 
 const AuthForm = () => {
 
@@ -28,7 +28,10 @@ const AuthForm = () => {
             <div className="mx-auto w-full max-w-md px-8">
               <h1 className="card-title text-3xl font-mont">Welcome!</h1>
               <p className="mt-2 font-mont">Organize your Life.  Achieve your Desires</p>
-              <Form method="post" className="space-y-6 mt-8 form-control w-full max-w-xs font-mont">
+              <h2 className='text-xl font-mont mt-6'>{
+                authMode === "login" ? "Login" : "Sign Up"}
+              </h2>
+              <Form method="post" className="space-y-6 mt-6 form-control w-full max-w-xs font-mont">
                 <div>
                   <label className="label pl-0 " htmlFor="email" >
                     <span className="label-text " >Email Address</span>
@@ -107,6 +110,7 @@ const AuthForm = () => {
                   </div>
                 </div>
               </Form>
+              
             </div>
           </div>
         </div>

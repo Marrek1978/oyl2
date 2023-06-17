@@ -1,5 +1,5 @@
 import React from 'react'
-import { closeIcon } from '~/components/icons';
+import { closeIcon } from '~/components/utilities/icons';
 
 interface CloseLabelBtnProps {
   text: string;

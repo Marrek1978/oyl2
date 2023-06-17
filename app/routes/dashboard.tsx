@@ -11,7 +11,10 @@ import { ListProvider } from '~/components/list/ListContext';
 
 
 export const loader = async ({ request }: LoaderArgs) => {
-  await requireUserId(request);
+  console.log('in dashboard loader')
+  
+  const userId = await requireUserId(request);
+  console.log( 'userId is ', userId)
   return null;
 
   // load todos from the database
