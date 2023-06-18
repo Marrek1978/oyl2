@@ -20,7 +20,7 @@ export const action = async ({ request }: ActionArgs) => {
 }
 
 
-function DeleteListPage() {
+function DeleteTodosListPage() {
 
   const params = useParams();
   const matches = useMatches();
@@ -81,4 +81,4 @@ function DeleteListPage() {
   )
 }
 
-export default DeleteListPage
+export default DeleteTodosListPage

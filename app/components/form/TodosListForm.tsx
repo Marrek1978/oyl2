@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useFetcher, useNavigate } from '@remix-run/react';
 import { v4 as uuidv4 } from "uuid";
 
@@ -7,7 +7,7 @@ import DndTodos from '~/components/dnd/DndTodos';
 import SolidBtn from '~/components/buttons/SolidBtn';
 import Divider from '~/components/utilities/Divider';
 import DatePicker from '~/components/list/DatePicker'
-import { useList } from '~/components/list/ListContext';
+// import { useList } from '~/components/list/ListContext';
 import OutlinedBtn from '~/components/buttons/OutlinedBtn';
 import EditToDoModal from '~/components/modals/EditToDoModal';
 import SuccessMessage from '~/components/modals/SuccessMessage';
@@ -15,15 +15,24 @@ import { sortTodos, resetTodoSortOrder } from '~/components/utilities/helperFunc
 import SolidBtnGreyBlue from '~/components/buttons/SolidBtnGreyBlue';
 import { ArrowIcon45deg, ArrowIconUp, closeIcon, dbIcon } from '~/components/utilities/icons';
 
-import type { CreationTodo } from '~/types/listTypes';
+import type { CreationTodo, ListAndToDos } from '~/types/listTypes';
 
-function NewListForm() {
-  
+interface TodosListFormProps {
+  list?: ListAndToDos;
+}
+function TodosListForm({ list }: TodosListFormProps) {
+
   const fetcher = useFetcher();
   const navigate = useNavigate();
   const inputToDoRef = useRef<HTMLInputElement>(null);
-  const { listTitle, setListTitle, isRecurring, setIsRecurring, todos, setTodos } = useList();
-  
+
+  // const { listTitle, setListTitle, isRecurring, setIsRecurring, todos, setTodos } = useList();
+  const [todos, setTodos] = useState<CreationTodo[]>([]);
+  const [listTitle, setListTitle] = useState<string>('');
+  const [isRecurring, setIsRecurring] = useState<boolean>(false);
+
+  const [isEditingTodoList, setIsEditingTodoList] = useState<boolean>(false);
+
   const [successMessage, setSuccessMessage] = useState('');
   const [isUrgent, setIsUrgent] = useState<boolean>(false);
   const [isImportant, setIsImportant] = useState<boolean>(false);
@@ -34,8 +43,18 @@ function NewListForm() {
 
   let disableSaveBtn = !listTitle || todos.length === 0;
 
+  useEffect(() => {
+    console.log('in useEffect in NewListForm.tsx')
+    if (list) {
+      setListTitle(list.title);
+      setTodos(list.todos);
+      setIsRecurring(list.is_recurring);
+      setIsEditingTodoList(true);
+    }
+  }, [list])
 
-  const handleSaveListToDb = async () => {
+
+  const handleCreateListInDb = async () => {
     const isRecurringString = JSON.stringify(isRecurring);
     const todosString = JSON.stringify(todos);
 
@@ -51,7 +70,27 @@ function NewListForm() {
 
       setSuccessMessage('List was saved');
       setTimeout(() => setSuccessMessage(''), 1000); // Clear the message after 3 seconds
+    } catch (error) { throw error }
 
+    setListTitle('')
+    setTodos([])
+    setIsRecurring(false)
+  }
+
+  const handleSaveListEditsToDb = async () => {
+    const editedList = { ...list, title: listTitle, todos, is_recurring: isRecurring }
+    const editedListString = JSON.stringify(editedList);
+
+    try {
+      fetcher.submit({
+        editedListString
+      }, {
+        method: 'PUT',
+        action: '/dash/todos/$listId/edit',
+      })
+
+      setSuccessMessage('List was saved');
+      setTimeout(() => setSuccessMessage(''), 1000); // Clear the message after 3 seconds
     } catch (error) { throw error }
 
     setListTitle('')
@@ -114,7 +153,7 @@ function NewListForm() {
         <Modal onClose={() => { }} zIndex={20}>
           {successMessage}
           <SuccessMessage
-            text='List was saved'
+            text={isEditingTodoList ? 'List was saved' : 'List was updated'}
           />
         </Modal>)
       }
@@ -133,7 +172,7 @@ function NewListForm() {
           flex items-center
           mx-8
           '>
-          Make a New List of To-Dos
+          {isEditingTodoList ? 'Update your To-DoList' : 'Make a New List of To-Dos'}
         </div>
 
         {/* //? *****List Title ******  */}
@@ -279,8 +318,8 @@ function NewListForm() {
         <div className='mx-8'>
           <div className=''>
             <SolidBtn
-              text={'Save New List'}
-              onClickFunction={handleSaveListToDb}
+              text={isEditingTodoList ? 'Save Updates to List' : 'Save New List'}
+              onClickFunction={isEditingTodoList ? handleSaveListEditsToDb : handleCreateListInDb}
               icon={dbIcon}
               daisyUIBtnColor='primary'
               disableSaveBtn={disableSaveBtn}
@@ -311,9 +350,8 @@ function NewListForm() {
           />
         </>
       )}
-
     </>
   )
 }
 
-export default NewListForm
+export default TodosListForm

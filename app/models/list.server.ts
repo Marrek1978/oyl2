@@ -141,9 +141,7 @@ export async function updateListAndTodos({
   return { updateList, updateTodos };
 }
 
-export async function reorderCompletedToDos({ todos}: {todos: ToDo[] }){
-
-  //update the sort order of the todos
+export async function reorderCompletedToDos({ todos }: { todos: ToDo[] }) {
   const updateTodos = todos.map((todo) => {
     return prisma.toDo.update({
       where: { id: todo.id },
@@ -151,11 +149,10 @@ export async function reorderCompletedToDos({ todos}: {todos: ToDo[] }){
         sortOrder: todo.sortOrder,
       },
     });
-  })
+  });
 
   await Promise.all(updateTodos);
   return { updateTodos };
-
 }
 
 export async function deleteCompletedToDosFromList({ id }: Pick<List, "id">) {
@@ -183,7 +180,7 @@ export async function getToDosWhere(
   { userId }: { userId: User["id"] },
   condition: ToDoCondition
 ): Promise<ToDo[]> {
-  const user  = await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: {
       id: userId,
     },
@@ -202,14 +199,14 @@ export async function getToDosWhere(
   if (!user || !user.lists) {
     return [];
   }
-  
+
   // Flatten the todos into a single array
   const flattenedTodos = user.lists.flatMap((list) => list.todos);
   return flattenedTodos;
 }
 
-export async function getToDosWhereDueDate( { userId }: { userId: User["id"] }){
-  const user  = await prisma.user.findUnique({
+export async function getToDosWhereDueDate({ userId }: { userId: User["id"] }) {
+  const user = await prisma.user.findUnique({
     where: {
       id: userId,
     },
@@ -233,13 +230,15 @@ export async function getToDosWhereDueDate( { userId }: { userId: User["id"] }){
   if (!user || !user.lists) {
     return [];
   }
-  
+
   // Flatten the todos into a single array
   const flattenedTodos = user.lists.flatMap((list) => list.todos);
   return flattenedTodos;
 }
 
-export async function deleteCompletedToDosFromPriorityList( completedTodoIds:string[] ) {
+export async function deleteCompletedToDosFromPriorityList(
+  completedTodoIds: string[]
+) {
   const deleteCompletedToDos = completedTodoIds.map((id) => {
     return prisma.toDo.delete({
       where: { id: id },
@@ -248,6 +247,3 @@ export async function deleteCompletedToDosFromPriorityList( completedTodoIds:str
   await Promise.all(deleteCompletedToDos);
   return { deleteCompletedToDos };
 }
-
-
-

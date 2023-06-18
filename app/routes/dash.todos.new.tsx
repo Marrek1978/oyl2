@@ -1,6 +1,6 @@
 import type { ActionArgs } from '@remix-run/server-runtime';
 import { parse } from 'querystring';
-import NewListForm from '~/components/form/NewListForm';
+import NewListForm from '~/components/form/TodosListForm';
 import Modal from '~/components/modals/Modal';
 import { createListAndTodos } from '~/models/list.server';
 import { requireUserId } from '~/models/session.server';
