@@ -1,12 +1,13 @@
 import { json } from '@remix-run/server-runtime';
+
+import { useLoaderData } from '@remix-run/react';
 import type { LoaderArgs } from '@remix-run/server-runtime';
-import { Outlet, useLoaderData } from '@remix-run/react';
 
 import { getListAndTodos } from '~/models/list.server';
 import { requireUserId } from '~/models/session.server';
-import TodoLists from '~/components/list/TodoLists';
 import { transformDataDates } from '~/components/utilities/helperFunctions';
 
+import TodoLists from '~/components/list/TodoLists';
 
 export const loader = async ({ request }: LoaderArgs) => {
 
@@ -19,17 +20,16 @@ export const loader = async ({ request }: LoaderArgs) => {
   }
 }
 
-function TodosPage() {
+function ListsPage() {
 
-  const initialData = useLoaderData<typeof loader>();
-  const allLists = transformDataDates(initialData.todoLists);
+  const initialTodosData = useLoaderData<typeof loader>();
+  const todoLists = transformDataDates(initialTodosData.todoLists);
 
   return (
     <>
-      <Outlet />
-      <TodoLists lists={allLists} />
+      <TodoLists lists={todoLists} />
     </>
   )
 }
 
-export default TodosPage
+export default ListsPage

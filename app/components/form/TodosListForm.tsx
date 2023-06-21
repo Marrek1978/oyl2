@@ -29,7 +29,6 @@ function TodosListForm({ list }: TodosListFormProps) {
   // const { listTitle, setListTitle, isRecurring, setIsRecurring, todos, setTodos } = useList();
   const [todos, setTodos] = useState<CreationTodo[]>([]);
   const [listTitle, setListTitle] = useState<string>('');
-  const [isRecurring, setIsRecurring] = useState<boolean>(false);
 
   const [isEditingTodoList, setIsEditingTodoList] = useState<boolean>(false);
 
@@ -48,21 +47,18 @@ function TodosListForm({ list }: TodosListFormProps) {
     if (list) {
       setListTitle(list.title);
       setTodos(list.todos);
-      setIsRecurring(list.is_recurring);
       setIsEditingTodoList(true);
     }
   }, [list])
 
 
   const handleCreateListInDb = async () => {
-    const isRecurringString = JSON.stringify(isRecurring);
     const todosString = JSON.stringify(todos);
 
     try {
       fetcher.submit({
         listTitle,
-        isRecurringString,
-        todosString,
+        todosString
       }, {
         method: 'POST',
         action: '/dash/todos/new',
@@ -72,13 +68,17 @@ function TodosListForm({ list }: TodosListFormProps) {
       setTimeout(() => setSuccessMessage(''), 1000); // Clear the message after 3 seconds
     } catch (error) { throw error }
 
+    clearListState();
+  }
+
+  const clearListState = () => {
+
     setListTitle('')
     setTodos([])
-    setIsRecurring(false)
   }
 
   const handleSaveListEditsToDb = async () => {
-    const editedList = { ...list, title: listTitle, todos, is_recurring: isRecurring }
+    const editedList = { ...list, title: listTitle, todos }
     const editedListString = JSON.stringify(editedList);
 
     try {
@@ -93,9 +93,7 @@ function TodosListForm({ list }: TodosListFormProps) {
       setTimeout(() => setSuccessMessage(''), 1000); // Clear the message after 3 seconds
     } catch (error) { throw error }
 
-    setListTitle('')
-    setTodos([])
-    setIsRecurring(false)
+    clearListState();
   }
 
   const handleAddTodoToList = () => {
@@ -137,10 +135,6 @@ function TodosListForm({ list }: TodosListFormProps) {
       isUrgent && setIsUrgent(false)
     }
     setIsImportant(e.target.checked)
-  }
-
-  const handleIsRecurring = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsRecurring(e.target.checked)
   }
 
   const updateTodo = (index: number | null, updatedTodo: CreationTodo) => {
@@ -200,7 +194,7 @@ function TodosListForm({ list }: TodosListFormProps) {
         <div className='mx-8'>
           <div> <Divider /> </div>
 
-          <div className="my-8 ">
+          <div className="mt-4 mb-8 ">
             <div className="form-control mt-0">
               <label className="label pl-0">
                 <span className="label-text text-base font-mont font-semibold">List Title</span>
@@ -224,17 +218,6 @@ function TodosListForm({ list }: TodosListFormProps) {
                     </div>
                   </span>
                 }
-              </label>
-            </div>
-
-            <div className="">
-              <label className="cursor-pointer label justify-start pt-0 pl-0" >
-                <span className="label-text mr-2 font-mont font-semibold">Recurring List</span>
-                <input type="checkbox"
-                  className="toggle toggle-secondary"
-                  checked={isRecurring}
-                  onChange={handleIsRecurring}
-                />
               </label>
             </div>
 

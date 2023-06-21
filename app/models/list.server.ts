@@ -80,15 +80,13 @@ export async function createListAndTodos({
   title,
   userId,
   todos,
-  is_recurring,
-}: Pick<List, "title" | "is_recurring"> & { userId: User["id"] } & {
+}: Pick<List, "title" > & { userId: User["id"] } & {
   todos: CreateTodo[];
 }) {
   return await prisma.list.create({
     data: {
       title,
       userId,
-      is_recurring,
       todos: {
         createMany: {
           data: todos,
@@ -103,15 +101,13 @@ export async function updateListAndTodos({
   title,
   userId,
   todos,
-  is_recurring,
-}: Pick<List, "id" | "title" | "is_recurring"> & { userId: User["id"] } & {
+}: Pick<List, "id" | "title" > & { userId: User["id"] } & {
   todos: Todo[];
 }) {
   const updateList = prisma.list.update({
     where: { id },
     data: {
       title,
-      is_recurring,
     },
   });
 

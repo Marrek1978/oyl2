@@ -7,24 +7,13 @@ import { enUS } from 'date-fns/locale';
 import { EditIcon } from '../utilities/icons';
 import { Link } from '@remix-run/react';
 
-
-
 interface ListCardProps {
   listItem: ListAndToDos;
-  // openCheckBoxModal: () => void;
-  // setOpenCheckboxModalId: (id: string | null) => void;
-  // openCheckboxModalId: string | null;
-  // triggerRefreshRouteData: () => void;
 }
-
 
 
 const ListCardV2: React.FC<ListCardProps> = ({
   listItem,
-  // openCheckBoxModal, 
-  // setOpenCheckboxModalId,
-  //  openCheckboxModalId, 
-  //  triggerRefreshRouteData 
 }) => {
 
   const listTitle = listItem.title
@@ -34,7 +23,10 @@ const ListCardV2: React.FC<ListCardProps> = ({
   return (
     <>
       <div
-        className="block  bg-white 
+        className="
+         flex-[1_1_300px] min-w-[200px] max-w-[400px] min-h-[200px]
+          block
+          bg-white 
           font-poppins text-navy-900
           w-[250px] max-h-[250px] pb-3
           overflow-hidden relative
@@ -51,22 +43,15 @@ const ListCardV2: React.FC<ListCardProps> = ({
             {listTitle}
           </div>
 
-          <Link to={id}>
+          <Link to={'/dash/todos/' + id}>
             <div className='flex gap-2  
             font-bold font-mont text-xs  uppercase     
             cursor-pointer 
             text-primary-300
             '>  OPEN  {EditIcon}   </div>
           </Link>
-
-
         </div >
 
-        {/* <//!-- days --> */}
-        <div className="flex" >
-        </div >
-
-        {/* <//!-- todos   consider putting into diff component?  not sure if needed... maybe for editing made lists modal?--> */}
         < div className="mx-6 mt-4" >
           {todosArray.map((todoObj, index) => {
             const priorityStyling = ToDoItemStylesNoBg({ todo: todoObj })

@@ -42,7 +42,6 @@ model Note {
 model List {
   id    String @id @default(cuid())
   title String
-  is_recurring Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

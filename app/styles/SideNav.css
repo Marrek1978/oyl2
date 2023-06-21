@@ -4,6 +4,9 @@
 
 
 
+#side-nav >li {
+  
+}
 
 #side-nav > li > a{
 
@@ -13,7 +16,7 @@
   text-base-content 
   flex h-12 
   cursor-pointer items-center truncate 
-  px-6 py-4 
+  px-4 py-4 
   font-mont 
   font-normal  
   
@@ -32,4 +35,16 @@
   @apply bg-white text-primary font-semibold outline-none  ;
 }
 
+.link__right {
+  @apply flex w-full justify-end !important;
+}
 
+.link__indent1 {
+  @apply pl-8 !important;
+}
+.link__indent2{
+  @apply pl-12 !important;
+}
+.link__indent3{
+  @apply pl-16 !important;
+}
