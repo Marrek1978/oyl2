@@ -1,10 +1,10 @@
 import React from 'react'
 import { parse } from 'querystring';
-import { useMatches, useParams } from '@remix-run/react';
+import { Outlet, useMatches, useParams } from '@remix-run/react';
 import { redirect, type ActionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
-import TodosListForm from '~/components/form/TodosListForm';
+import TodosListForm from '~/components/forms/TodosListForm';
 import { updateListAndTodos } from '~/models/list.server';
 
 import type { ListAndToDos } from '~/types/listTypes';
@@ -14,14 +14,13 @@ export const action = async ({ request }: ActionArgs) => {
   const formBody = await request.text();
   const parsedBody = parse(formBody);
   const editedListObject = JSON.parse(parsedBody.editedListString as string);
-  const { id, title: listTitle, userId, todos } = editedListObject
+  const { id, title, userId, todos } = editedListObject
 
   try {
-    await updateListAndTodos({ id, title: listTitle, userId, todos})
+    await updateListAndTodos({ id, title, userId, todos })
   } catch (error) { throw error }
 
   return redirect('/dash/todos')
-
 }
 
 
@@ -35,6 +34,7 @@ function EditTodosListPage() {
 
   return (
     <>
+      <Outlet />
       <Modal onClose={() => { }} zIndex={30}>
         <TodosListForm list={list} />
       </Modal>

@@ -21,7 +21,7 @@ const SideNav = () => {
   return (
     <>
       <nav >
-        <ul id='side-nav' className="menu  w-56 p-0 [&_li>*]:rounded-none">
+        <ul id='side-nav' className="menu w-56 p-0 [&_li>*]:rounded-none">
           <li className="relative">
             <NavLink to='/dashboard/focus/daily/priorities/projects' end >
               <span>Dashboard</span>
@@ -58,6 +58,12 @@ const SideNav = () => {
           <li className="">
             <NavLink to='/dashboard/todos' end >
               <span>Projects</span>
+            </NavLink>
+          </li>
+
+          <li className="">
+            <NavLink to='/dash/clarity' end >
+              <span>Clarification Questions</span>
             </NavLink>
           </li>
 

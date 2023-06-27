@@ -3,7 +3,7 @@ import { json, redirect } from "@remix-run/node";
 import { createUser, verifyLogin } from "~/models/user.server";
 import { getUserId } from "~/models/session.server";
 // import { safeRedirect, validateEmail } from "~/utils";
-import AuthForm from "~/components/auth/AuthForm";
+import AuthForm from "~/components/buttons/auth/AuthForm";
 // import { ca } from "date-fns/locale";
 import { validateCredentials } from "~/models/validation.server";
 

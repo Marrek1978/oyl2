@@ -58,7 +58,7 @@ function AppContent() {
   const { theme } = useTheme();
 
   return (
-    <html lang="en" className="m-h-full" 
+    <html lang="en" 
     data-theme={theme}
     >
       <head>

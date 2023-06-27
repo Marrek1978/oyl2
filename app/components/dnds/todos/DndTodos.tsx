@@ -1,5 +1,5 @@
 import React from 'react'
-import { SortableItem } from '~/components/list/todos/SortableItem'
+import { SortableItem } from '~/components/dnds/todos/SortableItem'
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
 import type { DragEndEvent } from "@dnd-kit/core";
 import {

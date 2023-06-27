@@ -18,6 +18,8 @@ model User {
   password Password?
   notes    Note[]
   lists    List[]
+  values   Values[]
+  desires  Desires[]
 }
 
 model Password {
@@ -67,6 +69,70 @@ model ToDo {
   list   List   @relation(fields: [listId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   listId String
 }
+
+model Values {
+  id   String @id @default(cuid())
+  valueTitle String
+  valueDescription String
+  sortOrder Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+
+  valueDesires DesireValues[]
+}
+
+
+model Desires {
+  id   String @id @default(cuid())
+  title String
+  description String
+  sortOrder Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+
+  desireValues DesireValues[]
+}
  
+ model DesireValues {
+  id         String  @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  desireId   String
+  valueId    String
+
+  value      Values   @relation(fields: [valueId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  desire     Desires  @relation(fields: [desireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([valueId, desireId])
+}
+
+model DesiresClarifyingQuestions {
+  id         String  @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  birthDate  DateTime
+  twentyFourHours String
+  twentyFourRegrets String
+  oneWeek String
+  oneWeekRegrets String
+  oneMonth String
+  oneMonthRegrets String
+  oneYear String
+  fiveYears String
+  twentyYears String
+  fiftyYears String
+
+
+}
 
 

@@ -1,9 +1,9 @@
-import { Outlet, useMatches, useParams } from '@remix-run/react';
-import type { ActionArgs } from '@remix-run/server-runtime';
 import { parse } from 'querystring';
+import type { ActionArgs } from '@remix-run/server-runtime';
+import { Outlet, useMatches, useParams } from '@remix-run/react';
 
 import Modal from '~/components/modals/Modal';
-import ListCompletedTodosForm from '~/components/form/ListCompletedTodosForm';
+import TodosCompletedForm from '~/components/forms/TodosCompletedForm';
 import { deleteCompletedToDosFromList, reorderCompletedToDos, updateToDoComplete } from '~/models/list.server';
 
 import type { ListAndToDos } from '~/types/listTypes';
@@ -53,7 +53,7 @@ function UpdateListPage() {
     <>
       <Outlet />
       <Modal onClose={() => { }} >
-        <ListCompletedTodosForm list={list} />
+        <TodosCompletedForm list={list} />
       </Modal>
     </>
   )

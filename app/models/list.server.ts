@@ -1,7 +1,6 @@
-// list.server.ts
-
 import { prisma } from "~/db.server";
 import type { List, User, ToDo } from "@prisma/client";
+
 import type { Todo } from "~/types/listTypes";
 
 type CreateTodo = {
@@ -104,15 +103,16 @@ export async function updateListAndTodos({
 }: Pick<List, "id" | "title" > & { userId: User["id"] } & {
   todos: Todo[];
 }) {
-  const updateList = prisma.list.update({
+
+  const updateList = await prisma.list.update({
     where: { id },
     data: {
       title,
     },
   });
 
-  const updateTodos = todos.map((todo) => {
-    return prisma.toDo.upsert({
+  const updateTodos = await todos.map((todo) => {
+    return  prisma.toDo.upsert({
       where: { id: todo.id },
       create: {
         body: todo.body,

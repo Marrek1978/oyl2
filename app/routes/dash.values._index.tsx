@@ -1,14 +1,14 @@
-import { Outlet, useMatches, useParams } from '@remix-run/react'
 import { redirect, type ActionArgs } from '@remix-run/server-runtime'
 
-import { updateValue } from '~/models/values.server'
-import Modal from '~/components/modals/Modal'
+import { createValue } from '~/models/values.server'
+import { requireUserId } from '~/models/session.server'
 import ValueForm from '~/components/forms/ValueForm'
 
-import type { Values } from '@prisma/client';
 import type { validationErrorsTypes } from '~/types/valueTypes'
 
 export const action = async ({ request }: ActionArgs) => {
+
+  const userId = await requireUserId(request)
   const formData = await request.formData()
   const valueData = Object.fromEntries(formData);
 
@@ -18,33 +18,25 @@ export const action = async ({ request }: ActionArgs) => {
   if (!valueData.title || !valueData.description) return validationErrors
 
   let value = {
-    valueId: valueData.valueId as string,
     valueTitle: valueData.title as string,
     valueDescription: valueData.description as string,
+    userId,
+    sortOrder: valueData.sortOrder ? parseInt(valueData.sortOrder as string) : 0, 
   }
 
   try {
-    await updateValue(value)
+    await createValue(value)
     return redirect('/dash/values')
   } catch (error) { throw error }
 }
 
-
-function EditValueRoute() {
-
-  const matches = useMatches();
-  const params = useParams();
-  const values = matches.find(match => match.id === 'routes/dash.values')?.data
-  const value = values?.find((value: Values) => value.id === params.valueId)
-
+function AddNewValuePage() {
   return (
     <>
-      <Outlet />
-      <Modal onClose={() => { }} zIndex={10}>
-        <ValueForm value={value} />
-      </Modal>
+      <ValueForm />
     </>
   )
 }
 
-export default EditValueRoute
+export default AddNewValuePage
+

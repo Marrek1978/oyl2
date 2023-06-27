@@ -30,9 +30,9 @@ function Navbar() {
 
   return (
     <>
-      <nav>
-        <div className="navbar h-24 bg-base-content text-goldText justify-between ">
-          <Link className="  text-3xl tracking-wide" to="/" >
+      <nav >
+        <div className="navbar p-6 h-24 bg-base-content text-goldText justify-between  ">
+          <Link className="text-3xl tracking-wide" to="/" >
             <div className='flex gap-2 uppercase font-nanum'>
               <div id='logo'>
                 <img src='/gold_lion.png' alt='logo' className='w-14 h-14' />

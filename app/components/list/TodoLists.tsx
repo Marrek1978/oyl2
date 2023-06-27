@@ -28,7 +28,7 @@ function TodoLists({lists}:TodoListsProps) {
             </div>
           </Link>
         </div>
-        <div className='flex flex-wrap  gap-6 mt-6'>
+        <div className='flex flex-wrap gap-6 mt-6'>
           {lists?.map((list: ListAndToDos) => (
             <ListCardV2
               key={list.id}

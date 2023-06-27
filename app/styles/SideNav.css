@@ -4,14 +4,9 @@
 
 
 
-#side-nav >li {
-  
-}
+
 
 #side-nav > li > a{
-
-  /* background-color: red !important;
-  font-weight: bold; */
   @apply 
   text-base-content 
   flex h-12 

@@ -8,24 +8,27 @@ import SolidBtn from '~/components/buttons/SolidBtn';
 
 
 export const loader = async ({ request }: LoaderArgs) => {
-  await requireUserId(request);
-  return null;
+  const userId = await requireUserId(request);
+  return userId;
 };
 
 function Dash() {
   return (
     <>
-      <main className="relative min-h-screen sm:flex gap-6 mt-12 px-6">
-        <aside className='mt-0' >
-          <div className='mt-1'>
-            <SideNav />
-          </div>
+      <main className="
+        w-full
+        mt-12 px-6 
+        min-h-screen 
+        flex gap-6
+          ">
+        <aside className='w-56' >
+          <SideNav />
         </aside>
-        <div className="relative min-h-[90vh] w-full">
+        <article className=" flex-1 min-h-[90vh]   ">
           <ListProvider>
             <Outlet />
           </ListProvider>
-        </div >
+        </article >
       </main >
     </>
   )

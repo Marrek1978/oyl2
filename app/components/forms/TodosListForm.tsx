@@ -3,7 +3,7 @@ import { useFetcher, useNavigate } from '@remix-run/react';
 import { v4 as uuidv4 } from "uuid";
 
 import Modal from '~/components/modals/Modal';
-import DndTodos from '~/components/dnd/DndTodos';
+import DndTodos from '~/components/dnds/todos/DndTodos';
 import SolidBtn from '~/components/buttons/SolidBtn';
 import Divider from '~/components/utilities/Divider';
 import DatePicker from '~/components/list/DatePicker'

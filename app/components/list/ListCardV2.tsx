@@ -1,6 +1,5 @@
 import React from 'react'
 import type { ListAndToDos } from '~/types/listTypes';
-import CardHeader from '../CardHeader';
 import { ToDoItemStylesNoBg } from '~/styles/ToDoItemStyles';
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
@@ -24,35 +23,36 @@ const ListCardV2: React.FC<ListCardProps> = ({
     <>
       <div
         className="
-         flex-[1_1_300px] min-w-[200px] max-w-[400px] min-h-[200px]
-          block
-          bg-white 
-          font-poppins text-navy-900
-          w-[250px] max-h-[250px] pb-3
-          overflow-hidden relative
+          flex-[1_1_300px] 
+          max-w-[400px] min-w-[250px]
+          font-poppins text-primary-content
+          truncate 
+          pb-3
           shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] 
         ">
         <div
-          className=" flex justify-between items-center w-full 
+          className="
+          w-full h-[48px]
+          flex justify-between items-center  gap-4
           bg-base-content 
-          py-2 px-6
+          px-6
+           flex-shrink-0
           ">
           <div className='
-            text-primary-300 font-mont uppercase font-medium tracking-widest 
-            truncate overflow-ellipsis w-2/3'>
+            text-primary-300 font-mont uppercase font-medium text-sm  tracking-widest 
+            truncate overflow-ellipsis '>
             {listTitle}
           </div>
-
           <Link to={'/dash/todos/' + id}>
-            <div className='flex gap-2  
-            font-bold font-mont text-xs  uppercase     
-            cursor-pointer 
-            text-primary-300
-            '>  OPEN  {EditIcon}   </div>
+            <div className='flex gap-2 items-center
+                text-info font-mont font-bold text-sm  uppercase
+                hover:scale-105 transition-all '>
+              OPEN {EditIcon}
+            </div>
           </Link>
         </div >
 
-        < div className="mx-6 mt-4" >
+        < div className="mx-6 mt-4 h-48" >
           {todosArray.map((todoObj, index) => {
             const priorityStyling = ToDoItemStylesNoBg({ todo: todoObj })
             return (
@@ -75,18 +75,9 @@ const ListCardV2: React.FC<ListCardProps> = ({
                 )}
               </div>
             )
-          })
-          }
+          })}
         </ div>
-
-        {todosArray.length > 3 && (
-          <div className="h-6 w-full absolute bottom-0 left-0">
-            <div className="h-full w-full bg-gradient-to-t from-slate-200 to-white"></div>
-          </div>
-        )
-        }
       </div >
-
     </>
   )
 }

@@ -7,8 +7,8 @@ interface ToDoItemStylesProps {
 export function ToDoItemStyles({todo}: ToDoItemStylesProps) {
   
   return (
-    todo['urgent'] ? 'text-accent bg-danger-50'
-    : todo['important'] ? ' text-info bg-info-100'
+    todo['urgent'] ? 'text-accent-focus bg-accent-content'
+    : todo['important'] ? ' text-success-content bg-success'
       : 'text-base-content'
   )
 }
@@ -17,7 +17,7 @@ export function ToDoItemStylesNoBg({todo}: ToDoItemStylesProps) {
   
   return (
     todo['urgent'] ? 'text-accent'
-    : todo['important'] ? ' text-info'
+    : todo['important'] ? ' text-success'
       : 'text-base-content'
   )
 }

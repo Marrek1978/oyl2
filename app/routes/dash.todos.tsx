@@ -7,7 +7,6 @@ import { requireUserId } from '~/models/session.server';
 import TodoLists from '~/components/list/TodoLists';
 import { transformDataDates } from '~/components/utilities/helperFunctions';
 
-
 export const loader = async ({ request }: LoaderArgs) => {
 
   try {

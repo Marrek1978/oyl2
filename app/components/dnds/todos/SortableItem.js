@@ -2,7 +2,7 @@ import { useSortable } from "@dnd-kit/sortable";
 // import { useDroppable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import React from "react";
-import ToDoItem from "./ToDoItem";
+import ToDoItem from "~/components/list/todos/ToDoItem";
 
 export function SortableItem(props) {
   const { attributes, listeners, setNodeRef, transform, transition } =

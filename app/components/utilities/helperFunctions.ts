@@ -1,7 +1,5 @@
 import type { CreationTodo, Todo } from "~/types/listTypes";
 
-
-
 export function transformDataDates(data: any) {
   return data.map((item: any) => ({
     ...item,
@@ -16,10 +14,8 @@ export function transformDataDates(data: any) {
   }));
 }
 
-
 export function sortTodos(todos: Todo[]): Todo[] {
-
-  const todosCopy = [...todos]
+  const todosCopy = [...todos];
 
   todosCopy.sort((a, b) => {
     // Put completed todos at the bottom
@@ -27,23 +23,20 @@ export function sortTodos(todos: Todo[]): Todo[] {
       return 1;
     } else if (!a.complete && b.complete) {
       return -1;
-    }
-    else if (a.urgent && !b.urgent) {
+    } else if (a.urgent && !b.urgent) {
       return -1;
     } else if (!a.urgent && b.urgent) {
       return 1;
-    }
-    else if (a.important && !b.important) {
+    } else if (a.important && !b.important) {
       return -1;
     } else if (!a.important && b.important) {
       return 1;
-    }
-    else {
-      return 0
+    } else {
+      return 0;
     }
   });
 
-  return resetTodoSortOrder(todosCopy)
+  return resetTodoSortOrder(todosCopy);
 }
 
 export function resetTodoSortOrder(todos: CreationTodo[]): CreationTodo[] {
@@ -51,6 +44,7 @@ export function resetTodoSortOrder(todos: CreationTodo[]): CreationTodo[] {
     return {
       ...todo,
       sortOrder: index,
-    }
-  })
+    };
+  });
 }
+

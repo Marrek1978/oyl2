@@ -1,16 +1,16 @@
 
 import type { ListAndToDos, Todo } from '~/types/listTypes';
-import ToDoWithCheckBox from '../list/todos/ToDoWithCheckBox';
-import { sortTodos } from './EditListModal';
+// import ToDoWithCheckBox from '../list/todos/ToDoWithCheckBox';
+// import { sortTodos } from './EditListModal';
 import { MouseEvent, useEffect, useState } from 'react';
 import { useList } from '../list/ListContext';
 import CloseLabelBtn from '../buttons/SolidLabelClose';
 import HeaderLabel from '../LabelCardHeader';
 import TextBtn from '../buttons/TextBtn';
-import OutlinedLabelBtn from '../buttons/OutlinedLabelBtn';
+// import OutlinedLabelBtn from '../buttons/OutlinedLabelBtn';
 import { trashIcon, downArrowsIcon, dbIcon } from '../utilities/icons';
 import Divider from '~/components/utilities/Divider';
-import ToDoWithCheckBoxForm from '../list/todos/ToDoWithCheckBoxForm';
+// import ToDoWithCheckBoxForm from '../list/todos/ToDoWithCheckBoxForm';
 import { Form } from '@remix-run/react';
 import SolidBtn from '../buttons/SolidBtn';
 
@@ -60,7 +60,7 @@ const DashPrioritiesChBoxModal: React.FC<DashPrioritiesChBoxModalProps> = ({
           <div className='py-6 px-8 font-poppins  '>
             <Form method='post' id='checkbox-form' >
               <div className=" max-h-[50vh] min-h-[200px] overflow-y-auto">
-                {todos?.map((todoItem, index) => {
+                {/* {todos?.map((todoItem, index) => {
                   return (
                     <ToDoWithCheckBoxForm
                       key={todoItem.id}
@@ -70,7 +70,7 @@ const DashPrioritiesChBoxModal: React.FC<DashPrioritiesChBoxModalProps> = ({
                       triggerRefreshRouteData={() => { }}
                     />
                   )
-                })}
+                })} */}
               </div>
 
               <div className='mb-8'>

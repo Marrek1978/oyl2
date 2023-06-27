@@ -24,16 +24,16 @@ const ToDoItem: React.FC<ToDoItemProps> = ({ todo, id, removeTodo, editTodo }) =
   return (
     <>
       <div
-        className={`block rounded-none
+        className={`block 
+          rounded-none
           px-3 py-2 w-full  
           mt-2
           font-poppins
           cursor-pointer 
-          text-left 
+          text-left text-base-content
           transition duration-500
-          hover:bg-blue-100 hover:border-blue-200 hover:border
-          hover:text-blue-900
-          focus:bg-neutral-100 focus:text-neutral-500 focus:ring-0
+          hover:bg-primary/30 
+          hover:text-primary-focus
          ${priorityStyling}
            `}>
         <div className="flex w-full justify-between "  >
@@ -45,11 +45,10 @@ const ToDoItem: React.FC<ToDoItemProps> = ({ todo, id, removeTodo, editTodo }) =
               {formattedDate}
             </div>
           )}
+
           <div className="flex">
-          {/* <label htmlFor="edit-todo-modal" className="btn">open modal</label> */}
             <label 
             htmlFor={`edit-todo-modal-${todo?.id}`}
-            // htmlFor="edit-todo-modal"
               className="btn btn-xs btn-outline btn-info mr-3"
               onClick={() => editTodo(id)}
             ><FiEdit /> </label>

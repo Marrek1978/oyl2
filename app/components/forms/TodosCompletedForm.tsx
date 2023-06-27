@@ -9,11 +9,11 @@ import { EditIcon, closeIcon, downArrowsIcon, trashIcon } from '~/components/uti
 
 import type { ListAndToDos } from '~/types/listTypes';
 
-interface ListCompletedTodosFormProps {
+interface TodosCompletedFormProps {
   list: ListAndToDos;
 }
 
-function ListCompletedTodosForm({ list }: ListCompletedTodosFormProps) {
+function TodosCompletedForm({ list }: TodosCompletedFormProps) {
 
   const fetcher = useFetcher();
   const todos = list.todos;
@@ -34,7 +34,6 @@ function ListCompletedTodosForm({ list }: ListCompletedTodosFormProps) {
 
   const handleDeleteCompletedToDos = async (): Promise<void> => {
 
-    console.log('handleDeleteCompletedToDos');
     try {
       fetcher.submit({
         id: list.id,
@@ -59,13 +58,14 @@ function ListCompletedTodosForm({ list }: ListCompletedTodosFormProps) {
               `}>
             {list.title}
           </div>
-          <div className='text-primary-300 '>
-            <Link to='edit'>
-              <div className='flex gap-2 items-center font-mont font-medium hover:font-semibold hover:text-primary-100 hover:scale-105 transition-all '>
-                Edit {EditIcon}
-              </div>
-            </Link>
-          </div>
+          <Link to='edit'>
+            <div className='flex gap-2 items-center 
+                font-mont font-bold text-info
+                hover:scale-105 transition-all
+                 '>
+              Edit {EditIcon}
+            </div>
+          </Link>
         </div>
 
         <div className='py-6 px-8 font-poppins  '>
@@ -111,40 +111,34 @@ function ListCompletedTodosForm({ list }: ListCompletedTodosFormProps) {
             </div>
           )}
 
-
-          <div className='w-full mt-6 '>
-            <Link to='..' >
-              <SolidBtnGreyBlue text='Close'
-                onClickFunction={() => { }}
-                icon={closeIcon}
-              />
-            </Link>
-          </div>
-
-          <div className='w-full mt-6 '>
-            <Link to='delete' >
-              <button className='btn btn-outline  
+          <div className='w-full mt-6 flex gap-6 '>
+            <div className='w-full flex-1 '>
+              <Link to='delete' >
+                <button className='btn btn-error btn-outline  
                 w-full
                 rounded-none
                 font-mont font-semibold
               ' >
-                Delete List
-                {trashIcon}
-              </button>
-            </Link>
+                  Delete List
+                  {trashIcon}
+                </button>
+              </Link>
+            </div>
+
+            <div className='w-full flex-1 '>
+              <Link to='..' >
+                <SolidBtnGreyBlue text='Close'
+                  onClickFunction={() => { }}
+                  icon={closeIcon}
+                />
+              </Link>
+            </div>
+
           </div>
-          {/* <div className=' w-full mt-6 '>
-              <OutlinedLabelBtn
-              text={'Delete this List'}
-              htmlFor={'delete-list-modal'}
-              icon={trashIcon}
-              onClickFunction={openDeleteListModal}
-              />
-            </div> */}
         </div>
       </div>
     </>
   )
 }
 
-export default ListCompletedTodosForm
+export default TodosCompletedForm
