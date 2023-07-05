@@ -7,6 +7,7 @@ import { getValues } from '~/models/values.server';
 import { requireUserId } from '~/models/session.server';
 import { getDesires, updateDesiresOrder } from '~/models/desires.server';
 import DndDesires from '~/components/dnds/desires/DndDesires';
+import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 
 export const loader = async ({ request }: LoaderArgs) => {
   let userId;
@@ -34,19 +35,11 @@ function DesiresPage() {
 
   return (
     <>
-      <section className='
-      w-full
-      flex gap-6 flex-wrap
-      mt-0 
-      '>
-        <div className='
-        bg-base-100 p-8   
-        flex-1
-      '>
-          <div className=' text-3xl font-medium font-nanum tracking-wide'>Your Desires</div>
-          <div className=' mt-6 '>
+      <section className='flex gap-8'>
+        <div className=' flex-1  max-w-max'>
+          <BasicTextAreaBG >
             <DndDesires />
-          </div>
+          </BasicTextAreaBG >
         </div>
         <div className='flex-1  max-w-[800px]'>
           <Outlet />

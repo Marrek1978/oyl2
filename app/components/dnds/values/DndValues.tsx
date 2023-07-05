@@ -6,6 +6,7 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from 
 
 import DndSortableValue from './DndSortableValue';
 import Modal from '~/components/modals/Modal';
+import HeadingH1 from '~/components/titles/HeadingH1';
 import SuccessMessage from '~/components/modals/SuccessMessage';
 
 import type { Values } from '@prisma/client'
@@ -96,6 +97,7 @@ const DndValues: React.FC<DndValuesProps> = ({ setOrderBool }) => {
           />
         </Modal>)
       }
+      <HeadingH1 text={'Your Values'} />
       <DndContext
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
@@ -105,7 +107,6 @@ const DndValues: React.FC<DndValuesProps> = ({ setOrderBool }) => {
           items={values?.map(value => value.id)}
           strategy={verticalListSortingStrategy}
         >
-
           {values?.map((value) => (
             <DndSortableValue
               key={value.id}
@@ -113,10 +114,8 @@ const DndValues: React.FC<DndValuesProps> = ({ setOrderBool }) => {
               value={value}
             />
           ))}
-
         </SortableContext>
       </DndContext >
-
     </>
   )
 }

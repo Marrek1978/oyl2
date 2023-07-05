@@ -5,7 +5,7 @@ import { Outlet, useLoaderData } from '@remix-run/react';
 import { getListAndTodos } from '~/models/list.server';
 import { requireUserId } from '~/models/session.server';
 import TodoLists from '~/components/list/TodoLists';
-import { transformDataDates } from '~/components/utilities/helperFunctions';
+import { transformToDoDataDates } from '~/components/utilities/helperFunctions';
 
 export const loader = async ({ request }: LoaderArgs) => {
 
@@ -21,7 +21,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 function TodosPage() {
 
   const initialData = useLoaderData<typeof loader>();
-  const allLists = transformDataDates(initialData.todoLists);
+  const allLists = transformToDoDataDates(initialData.todoLists);
 
   return (
     <>

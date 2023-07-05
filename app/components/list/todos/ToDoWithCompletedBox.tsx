@@ -7,13 +7,10 @@ import { ToDoItemStylesNoBg } from '~/styles/ToDoItemStyles'
 import type { Todo } from '~/types/listTypes';
 
 interface ToDoItemProps {
-  todoItem: Todo;
-  index: number;
-  todoId: string;
-  triggerRefreshRouteData?: () => void;
+  todoItem: Todo ;
 }
 
-const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem, index, todoId, triggerRefreshRouteData }) => {
+const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem}) => {
 
   const fetcher = useFetcher();
   const [isUpdating, setIsUpdating] = React.useState(false)

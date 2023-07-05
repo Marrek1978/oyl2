@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Form, Link, useActionData, useLocation, useMatches, useNavigation } from '@remix-run/react'
+import { useState, useEffect } from 'react';
+import {Form, Link, useActionData, useLocation, useMatches, useNavigation} from '@remix-run/react'
 
 import { closeIcon, dbIcon, trashIcon } from '../utilities/icons'
 import { Values } from '@prisma/client';
@@ -47,7 +47,7 @@ function ValueForm({ value }: ValueFormProps) {
       <div className='
           bg-base-100 
           grid grid-cols-[minmax(300px,800px)] grid-rows-[72px_1fr_min-content]
-          cursor-default
+          cursor-default  shadow-xl
         '>
         <div className='w-full h-full px-8 bg-base-content flex justify-between items-center'>
           <div className={`

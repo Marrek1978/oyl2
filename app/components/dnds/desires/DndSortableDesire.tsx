@@ -25,10 +25,9 @@ function DndSortableDesire({ id, desire }: DndSortableDesireProps) {
   desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="w-full">
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="max-w-max">
       <div key={desire.id} id={desire.id} className='
-        grid grid-cols-[minmax(250px,800px)] grid-rows-[24px_1fr] 
-        w-full
+        max-w-max
         px-3 py-4 
         mt-2
         font-poppins
@@ -52,7 +51,8 @@ function DndSortableDesire({ id, desire }: DndSortableDesireProps) {
         </div>
         <div className='
           text-slate-400 text-sm 
-          mt-1 mr-16
+          mt-1 
+          max-w-prose
           truncate 
           '>
           {desire.description}

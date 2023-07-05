@@ -1,6 +1,7 @@
 import type { CreationTodo, Todo } from "~/types/listTypes";
+import type { CreationRoutineToDo } from "~/types/routineTypes";
 
-export function transformDataDates(data: any) {
+export function transformToDoDataDates(data: any) {
   return data.map((item: any) => ({
     ...item,
     createdAt: new Date(item.createdAt!),
@@ -13,6 +14,22 @@ export function transformDataDates(data: any) {
     })),
   }));
 }
+
+export function transformRoutineDataDates(routines: any) {
+  return routines.map((routine: any) => ({
+    ...routine,
+    createdAt: new Date(routine.createdAt!),
+    updatedAt: new Date(routine.updatedAt!),
+    routineToDos: routine.routineToDos.map((routineToDo: any) => ({
+      ...routineToDo,
+      createdAt: new Date(routineToDo.createdAt!),
+      updatedAt: new Date(routineToDo.updatedAt!),
+    })),
+  }));
+}
+
+
+
 
 export function sortTodos(todos: Todo[]): Todo[] {
   const todosCopy = [...todos];
@@ -48,3 +65,12 @@ export function resetTodoSortOrder(todos: CreationTodo[]): CreationTodo[] {
   });
 }
 
+export function resetRoutineTodosSortOrder(todos: CreationRoutineToDo[]) {
+ 
+  return todos.map((todo, index) => {
+    return {
+      ...todo,
+      sortOrder: index,
+    };
+  });
+}

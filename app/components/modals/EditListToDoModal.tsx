@@ -10,7 +10,7 @@ interface EditToDoProps {
   updateTodo: (index: number, updatedTodo: CreationTodo) => void;
   index: number | null;
 }
-const EditToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOpen, todos, updateTodo, index }) => {
+const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOpen, todos, updateTodo, index }) => {
 
   const [body, setBody] = React.useState<string>(todo?.body || '');
   const [urgent, setUrgent] = React.useState<boolean>(todo?.urgent || false);
@@ -111,7 +111,7 @@ const EditToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOpen, 
                 rounded-none w-40
                 "
               onClick={handleSave}
-            >Save Edits
+            >Accept Edits
             </label>
           </div>
 
@@ -121,4 +121,4 @@ const EditToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOpen, 
   )
 }
 
-export default EditToDoModal
+export default EditListToDoModal

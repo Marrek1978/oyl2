@@ -5,6 +5,7 @@ import type { LoaderArgs } from '@remix-run/server-runtime';
 import { requireUserId } from '~/models/session.server';
 import { getValues, updateValuesOrder } from '~/models/values.server';
 import DndValues from '~/components/dnds/values/DndValues';
+import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 
 export const loader = async ({ request }: LoaderArgs) => {
   let userId;
@@ -30,21 +31,13 @@ function ValuesPage() {
 
   return (
     <>
-      <section className='
-        w-full
-        flex gap-6 flex-wrap
-        mt-0 
-        '>
-        <div className='
-          bg-base-100 p-8   
-          flex-1
-        '>
-          <div className=' text-3xl font-medium font-nanum tracking-wide'>Your Values</div>
-          <div className=' mt-6 '>
+      <section className='flex gap-8 '>
+        <div className='flex-1 max-w-max'>
+          <BasicTextAreaBG >
             <DndValues />
-          </div>
+          </BasicTextAreaBG>
         </div>
-        <div className='flex-1  max-w-[800px]'>
+        <div className='flex-1 max-w-[800px]'>
           <Outlet />
         </div>
       </section >

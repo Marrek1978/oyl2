@@ -73,9 +73,7 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
             {todos.map((todoItem, index) => {
               return <ToDoWithCompletedBox
                 key={todoItem.id}
-                todoId={todoItem.id}
                 todoItem={todoItem}
-                index={index}
               />
             })}
           </div>

@@ -1,5 +1,4 @@
-import type { Desires } from "@prisma/client";
-import type{ Values } from "@prisma/client";
+import type { Desires, Values } from "@prisma/client";
 
 export type DesireWithStringDates = Desires & { createdAt: String, updatedAt: String }
 

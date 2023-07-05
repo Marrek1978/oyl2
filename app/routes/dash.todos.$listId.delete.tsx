@@ -12,14 +12,12 @@ export const action = async ({ request }: ActionArgs) => {
 
   const formBody = await request.text();
   const parsedBody = parse(formBody);
-  const listId = parsedBody.listId as string
-
+  const listId = parsedBody.rowId as string
   try {
     await deleteList({ id: listId })
     return redirect('/dash/todos')
   } catch (error) { throw error }
 }
-
 
 function DeleteTodosListPage() {
 
@@ -28,8 +26,7 @@ function DeleteTodosListPage() {
 
   const listId = params.listId as string
   const lists = matches.find(match => match.id === 'routes/dash.todos')?.data.todoLists
-  const list = lists?.find((list: ListAndToDos) => list.id === params.listId)
-
+  const list = lists?.find((list: ListAndToDos) => list.id === listId)
   const title = list?.title
 
   return (

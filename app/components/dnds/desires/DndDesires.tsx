@@ -9,12 +9,13 @@ import SuccessMessage from '~/components/modals/SuccessMessage';
 import DndSortableDesire from '~/components/dnds/desires/DndSortableDesire';
 
 import type { DesireWithStringDates, DesireWithValues } from '~/types/desireTypes'
+import HeadingH1 from '~/components/titles/HeadingH1';
 
-interface DndValuesProps {
+interface DndDesiresProps {
   setOrderBool?: (bool: boolean) => void
 }
 
-const DndValues: React.FC<DndValuesProps> = ({ setOrderBool }) => {
+const DndDesires: React.FC<DndDesiresProps> = ({ setOrderBool }) => {
 
   const fetcher = useFetcher();
   const loaderData = useLoaderData();
@@ -96,6 +97,7 @@ const DndValues: React.FC<DndValuesProps> = ({ setOrderBool }) => {
           />
         </Modal>)
       }
+      <HeadingH1 text={'Your Desires'} />
       <DndContext
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
@@ -118,4 +120,4 @@ const DndValues: React.FC<DndValuesProps> = ({ setOrderBool }) => {
   )
 }
 
-export default DndValues
+export default DndDesires

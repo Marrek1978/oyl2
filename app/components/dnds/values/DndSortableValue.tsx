@@ -21,10 +21,9 @@ function DndSortableValue({ id, value }: DndSortableValueProps) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="w-full">
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="max-w-max">
       <div key={value.id} id={value.id} className='
-        grid grid-cols-[minmax(250px,800px)] grid-rows-[24px_1fr]
-        w-full
+        max-w-max
         px-3 py-4 
         mt-2
         font-poppins
@@ -34,8 +33,6 @@ function DndSortableValue({ id, value }: DndSortableValueProps) {
         hover:bg-primary/30 
         hover:text-primary-focus
      '>
-
-        {/* <div className='flex items-center justify-between gap-12  '> */}
         <div className="flex items-center justify-between gap-4 ">
           <div className='text-xl font-medium'>{value.valueTitle}</div>
           <Link to={value.id} >
@@ -48,8 +45,9 @@ function DndSortableValue({ id, value }: DndSortableValueProps) {
         </div>
         <div className='
           text-slate-400 text-sm 
-          mt-2 mr-16
-          truncate overflow-ellipsis 
+          mt-1          
+          truncate 
+          max-w-prose
           '>
           {value.valueDescription}
         </div>

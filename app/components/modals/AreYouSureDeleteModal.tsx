@@ -9,6 +9,7 @@ interface AreYouSureDeleteModalProps {
 }
 
 function AreYouSureDeleteModal({ item, title, id }: AreYouSureDeleteModalProps) {
+
   return (
     <>
       <div className="card w-[700px] bg-base-100 

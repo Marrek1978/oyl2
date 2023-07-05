@@ -28,7 +28,7 @@ const ListCardV2: React.FC<ListCardProps> = ({
           font-poppins text-primary-content
           truncate 
           pb-3
-          shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] 
+          shadow-xl
         ">
         <div
           className="
@@ -36,7 +36,6 @@ const ListCardV2: React.FC<ListCardProps> = ({
           flex justify-between items-center  gap-4
           bg-base-content 
           px-6
-           flex-shrink-0
           ">
           <div className='
             text-primary-300 font-mont uppercase font-medium text-sm  tracking-widest 

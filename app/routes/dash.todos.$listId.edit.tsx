@@ -15,7 +15,6 @@ export const action = async ({ request }: ActionArgs) => {
   const parsedBody = parse(formBody);
   const editedListObject = JSON.parse(parsedBody.editedListString as string);
   const { id, title, userId, todos } = editedListObject
-
   try {
     await updateListAndTodos({ id, title, userId, todos })
   } catch (error) { throw error }
@@ -24,7 +23,7 @@ export const action = async ({ request }: ActionArgs) => {
 }
 
 
-function EditTodosListPage() {
+function EditListPage() {
 
   const matches = useMatches();
   const params = useParams();
@@ -42,4 +41,4 @@ function EditTodosListPage() {
   )
 }
 
-export default EditTodosListPage
+export default EditListPage

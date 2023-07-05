@@ -1,37 +1,37 @@
 import { prisma } from "~/db.server";
-import type { List, User, ToDo } from "@prisma/client";
+import type { Lists, User, ListToDos } from "@prisma/client";
 
 import type { Todo } from "~/types/listTypes";
 
 type CreateTodo = {
-  body: ToDo["body"];
-  urgent: ToDo["urgent"];
-  important: ToDo["important"];
-  complete: ToDo["complete"];
-  dueDate: ToDo["dueDate"];
-  sortOrder: ToDo["sortOrder"];
+  body: ListToDos["body"];
+  urgent: ListToDos["urgent"];
+  important: ListToDos["important"];
+  complete: ListToDos["complete"];
+  dueDate: ListToDos["dueDate"];
+  sortOrder: ListToDos["sortOrder"];
 };
 
 // Get a list by id and userId
 export function getList({
   id,
   userId,
-}: Pick<List, "id"> & { userId: User["id"] }) {
-  return prisma.list.findFirst({
+}: Pick<Lists, "id"> & { userId: User["id"] }) {
+  return prisma.lists.findFirst({
     where: { id, userId },
   });
 }
 
 // Get all list for a specific user
 export function getListItems({ userId }: { userId: User["id"] }) {
-  return prisma.list.findMany({
+  return prisma.lists.findMany({
     where: { userId },
     orderBy: { updatedAt: "desc" },
   });
 }
 
 export function getListAndTodos({ userId }: { userId: User["id"] }) {
-  return prisma.list.findMany({
+  return prisma.lists.findMany({
     // where: { userId },
     where: { userId },
     include: {
@@ -48,11 +48,11 @@ export async function updateToDoComplete({
   id,
   complete,
 }: {
-  id: ToDo["id"];
-  complete: ToDo["complete"];
+  id: ListToDos["id"];
+  complete: ListToDos["complete"];
 }) {
   try {
-    const result = prisma.toDo.update({
+    const result = prisma.listToDos.update({
       where: {
         id: id,
       },
@@ -68,9 +68,9 @@ export async function updateToDoComplete({
     throw error;
   }
 }
-// Delete a list by id and userId
-export function deleteList({ id }: Pick<List, "id">) {
-  return prisma.list.delete({
+// Delete a list by id 
+export async function deleteList({ id }: Pick<Lists, "id">) {
+  return prisma.lists.delete({
     where: { id },
   });
 }
@@ -79,10 +79,10 @@ export async function createListAndTodos({
   title,
   userId,
   todos,
-}: Pick<List, "title" > & { userId: User["id"] } & {
+}: Pick<Lists, "title" > & { userId: User["id"] } & {
   todos: CreateTodo[];
 }) {
-  return await prisma.list.create({
+  return await prisma.lists.create({
     data: {
       title,
       userId,
@@ -100,11 +100,11 @@ export async function updateListAndTodos({
   title,
   userId,
   todos,
-}: Pick<List, "id" | "title" > & { userId: User["id"] } & {
+}: Pick<Lists, "id" | "title" > & { userId: User["id"] } & {
   todos: Todo[];
 }) {
 
-  const updateList = await prisma.list.update({
+  const updateList = await prisma.lists.update({
     where: { id },
     data: {
       title,
@@ -112,7 +112,7 @@ export async function updateListAndTodos({
   });
 
   const updateTodos = await todos.map((todo) => {
-    return  prisma.toDo.upsert({
+    return  prisma.listToDos.upsert({
       where: { id: todo.id },
       create: {
         body: todo.body,
@@ -137,9 +137,10 @@ export async function updateListAndTodos({
   return { updateList, updateTodos };
 }
 
-export async function reorderCompletedToDos({ todos }: { todos: ToDo[] }) {
+export async function reorderCompletedToDos({ todos }: { todos: ListToDos[] }) {
+  
   const updateTodos = todos.map((todo) => {
-    return prisma.toDo.update({
+    return prisma.listToDos.update({
       where: { id: todo.id },
       data: {
         sortOrder: todo.sortOrder,
@@ -151,8 +152,8 @@ export async function reorderCompletedToDos({ todos }: { todos: ToDo[] }) {
   return { updateTodos };
 }
 
-export async function deleteCompletedToDosFromList({ id }: Pick<List, "id">) {
-  return await prisma.toDo.deleteMany({
+export async function deleteCompletedToDosFromList({ id }: Pick<Lists, "id">) {
+  return await prisma.listToDos.deleteMany({
     where: {
       listId: id,
       complete: true,
@@ -162,7 +163,7 @@ export async function deleteCompletedToDosFromList({ id }: Pick<List, "id">) {
 
 type ToDoCondition = Partial<
   Pick<
-    ToDo,
+  ListToDos,
     | "id"
     | "body"
     | "urgent"
@@ -175,7 +176,7 @@ type ToDoCondition = Partial<
 export async function getToDosWhere(
   { userId }: { userId: User["id"] },
   condition: ToDoCondition
-): Promise<ToDo[]> {
+): Promise<ListToDos[]> {
   const user = await prisma.user.findUnique({
     where: {
       id: userId,
@@ -236,7 +237,7 @@ export async function deleteCompletedToDosFromPriorityList(
   completedTodoIds: string[]
 ) {
   const deleteCompletedToDos = completedTodoIds.map((id) => {
-    return prisma.toDo.delete({
+    return prisma.listToDos.delete({
       where: { id: id },
     });
   });

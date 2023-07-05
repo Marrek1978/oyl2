@@ -7,7 +7,6 @@ import Modal from '~/components/modals/Modal';
 import TodosListForm from '~/components/forms/TodosListForm';
 
 export const action = async ({ request }: ActionArgs) => {
-  //? add a success message
   const userId = await requireUserId(request);
   const formBody = await request.text();
   const parsedBody = parse(formBody);

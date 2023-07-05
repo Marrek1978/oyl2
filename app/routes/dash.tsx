@@ -1,11 +1,11 @@
 import React from 'react'
 import type { LoaderArgs } from '@remix-run/server-runtime';
+import { Link, Outlet, isRouteErrorResponse, useRouteError } from '@remix-run/react';
+
 import { requireUserId } from '~/models/session.server';
 import SideNav from '~/components/nav/SideNav';
-import { ListProvider } from '~/components/list/ListContext';
-import { Link, Outlet, isRouteErrorResponse, useRouteError } from '@remix-run/react';
 import SolidBtn from '~/components/buttons/SolidBtn';
-
+import { ListProvider } from '~/components/list/ListContext';
 
 export const loader = async ({ request }: LoaderArgs) => {
   const userId = await requireUserId(request);

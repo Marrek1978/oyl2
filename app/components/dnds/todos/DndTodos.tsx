@@ -49,7 +49,6 @@ function DndTodos({setTodos, todos, setTodoSortOrder, setIsEditToDoModalOpen, se
     const index = todos.findIndex(todo => todo.id === todoId);
     setSelectedTodoIndex(index);
     setSelectedTodo(todo)
-    console.log('handleOpenModal')
     setIsEditToDoModalOpen(true);
   };
 

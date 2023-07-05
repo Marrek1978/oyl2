@@ -9,7 +9,7 @@ import Divider from '~/components/utilities/Divider';
 import DatePicker from '~/components/list/DatePicker'
 // import { useList } from '~/components/list/ListContext';
 import OutlinedBtn from '~/components/buttons/OutlinedBtn';
-import EditToDoModal from '~/components/modals/EditToDoModal';
+import EditListToDoModal from '~/components/modals/EditListToDoModal';
 import SuccessMessage from '~/components/modals/SuccessMessage';
 import { sortTodos, resetTodoSortOrder } from '~/components/utilities/helperFunctions';
 import SolidBtnGreyBlue from '~/components/buttons/SolidBtnGreyBlue';
@@ -20,6 +20,7 @@ import type { CreationTodo, ListAndToDos } from '~/types/listTypes';
 interface TodosListFormProps {
   list?: ListAndToDos;
 }
+
 function TodosListForm({ list }: TodosListFormProps) {
 
   const fetcher = useFetcher();
@@ -43,7 +44,6 @@ function TodosListForm({ list }: TodosListFormProps) {
   let disableSaveBtn = !listTitle || todos.length === 0;
 
   useEffect(() => {
-    console.log('in useEffect in NewListForm.tsx')
     if (list) {
       setListTitle(list.title);
       setTodos(list.todos);
@@ -324,7 +324,7 @@ function TodosListForm({ list }: TodosListFormProps) {
 
       {isEditToDoModalOpen && (
         <>
-          <EditToDoModal
+          <EditListToDoModal
             todo={selectedTodo}
             setIsEditToDoModalOpen={setIsEditToDoModalOpen}
             todos={todos}

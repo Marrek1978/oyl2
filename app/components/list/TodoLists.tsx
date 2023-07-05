@@ -5,17 +5,18 @@ import { EditIcon } from '../utilities/icons';
 import ListCardV2 from '~/components/list/ListCardV2'
 
 import type { ListAndToDos } from '~/types/listTypes';
+import HeadingH1 from '../titles/HeadingH1';
 
 interface TodoListsProps {
   lists: ListAndToDos[]
 }
 
-function TodoLists({lists}:TodoListsProps) {
+function TodoLists({ lists }: TodoListsProps) {
   return (
-   <>
-    <article className="relative w-full  ">
-        <div className='flex justify-between items-end content-end mb-12'>
-          <div className='text-4xl font-medium font-nanum tracking-wide'>To-Do Lists</div>
+    <>
+      <article className="w-full ">
+        <div className='flex justify-between items-end content-end '>
+          <HeadingH1 text='To-Do Lists' />
           <Link to='/dash/todos/new' >
             <div className='w-72'>
               <button
@@ -28,7 +29,7 @@ function TodoLists({lists}:TodoListsProps) {
             </div>
           </Link>
         </div>
-        <div className='flex flex-wrap gap-6 mt-6'>
+        <div className='flex flex-wrap gap-6 mt-8'>
           {lists?.map((list: ListAndToDos) => (
             <ListCardV2
               key={list.id}
@@ -36,8 +37,8 @@ function TodoLists({lists}:TodoListsProps) {
             />
           ))}
         </div>
-      </article> 
-   </>
+      </article>
+    </>
   )
 }
 
