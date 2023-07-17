@@ -1,10 +1,11 @@
+@import "react-big-calendar/lib/css/react-big-calendar.css";
 
 
 /* .react-datepicker__input-container  */
-.react-datepicker__aria-live{
+.react-datepicker__aria-live {
   display: none !important;
 }
 
-.prose{
-  max-width:37.5em;
+.prose {
+  max-width: 37.5em;
 }

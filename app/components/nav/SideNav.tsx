@@ -50,7 +50,7 @@ const SideNav = () => {
           )}
 
           <li className="">
-            <NavLink to='/' end >
+            <NavLink to='/dash/schedule' end >
               <span>Schedule</span>
             </NavLink>
           </li>
