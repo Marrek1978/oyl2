@@ -1,0 +1,8 @@
+.rbc-allday-cell {
+  display: none !important;
+  background-color:blue;
+}
+
+.rbc-event-label{
+  display:none !important;
+}

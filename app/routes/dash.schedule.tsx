@@ -1,257 +1,209 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import { Calendar, momentLocalizer, Views, DateLocalizer } from 'react-big-calendar'
+import React, { useCallback, useState } from 'react'
+import { useLoaderData } from '@remix-run/react'
+import type { LinksFunction } from '@remix-run/react/dist/routeModules'
+import { json, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
+
 import type { Event } from 'react-big-calendar'
-// EventProps } from 'react-big-calendar'
-import moment from 'moment'
-import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
-import type { EventInteractionArgs, DragFromOutsideItemArgs } from 'react-big-calendar/lib/addons/dragAndDrop'
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
-import PropTypes from 'prop-types'
 
-import events from '~/components/Calendar/events/events'
+import styleSheet from "~/styles/SchedulerCss.css";
 
-const localizer = momentLocalizer(moment)
-const DragAndDropCalendar = withDragAndDrop(Calendar)
+import Scheduler from '~/components/schedule/Scheduler'
+import { events } from '~/components/Schedule/events/events'
+import ListsAsDraggableItems from '~/components/schedule/ListsAsDraggableItems'
+import { transformRoutineDataDates, transformToDoDataDates } from '~/components/utilities/helperFunctions'
+import { getListAndTodos } from '~/models/list.server'
+import { getRoutines } from '~/models/routines.server'
+import { requireUserId } from '~/models/session.server'
+
+import type { ListAndToDos } from '~/types/listTypes'
+import type { RoutineAndToDos } from '~/types/routineTypes'
+
 
 //example from https://github.com/jquense/react-big-calendar/blob/master/stories/demos/exampleCode/dndOutsideSource.js
 
-//* load events from db
-// * set up object shapes for importing todos/habits, etc, convert to events, for dnd
-//* remove non-essentials - formatName, counters, etc
-//* set proper default date
-//* whole isdraggable?? props, etc.
-//* set up db for saving events 
+//! 1. save existing data into a word file
+//! 2. make new schema 
+//! 3. migrate schema
+//! 4. save events to db
+//! 5. load events from db
+//! 6. convert laoded events to be displayed in calendar
+
 //* consider how to structure and sync saved events vs converted events
+//* set up db for saving events 
+//!  i dont 'want to store the todos in the schedule, jsut the list id, nad then dynmaically load the todos!!!!    */
+//* load events from db
 
-
-//  type for events with id field
+//! need new type for loading from db
+//! could infer from db types
 interface myEvent extends Event {
   id: number;
+  title?: string;
+  start: Date;
+  end: Date;
+  isDraggable?: boolean;
+  allDay?: boolean;
+  description?: string;
+  resource?: any;
 }
 
-// interface draggableEvent extends Event {
-//   isDraggable: boolean;
-// }
+//*make sure works first?
+interface ConvertedToEvent {
+  id: string; // unique
+  listId: string, // from list/routine  
+  title?: string | undefined;
+  start: Date;
+  end: Date;
+  isDraggable: boolean;
+  allDay?: boolean;
+  description?: { [key:string]: string};
+}
 
-type DragItem = { title: string; name: string; } | 'undroppable';
-// export interface Event {
-//   allDay?: boolean | undefined;
-//   title?: React.ReactNode | undefined;
-//   start?: Date | undefined;
-//   end?: Date | undefined;
-//   resource?: any;
-// }
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: styleSheet }];
 
-//!  events will eventually come from lists/todos/habits, etc... and be converted to draggable events
-const adjEvents = events.map((event, index) => ({
-  ...event,
-  // isDraggable: index % 2 === 0,
-  isDraggable: true,
-}))
+export const loader = async ({ request }: LoaderArgs) => {
+  try {
+    const userId = await requireUserId(request);
+    const loadedToDos = await getListAndTodos({ userId });
+    const loadedRoutines = await getRoutines({ userId });
+    //!!!!!   import   the saved scheduled events from db
+    // const loadedEvents = await getEvents({ userId });
+    return json({ loadedToDos, loadedRoutines });
+  } catch (error) {
+    throw error
+  }
+}
 
-//label for draggable events
-//!  titles will come from list of loaded data
-const formatName = (name: string, count: number) => `${name} ID ${count}`
+export const action = async ({ request }: ActionArgs) => {
+  //!! save scheduled events to db
+  return null
+  //save events to db
+}
 
+// loaded scheduled -events from file, convert to loaded from db
+const eventsForThisWeek = updateScheduledEventsDatesToCurrentWeek(events)
 
 
 function Schedule() {
 
-  const [myEvents, setMyEvents] = useState<myEvent[]>(adjEvents)
-  const [draggedEvent, setDraggedEvent] = useState<DragItem>()
-  // const [displayDragItemInCell, setDisplayDragItemInCell] = useState<boolean>(true)
-  // const displayDragItemInCell = true
+  //!load saved scheduled events from DB
+  const [saveScheduledLists, setSaveScheduledLists] = useState<boolean>(true)   //  SaveButton
+  const [draggedList, setDraggedList] = useState<ListAndToDos | RoutineAndToDos>()
+  const [scheduledLists, setScheduledLists] = useState<ConvertedToEvent[]>(eventsForThisWeek)
 
-  const [counters, setCounters] = useState<{ [key: string]: number }>({ item1: 0, item2: 0 })
+  //?  the strucutre of these events should be left to be simple, ( title, and todos, only)
+  //  loadedLists -> scheduled events -> saved events
+  //?  when added to the calendar, they should be converted to the event structure, with start and end dates, is draggable, all day, id
+  //? loaded scheduled events will be of the correct format, and will be loaded from db
+  const initialListsData = useLoaderData<typeof loader>();
+  const loadedToDos: ListAndToDos[] = transformToDoDataDates(initialListsData.loadedToDos);
+  const loadedRoutines: RoutineAndToDos[] = transformRoutineDataDates(initialListsData.loadedRoutines);
 
-  const defaultDate = useMemo(() => new Date(2015, 3, 12), [])
-
-  const eventPropGetter = useCallback(
-    (event: object) => {
-      if ('isDraggable' in event && event.isDraggable) {
-        return { className: 'isDraggable' }
-      } else {
-        return { className: 'isNotDraggable' }
-      }
-    }, [])
-
-  const handleDragStart = useCallback((draggedItem: DragItem) => setDraggedEvent(draggedItem), [])
-
-  // const dragFromOutsideItem = useCallback(() => draggedEvent, [draggedEvent])
-  const dragFromOutsideItem = useCallback(() => {
-    return (event: object) => {
-      if (draggedEvent !== 'undroppable' && draggedEvent !== undefined) {
-        return new Date();
-      }
-      return new Date(0)
-    }
-  }, [draggedEvent])
-
-  const customOnDragOver = useCallback(
-    (dragEvent: React.DragEvent<Element>) => {
-      if (draggedEvent !== 'undroppable') {
-        console.log('preventDefault')
-        dragEvent.preventDefault()
-      }
-    }, [draggedEvent])
-
-  //!   could be fixed to true... no need for assoc. input
-  // const handleDisplayDragItemInCell = useCallback(() => setDisplayDragItemInCell((prev) => !prev), [])
-
-  const newEvent = useCallback((event: Event): void => {
-    setMyEvents((prev) => {
-      const idList = prev.map((item) => item.id)
-      const newId = Math.max(...idList) + 1
-      return [...prev, { ...event, id: newId, isDraggable: true }]
-    })
-  }, [setMyEvents])
+ 
+  const handleDragStart = useCallback((draggedItem: ListAndToDos | RoutineAndToDos) => {
+    // console.log('handleDragStart and draggedItem is ', draggedItem)
+    setDraggedList(draggedItem)
+  }, [])
 
 
-  const onDrdopFromOutside = useCallback((
-    { start: startDate, end: endDate, allDay: isAllDay = false }: DragFromOutsideItemArgs
-  ) => {
-    if (draggedEvent === undefined) return
-    if (draggedEvent === 'undroppable') {
-      setDraggedEvent(undefined)
-      return
-    }
+  const handleSaveScheduledLists = () => {
+    //save to db
+    setSaveScheduledLists(false)
+  }
 
-    const start = typeof startDate === 'string' ? new Date(startDate) : startDate;
-    const end = typeof endDate === 'string' ? new Date(endDate) : endDate;
-
-    const { name } = draggedEvent
-    const event = {
-      title: formatName(name, counters[name]),
-      start,
-      end,
-      isAllDay,
-    }
-    setDraggedEvent(undefined)
-    setCounters((prev) => {
-      const { [name]: count } = prev
-      return {
-        ...prev,
-        [name]: count + 1,
-      }
-    })
-    newEvent(event)
-
-  }, [draggedEvent, counters, setDraggedEvent, setCounters, newEvent])
-
-
-  const moveEvent = useCallback((
-    { event, start, end, isAllDay: droppedOnAllDaySlot = false }: EventInteractionArgs<any>
-  ): void => {
-
-    const { allDay } = event
-    if (!allDay && droppedOnAllDaySlot) event.allDay = true
-
-    setMyEvents((prev) => {
-      const existing = prev.find((ev) => ev.id === event.id)!
-      const filtered = prev.filter((ev) => ev.id !== event.id)
-
-      const newStart = typeof start === 'string' ? new Date(start) : start;
-      const newEnd = typeof end === 'string' ? new Date(end) : end;
-
-      return [...filtered, { ...existing, start: newStart, end: newEnd, allDay, id: existing.id, title: existing.title, resource: existing.resource }]
-    })
-  }, [setMyEvents])
-
-
-  const resizeEvent = useCallback((
-    { event, start, end }: EventInteractionArgs<any>
-  ): void => {
-
-    setMyEvents((prev) => {
-      const existing = prev.find((ev) => ev.id === event.id)!
-      const filtered = prev.filter((ev) => ev.id !== event.id)
-
-      const newStart = typeof start === 'string' ? new Date(start) : start;
-      const newEnd = typeof end === 'string' ? new Date(end) : end;
-
-      return [...filtered, { ...existing, start: newStart, end: newEnd }]
-    })
-  }, [setMyEvents])
-
-  // console.log('events are', myEvents)
+  console.log('scheduyled events are ', scheduledLists)
 
   return (
     <>
-      <strong>
-        Drag and Drop an "event" from one slot to another to "move" the event,
-        or drag an event's drag handles to "resize" the event.
-      </strong>
+    {/* {//! color code bgs based on list type! */}
+      <ListsAsDraggableItems
+        loadedToDos={loadedToDos}
+        loadedRoutines={loadedRoutines}
+        handleDragStart={handleDragStart}
+      />
 
-      <div className='card' >
-        <div className="inner">
-          <h4>Outside Drag Sources</h4>
-          <p>
-            Lighter colored events, in the Calendar, have an `isDraggable` key
-            of `false`.
-          </p>
-          {Object.entries(counters).map(([name, count]) => (
-            <div
-              draggable="true"
-              className='border-2 border-gray-400 p-2 bg-slate-200'
-              key={name}
-              onDragStart={() =>
-                handleDragStart({ title: formatName(name, count), name })
-              }
-            >
-              {formatName(name, count)}
-            </div>
-          ))}
-          <div
-            draggable="true"
-            onDragStart={() => handleDragStart('undroppable')}
+      <div className='mt-12'>
+        <strong>
+          Drag and Drop a "list" from above into the Calendar below. Move, Resize, or Duplicate as necessary
+        </strong>
+      </div>
+      <div className='my-6'>
+        {saveScheduledLists &&
+          <button
+            className='btn btn-primary'
+            onClick={handleSaveScheduledLists}
           >
-            Draggable but not for calendar.
-          </div>
-        </div>
+            Save Changes to Schedule
+          </button>}
       </div>
-      <div className="h-[600px]">
-        <DragAndDropCalendar
-          defaultDate={defaultDate}
-          defaultView={Views.WEEK}
-          dragFromOutsideItem={dragFromOutsideItem}
-          draggableAccessor={(event: any) => event.isDraggable}
-          eventPropGetter={eventPropGetter}
-          events={myEvents}
-          localizer={localizer}
-          onDropFromOutside={onDrdopFromOutside}
-          onDragOver={customOnDragOver}
-          onEventDrop={moveEvent}
-          onEventResize={resizeEvent}
-          onSelectSlot={newEvent}
-          resizable
-          selectable
-        />
-      </div>
+
+      <Scheduler
+        scheduledLists={scheduledLists}
+        setScheduledLists={setScheduledLists}
+        draggedList={draggedList}
+        setDraggedList={setDraggedList}
+        saveScheduledLists={saveScheduledLists}
+        setSaveScheduledLists={setSaveScheduledLists}
+      />
+
+
     </>
   )
 }
-Schedule.propTypes = {
-  localizer: PropTypes.instanceOf(DateLocalizer),
-}
+
 
 export default Schedule
 
-// const MyCalendar = ({ props }: any) => (
 
-//   <div className="myCustomHeight">
-//     <Calendar
-//       localizer={localizer}
-//       // events={myEventsList}
-//       startAccessor="start"
-//       endAccessor="end"
-//     />
-//   </div>
-// )
-// type Event = {
-//   id: number;
-//   title: string;
-//   start: Date;
-//   end: Date;
-//   allDay?: boolean;
-//   resourceId?: number[];
-// };
+
+///*  into helper function doc... for loading schedueled Events from DB - remake for this week
+//  will have to change typing becuse input will change from .json file to db imports
+function updateScheduledEventsDatesToCurrentWeek(events: myEvent[]): ConvertedToEvent[] {
+  const currentDate = new Date()
+  const currentWeekDay = currentDate.getDay()
+
+  //get monday of the current week
+  const currentWeekMonday = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    currentDate.getDate() - currentWeekDay + 1
+  )
+
+  return events.map((event) => {
+
+    if (!event.start || !event.end) {
+      throw new Error('Event start and end times must be defined');
+    }
+    const start = new Date(event.start)
+    const end = new Date(event.end)
+
+    const day = start.getDay()
+    const startHour = start.getHours()
+    const startMinutes = start.getMinutes()
+    const endHour = end.getHours()
+    const endMinutes = end.getMinutes()
+
+    //create the new start and end dates
+    const newStart = new Date(currentWeekMonday)
+    newStart.setDate(newStart.getDate() + day - 1)
+    newStart.setHours(startHour, startMinutes, 0, 0)
+
+    const newEnd = new Date(newStart)
+    newEnd.setHours(endHour, endMinutes, 0, 0)
+
+    //! this should not be needed for events loaded from db... prob have to convert dates.
+    //if the event.id is a number, convert to string
+    const id = typeof event.id === 'number' ? event.id.toString() : event.id
+
+    return {
+      ...event,
+      description: undefined,
+      id: id,
+      listId: id,
+      start: newStart,
+      end: newEnd,
+      isDraggable: true,
+    }
+  })
+}

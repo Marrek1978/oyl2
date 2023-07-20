@@ -1,5 +1,6 @@
 // types.ts
 import type { Lists as PrismaList, ListToDos } from '@prisma/client'
+import { RoutineAndToDos, RoutineToDo } from './routineTypes';
 
 export type ListAndToDos = PrismaList & {
   todos: ListToDos[],
@@ -23,5 +24,10 @@ export interface DatabaseTodo extends CreationTodo {
 }
 
 export type Todo = CreationTodo | DatabaseTodo;
+
+export type ImportedLists = ListAndToDos[] | RoutineAndToDos[]
+export type ImportedList = ListAndToDos | RoutineAndToDos
+export type allTodoTypes = Todo | RoutineToDo 
+
 
 
