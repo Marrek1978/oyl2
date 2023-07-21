@@ -7,6 +7,8 @@ generator client {
   provider = "prisma-client-js"
 }
 
+//!  need to change most plural model names to singular
+
 model User {
   id    String @id @default(cuid())
   email String @unique
@@ -22,6 +24,7 @@ model User {
   values   Values[]
   desires  Desires[]
   desiresClarifyingQuestions DesiresClarifyingQuestions[]
+  scheduledLists ScheduledList[]
 }
 
 model Password {
@@ -99,12 +102,12 @@ model RoutineToDos {
 }
 model Values {
   id   String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
   valueTitle String
   valueDescription String
   sortOrder Int @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
   
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
@@ -115,13 +118,13 @@ model Values {
 
 model Desires {
   id   String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   title String
   description String
   sortOrder Int @default(0)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
 
@@ -165,4 +168,20 @@ model DesiresClarifyingQuestions {
   userId String @unique
 }
 
+model ScheduledList {
+  id    String @id @default(cuid())
+  listId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  title String
+  isDraggable Boolean @default(true)
+  start   DateTime
+  end   DateTime
+  description Json
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+
+}
 

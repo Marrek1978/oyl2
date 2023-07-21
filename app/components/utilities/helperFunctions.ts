@@ -28,8 +28,15 @@ export function transformRoutineDataDates(routines: any) {
   }));
 }
 
-
-
+export function transformScheduledListsDataDates(lists: any) {
+  return lists.map((list: any) => ({
+    ...list,
+    createdAt: new Date(list.createdAt!),
+    updatedAt: new Date(list.updatedAt!),
+    start: new Date(list.start),
+    end: new Date(list.end),
+  }));
+}
 
 export function sortTodos(todos: Todo[]): Todo[] {
   const todosCopy = [...todos];
@@ -66,7 +73,6 @@ export function resetTodoSortOrder(todos: CreationTodo[]): CreationTodo[] {
 }
 
 export function resetRoutineTodosSortOrder(todos: CreationRoutineToDo[]) {
- 
   return todos.map((todo, index) => {
     return {
       ...todo,

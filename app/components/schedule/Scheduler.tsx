@@ -11,52 +11,33 @@ import { v4 as uuidv4 } from 'uuid';
 
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndToDos } from '~/types/routineTypes'
+import type { ScheduledList } from '@prisma/client'
 // import { events } from './../calendar/events/events';
 
 const localizer = momentLocalizer(moment)
 const DragAndDropCalendar = withDragAndDrop(Calendar)
 
-// interface myEvent extends Event {
-//   id: number;
-//   title?: string;
-//   start: Date;
-//   end: Date;
-//   isDraggable?: boolean;
-//   allDay?: boolean;
-//   description?: string;
-//   resource?: any;
-// }
-
-interface ScheduledList {
-  id: string; // unique
-  listId: string, // from list/routine  
-  title?: string | undefined;
-  start: Date;
-  end: Date;
-  isDraggable: boolean;
-  allDay?: boolean;
-  description?: { [key: string]: string };
-}
-
 interface SchedulerProps {
-  scheduledLists: ScheduledList[];
-  setScheduledLists: React.Dispatch<React.SetStateAction<ScheduledList[]>>;
+  scheduledLists: ScheduledList[] | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[];
+  setScheduledLists: React.Dispatch<React.SetStateAction<ScheduledList[] | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[]>>;
   draggedList: ListAndToDos | RoutineAndToDos | undefined;
   setDraggedList: React.Dispatch<React.SetStateAction<ListAndToDos | RoutineAndToDos | undefined>>;
-  saveScheduledLists: boolean;
   setSaveScheduledLists: React.Dispatch<React.SetStateAction<boolean>>;
+  // saveScheduledLists: boolean;
 }
 
-function Scheduler({ scheduledLists, setScheduledLists, draggedList, setDraggedList, saveScheduledLists, setSaveScheduledLists }: SchedulerProps) {
+//!  have to decide on styling
+
+function Scheduler({
+  scheduledLists,
+  setScheduledLists,
+  draggedList,
+  setDraggedList,
+  setSaveScheduledLists
+  // saveScheduledLists, 
+}: SchedulerProps) {
 
   const defaultDate = useMemo(() => new Date(), [])
-
-
-  const eventPropGetter = useCallback(
-    (event: object) => {
-      return { className: 'bg-primary-content text-base-content' }  // colors scheduled events
-    }, [])
-
 
   const dragFromOutsideItem = useCallback(() => {
     return (event: object) => {
@@ -72,7 +53,7 @@ function Scheduler({ scheduledLists, setScheduledLists, draggedList, setDraggedL
     }, [])
 
 
-  const addListToScheduledList = useCallback((list: ScheduledList): void => {
+  const addListToScheduledList = useCallback((list: Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>): void => {
     setSaveScheduledLists(true)
     setScheduledLists((prev) => {
       return [...prev, { ...list }]
@@ -80,44 +61,26 @@ function Scheduler({ scheduledLists, setScheduledLists, draggedList, setDraggedL
   }, [setScheduledLists, setSaveScheduledLists])
 
 
-  // const onSelectSlot = useCallback((slotInfo: SlotInfo) => {
-
-  //   console.log('slotInfo', slotInfo)
-  //   const description: Todo[] | RoutineToDo[] = descriptionType(draggedEvent!)
-  //   const newEvent: ConvertedToEvent = {
-  //     id: uuidv4(),
-  //     listId: draggedEvent!.id,
-  //     title: draggedEvent?.title,
-  //     start: slotInfo.start,
-  //     end: slotInfo.end,
-  //     isDraggable: true,
-  //     allDay: false,
-  //     description: description,
-  //   }
-  //   addEventToScheduledEvents(newEvent)
-  // }, [addEventToScheduledEvents, draggedEvent])
-
-
   const onDrdopFromOutside = useCallback((
     { start: startDate, end: endDate }: DragFromOutsideItemArgs
   ) => {
-    // console.log('onDropFromOutside')
+
     if (draggedList === undefined) return
     const start = typeof startDate === 'string' ? new Date(startDate) : startDate;
     const end = typeof endDate === 'string' ? new Date(endDate) : endDate;
 
-    //go from determining type to proving type lable and list id
-    // const description: Todo[] | RoutineToDo[] = descriptionType(draggedList!)
     const description: { [key: string]: string } = descriptionTypeLabelAndId(draggedList!)
 
-    const list: ScheduledList = {
+    // randome id is needed to create a new scheduled list
+    // if id is in db => update
+    // if this id is not in DB ( adn won't be) => create new scheduled list with DB givin ID
+    const list: Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'> = {
       id: uuidv4(),
       listId: draggedList.id,
       title: draggedList.title,
+      isDraggable: true,
       start,
       end,
-      isDraggable: true,
-      allDay: false,
       description: description,
     }
 
@@ -138,7 +101,6 @@ function Scheduler({ scheduledLists, setScheduledLists, draggedList, setDraggedL
       const filtered = prev.filter((ev) => ev.id !== event.id)
       const newStart = typeof start === 'string' ? new Date(start) : start;
       const newEnd = typeof end === 'string' ? new Date(end) : end;
-
       return [...filtered, { ...existing, start: newStart, end: newEnd, allDay, id: existing.id, title: existing.title }]
     })
   }, [setScheduledLists, setSaveScheduledLists])
@@ -174,9 +136,7 @@ function Scheduler({ scheduledLists, setScheduledLists, draggedList, setDraggedL
   }, []);
 
   function CustomEvent({ event: innerEvent, title }: any) {
-    //  could get lists from ids?  pass listId as description? and access it here to display todos?
-    // description prob needs to be an array { type: listId, } to get todos[] - maybe just in day view?
-    // console.log('innerEvent', innerEvent)
+    //  could get todos from description : listId?  access it here to display todos?
     return (
       <>
         {title && (
@@ -188,10 +148,26 @@ function Scheduler({ scheduledLists, setScheduledLists, draggedList, setDraggedL
             : 'No start and end times available'
           }
         </div>
+
       </>
     );
+
+    // list todos??
   }
 
+  const eventPropGetter = useCallback(
+    (event: object) => {
+      console.log('in event prop getter and event is ', event)
+      // make bg based on descripton type
+      return { className: 'bg-primary-content text-base-content' }  // colors scheduled events
+    }, [])
+
+
+  function customeHandleSelectList({ event: Object }: any) {
+
+    //open a checkbox modal on double click?
+    console.log('in handle select list')
+  }
 
   return (
     <>
@@ -200,23 +176,26 @@ function Scheduler({ scheduledLists, setScheduledLists, draggedList, setDraggedL
           defaultDate={defaultDate}
           defaultView={Views.WEEK}
           dragFromOutsideItem={dragFromOutsideItem}
-          // draggableAccessor={(event: any) => event.isDraggable}
-          eventPropGetter={eventPropGetter}
           events={scheduledLists}
           localizer={localizer}
           onDropFromOutside={onDrdopFromOutside}
           onDragOver={customOnDragOver}
           onEventDrop={moveEvent}
           onEventResize={resizeEvent}
-          // onSelectSlot={onSelectSlot}
           resizable
           selectable
           toolbar={false}
           scrollToTime={new Date()}
           dayPropGetter={dayPropGetter}
-          components={{ event: CustomEvent }}
+          eventPropGetter={eventPropGetter}
+          components={{
+            event: CustomEvent,
+          }}
           step={15}
           timeslots={4}
+          onDrillDown={() => { }}
+          onSelectEvent={customeHandleSelectList}
+
         />
       </div>
     </>
@@ -225,15 +204,6 @@ function Scheduler({ scheduledLists, setScheduledLists, draggedList, setDraggedL
 
 export default Scheduler
 
-// function descriptionType(list: ListAndToDos | RoutineAndToDos): Todo[] | RoutineToDo[] {
-//   if ('todos' in list) {
-//     return list.todos
-//   } else if ('routineToDos' in list) {
-//     return list.routineToDos
-//   } else {
-//     return []
-//   }
-// }
 
 function descriptionTypeLabelAndId(list: ListAndToDos | RoutineAndToDos): { [key: string]: string } {
   if ('todos' in list) {
