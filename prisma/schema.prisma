@@ -19,10 +19,10 @@ model User {
 
   password Password?
   notes    Note[]
-  lists    Lists[]
-  routines Routines[]
-  values   Values[]
-  desires  Desires[]
+  lists    List[]
+  routines Routine[]
+  values  Value[]
+  desires  Desire[]
   desiresClarifyingQuestions DesiresClarifyingQuestions[]
   scheduledLists ScheduledList[]
 }
@@ -46,7 +46,7 @@ model Note {
   userId String
 }
 
-model Lists {
+model List {
   id    String @id @default(cuid())
   title String
 
@@ -56,10 +56,10 @@ model Lists {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
 
-  todos ListToDos[]
+  todos ListToDo[]
 }
 
-model ListToDos {
+model ListToDo {
   id   String @id @default(cuid())
   body String
   urgent Boolean
@@ -71,11 +71,11 @@ model ListToDos {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  list  Lists   @relation(fields: [listId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  list  List   @relation(fields: [listId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   listId String
 }
 
-model Routines {
+model Routine {
   id    String @id @default(cuid())
   title String
 
@@ -85,10 +85,10 @@ model Routines {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
 
-  routineToDos RoutineToDos[]
+  routineToDos RoutineToDo[]
 }
 
-model RoutineToDos {
+model RoutineToDo {
   id   String @id @default(cuid())
   body String
   complete Boolean @default(false)
@@ -97,10 +97,10 @@ model RoutineToDos {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  routine   Routines   @relation(fields: [routineId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  routine   Routine   @relation(fields: [routineId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   routineId String
 }
-model Values {
+model Value {
   id   String @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -112,11 +112,11 @@ model Values {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
 
-  valueDesires DesireValues[]
+  valueDesire DesireValue[]
 }
 
 
-model Desires {
+model Desire {
   id   String @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -128,10 +128,10 @@ model Desires {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
 
-  desireValues DesireValues[]
+  desireValues DesireValue[]
 }
  
- model DesireValues {
+ model DesireValue {
   id         String  @id @default(cuid())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -139,8 +139,8 @@ model Desires {
   desireId   String
   valueId    String
 
-  value      Values   @relation(fields: [valueId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  desire     Desires  @relation(fields: [desireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  value      Value   @relation(fields: [valueId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  desire     Desire  @relation(fields: [desireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([valueId, desireId])
 }

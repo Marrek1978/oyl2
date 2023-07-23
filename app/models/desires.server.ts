@@ -1,28 +1,28 @@
 import { prisma } from "~/db.server";
-import type { User, Desires, DesireValues } from "@prisma/client";
+import type { User, Desire, DesireValue } from "@prisma/client";
 import { DesireWithValues } from "~/types/desireTypes";
 
 type CreateDesire = {
-  title: Desires["title"];
-  description: Desires["description"];
+  title: Desire["title"];
+  description: Desire["description"];
   userId: User["id"];
-  sortOrder: Desires["sortOrder"];
-  valueIds: DesireValues["valueId"][];
+  sortOrder: Desire["sortOrder"];
+  valueIds: DesireValue["valueId"][];
 };
 
 type EditDesire = {
-  id: Desires["id"];
-  title: Desires["title"];
-  description: Desires["description"];
-  valueIds: DesireValues["valueId"][];
+  id: Desire["id"];
+  title: Desire["title"];
+  description: Desire["description"];
+  valueIds: DesireValue["valueId"][];
 };
 
 type DeleteDesire = {
-  desireId: Desires["id"];
+  desireId: Desire["id"];
 };
 
 export const getDesires = async (userId: User["id"]) => {
-  const result = await prisma.desires.findMany({
+  const result = await prisma.desire.findMany({
     where: { userId },
     include: {
       desireValues: {
@@ -38,7 +38,7 @@ export const getDesires = async (userId: User["id"]) => {
 };
 
 export const createDesire = async (desire: CreateDesire) => {
-  const result = await prisma.desires.create({
+  const result = await prisma.desire.create({
     data: {
       title: desire.title,
       description: desire.description,
@@ -58,7 +58,7 @@ export const createDesire = async (desire: CreateDesire) => {
 export const updateDesire = async (desire: EditDesire) => {
   //delete all existing desireValues
   try {
-    await prisma.desireValues.deleteMany({
+    await prisma.desireValue.deleteMany({
       where: {
         desireId: desire.id,
       },
@@ -67,7 +67,7 @@ export const updateDesire = async (desire: EditDesire) => {
     throw error;
   }
 
-  const result = await prisma.desires.update({
+  const result = await prisma.desire.update({
     where: {
       id: desire.id,
     },
@@ -87,7 +87,7 @@ export const updateDesire = async (desire: EditDesire) => {
 
 export const updateDesiresOrder = async (desires: DesireWithValues[]) => {
   const updateSortOrder = desires.map((desire) => {
-    return prisma.desires.update({
+    return prisma.desire.update({
       where: { id: desire.id },
       data: {
         sortOrder: desire.sortOrder,
@@ -101,7 +101,7 @@ export const updateDesiresOrder = async (desires: DesireWithValues[]) => {
 
 export const deleteDesire = async (desireId: DeleteDesire) => {
 
-  const result = await prisma.desires.delete({
+  const result = await prisma.desire.delete({
     where:{
       id: desireId.desireId
     }
