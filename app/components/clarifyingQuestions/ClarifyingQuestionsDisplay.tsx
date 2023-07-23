@@ -58,7 +58,7 @@ function ClarifyingQuestionsDisplay({ questions }: ClarifyingQuestionsDisplayPro
         <div className='text-xl font-semibold mt-8' >
           How would I spend my time if I only had...
         </div>
-        {keysInOrder.map((key, index) => {
+        {questions[0] && keysInOrder.map((key, index) => {
           if (key === 'twentyFourHours' || key === 'oneWeek' || key === 'oneMonth' || key === 'oneYear') {
             return (
               <div key={index} >

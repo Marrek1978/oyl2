@@ -40,7 +40,7 @@ export const action = async ({ request }: ActionArgs) => {
     return maxAgeError
   }
 
-  const maxAge = parseInt(maxAgeString as string)
+  const maxAge = parseInt(maxAgeString as string) | 75
 
   try {
     await upsertMaxAge(maxAge, userId)

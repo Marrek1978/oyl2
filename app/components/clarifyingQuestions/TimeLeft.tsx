@@ -9,9 +9,9 @@ function TimeLeft() {
 
   const matches = useMatches();
   const questions = matches.find(match => match.id === 'routes/dash.clarity')?.data
-  const retrievedMaxAge = questions[0].maxAge
+  const retrievedMaxAge = questions[0]?.maxAge | 65
 
-  const bDay = new Date(questions[0].birthDate as string)
+  const bDay = new Date(questions[0]?.birthDate ?? '1980-01-01' as string)
   const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
   const birthDate = new Intl.DateTimeFormat('en-US', options).format(bDay);
 
