@@ -3,6 +3,7 @@
 import { Link } from '@remix-run/react';
 import { EditIcon } from '../utilities/icons';
 import type { RoutineAndToDos } from '~/types/routineTypes';
+import type { RoutineToDo } from '@prisma/client';
 
 interface RoutineCardProps {
   routine: RoutineAndToDos;
@@ -11,7 +12,7 @@ interface RoutineCardProps {
 function RoutineCard({ routine }: RoutineCardProps) {
 
   const title = routine.title
-  const routineToDosArray = routine.routineToDos
+  const routineToDosArray:RoutineToDo[] = routine.routineToDos
   const id = routine.id
 
   return (
@@ -58,7 +59,7 @@ function RoutineCard({ routine }: RoutineCardProps) {
                     text-left 
                     text-base-content
                     `}>
-                <div className={`w-3/5 wrap truncate text-ellipsis	${todoObj.complete && 'line-through text-slate-300'}`} >
+                <div className={` wrap truncate text-ellipsis	${todoObj.complete && 'line-through text-slate-300'}`} >
                   {todoObj.body}
                 </div>
               </div>

@@ -40,7 +40,7 @@ const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem}) => {
   return (
     <>
       <div className={` 
-        flex w-full  items-center	justify-between
+        flex w-full gap-4 items-center justify-between
         px-3 py-1 mb-1
         text-left 
         ${borderClass}
@@ -52,7 +52,7 @@ const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem}) => {
           {todoItem.body}
         </div>
 
-        <div className='flex gap-2' >
+        <div className='flex gap-2 w-max' >
           {todoItem.dueDate && (
             <div className={`text-xs font-medium text-slate-400 self-center
             ${isChecked && 'line-through text-slate-400'}

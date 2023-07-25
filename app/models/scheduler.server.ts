@@ -6,9 +6,10 @@ export async function saveScheduledLists({
   ScheduledLists,
 }: {
   userId: User["id"];
-  ScheduledLists: Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[];
+  ScheduledLists:
+    | ScheduledList[]
+    | Omit<ScheduledList, "createdAt" | "updatedAt" | "userId">[];
 }) {
-
   const upsertScheduledLists = ScheduledLists.map(
     (list): Promise<ScheduledList> => {
       return prisma.scheduledList.upsert({
@@ -35,13 +36,19 @@ export async function saveScheduledLists({
   );
 
   const results = await Promise.all(upsertScheduledLists);
-  return {results};
+  return { results };
 }
 
-
-export async function getScheduledLists ({userId} : {userId: User['id']}) {
+export async function getScheduledLists({ userId }: { userId: User["id"] }) {
   const scheduledLists = await prisma.scheduledList.findMany({
-    where: { userId:userId },
+    where: { userId: userId },
   });
-  return scheduledLists ;
+  return scheduledLists;
+}
+
+export async function deleteScheduledList({ id }: Pick<ScheduledList, "id">) {
+  const deleteResult = await prisma.scheduledList.delete({
+    where: { id },
+  });
+  return deleteResult;
 }

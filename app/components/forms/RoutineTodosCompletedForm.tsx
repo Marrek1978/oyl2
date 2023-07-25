@@ -1,4 +1,4 @@
-import type { RoutineToDos } from '@prisma/client';
+import type { RoutineToDo } from '@prisma/client';
 import { Link, useFetcher } from '@remix-run/react';
 import React from 'react'
 import type { RoutineAndToDos } from '~/types/routineTypes'
@@ -17,7 +17,7 @@ interface RoutineTodosCompletedFormProps {
 function RoutineTodosCompletedForm({ routine }: RoutineTodosCompletedFormProps) {
 
   const fetcher = useFetcher();
-  const todos = routine.routineToDos;
+  const todos: RoutineToDo[] = routine.routineToDos;
 
   const handleCompletedToBottom = async (): Promise<void> => {
     const completedToDosAtBottom = sortTodos(todos);
@@ -121,7 +121,7 @@ function RoutineTodosCompletedForm({ routine }: RoutineTodosCompletedFormProps) 
 export default RoutineTodosCompletedForm
 
 
-function sortTodos(todos: RoutineToDos[]): RoutineToDos[] {
+function sortTodos(todos: RoutineToDo[]): RoutineToDo[] {
   const todosCopy = [...todos]
 
   todosCopy.sort((a, b) => {
@@ -137,7 +137,7 @@ function sortTodos(todos: RoutineToDos[]): RoutineToDos[] {
   return resetRoutineTodosSortOrder(todosCopy)
 }
 
-function resetRoutineTodosSortOrder(todos: RoutineToDos[]): RoutineToDos[] {
+function resetRoutineTodosSortOrder(todos: RoutineToDo[]): RoutineToDo[] {
 
   return todos.map((todo, index) => {
     return {

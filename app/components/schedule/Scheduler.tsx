@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 
 // import type { SlotInfo } from 'react-big-calendar'
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
@@ -12,6 +12,9 @@ import { v4 as uuidv4 } from 'uuid';
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndToDos } from '~/types/routineTypes'
 import type { ScheduledList } from '@prisma/client'
+import Modal from '../modals/Modal'
+import DeleteEventModal from '../modals/DeleteEventModal'
+import SuccessMessage from '../modals/SuccessMessage'
 // import { events } from './../calendar/events/events';
 
 const localizer = momentLocalizer(moment)
@@ -24,6 +27,8 @@ interface SchedulerProps {
   setDraggedList: React.Dispatch<React.SetStateAction<ListAndToDos | RoutineAndToDos | undefined>>;
   setSaveScheduledLists: React.Dispatch<React.SetStateAction<boolean>>;
   // saveScheduledLists: boolean;
+  loadedToDos: ListAndToDos[];
+  loadedRoutines: RoutineAndToDos[];
 }
 
 //!  have to decide on styling
@@ -33,11 +38,19 @@ function Scheduler({
   setScheduledLists,
   draggedList,
   setDraggedList,
-  setSaveScheduledLists
+  setSaveScheduledLists,
   // saveScheduledLists, 
+  loadedToDos,
+  loadedRoutines,
 }: SchedulerProps) {
 
   const defaultDate = useMemo(() => new Date(), [])
+  const [deleteEventBool, setDeleteEventBool] = useState<boolean>(false)
+  const [successMessage, setSuccessMessage] = useState('');
+  const [eventToDelete, setEventToDelete] = useState<ScheduledList | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>>()
+
+  // console.log('in scheduler and loadedToDos is ', loadedToDos)
+
 
   const dragFromOutsideItem = useCallback(() => {
     return (event: object) => {
@@ -157,20 +170,71 @@ function Scheduler({
 
   const eventPropGetter = useCallback(
     (event: object) => {
-      console.log('in event prop getter and event is ', event)
+      // console.log('in event prop getter and event is ', event)
       // make bg based on descripton type
       return { className: 'bg-primary-content text-base-content' }  // colors scheduled events
     }, [])
 
 
-  function customeHandleSelectList({ event: Object }: any) {
+  // function handleOnSelectEvent({ event: Object }: any) {
+  //   console.log('in handle select list')
+  // }
 
-    //open a checkbox modal on double click?
-    console.log('in handle select list')
+  function handleDoubleClickEvent(
+    event: any,
+    e: React.SyntheticEvent<HTMLElement, Event>
+  ) {
+    setDeleteEventBool(true)
+    setEventToDelete(event as ScheduledList | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>)
+  }
+
+  function handleToolTipAccessor(event: any) {
+
+    const type = Object.keys(event.description)[0]
+    const { listId } = event
+    let loadedList: ListAndToDos[] | RoutineAndToDos[] = [];
+    let todosArrayName: string = '';
+
+    if (type === 'todos') {
+      loadedList = loadedToDos
+      todosArrayName = type
+    }
+    if (type === 'routineToDos') {
+      loadedList = loadedRoutines
+      todosArrayName = type
+    }
+
+    const currentList = loadedList?.filter((list) => list.id === listId)
+    const currentToDos = currentList[0][todosArrayName]
+
+    return `\nToDos:\n${currentToDos?.map((todo: any) => todo.body).join('\n')}`
   }
 
   return (
     <>
+
+      {successMessage && (
+        <Modal onClose={() => { }} zIndex={30}>
+          {successMessage}Yolo
+          <SuccessMessage
+            // text={isEditingTodoList ? 'Routine was saved' : 'Routine was updated'}
+            text='List was removed from Schedule'
+          />
+        </Modal>)
+      }
+
+
+      {deleteEventBool && eventToDelete && (
+        <Modal onClose={() => { }} zIndex={20}>
+          <DeleteEventModal
+            event={eventToDelete}
+            setDeleteEventBool={setDeleteEventBool}
+            setScheduledLists={setScheduledLists}
+            setSuccessMessage={setSuccessMessage}
+          />
+        </Modal>
+      )}
+
       <div className="h-[600px]">
         <DragAndDropCalendar
           defaultDate={defaultDate}
@@ -194,7 +258,9 @@ function Scheduler({
           step={15}
           timeslots={4}
           onDrillDown={() => { }}
-          onSelectEvent={customeHandleSelectList}
+          // onSelectEvent={handleOnSelectEvent}
+          onDoubleClickEvent={handleDoubleClickEvent}
+          tooltipAccessor={handleToolTipAccessor}
 
         />
       </div>

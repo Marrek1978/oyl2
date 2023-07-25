@@ -47,6 +47,7 @@ function DraggableCard({ list, handleDragStart }: DraggableCardProps) {
           bg-base-content 
           px-4
           flex-shrink-0
+          
           ">
           <div className='
             text-primary-300 font-mont uppercase font-medium text-sm  tracking-widest 
@@ -55,7 +56,7 @@ function DraggableCard({ list, handleDragStart }: DraggableCardProps) {
           </div>
         </div >
 
-        < div className="mx-4 mt-2 h-16" >
+        < div className="mx-4 mt-2 h-16 " >
           {ToDosArray.map((todoObj: Todo | RoutineToDo, index: number) => {
             return (
               <div
@@ -66,7 +67,7 @@ function DraggableCard({ list, handleDragStart }: DraggableCardProps) {
                     text-left 
                     text-base-content
                     `}>
-                <div className={`w-3/5 wrap truncate text-ellipsis	${todoObj.complete && 'line-through text-slate-300'}`} >
+                <div className={`w-full  wrap truncate text-ellipsis	${todoObj.complete && 'line-through text-slate-300'}`} >
                   {todoObj.body}
                 </div>
               </div>

@@ -145,12 +145,13 @@ model Desire {
   @@unique([valueId, desireId])
 }
 
+//seed db with some data ehre
 model DesiresClarifyingQuestions {
   id         String  @id @default(cuid())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  birthDate  DateTime? 
+  birthDate  DateTime?
   twentyFourHours String? @default("")
   twentyFourHoursRegrets String? @default("")
   oneWeek String? @default("")

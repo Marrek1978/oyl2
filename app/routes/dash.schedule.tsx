@@ -14,7 +14,7 @@ import { transformRoutineDataDates, transformToDoDataDates, transformScheduledLi
 import { getListAndTodos } from '~/models/list.server'
 import { getRoutines } from '~/models/routines.server'
 import { requireUserId } from '~/models/session.server'
-import { getScheduledLists, saveScheduledLists } from '~/models/scheduler.server'
+import { deleteScheduledList, getScheduledLists, saveScheduledLists } from '~/models/scheduler.server'
 
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndToDos } from '~/types/routineTypes'
@@ -24,7 +24,7 @@ import type { ScheduledList } from '@prisma/client'
 //example from https://github.com/jquense/react-big-calendar/blob/master/stories/demos/exampleCode/dndOutsideSource.js
 
 //!  i dont 'want to store the todos in the schedule, jsut the list id, nad then dynmaically load the todos!!!!    */
-
+//!  stop propgation to day view, so that it doesnt open the day view when clicking a day
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styleSheet }];
 
@@ -47,25 +47,35 @@ export const loader = async ({ request }: LoaderArgs) => {
 // but i need to delete that ide and have the db create an id, which is used for storage and updating
 
 export const action = async ({ request }: ActionArgs) => {
-  console.log(' in action')
-  const userId = await requireUserId(request);
-  const formBody = await request.text();
-  const parsedBody = parse(formBody);
-  const ScheduledLists: Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[] = JSON.parse(parsedBody.scheduledListsString as string);
-  try {
-    await saveScheduledLists({ userId, ScheduledLists })
-  } catch (error) { throw error }
+  if (request.method === 'POST') {
+    const userId = await requireUserId(request);
+    const formBody = await request.text();
+    const parsedBody = parse(formBody);
+    const ScheduledLists: ScheduledList[] | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[] = JSON.parse(parsedBody.scheduledListsString as string);
+    try {
+      await saveScheduledLists({ userId, ScheduledLists })
+    } catch (error) { throw error }
+  }
+
+  if (request.method === 'DELETE') {
+    const formBody = await request.text();
+    const parsedBody = parse(formBody);
+    const idToDelete = parsedBody.idToDelete as string
+    try {
+      await deleteScheduledList({ id: idToDelete })
+      return json({status:'success'}, {status: 200})
+    } catch (error) { throw error }
+  }
   return null
 }
 
 function Schedule() {
 
   const fetcher = useFetcher();
-  const [saveScheduledLists, setSaveScheduledLists] = useState<boolean>(true)   //  SaveButton
+  const [saveScheduledLists, setSaveScheduledLists] = useState<boolean>(false)   //  SaveButton
   const [draggedList, setDraggedList] = useState<ListAndToDos | RoutineAndToDos>()
   const [scheduledLists, setScheduledLists] = useState<ScheduledList[] | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[]>([])
 
-  //?  the strucutre of these events should be left to be simple, ( title, and todos, only)
   //?  when added to the calendar, they should be converted to the event structure, with start and end dates, is draggable, all day, id
   //? loaded scheduled events will be of the correct format, and will be loaded from db
   const initialListsData = useLoaderData<typeof loader>();
@@ -74,8 +84,6 @@ function Schedule() {
   const loadedScheduledLists: ScheduledList[] = useMemo(() => transformScheduledListsDataDates(initialListsData.scheduledLists), [initialListsData.scheduledLists])
 
   useEffect(() => {
-    console.log('in use Effect')
-    //reset dates to always be the current week  only needed for loaded events... new/unsaved lists are always dnd into current week
     setScheduledLists(updateScheduledListsDatesToCurrentWeek(loadedScheduledLists))
   }, [loadedScheduledLists])
 
@@ -96,6 +104,8 @@ function Schedule() {
     } catch (error) { throw error }
     setSaveScheduledLists(false)
   }
+
+
 
   return (
     <>
@@ -131,6 +141,8 @@ function Schedule() {
         setDraggedList={setDraggedList}
         // saveScheduledLists={saveScheduledLists}
         setSaveScheduledLists={setSaveScheduledLists}
+        loadedToDos={loadedToDos}
+        loadedRoutines={loadedRoutines}
       />
 
 

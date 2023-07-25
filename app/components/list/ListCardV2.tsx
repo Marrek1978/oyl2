@@ -1,10 +1,13 @@
 import React from 'react'
-import type { ListAndToDos } from '~/types/listTypes';
-import { ToDoItemStylesNoBg } from '~/styles/ToDoItemStyles';
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import { EditIcon } from '../utilities/icons';
 import { Link } from '@remix-run/react';
+
+import { EditIcon } from '../utilities/icons';
+import { ToDoItemStylesNoBg } from '~/styles/ToDoItemStyles';
+
+import type { ListToDo } from '@prisma/client';
+import type { ListAndToDos } from '~/types/listTypes';
 
 interface ListCardProps {
   listItem: ListAndToDos;
@@ -16,7 +19,7 @@ const ListCardV2: React.FC<ListCardProps> = ({
 }) => {
 
   const listTitle = listItem.title
-  const todosArray = listItem.todos
+  const todosArray: ListToDo[] = listItem.todos
   const id = listItem.id
 
   return (
@@ -58,17 +61,17 @@ const ListCardV2: React.FC<ListCardProps> = ({
               <div
                 key={index}
                 className={` 
-                    flex w-full items-center content-center
+                    flex w-full gap-4 items-center content-center
                     p-0 m-0
                     text-left 
                    ${priorityStyling}
                     `}>
-                <div className={`w-3/5 wrap truncate text-ellipsis	${todoObj.complete && 'line-through text-slate-300'}`} >
+                <div className={` wrap truncate text-ellipsis	${todoObj.complete && 'line-through text-slate-300'}`} >
                   {todoObj.body}
                 </div>
 
                 {todoObj.dueDate && (
-                  <div className={`text-xs font-medium text-slate-400 self-center ${todoObj.complete && 'line-through text-slate-300'}`}>
+                  <div className={` text-xs font-medium text-slate-400 self-center ${todoObj.complete && 'line-through text-slate-300'}`}>
                     {format(new Date(todoObj.dueDate), 'EEE, MMM d', { locale: enUS })}
                   </div>
                 )}

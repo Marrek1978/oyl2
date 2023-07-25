@@ -15,23 +15,34 @@ interface ListsAsDraggableItemsProps {
 
 export default function ListsAsDraggableItems({ loadedToDos, loadedRoutines, handleDragStart }: ListsAsDraggableItemsProps) {
 
-  
+
 
   return (<>
     <article className="relative w-full  ">
       <div className='flex justify-between items-end content-end mb-6'>
         <div className='text-4xl font-medium font-nanum tracking-wide'>Routines</div>
-        <Link to='/dash/routines/new' >
-          <div className='w-72'>
+        <div className='flex gap-4'>
+          <Link to='/dash/routines' >
             <button
               className="
-                w-full
-                btn btn-primary btn-outline rounded-none font-mont">
-              Make New Routine
+              w-full
+              btn btn-primary btn-outline rounded-none font-mont">
+              Edit Routines
               {EditIcon}
             </button>
-          </div>
-        </Link>
+          </Link>
+          <Link to='/dash/routines/new' >
+            <div className=''>
+              <button
+                className="
+              w-full
+              btn btn-primary btn-outline rounded-none font-mont">
+                Make New Routine
+                {EditIcon}
+              </button>
+            </div>
+          </Link>
+        </div>
       </div>
       <div className='flex flex-wrap gap-6 mt-6'>
         {loadedRoutines?.map((routine: RoutineAndToDos) => (
@@ -42,23 +53,32 @@ export default function ListsAsDraggableItems({ loadedToDos, loadedRoutines, han
           />
         ))}
       </div>
-    </article>
+    </article >
 
 
     <article className="relative w-full mt-8  ">
       <div className='flex justify-between items-end content-end mb-6'>
         <div className='text-4xl font-medium font-nanum tracking-wide'>ToDos</div>
-        <Link to='/dash/todos/new' >
-          <div className='w-72'>
+        <div className='flex gap-4'>
+          <Link to='/dash/todos' >
             <button
               className="
-                w-full
-                btn btn-primary btn-outline rounded-none font-mont">
+            w-full
+            btn btn-primary btn-outline rounded-none font-mont">
+              Edit To-Do Lists
+              {EditIcon}
+            </button>
+          </Link>
+          <Link to='/dash/todos/new' >
+            <button
+              className="
+            w-full
+            btn btn-primary btn-outline rounded-none font-mont">
               Make New To-Do List
               {EditIcon}
             </button>
-          </div>
-        </Link>
+          </Link>
+        </div>
       </div>
       <div className='flex flex-wrap gap-6 mt-6'>
         {loadedToDos?.map((todo: ListAndToDos) => (
