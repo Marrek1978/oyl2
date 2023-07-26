@@ -1,6 +1,6 @@
 import { prisma } from "~/db.server";
 import type { User, Desire, DesireValue } from "@prisma/client";
-import { DesireWithValues } from "~/types/desireTypes";
+import type { DesireWithValues } from "~/types/desireTypes";
 
 type CreateDesire = {
   title: Desire["title"];

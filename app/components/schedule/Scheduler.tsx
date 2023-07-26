@@ -217,7 +217,6 @@ function Scheduler({
         <Modal onClose={() => { }} zIndex={30}>
           {successMessage}Yolo
           <SuccessMessage
-            // text={isEditingTodoList ? 'Routine was saved' : 'Routine was updated'}
             text='List was removed from Schedule'
           />
         </Modal>)

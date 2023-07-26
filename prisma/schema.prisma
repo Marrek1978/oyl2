@@ -7,24 +7,26 @@ generator client {
   provider = "prisma-client-js"
 }
 
-//!  need to change most plural model names to singular
 
 model User {
   id    String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
   email String @unique
   name String? @default("User")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   password Password?
+  projects Project[]
   notes    Note[]
   lists    List[]
   routines Routine[]
+  requiredSavings RequiredSavings[]
+  routineTrackers RoutineTracker[]
+  scheduledLists ScheduledList[]
   values  Value[]
   desires  Desire[]
   desiresClarifyingQuestions DesiresClarifyingQuestions[]
-  scheduledLists ScheduledList[]
 }
 
 model Password {
@@ -34,42 +36,108 @@ model Password {
   userId String @unique
 }
 
-model Note {
-  id    String @id @default(cuid())
-  title String
-  body  String
-
+model Project {
+  id String @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+    
+  title String
+  description String?
+  sortOrder Int @default(0)
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
+
+   desireId String? @unique
+  desire Desire? @relation(fields: [desireId], references: [id])
+
+  notes    Note[]
+  lists    List[]
+  routines Routine[]
+  requiredSavings RequiredSavings[]
+  routineTrackers RoutineTracker[]
+}
+
+model RequiredSavings {
+  id String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title String
+  description String?
+  sortOrder Int @default(0)
+
+  requiredAmount Int
+  savedAmount Int @default(0)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId String?
+
+}
+
+model RoutineTracker {
+  id String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title String
+  description String?
+  sortOrder Int @default(0)
+
+  date DateTime
+  success Boolean @default(false)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId String?
+  routine Routine? @relation(fields: [routineId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  routineId String?
+
+}
+
+model Note {
+  id    String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  title String
+  body  String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId String?
 }
 
 model List {
   id    String @id @default(cuid())
-  title String
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  title String
+
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId String?
 
   todos ListToDo[]
 }
 
 model ListToDo {
   id   String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
   body String
   urgent Boolean
   important Boolean
   complete Boolean @default(false)
   dueDate DateTime?
   sortOrder Int
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   list  List   @relation(fields: [listId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   listId String
@@ -77,29 +145,35 @@ model ListToDo {
 
 model Routine {
   id    String @id @default(cuid())
-  title String
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  title String
+
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
-
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId String?
+  
   routineToDos RoutineToDo[]
+  routineTracker RoutineTracker[]
 }
 
 model RoutineToDo {
   id   String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
   body String
   complete Boolean @default(false)
   sortOrder Int
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   routine   Routine   @relation(fields: [routineId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   routineId String
 }
+
+
+
 model Value {
   id   String @id @default(cuid())
   createdAt DateTime @default(now())
@@ -127,6 +201,8 @@ model Desire {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
+  projectId String? @unique
+  project Project? 
 
   desireValues DesireValue[]
 }
@@ -171,10 +247,10 @@ model DesiresClarifyingQuestions {
 
 model ScheduledList {
   id    String @id @default(cuid())
-  listId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
+  listId String
   title String
   isDraggable Boolean @default(true)
   start   DateTime
@@ -183,6 +259,7 @@ model ScheduledList {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
-
 }
+
+
 

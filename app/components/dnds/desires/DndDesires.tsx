@@ -11,11 +11,9 @@ import DndSortableDesire from '~/components/dnds/desires/DndSortableDesire';
 import type { DesireWithStringDates, DesireWithValues } from '~/types/desireTypes'
 import HeadingH1 from '~/components/titles/HeadingH1';
 
-interface DndDesiresProps {
-  setOrderBool?: (bool: boolean) => void
-}
 
-const DndDesires: React.FC<DndDesiresProps> = ({ setOrderBool }) => {
+
+const DndDesires = () => {
 
   const fetcher = useFetcher();
   const loaderData = useLoaderData();
@@ -56,6 +54,8 @@ const DndDesires: React.FC<DndDesiresProps> = ({ setOrderBool }) => {
       updatedAt: new Date(desire.updatedAt!),
     }));
   }
+
+
 
   const resetDesiresSortOrder = (desires: DesireWithValues[]) => {
     const reOrdered = desires?.map((desire, index) => {

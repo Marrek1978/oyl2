@@ -1,10 +1,10 @@
-import type { Desires, Values } from "@prisma/client";
+import type { Desire, Value } from "@prisma/client";
 
-export type DesireWithStringDates = Desires & { createdAt: String, updatedAt: String }
+export type DesireWithStringDates = Desire & { createdAt: String, updatedAt: String }
 
-export type DesireWithValues = Desires & {desireValues: {value: Values}[]}
+export type DesireWithValues = Desire & {desireValues: {value: Value}[]}
 
 export interface validationErrorsTypes {
-  title?: Desires['title']
-  description?: Desires['description']
+  title?: Desire['title']
+  description?: Desire['description']
 }

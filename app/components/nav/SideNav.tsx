@@ -27,6 +27,19 @@ const SideNav = () => {
               <span>Today</span>
             </NavLink>
           </li>
+
+          <li className="">
+            <NavLink to='/dash/schedule' end >
+              <span>Schedule</span>
+            </NavLink>
+          </li>
+
+          <li className="">
+            <NavLink to='/dash/projects' end >
+              <span>Projects</span>
+            </NavLink>
+          </li>
+
           <li className="">
             <NavLink to='/dash/lists' >
               <span>ToDos & Routines</span>
@@ -49,17 +62,9 @@ const SideNav = () => {
           </>
           )}
 
-          <li className="">
-            <NavLink to='/dash/schedule' end >
-              <span>Schedule</span>
-            </NavLink>
-          </li>
+        
 
-          <li className="">
-            <NavLink to='/dashboard/todos' end >
-              <span>Projects</span>
-            </NavLink>
-          </li>
+         
 
           <li className="">
             <NavLink to='/dash/clarity' end >
