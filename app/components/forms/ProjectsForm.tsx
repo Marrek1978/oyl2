@@ -1,8 +1,10 @@
-import type { Desire, Project } from '@prisma/client'
+import React, { useEffect, useState, useRef } from 'react'
 import { Form, Link, useActionData, useLocation, useMatches, useNavigation } from '@remix-run/react'
-import React, { useEffect, useState } from 'react'
-import { closeIcon, dbIcon, trashIcon } from '../utilities/icons';
+
 import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
+import { closeIcon, dbIcon, trashIcon } from '../utilities/icons';
+
+import type { Desire, Project } from '@prisma/client'
 import type { ProjectWithDesires } from '~/types/projectTypes';
 
 interface ProjectFormProps {
@@ -19,20 +21,21 @@ export default function ProjectsForm({ passedProject }: ProjectFormProps) {
   const project = passedProject as ProjectWithDesires
 
   const [title, setTitle] = useState<string>('')
-  const [description, setDescription] = useState<string>('')
   const [projectId, setProjectId] = useState<string>('')
   const [sortOrder, setSortOrder] = useState<number>(0) //if adding new desire, set to desires.length
+  const [description, setDescription] = useState<string>('')
+  const [saveEdits, setSaveEdits] = useState<boolean>(false)
+  const [selectedDesireId, setSelectedDesireId] = useState<string>('')
   const [isAddNewProjectRoute, setIsAddNewProjectRoute] = useState<boolean>(true) //true if /dash/desires, false if /dash/desires/:desireId
-  // const [projectDesire, setProjectDesire] = useState<Desire[]>([])
-  const [checkedValue, setCheckedValue] = useState<string>('');
 
   const isSubmitting = navigation.state === 'submitting'
   const allUserProjects: Project[] = matches.find(match => match.id === 'routes/dash.projects')?.data.projects
-  const listOfDesireIdsInProjectsTable: string[] = allUserProjects?.filter((project) => project.desireId !== null)  // list of projects that have a desireId
-    .map((project) => project.desireId as string)
-  console.log('listOfDesireIdsInProjectsTable', listOfDesireIdsInProjectsTable)
-
   const allUserDesires: Desire[] = matches.find(match => match.id === 'routes/dash.projects')?.data.desires
+
+  const listOfUsedDesireIds = useRef(
+    allUserProjects?.filter((project) => project.desireId !== null)  // list of projects that have a desireId
+      .map((project) => project.desireId as string)
+  );
 
 
   useEffect(() => {
@@ -44,37 +47,37 @@ export default function ProjectsForm({ passedProject }: ProjectFormProps) {
   }, [location.pathname]);
 
 
+  //loading data from passedProject or nothing
   useEffect(() => {
     setTitle(project?.title || '')
     setDescription(project?.description || '')
     setSortOrder(project?.sortOrder || allUserProjects?.length || 0)
     setProjectId(project?.id || '')
-
-    if (project?.desireId) {
-      setCheckedValue(project.desireId)
-      // setProjectDesires(project.desires.map(d => d.desire))
-    }
+    setSelectedDesireId(project?.desireId || '')
+    listOfUsedDesireIds.current = listOfUsedDesireIds.current.filter((desireId) => desireId !== project?.desireId)
   }, [allUserProjects, project])
 
-  // useEffect(() => {
-  // if (projectDesires) {
-  //   setCheckedValue(projectDesires?.map(projectDesire => projectDesire?.title));
-  // }
-  // }, [projectDesire]);
 
-  // const handleCheckboxChange = (valueTitle: string) => {
-  //   setCheckedValue(prevCheckedValue => {
-  //     if (prevCheckedValue.includes(valueTitle)) {
-  //       return prevCheckedValue.filter(title => title !== valueTitle);
-  //     } else {
-  //       return [valueTitle]; // instead of spreading the previous values, replace all of them with the new value
-  //     }
-  //   });
-  // }
+  useEffect(() => {
+    setSaveEdits(
+      title !== project?.title
+      || description !== project?.description
+      || !!(project?.desireId && selectedDesireId !== project?.desireId)   //original desire is changed
+      || !!(!project?.desireId && selectedDesireId)  // originally no desire then one is added
+    )
+  }, [selectedDesireId, title, description, project])
 
-  const handleRadioChange = (desireId: string) => {
-    setCheckedValue(desireId);
+
+  const handleCheckboxChange = (desireId: string) => {
+    setSelectedDesireId((prevId) => {
+      if (prevId === desireId) {
+        return ''
+      } else {
+        return desireId
+      }
+    })
   }
+
 
   return (
     <>
@@ -110,6 +113,7 @@ export default function ProjectsForm({ passedProject }: ProjectFormProps) {
                 "
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              required
             />
             {validationErrors?.title && (
               <div className='text-red-700'> {validationErrors.title}</div>
@@ -130,6 +134,7 @@ export default function ProjectsForm({ passedProject }: ProjectFormProps) {
                 name='description'
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                required
               >
               </textarea>
               {validationErrors?.description && (
@@ -148,11 +153,9 @@ export default function ProjectsForm({ passedProject }: ProjectFormProps) {
 
             <div className="grid grid-cols-[minmax(0,_max-content)_min-content] gap-x-6 ">
               {allUserDesires?.map((desire: Desire) => {
-                let isNotAvailabeForAssociation = listOfDesireIdsInProjectsTable.map((desireId) => desireId === desire.id).includes(true)
-
-                // desire.projectId ? true : false
-                console.log('isNotAvailabeForAssociation  is', isNotAvailabeForAssociation)
-
+                let isNotAvailabeForAssociation = listOfUsedDesireIds.current
+                  .map((desireId) => desireId === desire.id)
+                  .includes(true);
 
                 return (
                   <React.Fragment key={desire.id}>
@@ -164,17 +167,15 @@ export default function ProjectsForm({ passedProject }: ProjectFormProps) {
                     <div className='label'>
                       {!isNotAvailabeForAssociation && (
                         <input
-                          type="radio"
-                          className="radio radio-secondary self-center "
+                          type="checkbox"
+                          className="checkbox checkbox-secondary self-center "
                           name='desireId'
                           value={desire.id}
-                          checked={checkedValue === desire.id}
-                          onChange={() => handleRadioChange(desire.id)}
+                          checked={selectedDesireId.includes(desire.id)}
+                          onChange={() => handleCheckboxChange(desire.id)}
                         />
                       )}
                     </div>
-
-
                   </React.Fragment >
                 )
               })}
@@ -197,7 +198,7 @@ export default function ProjectsForm({ passedProject }: ProjectFormProps) {
                 <button
                   className="btn btn-primary rounded-none w-full   "
                   type='submit'
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !saveEdits}
                 >
                   {isSubmitting ? 'Saving...' : 'Save Edits'} {dbIcon}
                 </button>
@@ -205,13 +206,13 @@ export default function ProjectsForm({ passedProject }: ProjectFormProps) {
 
               <div className='w-full flex gap-4 mt-6 mb-8'>
                 <div className='flex-1'>
-                  <Link to='delete' >
+                  <Link to='../delete' >
                     <button className='btn btn-error btn-outline  
                     w-full
                     rounded-none
                     font-mont font-semibold
                   ' >
-                      Delete Desire
+                      Delete Project
                       {trashIcon}
                     </button>
                   </Link>

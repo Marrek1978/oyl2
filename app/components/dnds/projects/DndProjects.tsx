@@ -1,5 +1,5 @@
 import { useFetcher, useLoaderData } from '@remix-run/react'
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { ProjectWithDesires, ProjectWithStringDates } from '~/types/projectTypes';
 
 import type { DragEndEvent } from "@dnd-kit/core";
@@ -11,19 +11,24 @@ import HeadingH1 from '~/components/titles/HeadingH1';
 import DndSortableProject from './DndSortableProject';
 
 
+//  highlight currenly selected project at dash/projects/$projectId
+//  highlihgt to project as current 'Focus'
 
 function DndProjects() {
 
   const fetcher = useFetcher();
   const loadedProjects = useLoaderData();
 
+
   const [projects, setProjects] = useState<ProjectWithDesires[]>([]);
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
 
+
   useEffect(() => {
     if (loadedProjects?.projects) { setProjects(transformProjectDates(loadedProjects?.projects)) }
   }, [loadedProjects])
+
 
   function transformProjectDates(desires: ProjectWithStringDates[]) {
     return desires.map((desire: any) => ({
@@ -33,14 +38,12 @@ function DndProjects() {
     }));
   }
 
+
   useEffect(() => {
-
-    if(fetcher.data?.status === 'success') {
+    if (fetcher.data?.status === 'success') {
       setSuccessMessage('Projects Order was saved');
-      setTimeout(() => setSuccessMessage(''), 500); 
-      console.log('success')
+      setTimeout(() => setSuccessMessage(''), 500);
     }
-
   }, [fetcher])
 
 
@@ -52,10 +55,8 @@ function DndProjects() {
       }, {
         method: 'POST',
       })
-
-      // setSuccessMessage('Projects Order was saved');
-      // setTimeout(() => setSuccessMessage(''), 500); // Clear the message after 3 seconds
     } catch (error) { throw error }
+
     setSaveNewSortOrder(false);
   }, [projects, fetcher])
 
@@ -111,6 +112,7 @@ function DndProjects() {
             />
           </Modal>)
         }
+        <div className=''></div>
         <HeadingH1 text={'Your Projects'} />
         <DndContext
           collisionDetection={closestCenter}

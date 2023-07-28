@@ -36,7 +36,7 @@ function DesiresPage() {
   return (
     <>
       <section className='flex gap-8'>
-        <div className=' flex-1  max-w-max'>
+        <div className=' flex-1 min-w-[300px] max-w-[500px]'>
           <BasicTextAreaBG >
             <DndDesires />
           </BasicTextAreaBG >

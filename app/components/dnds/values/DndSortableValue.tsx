@@ -4,11 +4,11 @@ import { useSortable } from '@dnd-kit/sortable';
 
 import { EditIcon } from "../../utilities/icons";
 
-import type { Values } from '@prisma/client';
+import type { Value } from '@prisma/client';
 
 interface DndSortableValueProps {
   id: string;
-  value: Values;
+  value: Value;
 }
 
 function DndSortableValue({ id, value }: DndSortableValueProps) {
@@ -21,9 +21,9 @@ function DndSortableValue({ id, value }: DndSortableValueProps) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="max-w-max">
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="w-full">
       <div key={value.id} id={value.id} className='
-        max-w-max
+        
         px-3 py-4 
         mt-2
         font-poppins

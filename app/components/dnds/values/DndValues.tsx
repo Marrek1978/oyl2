@@ -9,7 +9,7 @@ import Modal from '~/components/modals/Modal';
 import HeadingH1 from '~/components/titles/HeadingH1';
 import SuccessMessage from '~/components/modals/SuccessMessage';
 
-import type { Values } from '@prisma/client'
+import type { Value } from '@prisma/client'
 import type { ValuesWithStringDates } from '~/types/valueTypes'
 
 interface DndValuesProps {
@@ -20,7 +20,7 @@ const DndValues: React.FC<DndValuesProps> = ({ setOrderBool }) => {
 
   const valuesData = useLoaderData<ValuesWithStringDates[]>();
   const fetcher = useFetcher();
-  const [values, setValues] = useState<Values[]>([]);
+  const [values, setValues] = useState<Value[]>([]);
   const [successMessage, setSuccessMessage] = useState('');
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
 
@@ -57,7 +57,7 @@ const DndValues: React.FC<DndValuesProps> = ({ setOrderBool }) => {
     }));
   }
 
-  const resetValuesSortOrder = (values: Values[]) => {
+  const resetValuesSortOrder = (values: Value[]) => {
     const reOrdered = values?.map((value, index) => {
       return {
         ...value,
@@ -71,7 +71,7 @@ const DndValues: React.FC<DndValuesProps> = ({ setOrderBool }) => {
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      setValues((prevValues: Values[]) => {
+      setValues((prevValues: Value[]) => {
         const oldIndex = prevValues.findIndex(value => value.id === active.id);
         const newIndex = prevValues.findIndex(value => value.id === over?.id);
         const newValues = arrayMove(prevValues, oldIndex, newIndex);

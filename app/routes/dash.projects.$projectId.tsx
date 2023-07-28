@@ -1,13 +1,13 @@
-import type { Project } from '@prisma/client'
 import { Link, Outlet, useMatches, useParams } from '@remix-run/react'
 import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime'
-import React from 'react'
-import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
-import HeadingH1 from '~/components/titles/HeadingH1'
-import { Desire } from '@prisma/client';
-import TextBtn from '~/components/buttons/TextBtn'
-import { EditIcon } from '~/components/utilities/icons'
 
+import TextBtn from '~/components/buttons/TextBtn'
+import HeadingH1 from '~/components/titles/HeadingH1'
+import { EditIcon } from '~/components/utilities/icons'
+import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
+
+import type { Project, Desire } from '@prisma/client'
+import HeadingH2 from '~/components/titles/HeadingH2'
 
 export const loader = async ({ request }: LoaderArgs) => {
 
@@ -19,10 +19,9 @@ export const action = async ({ request }: ActionArgs) => {
   return null
 }
 
-//edit projecdt fields
-// add lists, routines, routine_tracker, and required_savings, associated to project.
-// nested lists will be available to schedule, routines will be available to schedule,
-//  routine_tracker will not be available to schedule, required_savings will not be available to schedule
+//! add lists, routines, routine_tracker, and required_savings, associated to project.
+// ! nested lists will be available to schedule, routines will be available to schedule,
+// !  routine_tracker will not be available to schedule, required_savings will not be available to schedule
 export default function ProjectByIdPage() {
 
   const matches = useMatches();
@@ -37,11 +36,9 @@ export default function ProjectByIdPage() {
     <>
       <Outlet />
       <div className='flex flex-col gap-6'>
-
         <article>
           <BasicTextAreaBG >
             <div className='flex justify-between items-baseline'>
-
               <div className='flex gap-4 items-baseline '>
                 <HeadingH1 text={project.title} />
                 {desireTitle && (
@@ -52,21 +49,30 @@ export default function ProjectByIdPage() {
               </div>
               <Link to={'edit'} >
                 <TextBtn
-                  text='Edit Project Details'
+                  text='Edit Project Description'
                   onClickFunction={() => { }}
                   icon={EditIcon}
                 />
               </Link>
-
             </div>
-            <p className='text-xl' >{project.description}</p>
-
-
+            <p className='text-xl mt-4' >{project.description}</p>
           </BasicTextAreaBG >
         </article>
 
         <article>
           <BasicTextAreaBG >
+            <div className='flex justify-between items-baseline'>
+              <HeadingH2 text='Lists' />
+              <Link to={'edit'} >
+                <TextBtn
+                  text='Edit Lists'
+                  onClickFunction={() => { }}
+                  icon={EditIcon}
+                />
+              </Link>
+            </div>
+
+            Milestones
             Lists
             Habits
             habit tracker

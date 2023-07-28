@@ -25,9 +25,9 @@ function DndSortableDesire({ id, desire }: DndSortableDesireProps) {
   desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="max-w-max">
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="w-full">
       <div key={desire.id} id={desire.id} className='
-        max-w-max
+       
         px-3 py-4 
         mt-2
         font-poppins
@@ -41,6 +41,19 @@ function DndSortableDesire({ id, desire }: DndSortableDesireProps) {
         {/* <div className='flex items-center justify-between gap-12  '> */}
         <div className="flex items-center justify-between gap-4 ">
           <div className='text-xl font-medium'>{desire.title}</div>
+          {/* //!  add value-badges here */}
+          <div className="flex flex-wrap gap-2 items-center w-full mt-2">
+            {desireValues.map((value) => {
+              const title = value.value.valueTitle
+              let id = uuidv4();
+              return (
+                <div key={id} className="badge badge-xs badge-info gap-2 ">
+                  {title}
+                </div>
+              )
+            })
+            }
+          </div>
           <Link to={desire.id} >
             <div className='flex gap-2 items-center
                 text-primary font-mont font-bold text-xs  uppercase
@@ -58,19 +71,7 @@ function DndSortableDesire({ id, desire }: DndSortableDesireProps) {
           {desire.description}
         </div>
 
-        {/* //!  add value-badges here */}
-        <div className="flex flex-wrap gap-2 items-center w-full mt-2">
-          {desireValues.map((value) => {
-            const title = value.value.valueTitle
-            let id = uuidv4();
-            return (
-              <div key={id} className="badge badge-xs badge-info gap-2 ">
-                {title}
-              </div>
-            )
-          })
-          }
-        </div>
+
       </div>
     </div>
   );

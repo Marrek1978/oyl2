@@ -1,15 +1,15 @@
 import {json, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime';
 import { Outlet } from '@remix-run/react';
 import { requireUserId } from '~/models/session.server';
-import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
-import { getProjects, updateProjectsOrder } from '~/models/project.server';
-import DndProjects from '~/components/dnds/projects/DndProjects';
-import { getDesires } from '~/models/desires.server';
 import { parse } from 'querystring';
 
+import DndProjects from '~/components/dnds/projects/DndProjects';
+import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
+import { getDesires } from '~/models/desires.server';
+import { getProjects, updateProjectsOrder } from '~/models/project.server';
+
 export const loader = async ({ request }: LoaderArgs) => {
-  let userId;
-  userId = await requireUserId(request);
+  let userId = await requireUserId(request);
   try {
     const desires = await getDesires(userId)
     const projects = await getProjects(userId)
@@ -28,16 +28,12 @@ export const action = async ({ request }: ActionArgs) => {
   } catch (error) { throw error }
 }
 
-//list of dnd projects, dnd to order priority
-
-
-
 export default function AllProjectsPage() {
 
   return (
     <>
       <section className='flex gap-8'>
-        <div className=' flex-1  max-w-max'>
+        <div className=' flex-1 max-w-max'>
           <BasicTextAreaBG >
             <DndProjects />
           </BasicTextAreaBG >
