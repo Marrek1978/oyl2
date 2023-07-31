@@ -1,12 +1,14 @@
 import React from 'react'
 
-function SubHeading14px({text}: {text: string}) {
+function SubHeading14px({ text }: { text: string }) {
   return (
     <>
-    <div className='text-sm font-bold font-mont tracking-wide uppercase'>
-      {text}
-    </div>
-  </>
+      <div className='text-sm font-bold font-mont 
+      tracking-wide uppercase whitespace-pre
+      '>
+        {text}
+      </div>
+    </>
   )
 }
 

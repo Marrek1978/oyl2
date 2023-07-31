@@ -1,0 +1,44 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+
+.input-field-text-title {
+  @apply  
+  input border-none input-secondary 
+  bg-base-200 rounded-none
+  font-poppins font-normal tracking-wide
+}
+
+.input-field-text-para {
+  @apply  
+  w-full 
+  textarea textarea-bordered h-24 
+  input border-none input-secondary 
+  bg-base-200 rounded-none
+  font-poppins font-normal  
+  leading-snug
+}
+
+.validation-error {
+  @apply  
+  text-base text-error
+  font-poppins font-normal  
+  leading-snug
+}
+
+.vert-space-between-inputs {
+  @apply  
+  mt-6
+}
+
+.list-grid {
+  @apply  
+  grid gap-x-6 
+  grid-cols-[minmax(0,_max-content)_min-content] 
+}
+
+.two-button-spacing {
+  @apply  
+  w-full flex gap-4 
+}

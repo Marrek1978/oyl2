@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { useCallback, useEffect, useState } from 'react'
-import { useFetcher, useLoaderData } from '@remix-run/react';
+import { useFetcher, useRouteLoaderData } from '@remix-run/react';
 import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
@@ -19,7 +19,7 @@ import SubHeading12px from '~/components/titles/SubHeading12px';
 const DndDesires = () => {
 
   const fetcher = useFetcher();
-  const loaderData = useLoaderData();
+  const loaderData = useRouteLoaderData('routes/dash.desires');
 
   const [desires, setDesires] = useState<DesireWithValues[]>([]);
   const [successMessage, setSuccessMessage] = useState<string>('');
@@ -110,14 +110,7 @@ const DndDesires = () => {
           items={desires?.map(desire => desire.id)}
           strategy={verticalListSortingStrategy}
         >
-          {/* {desires?.map((desire) => (
-            <DndSortableDesire
-              key={desire.id}
-              id={desire.id}
-              desire={desire}
-            />
-          ))} */}
-
+      
           {desires?.map((desire) => {
 
             const desireValues = desire.desireValues
@@ -132,7 +125,7 @@ const DndDesires = () => {
                 linkTitle='Go to desire'
               >
 
-                <div className="flex flex-wrap gap-2 items-center w-full mt-0">
+                <div className="flex flex-wrap gap-2 items-center w-full mt-1">
                   {desireValues.map((value) => {
                     const title = value.value.valueTitle
                     let id = uuidv4();

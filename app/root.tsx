@@ -1,6 +1,6 @@
+import { json } from "@remix-run/node";
 import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction, LoaderArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import {
   Link,
   Links,
@@ -12,22 +12,20 @@ import {
   isRouteErrorResponse,
   useRouteError,
 } from "@remix-run/react";
-import Error from '~/components/utilities/Error'
-import type { CustomError } from "./types/ErrorTypes";
-
 
 import Navbar from './components/nav/Navbar';
-
+import Error from '~/components/utilities/Error'
 import { getUser } from "~/models/session.server";
 
-// import stylesheet from "~/tailwind.css";
-import tailwindStylesheetUrl from "~/styles/tailwind.css";
-// import "tw-elements/dist/css/tw-elements.min.css";
-
-// import "react-datepicker/dist/react-datepicker.css";
-import datePickerStyles from "~/styles/CustomCss.css";
 import navSytles from '~/styles/SideNav.css'
+import FormStyles from '~/styles/FormCss.css';
+import datePickerStyles from "~/styles/CustomCss.css";
+import tailwindStylesheetUrl from "~/styles/tailwind.css";
+
 import { ThemeProvider, useTheme } from './styles/ThemeContext';
+
+import type { CustomError } from "./types/ErrorTypes";
+
 
 export const links: LinksFunction = () => [
   // { rel: "stylesheet", href: stylesheet },
@@ -35,7 +33,8 @@ export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
   { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" },
   { rel: 'stylesheet', href: datePickerStyles },
-  { rel: 'stylesheet', href: navSytles }
+  { rel: 'stylesheet', href: navSytles },
+  { rel: 'stylesheet', href: FormStyles },
 ];
 
 

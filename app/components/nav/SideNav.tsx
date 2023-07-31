@@ -12,10 +12,10 @@ const SideNav = () => {
     || location.pathname.includes('/dash/routines')
   );
 
-  const isValues = (
-    location.pathname.includes('/dash/values')
-    || location.pathname.includes('/dash/desires')
-  );
+  // const isValues = (
+  //   location.pathname.includes('/dash/values')
+  //   || location.pathname.includes('/dash/desires')
+  // );
   // console.log('isListPage is:', isListPage); // logs the current URL path
 
   return (
@@ -78,13 +78,15 @@ const SideNav = () => {
             </NavLink>
           </li>
 
-          {isValues && (<>
+          {/* {isValues && (<> */}
             <li className="">
-              <NavLink to='/dash/desires' end className='link__indent1'  >
+              <NavLink to='/dash/desires' end 
+              // className='link__indent1'
+                >
                 <span>Desires</span>
               </NavLink>
             </li>
-            <li className="">
+            {/* <li className="">
               <NavLink to='/dash/desires' end className='link__indent2'  >
                 <span>Current Situation</span>
               </NavLink>
@@ -93,9 +95,9 @@ const SideNav = () => {
               <NavLink to='/dash/delta' end className='link__indent3'  >
                 <span>Delta</span>
               </NavLink>
-            </li>
-          </>
-          )}
+            </li> */}
+          {/* </> */}
+          {/* )} */}
 
           <li className="relative">
             <NavLink to='/dashboard/todos' end >

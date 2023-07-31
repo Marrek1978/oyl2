@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Form, Link, useActionData, useLocation, useMatches, useNavigation } from '@remix-run/react';
 
+import ListLabel from './ListLabel';
+import InputLabel from './InputLabel';
+import SolidBtn from '../buttons/SolidBtn';
+import BasicFormAreaBG from './BasicFormAreaBG';
+import OutlinedBtn from '../buttons/OutlinedBtn';
 import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
 import { closeIcon, dbIcon, trashIcon } from '../utilities/icons';
 
@@ -12,9 +17,6 @@ interface DesireFormProps {
   desire?: DesireWithValues
 }
 
-//! *************  get checkboxes clearing ... in chat gpt
-//! *************  make sortable
-
 function DesiresForm({ desire }: DesireFormProps) {
 
   const matches = useMatches();
@@ -24,11 +26,12 @@ function DesiresForm({ desire }: DesireFormProps) {
 
   const [title, setTitle] = useState<string>('')
   const [desireId, setDesireId] = useState<string>('')
-  const [description, setDescription] = useState<string>('')
   const [sortOrder, setSortOrder] = useState<number>(0) //if adding new desire, set to desires.length
-  const [isAddNewDesireRoute, setIsAddNewDesireRoute] = useState<boolean>(true) //true if /dash/desires, false if /dash/desires/:desireId
+  const [description, setDescription] = useState<string>('')
+  const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
   const [desireValues, setDesireValues] = useState<Value[]>([])
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
+  const [isAddNewDesireRoute, setIsAddNewDesireRoute] = useState<boolean>(true) //true if /dash/desires, false if /dash/desires/:desireId
 
   const isSubmitting = navigation.state === 'submitting'
   const desires: Desire[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
@@ -37,6 +40,7 @@ function DesiresForm({ desire }: DesireFormProps) {
   useEffect(() => {
     if (location.pathname === '/dash/desires') {
       setIsAddNewDesireRoute(true)
+      setIsSaveable(true)
     } else if (location.pathname.startsWith('/dash/desires/')) {
       setIsAddNewDesireRoute(false)
     }
@@ -48,16 +52,35 @@ function DesiresForm({ desire }: DesireFormProps) {
     setDescription(desire?.description || '')
     setSortOrder(desire?.sortOrder || desires?.length || 0)
     setDesireId(desire?.id || '')
-
-    const desireValuesOnly = desire?.desireValues.map((dv: any) => dv.value)
+    const desireValuesOnly = desire?.desireValues.map((dv: any) => dv.value.valueTitle)
     setDesireValues(desireValuesOnly || [])
+    desireValuesOnly && setCheckedValues(desireValuesOnly?.map(dv => dv));
   }, [desires, desire])
 
+
   useEffect(() => {
-    if (desireValues) {
-      setCheckedValues(desireValues?.map(dv => dv?.valueTitle));
+    const isInputEmpty = isAddNewDesireRoute && (!title || !description)
+    const isInputDifferent = !isAddNewDesireRoute && (
+      title !== desire?.title || description !== desire?.description
+      || !arraysEqual(desireValues, checkedValues)
+    )
+    setIsSaveable(!isInputEmpty && (isInputDifferent))
+  }, [title, description, desire?.title, desire?.description, isAddNewDesireRoute, desireValues, checkedValues]);
+
+
+  function arraysEqual(a: any[], b: any[]) {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
+
+    const sortedA = a.slice().sort();
+    const sortedB = b.slice().sort();
+
+    for (let i = 0; i < sortedA.length; ++i) {
+      if (sortedA[i] !== sortedB[i]) return false;
     }
-  }, [desireValues]);
+    return true;
+  }
 
   const handleCheckboxChange = (valueTitle: string) => {
     setCheckedValues(prevCheckedValues => {
@@ -72,54 +95,33 @@ function DesiresForm({ desire }: DesireFormProps) {
 
   return (
     <>
-      <div className='
-          bg-base-100 
-          grid grid-cols-[minmax(300px,800px)] grid-rows-[72px_1fr_min-content]
-          cursor-default
-        '>
-        <div className='w-full h-full px-8 bg-base-content flex justify-between items-center'>
-          <div className={`
-              text-xl font-mont uppercase font-normal tracking-widest 
-              text-primary-300
-              truncate overflow-ellipsis 
-              `}>
-            {isAddNewDesireRoute ? 'Create New Desire' : (<div ><span className='text-sm' >Edit Desire:</span>  {title}</div>)}
-          </div>
-        </div>
-
+      <BasicFormAreaBG
+        title={isAddNewDesireRoute
+          ? 'Create New Desire'
+          : (<div ><span className='text-sm' >Edit Desire: </span>{title}</div>)
+        }
+      >
         <Form method='post' className='mx-8'>
-          <div className="form-control mt-6">
+          <div className="form-control vert-space-between-inputs">
             <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
             <input type="string" name='desireId' value={desireId} hidden readOnly />
-            <label className="label pl-0">
-              <span className="label-text text-base font-mont font-semibold">Desire Title</span>
-            </label>
+
+            <InputLabel text='Desire Title' />
             <input type="text"
               placeholder="Enter a Desire Title"
               name='title'
-              className="
-                input border-none input-secondary 
-                bg-base-200 rounded-none
-                font-poppins font-normal tracking-wide
-                "
+              className='input-field-text-title'
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
             {validationErrors?.title && (
-              <div className='text-red-700'> {validationErrors.title}</div>
+              <div className='validation-error'> {validationErrors.title}</div>
             )}
 
-            <div className='mt-6'>
-              <label className="label pl-0">
-                <span className="label-text text-base font-mont font-semibold">Description</span>
-              </label>
+            <div className='vert-space-between-inputs'>
+              <InputLabel text='Description' />
               <textarea
-                className="w-full 
-                  textarea textarea-bordered h-24 
-                  input border-none input-secondary 
-                  bg-base-200 rounded-none
-                  font-poppins font-normal  leading-snug
-                  "
+                className='input-field-text-para '
                 placeholder="Describe what you desire. You can describe why you desire somethihng, but do not spend any time justifying your desire."
                 name='description'
                 value={description}
@@ -127,7 +129,7 @@ function DesiresForm({ desire }: DesireFormProps) {
               >
               </textarea>
               {validationErrors?.description && (
-                <div className='text-red-700'> {validationErrors.description}</div>
+                <div className='validation-error'> {validationErrors.description}</div>
               )}
             </div>
           </div>
@@ -135,18 +137,13 @@ function DesiresForm({ desire }: DesireFormProps) {
 
           {/* //**************VALUES CHECKBOXES ***************  */}
 
-          <div className='mt-6'>
-            <label className="label pl-0">
-              <span className="label-text text-base font-mont font-semibold">Values Served</span>
-            </label>
-
-            <div className="grid grid-cols-[minmax(0,_max-content)_min-content] gap-x-6 ">
+          <div className='vert-space-between-inputs'>
+            <InputLabel text='Values Served' />
+            <div className="list-grid">
               {allUserValues?.map((value: Value) => (
                 <React.Fragment key={value.id}>
-                  <div className="mr-12" >
-                    <label className="cursor-pointer label">
-                      <span className="label-text">{value.valueTitle}</span>
-                    </label>
+                  <div className="" >
+                    <ListLabel text={value.valueTitle} />
                   </div>
                   <div className='label'>
                     <input
@@ -163,54 +160,41 @@ function DesiresForm({ desire }: DesireFormProps) {
           </div>
 
           {/* //**************BUTTONS ***************  */}
-          {isAddNewDesireRoute
-            ? (
-              <button
-                className="w-full btn btn-primary rounded-none mt-8  mb-8   "
-                type='submit'
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Saving...' : 'Save Edits'} {dbIcon}
-              </button>
-            ) : (<>
+          <div className='mt-6 mb-8'>
+            <SolidBtn text={isSubmitting ? 'Saving...' : 'Save Edits'}
+              onClickFunction={() => { }}
+              icon={dbIcon}
+              disableSaveBtn={isSubmitting || !isSaveable}
+            />
 
-              <div className='mt-6'>
-                <button
-                  className="btn btn-primary rounded-none w-full   "
-                  type='submit'
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Saving...' : 'Save Edits'} {dbIcon}
-                </button>
-              </div>
+            {!isAddNewDesireRoute &&
+              (<>
+                <div className='two-button-spacing mt-6 mb-8'>
 
-              <div className='w-full flex gap-4 mt-6 mb-8'>
-                <div className='flex-1'>
-                  <Link to='delete' >
-                    <button className='btn btn-error btn-outline  
-                    w-full
-                    rounded-none
-                    font-mont font-semibold
-                  ' >
-                      Delete Desire
-                      {trashIcon}
-                    </button>
-                  </Link>
+                  <div className='flex-1'>
+                    <Link to='delete' >
+                      <OutlinedBtn
+                        text='Delete Desire'
+                        onClickFunction={() => { }}
+                        icon={trashIcon}
+                        daisyUIBtnColor='error'
+                      />
+                    </Link>
+                  </div>
+
+                  <div className='flex-1'>
+                    <Link to='..' >
+                      <SolidBtnGreyBlue text='Close w/o saving'
+                        onClickFunction={() => { }}
+                        icon={closeIcon}
+                      />
+                    </Link>
+                  </div>
                 </div>
-
-                <div className='flex-1'>
-                  <Link to='..' >
-                    <SolidBtnGreyBlue text='Close w/o saving'
-                      onClickFunction={() => { }}
-                      icon={closeIcon}
-                    />
-                  </Link>
-                </div>
-              </div>
-            </>)}
-
+              </>)}
+          </div>
         </Form>
-      </div>
+      </BasicFormAreaBG>
     </>
   )
 }

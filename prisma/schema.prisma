@@ -199,6 +199,9 @@ model Desire {
   description String
   sortOrder Int @default(0)
 
+  currentSituation String?
+  delta String?
+
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
   projectId String? @unique

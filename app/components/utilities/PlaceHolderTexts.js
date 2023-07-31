@@ -1,0 +1,1 @@
+export const DesireCurrentSituation = "What is your current situation?";

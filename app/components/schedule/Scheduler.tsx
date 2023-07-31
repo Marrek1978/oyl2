@@ -205,7 +205,7 @@ function Scheduler({
     }
 
     const currentList = loadedList?.filter((list) => list.id === listId)
-    const currentToDos = currentList[0][todosArrayName]
+    const currentToDos = currentList[0]?.[todosArrayName]
 
     return `\nToDos:\n${currentToDos?.map((todo: any) => todo.body).join('\n')}`
   }

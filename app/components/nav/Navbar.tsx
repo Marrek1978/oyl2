@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react'
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, Form } from "@remix-run/react";
 import type { LoaderArgs } from '@remix-run/node';
 import { getUserId } from "~/models/session.server";
 import { json } from "@remix-run/node";
-import { Form } from "@remix-run/react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun, faMoon } from "@fortawesome/free-solid-svg-icons";

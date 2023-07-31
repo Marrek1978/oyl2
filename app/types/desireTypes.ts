@@ -7,6 +7,7 @@ export type DesireWithStringDates = Desire & {
 };
 
 export type DesireWithValues = Desire & { desireValues: { value: Value }[] };
+export type DesireValues = { desireValues: { value: Value }[] }
 
 export interface validationErrorsTypes {
   title?: Desire["title"];

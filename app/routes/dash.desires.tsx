@@ -6,16 +6,17 @@ import type { LoaderArgs } from '@remix-run/server-runtime';
 import { getValues } from '~/models/values.server';
 import { requireUserId } from '~/models/session.server';
 import { getDesires, updateDesiresOrder } from '~/models/desires.server';
-import DndDesires from '~/components/dnds/desires/DndDesires';
-import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
+
+import type {  Value } from '@prisma/client';
+import type { DesireWithValues } from '~/types/desireTypes';
 
 export const loader = async ({ request }: LoaderArgs) => {
   let userId;
   userId = await requireUserId(request);
   try {
-    let desires = await getDesires(userId);
-    let values = await getValues(userId);
-    return { desires, values }
+    let desires:DesireWithValues[] = await getDesires(userId);
+    let allUserValues:Value[] = await getValues(userId);
+    return { desires, allUserValues }
   } catch (error) { throw error }
 };
 
@@ -35,16 +36,7 @@ function DesiresPage() {
 
   return (
     <>
-      <section className='flex gap-8'>
-        <div className=' flex-1 min-w-[300px] max-w-max'>
-          <BasicTextAreaBG >
-            <DndDesires />
-          </BasicTextAreaBG >
-        </div>
-        <div className='flex-1  max-w-[800px]'>
-          <Outlet />
-        </div>
-      </section >
+      <Outlet />
     </>
   )
 }

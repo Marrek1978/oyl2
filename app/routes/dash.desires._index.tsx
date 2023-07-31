@@ -6,6 +6,8 @@ import { requireUserId } from '~/models/session.server'
 import { createDesire } from '~/models/desires.server'
 
 import type { validationErrorsTypes } from '~/types/valueTypes'
+import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
+import DndDesires from '~/components/dnds/desires/DndDesires'
 
 export const action = async ({ request }: ActionArgs) => {
   const userId = await requireUserId(request)
@@ -43,7 +45,16 @@ export const action = async ({ request }: ActionArgs) => {
 function AddNewDesirePage() {
   return (
     <>
-      <DesiresForm />
+      <section className='flex gap-8 mb-12'>
+        <div className=' flex-1 min-w-[300px] max-w-max'>
+          <BasicTextAreaBG >
+            <DndDesires />
+          </BasicTextAreaBG >
+        </div>
+        <div className='flex-1  max-w-[800px]'>
+          <DesiresForm />
+        </div>
+      </section >
     </>
   )
 }
