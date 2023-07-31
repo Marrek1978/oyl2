@@ -1,11 +1,12 @@
-import {json, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime';
-import { Outlet } from '@remix-run/react';
-import { requireUserId } from '~/models/session.server';
 import { parse } from 'querystring';
+import { Outlet } from '@remix-run/react';
+import {json, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime';
+
 
 import DndProjects from '~/components/dnds/projects/DndProjects';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 import { getDesires } from '~/models/desires.server';
+import { requireUserId } from '~/models/session.server';
 import { getProjects, updateProjectsOrder } from '~/models/project.server';
 
 export const loader = async ({ request }: LoaderArgs) => {
@@ -16,7 +17,6 @@ export const loader = async ({ request }: LoaderArgs) => {
     return { projects, desires, userId }
   } catch (error) { throw error }
 }
-
 
 export const action = async ({ request }: ActionArgs) => {
   const formBody = await request.text();

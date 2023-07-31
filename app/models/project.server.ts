@@ -14,7 +14,6 @@ export const getProjects = async (userId: User["id"]) => {
     where: { userId },
     orderBy: { sortOrder: "asc" },
   });
-
   return result;
 };
 

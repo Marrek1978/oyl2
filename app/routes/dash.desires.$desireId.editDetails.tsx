@@ -40,7 +40,7 @@ export const action = async ({ request }: ActionArgs) => {
 }
 
 
-function EditDesirePage() {
+function EditDesireDetailsPage() {
 
   const matches = useMatches();
   const params = useParams();
@@ -57,4 +57,4 @@ function EditDesirePage() {
   )
 }
 
-export default EditDesirePage
+export default EditDesireDetailsPage

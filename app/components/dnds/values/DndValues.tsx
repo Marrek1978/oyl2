@@ -1,16 +1,18 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useFetcher, useLoaderData } from '@remix-run/react';
+
 import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
 
-import DndSortableValue from './DndSortableValue';
+// import DndSortableValue from './DndSortableValue';
 import Modal from '~/components/modals/Modal';
 import HeadingH1 from '~/components/titles/HeadingH1';
 import SuccessMessage from '~/components/modals/SuccessMessage';
 
 import type { Value } from '@prisma/client'
 import type { ValuesWithStringDates } from '~/types/valueTypes'
+import DndSortableGeneric from '~/components/genericComponents/dnd/DndSortableGeneric';
 
 interface DndValuesProps {
   setOrderBool?: (bool: boolean) => void
@@ -18,8 +20,9 @@ interface DndValuesProps {
 
 const DndValues: React.FC<DndValuesProps> = ({ setOrderBool }) => {
 
-  const valuesData = useLoaderData<ValuesWithStringDates[]>();
   const fetcher = useFetcher();
+  const valuesData = useLoaderData<ValuesWithStringDates[]>();
+
   const [values, setValues] = useState<Value[]>([]);
   const [successMessage, setSuccessMessage] = useState('');
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
@@ -107,13 +110,25 @@ const DndValues: React.FC<DndValuesProps> = ({ setOrderBool }) => {
           items={values?.map(value => value.id)}
           strategy={verticalListSortingStrategy}
         >
-          {values?.map((value) => (
+          {/* {values?.map((value) => (
             <DndSortableValue
               key={value.id}
               id={value.id}
               value={value}
             />
+          ))} */}
+
+
+          {values?.map((value) => (
+            <DndSortableGeneric
+              key={value.id}
+              id={value.id}
+              description={value.valueDescription}
+              title={value.valueTitle}
+            >
+            </DndSortableGeneric>
           ))}
+
         </SortableContext>
       </DndContext >
     </>

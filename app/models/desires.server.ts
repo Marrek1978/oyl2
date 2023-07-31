@@ -37,6 +37,30 @@ export const getDesires = async (userId: User["id"]) => {
   return result;
 };
 
+export const getDesireById = async ( desireId: Desire["id"], userId: User["id"]) => {
+  const result = await prisma.desire.findFirst({
+    where: { id: desireId, userId },
+    include: {
+      desireValues: {
+        select: {
+          value: true,
+        },
+      },
+    },
+  });
+
+  return result;
+}
+
+export const getDesiresByUserId = async (userId: User["id"]) => {
+  const result = await prisma.desire.findMany({
+    where: { userId },
+    orderBy: { sortOrder: "asc" },
+  });
+
+  return result;
+}
+
 export const createDesire = async (desire: CreateDesire) => {
   const result = await prisma.desire.create({
     data: {

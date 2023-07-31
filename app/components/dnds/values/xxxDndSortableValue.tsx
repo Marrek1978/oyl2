@@ -21,9 +21,9 @@ function DndSortableValue({ id, value }: DndSortableValueProps) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="w-full">
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mt-5">
       <div key={value.id} id={value.id} className='
-        
+        w-full
         px-3 py-4 
         mt-2
         font-poppins
@@ -44,10 +44,10 @@ function DndSortableValue({ id, value }: DndSortableValueProps) {
           </Link>
         </div>
         <div className='
-          text-slate-400 text-sm 
-          mt-1          
-          truncate 
-          max-w-prose
+          text-base-content/70
+          text-sm 
+          mt-2      
+          max-w-prose w-prose
           '>
           {value.valueDescription}
         </div>

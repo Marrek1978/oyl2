@@ -1,14 +1,13 @@
-import { useSortable } from '@dnd-kit/sortable';
-import React from 'react'
 import { Link, useMatches, useParams } from "@remix-run/react";
 import { CSS } from "@dnd-kit/utilities";
+import { useSortable } from '@dnd-kit/sortable';
 
-import { EditIcon } from "../../utilities/icons";
-import type { Desire, Project } from '@prisma/client';
+import TextBtn from '~/components/buttons/TextBtn';
 import SubHeading12px from '~/components/titles/SubHeading12px';
 import SubHeading14px from '~/components/titles/SubHeading14px';
-import TextBtn from '~/components/buttons/TextBtn';
+import { ArrowUpperRight, EditIcon } from "../../utilities/icons";
 
+import type { Desire, Project } from '@prisma/client';
 interface DndSortableProjectProps {
   id: string;
   project: Project
@@ -37,9 +36,8 @@ function DndSortableProject({ id, project }: DndSortableProjectProps) {
   }
 
 
-
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className=" ">
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className=" mt-5">
       <div key={project.id} id={project.id}
         className={`
           w-full
@@ -51,74 +49,75 @@ function DndSortableProject({ id, project }: DndSortableProjectProps) {
           transition duration-500
           hover:bg-primary/30 
           hover:text-primary-focus
-          ${project.sortOrder === 0 && 'bg-base-content text-base-100 hover:text-blue-500'}
-          ${highlightedProjectId === project.id && project.sortOrder !== 0 && ' bg-info/70'}
+          ${project.sortOrder === 0 && 'bg-base-content text-base-100   hover:bg-info-content '}
+          ${highlightedProjectId === project.id && project.sortOrder !== 0 && ' bg-info/50'}
       `}
       >
 
         {project.sortOrder === 0 && (
-          <div className='font-medium mt-0 mb-2 text-sky-200  '>
+          <div className='mt-0 mb-2 text-info/70  '>
             <SubHeading14px
               text='Project to focus on'
             />
           </div>
         )}
         {/* <div className='flex items-center justify-between gap-12  '> */}
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <div className={`
+        <div className="flex items-baseline justify-between gap-4">
+          <div className={`
               text-xl font-medium 
-              ${highlightedProjectId !== project.id && project.sortOrder !== 0 &&'text-base-content'}
+              ${highlightedProjectId !== project.id && project.sortOrder !== 0 && 'text-base-content'}
               ${project.sortOrder === 0 && 'text-base-100'}
-              ${highlightedProjectId === project.id && project.sortOrder !== 0 && 'text-primary-content'} 
+              ${highlightedProjectId === project.id && project.sortOrder !== 0 && 'text-success-content'} 
             `} >
-              {project.title}
-            </div>
-
-            {/* //!  add value-badges here */}
-            {associatedDesire && (
-              // <div className=" mt-0 text-gray-300">
-              <div className={`
-                text-xl font-medium 
-                ${highlightedProjectId !== project.id && project.sortOrder !== 0 &&'text-slate-600'}
-                ${project.sortOrder === 0 && 'text-base-300'}
-                ${highlightedProjectId === project.id && project.sortOrder !== 0 && 'text-gray-200'} 
-              `} >
-                <SubHeading12px
-                  text={associatedDesire}
-                />
-              </div>
-
-            )}
+            {project.title}
           </div>
 
-          <div className='self-start'>
+          <div className=''>
             {highlightedProjectId !== project.id ?
               <Link to={project.id} >
                 <TextBtn
-                  text='Go To'
+                  text='Show Summary'
                   onClickFunction={() => { }}
-                  color='red-600'
+                  color={`
+                    ${project.sortOrder !== 0 && 'text-primary/70'}
+                    ${project.sortOrder === 0 && 'text-info'}
+                  `}
                   icon={EditIcon}
                 />
               </Link>
               :
-              <div >{EditIcon}</div>
+              <div className={` 
+              ${project.sortOrder === 0 && 'text-info'}
+              ${highlightedProjectId === project.id && project.sortOrder !== 0 && 'text-primary/70'} 
+              `} >
+                {ArrowUpperRight}
+              </div>
             }
           </div>
-
         </div>
 
+        {/* //!  add value-badges here */}
+        {associatedDesire && (
+          <div className={`
+                font-medium 
+                ${highlightedProjectId !== project.id && project.sortOrder !== 0 && 'text-slate-600'}
+                ${project.sortOrder === 0 && 'text-base-300'}
+                ${highlightedProjectId === project.id && project.sortOrder !== 0 && 'text-base-content'} 
+              `} >
+            <SubHeading12px
+              text={associatedDesire}
+            />
+          </div>
+        )}
+
         <div className={`
-          mt-2 w-prose max-w-prose
-          text-slate-400 text-sm 
-          ${highlightedProjectId !== project.id && project.sortOrder !== 0 &&'text-slate-500'}
-          ${project.sortOrder === 0 && 'text-gray-300'}
-          ${highlightedProjectId === project.id && project.sortOrder !== 0 && 'text-gray-200'} 
+          mt-2 w-prose max-w-prose text-sm 
+          ${highlightedProjectId !== project.id && project.sortOrder !== 0 && 'text-base-content/80'}
+          ${project.sortOrder === 0 && 'text-base-300/70'}
+          ${highlightedProjectId === project.id && project.sortOrder !== 0 && 'text-info-content/70'} 
           `}>
           {project.description}
         </div>
-
 
       </div>
     </div>

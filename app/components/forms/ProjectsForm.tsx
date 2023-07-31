@@ -1,24 +1,24 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Form, Link, useActionData, useLocation, useMatches, useNavigation } from '@remix-run/react'
+import { Form, Link, useActionData, useLocation, useNavigation } from '@remix-run/react'
 
 import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
 import { closeIcon, dbIcon, trashIcon } from '../utilities/icons';
 
 import type { Desire, Project } from '@prisma/client'
-import type { ProjectWithDesires } from '~/types/projectTypes';
 
 interface ProjectFormProps {
-  passedProject?: ProjectWithDesires
+  project?: Project;
+  desire?: Desire;
+  allUserDesires: Desire[];
+  allUserProjects: Project[];
+
 }
 
-export default function ProjectsForm({ passedProject }: ProjectFormProps) {
+export default function ProjectsForm({ project, desire, allUserDesires, allUserProjects }: ProjectFormProps) {
 
-  const matches = useMatches();
   const location = useLocation()
   const navigation = useNavigation();
   const validationErrors = useActionData()
-
-  const project = passedProject as ProjectWithDesires
 
   const [title, setTitle] = useState<string>('')
   const [projectId, setProjectId] = useState<string>('')
@@ -28,15 +28,9 @@ export default function ProjectsForm({ passedProject }: ProjectFormProps) {
   const [selectedDesireId, setSelectedDesireId] = useState<string>('')
   const [isAddNewProjectRoute, setIsAddNewProjectRoute] = useState<boolean>(true) //true if /dash/desires, false if /dash/desires/:desireId
 
+  let listOfUsedDesireIds = useRef(allUserProjects?.map((project) => project.desireId))
+
   const isSubmitting = navigation.state === 'submitting'
-  const allUserProjects: Project[] = matches.find(match => match.id === 'routes/dash.projects')?.data.projects
-  const allUserDesires: Desire[] = matches.find(match => match.id === 'routes/dash.projects')?.data.desires
-
-  const listOfUsedDesireIds = useRef(
-    allUserProjects?.filter((project) => project.desireId !== null)  // list of projects that have a desireId
-      .map((project) => project.desireId as string)
-  );
-
 
   useEffect(() => {
     if (location.pathname === '/dash/projects') {
@@ -51,10 +45,10 @@ export default function ProjectsForm({ passedProject }: ProjectFormProps) {
   useEffect(() => {
     setTitle(project?.title || '')
     setDescription(project?.description || '')
-    setSortOrder(project?.sortOrder || allUserProjects?.length || 0)
+    setSortOrder(project?.sortOrder || allUserProjects?.length || 1)
     setProjectId(project?.id || '')
     setSelectedDesireId(project?.desireId || '')
-    listOfUsedDesireIds.current = listOfUsedDesireIds.current.filter((desireId) => desireId !== project?.desireId)
+    listOfUsedDesireIds.current = listOfUsedDesireIds.current?.filter((desireId) => desireId !== project?.desireId)
   }, [allUserProjects, project])
 
 
@@ -153,10 +147,7 @@ export default function ProjectsForm({ passedProject }: ProjectFormProps) {
 
             <div className="grid grid-cols-[minmax(0,_max-content)_min-content] gap-x-6 ">
               {allUserDesires?.map((desire: Desire) => {
-                let isNotAvailabeForAssociation = listOfUsedDesireIds.current
-                  .map((desireId) => desireId === desire.id)
-                  .includes(true);
-
+                let isNotAvailabeForAssociation = listOfUsedDesireIds.current?.includes(desire.id)
                 return (
                   <React.Fragment key={desire.id}>
                     <div className="mr-12" >
@@ -228,11 +219,8 @@ export default function ProjectsForm({ passedProject }: ProjectFormProps) {
                 </div>
               </div>
             </>)}
-
         </Form >
       </div >
-
-
     </>
   )
 }

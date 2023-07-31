@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { useCallback, useEffect, useState } from 'react'
 import { useFetcher, useLoaderData } from '@remix-run/react';
 import type { DragEndEvent } from "@dnd-kit/core";
@@ -6,11 +7,13 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from 
 
 import Modal from '~/components/modals/Modal';
 import SuccessMessage from '~/components/modals/SuccessMessage';
-import DndSortableDesire from '~/components/dnds/desires/DndSortableDesire';
+// import DndSortableDesire from '~/components/dnds/desires/DndSortableDesire';
+
 
 import type { DesireWithStringDates, DesireWithValues } from '~/types/desireTypes'
 import HeadingH1 from '~/components/titles/HeadingH1';
-
+import DndSortableGeneric from '~/components/genericComponents/dnd/DndSortableGeneric';
+import SubHeading12px from '~/components/titles/SubHeading12px';
 
 
 const DndDesires = () => {
@@ -107,13 +110,51 @@ const DndDesires = () => {
           items={desires?.map(desire => desire.id)}
           strategy={verticalListSortingStrategy}
         >
-          {desires?.map((desire) => (
+          {/* {desires?.map((desire) => (
             <DndSortableDesire
               key={desire.id}
               id={desire.id}
               desire={desire}
             />
-          ))}
+          ))} */}
+
+          {desires?.map((desire) => {
+
+            const desireValues = desire.desireValues
+            desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
+
+            return (
+              <DndSortableGeneric
+                key={desire.id}
+                id={desire.id}
+                title={desire.title}
+                description={desire.description}
+                linkTitle='Go to desire'
+              >
+
+                <div className="flex flex-wrap gap-2 items-center w-full mt-0">
+                  {desireValues.map((value) => {
+                    const title = value.value.valueTitle
+                    let id = uuidv4();
+                    return (
+                      <div key={id}
+                        className={`
+                        font-medium 
+                        text-slate-600
+                      `} >
+                        <SubHeading12px
+                          text={`${title}, `}
+                        />
+                      </div>
+                    )
+                  })
+                  }
+                </div>
+              </DndSortableGeneric>
+            )
+          })}
+
+
         </SortableContext>
       </DndContext >
     </>

@@ -32,7 +32,7 @@ function ValuesPage() {
   return (
     <>
       <section className='flex gap-8 '>
-        <div className='flex-1 max-w-[500px]'>
+        <div className='flex-1 max-w-max'>
           <BasicTextAreaBG >
             <DndValues />
           </BasicTextAreaBG>

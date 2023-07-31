@@ -1,13 +1,30 @@
-import { useMatches, useParams } from '@remix-run/react';
-import { redirect, type ActionArgs } from '@remix-run/server-runtime';
+import { useLoaderData } from '@remix-run/react';
+import { redirect, type ActionArgs, type LoaderFunction, type LoaderArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import ProjectsForm from '~/components/forms/ProjectsForm'
 import { requireUserId } from '~/models/session.server';
-import { updateProjectDetails } from '~/models/project.server';
+import { getDesireById, getDesiresByUserId } from '~/models/desires.server';
+import { getProjectById, getProjects, updateProjectDetails } from '~/models/project.server';
 
 import type { Project } from '@prisma/client';
 import type { ProjectValidationErrorsTypes } from '~/types/projectTypes';
+
+export const loader: LoaderFunction = async ({ request, params }: LoaderArgs) => {
+  const userId = await requireUserId(request);
+  const projectId = params.projectId!;   // const project = getProjectById(params.projectId, userId)
+  try {
+    const allUserProjects = await getProjects(userId)
+    const project = await getProjectById(projectId, userId);
+    const desireId = project?.desireId
+    const allUserDesires = await getDesiresByUserId(userId)
+    let desire;
+    if (desireId) {
+      desire = await getDesireById(desireId, userId)
+    }
+    return { project, allUserDesires, desire, allUserProjects };
+  } catch (error) { throw error }
+};
 
 export const action = async ({ request }: ActionArgs) => {
   const userId = await requireUserId(request)
@@ -45,14 +62,16 @@ export const action = async ({ request }: ActionArgs) => {
 
 function EditProjectPage() {
 
-  const matches = useMatches();
-  const params = useParams();
-  const projects = matches.find(match => match.id === 'routes/dash.projects')?.data.projects
-  const project = projects?.find((project: Project) => project.id === params.projectId)
+  const { project, desire, allUserDesires, allUserProjects } = useLoaderData()
 
   return (
     <Modal onClose={() => { }} zIndex={10}>
-      <ProjectsForm passedProject={project} />
+      <ProjectsForm
+        project={project}
+        desire={desire}
+        allUserDesires={allUserDesires}
+        allUserProjects={allUserProjects}
+      />
     </Modal>
   )
 }

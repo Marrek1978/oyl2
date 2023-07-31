@@ -1,51 +1,53 @@
-import { Link, Outlet, useMatches, useParams } from '@remix-run/react'
-import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime'
+import { Link, Outlet,  useLoaderData } from '@remix-run/react';
 
-import TextBtn from '~/components/buttons/TextBtn'
-import HeadingH1 from '~/components/titles/HeadingH1'
-import { EditIcon } from '~/components/utilities/icons'
-import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
+import { requireUserId } from '~/models/session.server';
+import { getDesireById } from '~/models/desires.server';
+import { getProjectById } from '~/models/project.server';
+import TextBtn from '~/components/buttons/TextBtn';
+import HeadingH1 from '~/components/titles/HeadingH1';
+import HeadingH2 from '~/components/titles/HeadingH2';
+import { EditIcon } from '~/components/utilities/icons';
+import SubHeading14px from '~/components/titles/SubHeading14px';
+import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 
-import type { Project, Desire } from '@prisma/client'
-import HeadingH2 from '~/components/titles/HeadingH2'
-import SubHeading14px from '~/components/titles/SubHeading14px'
+// import type { Desire, Project } from '@prisma/client';
+import type { LoaderArgs, LoaderFunction } from '@remix-run/server-runtime';
 
-export const loader = async ({ request }: LoaderArgs) => {
 
-  //load project from params
-  return 'yolo'
-}
 
-export const action = async ({ request }: ActionArgs) => {
-  return null
-}
+export const loader: LoaderFunction = async ({ request, params }: LoaderArgs) => {
+  const userId = await requireUserId(request);
+  const projectId = params.projectId!;   // const project = getProjectById(params.projectId, userId)
+  try {
+    const project = await getProjectById(projectId, userId);
+    const desireId = project?.desireId
+    let desire;
+    if (desireId) {
+      desire = await getDesireById(desireId, userId)
+    }
+    return { project, desire };
+  } catch (error) { throw error }
+};
 
-//! add lists, routines, routine_tracker, and required_savings, associated to project.
-// ! nested lists will be available to schedule, routines will be available to schedule,
-// !  routine_tracker will not be available to schedule, required_savings will not be available to schedule
-export default function ProjectByIdPage() {
+function ManageProjectPage() {
 
-  const matches = useMatches();
-  const params = useParams();
-  const projects = matches.find(match => match.id === 'routes/dash.projects')?.data.projects
-  const desires = matches.find(match => match.id === 'routes/dash.projects')?.data.desires
-  const project = projects?.find((project: Project) => project.id === params.projectId)
-
-  const desireTitle = desires.find((desire: Desire) => desire.id === project.desireId)?.title
-
+  const {project, desire} = useLoaderData()
+  const desireTitle = desire?.title || ''
+  
   return (
     <>
       <Outlet />
-      <div className='flex flex-col gap-6'>
+      <div className='flex flex-col gap-6 max-w-max'>
         <article>
           <BasicTextAreaBG >
             <div className='flex justify-between items-baseline'>
               <div className='flex gap-4 items-baseline '>
                 <HeadingH1 text={project.title} />
               </div>
-              <Link to={'manage'} >
+
+              <Link to={`editDescription`} >
                 <TextBtn
-                  text='Manage Project'
+                  text='Edit Project Description'
                   onClickFunction={() => { }}
                   icon={EditIcon}
                 />
@@ -58,7 +60,7 @@ export default function ProjectByIdPage() {
                 />
               </div>
             )}
-            <p className='text-md mt-4 text-base-content font-poppins' >{project.description}</p>
+            <p className='text-md mt-4 text-base-content font-poppins w-prose max-w-prose' >{project.description}</p>
           </BasicTextAreaBG >
         </article>
 
@@ -142,3 +144,5 @@ export default function ProjectByIdPage() {
     </>
   )
 }
+
+export default ManageProjectPage

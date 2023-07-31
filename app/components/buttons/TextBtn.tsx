@@ -8,13 +8,13 @@ interface TextBtnProps {
 }
 
 
-function TextBtn({ text, onClickFunction, icon, color = 'primary' }: TextBtnProps) {
+function TextBtn({ text, onClickFunction, icon, color = 'text-primary' }: TextBtnProps) {
 
   const getHoverClass = color === 'error' ? 'hover:text-red-500' : 'hover:opacity-70'
 
   return (
     <>
-      <button className={`bg-none text-${color}
+      <button className={`bg-none ${color}
         font-bold font-mont rounded-none
         ${getHoverClass} 
         hover:underline hover:scale-105 hover:z-50 

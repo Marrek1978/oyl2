@@ -1,14 +1,15 @@
-import { useRouteLoaderData } from '@remix-run/react'
-import { type ActionArgs } from '@remix-run/server-runtime'
+import { useMatches, useParams } from '@remix-run/react';
+import { redirect, type ActionArgs } from '@remix-run/server-runtime';
 
+import Modal from '~/components/modals/Modal'
 import ProjectsForm from '~/components/forms/ProjectsForm'
-import { createProject } from '~/models/project.server'
-import { requireUserId } from '~/models/session.server'
+import { requireUserId } from '~/models/session.server';
+import { updateProjectDetails } from '~/models/project.server';
 
-import type { ProjectValidationErrorsTypes } from '~/types/projectTypes'
+import type { Project } from '@prisma/client';
+import type { ProjectValidationErrorsTypes } from '~/types/projectTypes';
 
 export const action = async ({ request }: ActionArgs) => {
-  //save new project
   const userId = await requireUserId(request)
   const formData = await request.formData()
   const projectData = Object.fromEntries(formData);
@@ -17,7 +18,6 @@ export const action = async ({ request }: ActionArgs) => {
   !projectData.title && (validationErrors.title = 'A title is required')
   !projectData.description && (validationErrors.description = 'A description is required')
   if (!projectData.title || !projectData.description) return validationErrors
-
 
   let desireIds: string[] = []
   for (let key in desireIds) {
@@ -28,29 +28,33 @@ export const action = async ({ request }: ActionArgs) => {
   }
 
   let project = {
+    id: projectData.projectId as string,
     title: projectData.title as string,
     description: projectData.description as string,
     userId: userId as string,
     sortOrder: projectData.sortOrder ? parseInt(projectData.sortOrder as string) : 0,
-    desireId: projectData.desireId as string,
+    desireId: projectData.desireId as string || null,
   }
 
   try {
-    await createProject(project)
-    return null
+    await updateProjectDetails(project as Project)
+    return redirect('..')
   } catch (error) { throw error }
+
 }
 
-function NewProjectsPage() {
+function EditProjectPage() {
 
-  const { desires, projects } = useRouteLoaderData('routes/dash.projects')
+  const matches = useMatches();
+  const params = useParams();
+  const projects = matches.find(match => match.id === 'routes/dash.projects')?.data.projects
+  const project = projects?.find((project: Project) => project.id === params.projectId)
 
   return (
-    <ProjectsForm
-      allUserDesires={desires}
-      allUserProjects={projects}
-    />
+    <Modal onClose={() => { }} zIndex={10}>
+      <ProjectsForm project={project} />
+    </Modal>
   )
 }
 
-export default NewProjectsPage
+export default EditProjectPage

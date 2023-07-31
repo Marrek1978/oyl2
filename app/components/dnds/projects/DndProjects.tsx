@@ -1,15 +1,16 @@
-import { useFetcher, useLoaderData } from '@remix-run/react'
 import { useCallback, useEffect, useState } from 'react'
-import type { ProjectWithDesires, ProjectWithStringDates } from '~/types/projectTypes';
+import { useFetcher, useLoaderData } from '@remix-run/react'
 
 import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
+
 import Modal from '~/components/modals/Modal';
-import SuccessMessage from '~/components/modals/SuccessMessage';
 import HeadingH1 from '~/components/titles/HeadingH1';
+import SuccessMessage from '~/components/modals/SuccessMessage';
 import DndSortableProject from './DndSortableProject';
 
+import type { ProjectWithDesires, ProjectWithStringDates } from '~/types/projectTypes';
 
 //  highlight currenly selected project at dash/projects/$projectId
 //  highlihgt to project as current 'Focus'
@@ -18,7 +19,6 @@ function DndProjects() {
 
   const fetcher = useFetcher();
   const loadedProjects = useLoaderData();
-
 
   const [projects, setProjects] = useState<ProjectWithDesires[]>([]);
   const [successMessage, setSuccessMessage] = useState<string>('');
@@ -112,8 +112,11 @@ function DndProjects() {
             />
           </Modal>)
         }
-        <div className=''></div>
-        <HeadingH1 text={'Your Projects'} />
+
+        <div className='mb-8'>
+          <HeadingH1 text={'Your Projects'} />
+        </div>
+
         <DndContext
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
