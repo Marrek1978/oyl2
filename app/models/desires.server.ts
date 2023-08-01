@@ -79,13 +79,26 @@ export const createDesire = async (desire: CreateDesire) => {
   return result;
 };
 
-export const updateDesireCurrentSituation = async (desireId: Desire["id"], currentSituation: Desire["currentSituation"]) => {
+export const updateDesireCurrentSituation = async (desireId: Desire["id"], current: Desire["current"]) => {
   const result = await prisma.desire.update({
     where: {
       id: desireId,
     },
     data: {
-      currentSituation,
+      current,
+    },
+  });
+
+  return result;
+}
+
+export const updateDesireIdealScenario = async (desireId: Desire["id"], ideal: Desire["ideal"]) => {
+  const result = await prisma.desire.update({
+    where: {
+      id: desireId,
+    },
+    data: {
+      ideal,
     },
   });
 

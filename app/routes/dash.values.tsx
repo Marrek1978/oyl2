@@ -1,11 +1,10 @@
 import { parse } from 'querystring';
-import { Outlet } from '@remix-run/react'
 import type { LoaderArgs } from '@remix-run/server-runtime';
 
 import { requireUserId } from '~/models/session.server';
 import { getValues, updateValuesOrder } from '~/models/values.server';
 import DndValues from '~/components/dnds/values/DndValues';
-import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
+import DndPlusOutletFlex from '~/components/baseContainers/DndPlusOutletFlex';
 
 export const loader = async ({ request }: LoaderArgs) => {
   let userId;
@@ -31,16 +30,10 @@ function ValuesPage() {
 
   return (
     <>
-      <section className='flex gap-8 '>
-        <div className='flex-1 max-w-max'>
-          <BasicTextAreaBG >
-            <DndValues />
-          </BasicTextAreaBG>
-        </div>
-        <div className='flex-1 max-w-[800px]'>
-          <Outlet />
-        </div>
-      </section >
+
+      <DndPlusOutletFlex >
+        <DndValues />
+      </DndPlusOutletFlex>
     </>
   )
 }

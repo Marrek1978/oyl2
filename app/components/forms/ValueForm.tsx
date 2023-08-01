@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
-import {Form, Link, useActionData, useLocation, useMatches, useNavigation} from '@remix-run/react'
+import { Form, Link, useActionData, useLocation, useMatches, useNavigation } from '@remix-run/react'
 
-import { closeIcon, dbIcon, trashIcon } from '../utilities/icons'
-import { Values } from '@prisma/client';
 import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
+import { closeIcon, dbIcon, trashIcon } from '../utilities/icons'
 
+import type { Value } from '@prisma/client';
+import SolidBtn from '../buttons/SolidBtn';
+import OutlinedBtn from '../buttons/OutlinedBtn';
 interface ValueFormProps {
-  value?: Values
+  value?: Value
 }
 
 
@@ -19,9 +21,12 @@ function ValueForm({ value }: ValueFormProps) {
 
   const [title, setTitle] = useState<string>('')
   const [valueId, setValueId] = useState<string>('')
-  const [description, setDescription] = useState<string>('')
   const [sortOrder, setSortOrder] = useState<number>(0) //if adding new value, set to values.length
+  const [description, setDescription] = useState<string>('')
+  const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
   const [isAddNewValueRoute, setIsAddNewValueRoute] = useState(true) //true if /dash/values, false if /dash/values/:valueId
+  const [saveBtnText, setSaveBtnText] = useState<string>('Save Value')
+
 
   const isSubmitting = navigation.state === 'submitting'
   const values = matches.find(match => match.id === 'routes/dash.values')?.data
@@ -29,8 +34,10 @@ function ValueForm({ value }: ValueFormProps) {
   useEffect(() => {
     if (location.pathname === '/dash/values') {
       setIsAddNewValueRoute(true)
+      setSaveBtnText('Create Value')
     } else if (location.pathname.startsWith('/dash/values/')) {
       setIsAddNewValueRoute(false)
+      setSaveBtnText('Save Edits to Value')
     }
   }, [location.pathname]);
 
@@ -40,6 +47,15 @@ function ValueForm({ value }: ValueFormProps) {
     setSortOrder(value?.sortOrder || values?.length)
     setValueId(value?.id || '')
   }, [values, value])
+
+  useEffect(() => {
+    const isInputEmpty = !title || !description
+    const isInputDifferent =
+      title !== value?.valueTitle
+      || description !== value?.valueDescription
+    setIsSaveable(!isInputEmpty && (isInputDifferent))
+
+  }, [title, description, value,]);
 
 
   return (
@@ -106,53 +122,39 @@ function ValueForm({ value }: ValueFormProps) {
 
 
           {/* //**************BUTTONS ***************  */}
-          {isAddNewValueRoute
-            ? (
-              <button
-                className="w-full btn btn-primary rounded-none mt-8  mb-8   "
-                type='submit'
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Saving...' : 'Save New Value'} {dbIcon}
-              </button>
-            ) : (<>
+          <div className='mt-6 mb-8'>
+            <SolidBtn text={isSubmitting ? 'Saving...' : saveBtnText}
+              onClickFunction={() => { }}
+              icon={dbIcon}
+              disableSaveBtn={isSubmitting || !isSaveable}
+            />
 
-              <div className='mt-6'>
-                <button
-                  className="btn btn-primary rounded-none w-full   "
-                  type='submit'
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Saving...' : 'Save Edits'} {dbIcon}
-                </button>
-              </div>
+            {!isAddNewValueRoute &&
+              (<>
+                <div className='two-button-spacing mt-6 mb-8'>
+                  <div className='flex-1'>
+                    <Link to='delete' >
+                      <OutlinedBtn
+                        text='Delete Value'
+                        onClickFunction={() => { }}
+                        icon={trashIcon}
+                        daisyUIBtnColor='error'
+                      />
+                    </Link>
+                  </div>
 
-              <div className='w-full flex gap-4 mt-6 mb-8'>
-                <div className='flex-1'>
-                  <Link to='delete' >
-                    <button className='btn btn-error btn-outline  
-                    w-full
-                    rounded-none
-                    font-mont font-semibold
-                  ' >
-                      Delete Value
-                      {trashIcon}
-                    </button>
-                  </Link>
+                  <div className='flex-1'>
+                    <Link to='..' >
+                      <SolidBtnGreyBlue text='Close w/o saving'
+                        onClickFunction={() => { }}
+                        icon={closeIcon}
+                      />
+                    </Link>
+                  </div>
                 </div>
+              </>)}
 
-                <div className='flex-1'>
-                  <Link to='..' >
-                    <SolidBtnGreyBlue text='Close w/o saving'
-                      onClickFunction={() => { }}
-                      icon={closeIcon}
-                    />
-                  </Link>
-                </div>
-              </div>
-            </>)}
-
-
+          </div>
         </Form>
       </div>
     </>

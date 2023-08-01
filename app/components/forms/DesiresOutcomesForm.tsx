@@ -1,21 +1,20 @@
 import { useEffect, useState } from 'react'
-import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
+import { Form, useActionData, useNavigation } from '@remix-run/react';
 
 import InputLabel from './InputLabel';
 import SolidBtn from '../buttons/SolidBtn';
-import { closeIcon, dbIcon } from '../utilities/icons';
+import { dbIcon } from '../utilities/icons';
 import BasicFormAreaBG from './BasicFormAreaBG';
 import { DesireCurrentSituation } from '~/components/utilities/PlaceHolderTexts';
 
 import type { DesireWithValues } from '~/types/desireTypes'
-import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
 
 interface DesireFormProps {
   desire?: DesireWithValues
 }
 
-function DesiresCurrentForm({ desire }: DesireFormProps) {
 
+function DesiresOutcomesForm({desire}: DesireFormProps) {
   const navigation = useNavigation();
   const validationErrors = useActionData()
 
@@ -42,13 +41,16 @@ function DesiresCurrentForm({ desire }: DesireFormProps) {
 
   return (
     <BasicFormAreaBG
-      title={`Current Situation for  ${title}`}
+      title={`Specific Outcomes for  ${title}`}
     >
+
+      dnd area 
+      inptu field
       <Form method='post' className='mx-8'>
         <div className="form-control vert-space-between-inputs">
           <input type="string" name='desireId' value={desireId} hidden readOnly />
 
-          <InputLabel text='Current Situation' />
+          <InputLabel text='Specific Outcome' />
           <textarea
             className='input-field-text-para '
             placeholder={DesireCurrentSituation}
@@ -62,25 +64,21 @@ function DesiresCurrentForm({ desire }: DesireFormProps) {
           )}
         </div>
 
-        {/* //**************BUTTONS ***************  */}
-        <div className='mt-6 mb-8 flex flex-col gap-4 '>
 
-          <SolidBtn text={isSubmitting ? 'Saving...' : 'Save Edits to Current Situation'}
+        <InputLabel text='DnD Area of Progress Milestones' />
+
+
+        {/* //**************BUTTONS ***************  */}
+        <div className='mt-6 mb-8'>
+          <SolidBtn text={isSubmitting ? 'Saving...' : 'Save Edits'}
             onClickFunction={() => { }}
             icon={dbIcon}
             disableSaveBtn={isSubmitting || !isSaveable}
           />
-
-          <Link to='..' >
-            <SolidBtnGreyBlue text='Close w/o saving'
-              onClickFunction={() => { }}
-              icon={closeIcon}
-            />
-          </Link>
         </div>
       </Form>
     </BasicFormAreaBG>
   )
 }
 
-export default DesiresCurrentForm
+export default DesiresOutcomesForm

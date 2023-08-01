@@ -199,8 +199,11 @@ model Desire {
   description String
   sortOrder Int @default(0)
 
-  currentSituation String?
-  delta String?
+  ideal String?
+  current String?
+  desireOutcomes DesireOutcomes[]
+
+
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
@@ -209,7 +212,52 @@ model Desire {
 
   desireValues DesireValue[]
 }
+
+model DesireOutcomes {
+  id   String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title String
+  description String
+  sortOrder Int @default(0)
+  desireOutcomeMileStones DesireOutcomeMileStones[]
+
+  desireId String
+  desire Desire @relation(fields: [desireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  @@unique([title, desireId])
+}
+
+model DesireOutcomeMileStones {
+  id   String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title String
+  description String?
+  sortOrder Int @default(0)
+  date DateTime
+
+  desireOutcomeId String
+  desireOutcome DesireOutcomes @relation(fields: [desireOutcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  @@unique([title, desireOutcomeId])
+
+}
  
+ //! to upload images to GCS, check out 
+ //! https://github.com/leerob/nextjs-gcp-storage
+// model DesireImages{
+
+//   id   String @id @default(cuid())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   imageFile 
+
+//   desireId String
+//   desire Desire @relation(fields: [desireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+//   @@unique([url, desireId])
+// }
  model DesireValue {
   id         String  @id @default(cuid())
   createdAt  DateTime @default(now())

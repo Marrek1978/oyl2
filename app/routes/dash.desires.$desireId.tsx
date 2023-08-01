@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import type { Desire } from '@prisma/client';
 import { Outlet, useMatches, useParams } from '@remix-run/react';
 
 import H1WithLink from '~/components/titles/H1WithLink';
@@ -7,40 +8,52 @@ import BreadCrumb14px from '~/components/titles/BreadCrumb';
 import TextProseWidth from '~/components/text/TextProseWidth';
 import SubHeading14px from '~/components/titles/SubHeading14px';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
+import { DesireCurrentDefaultText, DesireIdealPlaceholderText, DesireOutcomesDefaultText } from '~/components/utilities/PlaceHolderTexts';
+import { requireUserId } from '~/models/session.server';
+import { getDesireById } from '~/models/desires.server';
 
-// import type { DesireWithValues } from '~/types/desireTypes';
-import type { Desire } from '@prisma/client';
+import { redirect, type LoaderArgs } from '@remix-run/server-runtime';
 import type { DesireValues, DesireWithValues } from '~/types/desireTypes';
 
+export const loader = async ({ request, params }: LoaderArgs) => {
+  const userId = await requireUserId(request);
+  const desireId = params.desireId!
+  try {
+    const desire: DesireWithValues | null = await getDesireById(desireId, userId)
+    return { desire };
+  } catch (error) { throw error }
+
+
+}
 
 function DesirePage() {
 
-  const matches = useMatches();
   const params = useParams();
+  const matches = useMatches();
   const desires: DesireWithValues[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
-  const desire: DesireWithValues | undefined = desires?.find((desire: Desire) => desire.id === params.desireId)
+  const desire: DesireWithValues | undefined = desires.find((desire: Desire) => desire.id === params.desireId)
 
   if (!desire) {
-    // Handle the case where desire is undefined
+    redirect('/dash/desires');
     return null;
   }
 
-
-  const desireValues: DesireValues['desireValues'] | undefined = desire.desireValues
+  const desireValues: DesireValues['desireValues'] = desire.desireValues || []
   desireValues?.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
-  const { title, description, currentSituation, delta } = desire || {};
-
+  const { title, description, current, ideal } = desire || {};
   const plural = desireValues && desireValues.length > 1 ? 's' : '';
 
   return (
     <>
-      <section className='flex gap-8'>
-        <div className=' flex-1 flex flex-col gap-6 min-w-[300px] max-w-max '>
-          <div className=''>
+      <Outlet />
+      <section className='flex gap-8 flex-wrap '>
+        <div className=' flex-1 flex flex-col gap-6 w-prose max-w-max basis '>
+          <div className='w-max'>
             <BasicTextAreaBG >
               <div className='text-success mb-2'>
                 <BreadCrumb14px text='Desire' />
               </div>
+
               <H1WithLink
                 title={title}
                 linkDestination={'editDetails'}
@@ -63,7 +76,6 @@ function DesirePage() {
                 })
                 }
               </div >
-
               <div className='mt-2'>
                 <TextProseWidth
                   text={description}
@@ -71,6 +83,23 @@ function DesirePage() {
               </div>
             </BasicTextAreaBG >
           </div>
+
+
+          <div className=''>
+            <BasicTextAreaBG >
+              <H2WithLink
+                title={'The Ideal Scenario'}
+                linkDestination={'editIdeal'}
+                linkText={'Edit your Ideal Scenario'}
+              />
+              <div className='mt-2'>
+                <TextProseWidth
+                  text={ideal?.length ? ideal : DesireIdealPlaceholderText}
+                />
+              </div>
+            </BasicTextAreaBG >
+          </div>
+
 
           <div className=''>
             <BasicTextAreaBG >
@@ -80,37 +109,33 @@ function DesirePage() {
                 linkText={'Edit Current Situation'}
               />
               <div className='mt-2'>
-                {currentSituation && (
-                  <TextProseWidth
-                    text={currentSituation}
-                  />
-                )}
+                <TextProseWidth
+                  text={current?.length ? current : DesireCurrentDefaultText}
+                />
               </div>
             </BasicTextAreaBG >
           </div>
+        </div>
 
-
-          <div className=''>
-            <BasicTextAreaBG >
-              <H2WithLink
-                title={'Difference to Create'}
-                linkDestination={'editCurrent'}
-                linkText={'Edit Current Situation'}
+        <div className=''>
+          <BasicTextAreaBG >
+            <H2WithLink
+              title={'What Specific Outcomes?'}
+              linkDestination={'outcomes'}
+              linkText={'Edit Specific Outcomes'}
+            />
+            <div className='mt-2'>
+              <TextProseWidth
+                text={ideal?.length ? ideal : DesireOutcomesDefaultText}
               />
-              <div className='mt-2'>
-                {delta && (
-                  <TextProseWidth
-                    text={delta}
-                  />
-                )}
-              </div>
-            </BasicTextAreaBG >
-          </div>
+            </div>
+          </BasicTextAreaBG >
+
+          {/* <div className='flex-1  max-w-[800px]'>
+          <Outlet />
+        </div> */}
         </div>
 
-        <div className='flex-1  max-w-[800px]'>
-          <Outlet />
-        </div>
       </section >
 
 
@@ -119,3 +144,5 @@ function DesirePage() {
 }
 
 export default DesirePage
+
+

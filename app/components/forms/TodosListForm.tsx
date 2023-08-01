@@ -16,6 +16,7 @@ import SolidBtnGreyBlue from '~/components/buttons/SolidBtnGreyBlue';
 import { ArrowIcon45deg, ArrowIconUp, closeIcon, dbIcon } from '~/components/utilities/icons';
 
 import type { CreationTodo, ListAndToDos } from '~/types/listTypes';
+import InputLabel from './InputLabel';
 
 interface TodosListFormProps {
   list?: ListAndToDos;
@@ -196,27 +197,19 @@ function TodosListForm({ list }: TodosListFormProps) {
 
           <div className="mt-4 mb-8 ">
             <div className="form-control mt-0">
-              <label className="label pl-0">
-                <span className="label-text text-base font-mont font-semibold">List Title</span>
-              </label>
+              <InputLabel text='List Title' />
               <input type="text"
                 placeholder="Enter a List Title"
                 value={listTitle}
                 onChange={(e) => setListTitle(e.target.value)}
-                className="
-                  input border-none input-secondary 
-                  bg-base-200 rounded-none
-                  font-poppins font-normal tracking-wide
-                  "
+                className=" input-field-text-title "
               />
               <label className="label min-h-8">
-                {!listTitle &&
-                  <span className="label-text-alt text-red-700">
-                    <div className='flex gap-2'>
-                      {ArrowIconUp}
-                      A List must have a Title
-                    </div>
-                  </span>
+                {!listTitle && (
+                  <div className=' flex gap-4 validation-error'>
+                    {ArrowIconUp} A List must have a Title
+                  </div>
+                )
                 }
               </label>
             </div>
@@ -224,40 +217,31 @@ function TodosListForm({ list }: TodosListFormProps) {
             <div className='my-8'>  <Divider />   </div>
 
             <div className="form-control mt-0 pt-0 pl-0">
-              <label className="label pt-0 pl-0">
-                <span className="label-text text-base font-mont font-semibold">Add To-do</span>
-              </label>
+              <InputLabel text='Add To-do' />
               <input type="text"
                 placeholder="Enter a To-Do"
                 ref={inputToDoRef}
-                className="input border-none input-secondary  
-                  bg-base-200
-                  rounded-none
-                  font-poppins font-normal tracking-wide
-                " />
+                className='input-field-text-title'
+              />
             </div>
 
             <div className="flex justify-between items-center pt-0 mt-4 flex-wrap">
-              <div className="">
-                <label className="cursor-pointer label pl-0 justify-start">
-                  <span className="label-text mr-2 font-mont font-semibold">Urgent</span>
-                  <input type="checkbox"
-                    className="toggle toggle-secondary"
-                    checked={isUrgent}
-                    onChange={handleIsUrgent}
-                  />
-                </label>
+              <div className="checkbox-label-flex">
+                <InputLabel text='Urgent' />
+                <input type="checkbox"
+                  className="toggle toggle-secondary"
+                  checked={isUrgent}
+                  onChange={handleIsUrgent}
+                />
               </div>
 
-              <div className="">
-                <label className="cursor-pointer label justify-start">
-                  <span className="label-text mr-2 font-mont font-semibold">Important</span>
-                  <input type="checkbox"
-                    className="toggle toggle-secondary"
-                    checked={isImportant}
-                    onChange={handleIsImportant}
-                  />
-                </label>
+              <div className=" checkbox-label-flex">
+                <InputLabel text='Important' />
+                <input type="checkbox"
+                  className="toggle toggle-secondary"
+                  checked={isImportant}
+                  onChange={handleIsImportant}
+                />
               </div>
             </div>
 

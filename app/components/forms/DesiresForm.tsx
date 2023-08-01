@@ -31,22 +31,26 @@ function DesiresForm({ desire }: DesireFormProps) {
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
   const [desireValues, setDesireValues] = useState<Value[]>([])
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
-  const [isAddNewDesireRoute, setIsAddNewDesireRoute] = useState<boolean>(true) //true if /dash/desires, false if /dash/desires/:desireId
+  const [isAddNewDesireRoute, setIsAddNewDesireRoute] = useState<boolean>(true)
+  const [saveBtnText, setSaveBtnText] = useState<string>('Save Desire')
 
   const isSubmitting = navigation.state === 'submitting'
   const desires: Desire[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
-  const allUserValues = matches.find(match => match.id === 'routes/dash.desires')?.data.values
+  const allUserValues: Value[] = matches.find(match => match.id === 'routes/dash.desires')?.data.allUserValues
 
   useEffect(() => {
     if (location.pathname === '/dash/desires') {
       setIsAddNewDesireRoute(true)
-      setIsSaveable(true)
+      setSaveBtnText('Create Desire')
+      // setIsSaveable(true)
     } else if (location.pathname.startsWith('/dash/desires/')) {
       setIsAddNewDesireRoute(false)
+      setSaveBtnText('Save Edits to Desire')
     }
   }, [location.pathname]);
 
 
+  
   useEffect(() => {
     setTitle(desire?.title || '')
     setDescription(desire?.description || '')
@@ -59,11 +63,11 @@ function DesiresForm({ desire }: DesireFormProps) {
 
 
   useEffect(() => {
-    const isInputEmpty = isAddNewDesireRoute && (!title || !description)
-    const isInputDifferent = !isAddNewDesireRoute && (
-      title !== desire?.title || description !== desire?.description
-      || !arraysEqual(desireValues, checkedValues)
-    )
+    const isInputEmpty = !title || !description
+    const isInputDifferent =
+      title !== desire?.title
+      || description !== desire?.description
+      || (!isAddNewDesireRoute && !arraysEqual(desireValues, checkedValues))
     setIsSaveable(!isInputEmpty && (isInputDifferent))
   }, [title, description, desire?.title, desire?.description, isAddNewDesireRoute, desireValues, checkedValues]);
 
@@ -161,7 +165,7 @@ function DesiresForm({ desire }: DesireFormProps) {
 
           {/* //**************BUTTONS ***************  */}
           <div className='mt-6 mb-8'>
-            <SolidBtn text={isSubmitting ? 'Saving...' : 'Save Edits'}
+            <SolidBtn text={isSubmitting ? 'Saving...' : saveBtnText}
               onClickFunction={() => { }}
               icon={dbIcon}
               disableSaveBtn={isSubmitting || !isSaveable}

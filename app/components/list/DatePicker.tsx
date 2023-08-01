@@ -1,6 +1,6 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TheDatePicker from "react-datepicker";
+import InputLabel from "../forms/InputLabel";
 // import MyDatepicker from "../MyDatePicker.client";
 
 interface DatePickerProps {
@@ -22,21 +22,19 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate }
 
   return (
     <div className="
-      rounded-lg flex items-center flex-wrap gap-3
+      rounded-lg flex items-center flex-wrap gap-4
       w-full max-h-6 
       mt-0 
-      
        ">
-      <label className="label pl-0 " htmlFor="list-title-input" >
-        <span className="label-text mr-2 font-mont font-semibold" >Due Date</span>
-      </label>
 
+     
+      <InputLabel text='Due Date' />
       <TheDatePicker
         isClearable={true}
         className='
               p-2 pl-4 min-h-8
               text-blue
-              placeholder:text-neutral-500
+              placeholder:text-neutral-400
               font-poppins font-normal tracking-wide
               bg-base-200
               '

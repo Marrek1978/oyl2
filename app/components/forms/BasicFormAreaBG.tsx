@@ -8,7 +8,7 @@ interface BasicFormAreaBGProps {
 function BasicFormAreaBG({ children, title }: BasicFormAreaBGProps) {
   return (
     <div className='
-       bg-base-100 shadow-xl
+      bg-base-100 shadow-xl
       grid grid-cols-[minmax(300px,800px)]
       grid-rows-[72px_1fr_min-content]
       cursor-defaultshadow-lg

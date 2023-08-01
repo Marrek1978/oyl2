@@ -1,6 +1,7 @@
-import { useMatches, useParams } from '@remix-run/react';
+import { Outlet, useMatches, useParams } from '@remix-run/react';
 
-import DesiresCurrentForm from '~/components/forms/DesiresCurrentForm';
+import DesiresForm from '~/components/forms/DesiresForm';
+import Modal from '~/components/modals/Modal';
 
 import type { DesireWithValues, } from '~/types/desireTypes';
 
@@ -13,8 +14,12 @@ function EditDesireDetailsPage() {
   const desire = desires?.find((desire: DesireWithValues) => desire.id === params.desireId)
 
   return (
+
     <>
-      <DesiresCurrentForm desire={desire} />
+      <Outlet />
+      <Modal onClose={() => { }} zIndex={10}>
+        <DesiresForm desire={desire} />
+      </Modal>
     </>
   )
 }

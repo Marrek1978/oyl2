@@ -5,7 +5,7 @@ import { updateValue } from '~/models/values.server'
 import Modal from '~/components/modals/Modal'
 import ValueForm from '~/components/forms/ValueForm'
 
-import type { Values } from '@prisma/client';
+import type { Value } from '@prisma/client';
 import type { validationErrorsTypes } from '~/types/valueTypes'
 
 export const action = async ({ request }: ActionArgs) => {
@@ -35,7 +35,7 @@ function EditValueRoute() {
   const matches = useMatches();
   const params = useParams();
   const values = matches.find(match => match.id === 'routes/dash.values')?.data
-  const value = values?.find((value: Values) => value.id === params.valueId)
+  const value = values?.find((value: Value) => value.id === params.valueId)
 
   return (
     <>
