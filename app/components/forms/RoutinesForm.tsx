@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useFetcher, useNavigate } from '@remix-run/react';
-import { v4 as uuidv42 } from "uuid";
+import { v4 as uuidRoutines } from "uuid";
 
 
 import SolidBtn from '../buttons/SolidBtn';
@@ -95,7 +95,7 @@ function RoutinesForm({ routine }: RoutinesFormProps) {
   }
 
   const addTodoToTodosState = (newTodo: string) => {
-    const id = uuidv42();
+    const id = uuidRoutines();
     const todo: CreationRoutineToDo = {
       id,
       body: newTodo,

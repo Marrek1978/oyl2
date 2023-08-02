@@ -5,6 +5,7 @@
 
 .input-field-text-title {
   @apply  
+  w-full
   input border-none input-secondary 
   bg-base-200 rounded-none
   font-poppins font-normal tracking-wide
@@ -18,6 +19,7 @@
   bg-base-200 rounded-none
   font-poppins font-normal  
   leading-snug
+  pb-0 !important
 }
 
 .validation-error {
@@ -25,6 +27,7 @@
   text-base text-error
   font-poppins font-normal  
   leading-snug
+  pb-0 !important
 }
 
 .vert-space-between-inputs {
