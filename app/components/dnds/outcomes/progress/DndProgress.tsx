@@ -1,6 +1,6 @@
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 import { useCallback, useEffect, useState } from 'react'
-import { useFetcher, useRouteLoaderData } from '@remix-run/react';
+import { useFetcher } from '@remix-run/react';
 import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
@@ -10,27 +10,36 @@ import SuccessMessage from '~/components/modals/SuccessMessage';
 // import DndSortableDesire from '~/components/dnds/desires/DndSortableDesire';
 
 
-import type { DesireWithStringDates, DesireWithValues } from '~/types/desireTypes'
-import HeadingH1 from '~/components/titles/HeadingH1';
-import DndSortableGeneric from '~/components/genericComponents/dnd/DndSortableGeneric';
-import SubHeading12px from '~/components/titles/SubHeading12px';
+import type { DesireWithValues } from '~/types/desireTypes'
+// import HeadingH1 from '~/components/titles/HeadingH1';
+import type { DesireOutcomeProgress } from '@prisma/client';
+import type { NewlyCreatedProgress } from '~/types/progressTypes';
+import ProgressEvidenceItem from './ProgressEvidenceItem';
+import HeadingH2 from '~/components/titles/HeadingH2';
 
 interface DndProgressProps {
-  progressList?: string[]
+  progressList?: DesireOutcomeProgress[] | NewlyCreatedProgress[]
 }
 
-function DndProgress({progressList}: DndProgressProps)  {
+function DndProgress({ progressList }: DndProgressProps) {
 
+  console.log(' in DndProgress, progressList: ', progressList)
   const fetcher = useFetcher();
-  const loaderData = useRouteLoaderData('routes/dash.desires');
+  // const loaderData = useRouteLoaderData('routes/dash.desires');
 
   const [desires, setDesires] = useState<DesireWithValues[]>([]);
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
+  const [progressListArray, setProgressListArray] = useState<DesireOutcomeProgress[] | NewlyCreatedProgress[]>([]);
+
+  // useEffect(() => {
+  //   if (loaderData?.progressList) { setDesires(transformProgressDates(loaderData?.progressList)) }
+  // }, [loaderData])
+
 
   useEffect(() => {
-    if (loaderData?.desires) { setDesires(transformDesireDates(loaderData?.desires)) }
-  }, [loaderData])
+    if (progressList) { setProgressListArray(progressList) }
+  }, [progressList])
 
   const handleEditSortOrder = useCallback(async () => {
     const desiresString = JSON.stringify(desires);
@@ -53,13 +62,13 @@ function DndProgress({progressList}: DndProgressProps)  {
     }
   }, [saveNewSortOrder, handleEditSortOrder])
 
-  function transformDesireDates(desires: DesireWithStringDates[]) {
-    return desires.map((desire: any) => ({
-      ...desire,
-      createdAt: new Date(desire.createdAt!),
-      updatedAt: new Date(desire.updatedAt!),
-    }));
-  }
+  // function transformDesireDates(desires: DesireWithStringDates[]) {
+  //   return desires.map((desire: any) => ({
+  //     ...desire,
+  //     createdAt: new Date(desire.createdAt!),
+  //     updatedAt: new Date(desire.updatedAt!),
+  //   }));
+  // }
 
 
 
@@ -94,7 +103,6 @@ function DndProgress({progressList}: DndProgressProps)  {
     }))
 
 
-    console.log('progressList', progressList)
   return (
     <>
       {successMessage && (
@@ -105,53 +113,35 @@ function DndProgress({progressList}: DndProgressProps)  {
           />
         </Modal>)
       }
-      <HeadingH1 text={'Your evidences'} />
+      
+      <div className='mt-4'>
+        <HeadingH2 text={'Evidence of Progress towards Outcome'} />
+      </div>
+
       <DndContext
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
         sensors={sensors}
       >
+
         <SortableContext
-          items={progressList?.map((desire,index) => index)}
+          items={progressListArray.map((progress) => progress.id)}
           strategy={verticalListSortingStrategy}
         >
-
-          {progressList?.map((progress, index) => {
-
+          {progressListArray?.map((progress) => {
             // const desireValues = p.desireValues
             // desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
 
             return (
-              <DndSortableGeneric
-                key={index}
-                id={`${index}`}
-                title={progress}
-                description={progress}
-                linkTitle='nope'
-              >
-
-                {/* <div className="flex flex-wrap gap-2 items-center w-full mt-1">
-                  {desireValues.map((value) => {
-                    const title = value.value.valueTitle
-                    let id = uuidv4();
-                    return (
-                      <div key={id}
-                        className={`
-                        font-medium 
-                        text-slate-600
-                      `} >
-                        <SubHeading12px
-                          text={`${title}, `}
-                        />
-                      </div>
-                    )
-                  })
-                  }
-                </div> */}
-              </DndSortableGeneric>
+              <ProgressEvidenceItem
+                key={progress.id}
+                id={progress.id}
+                progress={progress}
+                editTodo={() => { }}
+                removeTodo={() => { }}
+              />
             )
           })}
-
 
         </SortableContext>
       </DndContext >

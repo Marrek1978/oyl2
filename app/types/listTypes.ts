@@ -1,9 +1,9 @@
 // types.ts
-import type { Lists as PrismaList, ListToDos } from '@prisma/client'
-import { RoutineAndToDos, RoutineToDo } from './routineTypes';
+import type { List as PrismaList, ListToDo } from '@prisma/client'
+import type { RoutineAndToDos, RoutineToDo } from './routineTypes';
 
 export type ListAndToDos = PrismaList & {
-  todos: ListToDos[],
+  todos: ListToDo[],
 }
 
 export interface CreationTodo {

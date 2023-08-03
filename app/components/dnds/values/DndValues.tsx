@@ -110,15 +110,7 @@ const DndValues: React.FC<DndValuesProps> = ({ setOrderBool }) => {
           items={values?.map(value => value.id)}
           strategy={verticalListSortingStrategy}
         >
-          {/* {values?.map((value) => (
-            <DndSortableValue
-              key={value.id}
-              id={value.id}
-              value={value}
-            />
-          ))} */}
-
-
+        
           {values?.map((value) => (
             <DndSortableGeneric
               key={value.id}

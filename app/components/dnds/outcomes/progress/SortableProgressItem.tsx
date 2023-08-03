@@ -17,7 +17,7 @@ const style = {
 return (
   <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
     <ProgressEvidenceItem
-      todo={props.todo}
+      progress={props.progress}
       key={props.todo.id}
       id={props.todo.id}
       removeTodo={props.removeTodo}

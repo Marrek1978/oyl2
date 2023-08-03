@@ -1,6 +1,6 @@
 import React from 'react'
 
-interface TextBtnProps {
+interface TextBtnGuidelineProps {
   text: string;
   onClickFunction: () => void;
   icon?: React.ReactNode;
@@ -10,17 +10,12 @@ interface TextBtnProps {
   onMouseOut?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-
-function TextBtn({ text, onClickFunction, icon, color = 'text-primary', type='submit', onMouseOver, onMouseOut }: TextBtnProps) {
-
-  const getHoverClass = color === 'error' ? 'hover:text-red-500' : 'hover:opacity-70'
+function TextBtnGuideLine({ text, onClickFunction, icon, color = 'text-primary', type='submit', onMouseOver, onMouseOut }: TextBtnGuidelineProps) {
 
   return (
     <>
       <button className={`bg-none ${color}
         font-bold font-mont rounded-none
-        ${getHoverClass} 
-        hover:underline hover:scale-105 hover:z-50 
         transition-all duration-300 ease-linear 
          `}
         onClick={onClickFunction}
@@ -37,4 +32,4 @@ function TextBtn({ text, onClickFunction, icon, color = 'text-primary', type='su
   )
 }
 
-export default TextBtn
+export default TextBtnGuideLine

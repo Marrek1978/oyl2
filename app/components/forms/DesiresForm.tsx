@@ -174,7 +174,6 @@ function DesiresForm({ desire }: DesireFormProps) {
             {!isAddNewDesireRoute &&
               (<>
                 <div className='two-button-spacing mt-6 mb-8'>
-
                   <div className='flex-1'>
                     <Link to='delete' >
                       <OutlinedBtn

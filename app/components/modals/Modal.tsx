@@ -14,7 +14,7 @@ const Modal: React.FC<ModalProps> = ({ children, onClose, zIndex=10 }) => {
         <dialog
           className="modal"
           open
-          onClick={(event) => event.stopPropagation()}
+          // onClick={(event) => event.stopPropagation()}
         >
           {children}
         </dialog>
