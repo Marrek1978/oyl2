@@ -1,8 +1,8 @@
 
 
-import DndPlusOutletFlex from '~/components/baseContainers/DndPlusOutletFlex';
 
 import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
+import DndPlus1200OutletFlex from '~/components/baseContainers/DndPlus1200OutletFlex';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   return null
@@ -31,9 +31,9 @@ function EditDesireSpecificOutcomesPage() {
   return (
     <>
 
-      <DndPlusOutletFlex >
+      <DndPlus1200OutletFlex >
         <div>DND of Outcomes</div>
-      </DndPlusOutletFlex>
+      </DndPlus1200OutletFlex>
 
     </>
   )

@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import TheDatePicker from "react-datepicker";
 import InputLabel from "../forms/InputLabel";
+// import { CalendarIcon } from "../utilities/icons";
 // import MyDatepicker from "../MyDatePicker.client";
 
 interface DatePickerProps {
   setSelectedDate: (date: Date | null) => void;
   selectedDate: Date | null;
+  labelText?: string;
 }
 
-const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate }) => {
+const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, labelText = 'Due Date' }) => {
   const [startDate, setStartDate] = useState<Date | null>(selectedDate);
 
   useEffect(() => {
@@ -22,28 +24,30 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate }
 
   return (
     <div className="
-      rounded-lg flex items-center flex-wrap gap-4
-      w-full max-h-6 
-      mt-0 
+      rounded-none 
+      flex items-center  justify-start gap-x-4
+      max-w-max
        ">
 
-     
-      <InputLabel text='Due Date' />
-      <TheDatePicker
-        isClearable={true}
-        className='
-              p-2 pl-4 min-h-8
-              text-blue
-              placeholder:text-neutral-400
-              font-poppins font-normal tracking-wide
-              bg-base-200
-              '
-        selected={startDate}
-        onChange={handleSelectedDateChange}
-        placeholderText="Click to select a date "
-        dateFormat="MMMM do, yyyy"
-      />
-     
+      <InputLabel text={labelText} />
+      {/* <div className='flex items-center gap-x-2'> */}
+        {/* {CalendarIcon} */}
+        <TheDatePicker
+          isClearable={true}
+          showIcon={false}
+          className='
+          p-2 pl-4 
+          min-h-8
+          font-poppins font-normal tracking-wide
+          bg-base-200
+          text-blue placeholder:text-neutral-400
+          '
+          selected={startDate}
+          onChange={handleSelectedDateChange}
+          placeholderText={'Click to select a date.'}
+          dateFormat="MMMM do, yyyy"
+        />
+      {/* </div> */}
     </div>
   );
 };

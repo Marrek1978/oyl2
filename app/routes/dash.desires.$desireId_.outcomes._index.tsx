@@ -4,6 +4,12 @@ import DesiresOutcomesForm from '~/components/forms/DesiresOutcomesForm'
 
 import type { Desire } from '@prisma/client';
 import type { DesireWithValues } from '~/types/desireTypes';
+import type { ActionArgs } from '@remix-run/server-runtime';
+
+ export const action = async ({ request }: ActionArgs) => {
+  console.log('in action of app.routes.dash.desires.$desireId_.outcomes._index.tsx')
+  return null
+}
 
 function DesireOutcomesIndexPage() {
   const params = useParams();

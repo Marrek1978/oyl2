@@ -10,7 +10,6 @@ import SuccessMessage from '~/components/modals/SuccessMessage';
 // import DndSortableDesire from '~/components/dnds/desires/DndSortableDesire';
 
 
-import type { DesireWithValues } from '~/types/desireTypes'
 // import HeadingH1 from '~/components/titles/HeadingH1';
 import type { DesireOutcomeProgress } from '@prisma/client';
 import type { NewlyCreatedProgress } from '~/types/progressTypes';
@@ -23,44 +22,52 @@ interface DndProgressProps {
 
 function DndProgress({ progressList }: DndProgressProps) {
 
-  console.log(' in DndProgress, progressList: ', progressList)
+  // console.log(' in DndProgress, progressList: ', progressList)
   const fetcher = useFetcher();
   // const loaderData = useRouteLoaderData('routes/dash.desires');
 
-  const [desires, setDesires] = useState<DesireWithValues[]>([]);
+  // const [desires, setDesires] = useState<DesireWithValues[]>([]);
   const [successMessage, setSuccessMessage] = useState<string>('');
-  const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
+  // const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
   const [progressListArray, setProgressListArray] = useState<DesireOutcomeProgress[] | NewlyCreatedProgress[]>([]);
 
   // useEffect(() => {
   //   if (loaderData?.progressList) { setDesires(transformProgressDates(loaderData?.progressList)) }
   // }, [loaderData])
 
+  useEffect(() => {
+    if(fetcher.state === 'loading') {
+      setSuccessMessage('List was saved');
+      setTimeout(() => setSuccessMessage(''), 500);
+    }
+  }, [fetcher])
+
 
   useEffect(() => {
     if (progressList) { setProgressListArray(progressList) }
   }, [progressList])
 
-  const handleEditSortOrder = useCallback(async () => {
-    const desiresString = JSON.stringify(desires);
-    try {
-      fetcher.submit({
-        desiresString
-      }, {
-        method: 'POST',
-      })
-      setSuccessMessage('List was saved');
-      setTimeout(() => setSuccessMessage(''), 500); // Clear the message after 3 seconds
-    } catch (error) { throw error }
-    setSaveNewSortOrder(false);
-  }, [desires, fetcher])
+
+  // const handleEditSortOrder = useCallback(async () => {
+  //   const progressListString = JSON.stringify(progressListArray);
+  //   try {
+  //     fetcher.submit({
+  //       progressListString
+  //     }, {
+  //       method: 'POST',
+  //       action: '/dash/desires/$desireId/outcomes/$outcomeId/edit',
+  //     })
+  //   } catch (error) { throw error }
+  //   setSaveNewSortOrder(false);
+  // }, [progressListArray, fetcher])
 
 
-  useEffect(() => {
-    if (saveNewSortOrder) {
-      handleEditSortOrder()
-    }
-  }, [saveNewSortOrder, handleEditSortOrder])
+  // useEffect(() => {
+  //   if (saveNewSortOrder) {
+  //     handleEditSortOrder()
+  //   }
+  // }, [saveNewSortOrder, handleEditSortOrder])
+
 
   // function transformDesireDates(desires: DesireWithStringDates[]) {
   //   return desires.map((desire: any) => ({
@@ -71,29 +78,30 @@ function DndProgress({ progressList }: DndProgressProps) {
   // }
 
 
-
-  const resetDesiresSortOrder = (desires: DesireWithValues[]) => {
-    const reOrdered = desires?.map((desire, index) => {
+  const resetProgressListSortOrder = (progressList: DesireOutcomeProgress[] | NewlyCreatedProgress[]) => {
+    const reOrdered = progressList?.map((progress, index) => {
       return {
-        ...desire,
+        ...progress,
         sortOrder: index
       }
     })
-    setSaveNewSortOrder(true)
+    // setSaveNewSortOrder(true)
     return reOrdered
   }
+
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      setDesires((prevDesires: DesireWithValues[]) => {
-        const oldIndex = prevDesires.findIndex(desire => desire.id === active.id);
-        const newIndex = prevDesires.findIndex(desire => desire.id === over?.id);
-        const newDesires = arrayMove(prevDesires, oldIndex, newIndex);
-        return resetDesiresSortOrder(newDesires);
+      setProgressListArray((prevProgressList: DesireOutcomeProgress[] | NewlyCreatedProgress[]) => {
+        const oldIndex = prevProgressList.findIndex(progress => progress.id === active.id);
+        const newIndex = prevProgressList.findIndex(progress => progress.id === over?.id);
+        const newProgressList = arrayMove(prevProgressList, oldIndex, newIndex);
+        return resetProgressListSortOrder(newProgressList);
       })
     }
   }
+
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -105,18 +113,18 @@ function DndProgress({ progressList }: DndProgressProps) {
 
   return (
     <>
-      {successMessage && (
+      {/* {successMessage && (
         <Modal onClose={() => { }} zIndex={20}>
           {successMessage}
           <SuccessMessage
             text={'Order was updated'}
           />
         </Modal>)
-      }
-      
+      } */}
+{/*       
       <div className='mt-4'>
         <HeadingH2 text={'Evidence of Progress towards Outcome'} />
-      </div>
+      </div> */}
 
       <DndContext
         collisionDetection={closestCenter}

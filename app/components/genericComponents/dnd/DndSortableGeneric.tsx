@@ -12,7 +12,7 @@ interface basicTextAreaBGProps {
   linkTitle?: string;
 }
 
-function DndSortableGeneric({ children, id, title, description, linkTitle='Edit' }: basicTextAreaBGProps) {
+function DndSortableGeneric({ children, id, title, description, linkTitle = 'Edit' }: basicTextAreaBGProps) {
 
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: id });
@@ -25,18 +25,18 @@ function DndSortableGeneric({ children, id, title, description, linkTitle='Edit'
 
   return (
     <>
-      <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mt-5">
+      <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mt-0">
         <div key={id} id={id} className='
-        w-full
-        px-3 py-4 
-        mt-2
-        font-poppins
-        cursor-pointer 
-        text-left text-base-content
-        transition duration-500
-        hover:bg-primary/30 
-        hover:text-primary-focus
-     '>
+            px-3 py-4 
+            mt-2
+            font-poppins
+            cursor-pointer 
+            text-left text-base-content
+            transition duration-500
+            hover:bg-primary/30 
+            hover:text-primary-focus
+            max-w-prose
+          '>
           <div className="flex items-center justify-between gap-4 ">
             <div className='text-xl font-medium'>{title}</div>
             <Link to={id} >
@@ -49,7 +49,7 @@ function DndSortableGeneric({ children, id, title, description, linkTitle='Edit'
           </div>
 
           {/* //! associations?? */}
-          <div>  {children}</div>
+          <div className=' '>  {children}</div>
 
           <div className='
             text-base-content/70

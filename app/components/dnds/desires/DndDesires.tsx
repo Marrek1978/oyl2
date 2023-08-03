@@ -25,9 +25,19 @@ const DndDesires = () => {
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
 
+
   useEffect(() => {
     if (loaderData?.desires) { setDesires(transformDesireDates(loaderData?.desires)) }
   }, [loaderData])
+
+
+  useEffect(() => {
+    if (fetcher.state === 'loading') {
+      setSuccessMessage('List was saved');
+      setTimeout(() => setSuccessMessage(''), 500);
+    }
+  }, [fetcher])
+
 
   const handleEditSortOrder = useCallback(async () => {
     const desiresString = JSON.stringify(desires);
@@ -37,8 +47,6 @@ const DndDesires = () => {
       }, {
         method: 'POST',
       })
-      setSuccessMessage('List was saved');
-      setTimeout(() => setSuccessMessage(''), 500); // Clear the message after 3 seconds
     } catch (error) { throw error }
     setSaveNewSortOrder(false);
   }, [desires, fetcher])
@@ -49,15 +57,6 @@ const DndDesires = () => {
       handleEditSortOrder()
     }
   }, [saveNewSortOrder, handleEditSortOrder])
-
-  function transformDesireDates(desires: DesireWithStringDates[]) {
-    return desires.map((desire: any) => ({
-      ...desire,
-      createdAt: new Date(desire.createdAt!),
-      updatedAt: new Date(desire.updatedAt!),
-    }));
-  }
-
 
 
   const resetDesiresSortOrder = (desires: DesireWithValues[]) => {
@@ -71,6 +70,7 @@ const DndDesires = () => {
     return reOrdered
   }
 
+
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active.id !== over?.id) {
@@ -83,12 +83,14 @@ const DndDesires = () => {
     }
   }
 
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 8,
       },
     }))
+
 
   return (
     <>
@@ -98,8 +100,8 @@ const DndDesires = () => {
           <SuccessMessage
             text={'Order was updated'}
           />
-        </Modal>)
-      }
+        </Modal>
+      )}
       <HeadingH1 text={'Your Desires'} />
       <DndContext
         collisionDetection={closestCenter}
@@ -110,9 +112,8 @@ const DndDesires = () => {
           items={desires?.map(desire => desire.id)}
           strategy={verticalListSortingStrategy}
         >
-      
-          {desires?.map((desire) => {
 
+          {desires?.map((desire) => {
             const desireValues = desire.desireValues
             desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
 
@@ -125,7 +126,7 @@ const DndDesires = () => {
                 linkTitle='Go to desire'
               >
 
-                <div className="flex flex-wrap gap-2 items-center w-full mt-1">
+                <div className="flex flex-wrap gap-2 items-center mt-1 ">
                   {desireValues.map((value) => {
                     const title = value.value.valueTitle
                     let id = uuidv4();
@@ -147,7 +148,6 @@ const DndDesires = () => {
             )
           })}
 
-
         </SortableContext>
       </DndContext >
     </>
@@ -155,3 +155,11 @@ const DndDesires = () => {
 }
 
 export default DndDesires
+
+function transformDesireDates(desires: DesireWithStringDates[]) {
+  return desires.map((desire: any) => ({
+    ...desire,
+    createdAt: new Date(desire.createdAt!),
+    updatedAt: new Date(desire.updatedAt!),
+  }));
+}

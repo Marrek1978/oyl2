@@ -6,7 +6,7 @@ interface DndPlusOutletFlexProps {
   children: React.ReactNode
 }
 
-function DndPlusOutletFlex({children} : DndPlusOutletFlexProps) {
+function DndPlus800OutletFlex({children} : DndPlusOutletFlexProps) {
   return (
     <>
     <section className='flex gap-8 '>
@@ -23,4 +23,4 @@ function DndPlusOutletFlex({children} : DndPlusOutletFlexProps) {
   )
 }
 
-export default DndPlusOutletFlex
+export default DndPlus800OutletFlex
