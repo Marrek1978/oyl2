@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import TheDatePicker from "react-datepicker";
 import InputLabel from "../forms/InputLabel";
-// import { CalendarIcon } from "../utilities/icons";
-// import MyDatepicker from "../MyDatePicker.client";
 
 interface DatePickerProps {
   setSelectedDate: (date: Date | null) => void;
@@ -30,24 +28,21 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, 
        ">
 
       <InputLabel text={labelText} />
-      {/* <div className='flex items-center gap-x-2'> */}
-        {/* {CalendarIcon} */}
-        <TheDatePicker
-          isClearable={true}
-          showIcon={false}
-          className='
+      <TheDatePicker
+        isClearable={true}
+        showIcon={false}
+        className='
           p-2 pl-4 
           min-h-8
           font-poppins font-normal tracking-wide
           bg-base-200
           text-blue placeholder:text-neutral-400
           '
-          selected={startDate}
-          onChange={handleSelectedDateChange}
-          placeholderText={'Click to select a date.'}
-          dateFormat="MMMM do, yyyy"
-        />
-      {/* </div> */}
+        selected={startDate}
+        onChange={handleSelectedDateChange}
+        placeholderText={'Click to select a date.'}
+        dateFormat="MMMM do, yyyy"
+      />
     </div>
   );
 };

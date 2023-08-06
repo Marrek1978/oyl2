@@ -1,7 +1,7 @@
 import React from 'react'
-// import type { Todo } from '../../types/CreateTodoType'
-import type { CreationTodo } from '~/types/listTypes';
+
 import DatePicker from '~/components/list/DatePicker'
+import type { CreationTodo } from '~/types/listTypes';
 
 interface EditToDoProps {
   todo: CreationTodo | null;
@@ -10,6 +10,7 @@ interface EditToDoProps {
   updateTodo: (index: number, updatedTodo: CreationTodo) => void;
   index: number | null;
 }
+
 const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOpen, todos, updateTodo, index }) => {
 
   const [body, setBody] = React.useState<string>(todo?.body || '');
@@ -17,11 +18,13 @@ const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOp
   const [important, setImportant] = React.useState<boolean>(todo?.important || false);
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(todo?.dueDate || null);
 
+
   const handleSave = () => {
     if (todo === null || index === null) {
       console.error("Todo or index is null.");
       return;
     }
+
 
     const updatedTodo: CreationTodo = {
       ...todo,
@@ -48,7 +51,6 @@ const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOp
   return (
     <>
       <input type="checkbox"
-        // id={`edit-todo-modal`}
         id={`edit-todo-modal-${todo?.id}`}
         className="modal-toggle" />
 

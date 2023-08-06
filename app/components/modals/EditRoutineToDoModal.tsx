@@ -14,11 +14,8 @@ const EditRoutineToDoModal: React.FC<EditRoutineToDoProps> = ({ todo, setIsEditR
 
   const handleSave = () => {
     if (todo === null || index === null) {
-      console.error("Todo or index is null.");
       return;
     }
-
-
     const updatedTodo: CreationRoutineToDo = {
       ...todo,
       body,
@@ -28,19 +25,18 @@ const EditRoutineToDoModal: React.FC<EditRoutineToDoProps> = ({ todo, setIsEditR
   }
 
 
-
   return (
     <>
       <input type="checkbox"
-        // id={`edit-todo-modal`}
         id={`edit-todo-modal-${todo?.id}`}
         className="modal-toggle" />
 
       <div className="modal z-40 ">
         <div className="modal-box relative rounded-none  overflow-visible min-w-[500px]">
 
-          <h3 className="font-semibold font-nanum text-2xl 
-          base-content ">Edit your To-Do Item</h3>
+          <h3 className="font-semibold font-nanum text-2xl base-content ">
+            Edit your To-Do Item
+          </h3>
           <div className=" w-full mt-6">
             <input type="text" placeholder="Type here"
               className="input border-none w-full bg-base-200 font-mont"

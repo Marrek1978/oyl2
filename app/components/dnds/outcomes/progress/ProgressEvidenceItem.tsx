@@ -1,31 +1,29 @@
-import type { DesireOutcomeProgress } from '@prisma/client';
-import React from 'react';
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from '@dnd-kit/sortable';
-import { FiEdit } from 'react-icons/fi'
+
+import { EditIcon, smallTrashIcon } from '~/components/utilities/icons';
+
 import type { NewlyCreatedProgress } from '~/types/progressTypes';
-import { smallTrashIcon } from '~/components/utilities/icons';
+import type { DesireOutcomeProgress } from '@prisma/client';
 
 interface ProgressEvidenceItemProps {
   id: DesireOutcomeProgress['id'];
   progress: DesireOutcomeProgress | NewlyCreatedProgress;
-  removeTodo: (todoIndex: string) => void;
-  editTodo: (todoIndex: string) => void;
+  deleteProgressItem: (id: string) => void;
+  editProgressItem: (progress: DesireOutcomeProgress | NewlyCreatedProgress) => void;
 }
 
-
-
-function ProgressEvidenceItem({ id, progress, removeTodo, editTodo }: ProgressEvidenceItemProps) {
+function ProgressEvidenceItem({ id, progress, deleteProgressItem, editProgressItem }: ProgressEvidenceItemProps) {
 
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: id });
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
 
   const formattedDate = formatDate(progress?.dueDate);
-
 
   return (
     <>
@@ -53,20 +51,19 @@ function ProgressEvidenceItem({ id, progress, removeTodo, editTodo }: ProgressEv
             )}
 
             <div className="flex">
-              <label
-                htmlFor={`edit-todo-modal-${progress?.id}`}
+              <button
                 className="btn btn-xs btn-outline btn-info mr-3"
-                onClick={() => editTodo(id)}
-              ><FiEdit /> </label>
+                onClick={() => editProgressItem(progress)}
+                type="button"
+              >{EditIcon} </button>
 
               <button
                 className="btn btn-xs btn-outline btn-error"
-                onClick={() => removeTodo(id)}
+                onClick={() => deleteProgressItem(id)}
               >{smallTrashIcon}
               </button>
             </div>
           </div>
-
         </div>
       </div>
     </>

@@ -1,81 +1,23 @@
-// import { v4 as uuidv4 } from 'uuid';
-import { useCallback, useEffect, useState } from 'react'
-import { useFetcher } from '@remix-run/react';
-import type { DragEndEvent } from "@dnd-kit/core";
+import { useState } from 'react'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
 
 import Modal from '~/components/modals/Modal';
-import SuccessMessage from '~/components/modals/SuccessMessage';
-// import DndSortableDesire from '~/components/dnds/desires/DndSortableDesire';
-
-
-// import HeadingH1 from '~/components/titles/HeadingH1';
-import type { DesireOutcomeProgress } from '@prisma/client';
-import type { NewlyCreatedProgress } from '~/types/progressTypes';
 import ProgressEvidenceItem from './ProgressEvidenceItem';
-import HeadingH2 from '~/components/titles/HeadingH2';
+import EditProgressItemModal from '~/components/modals/EditProgressItemModal';
+
+import type { DesireOutcomeProgress } from '@prisma/client';
+import type { DragEndEvent } from "@dnd-kit/core";
+import type { NewlyCreatedProgress } from '~/types/progressTypes';
 
 interface DndProgressProps {
-  progressList?: DesireOutcomeProgress[] | NewlyCreatedProgress[]
+  progressList: DesireOutcomeProgress[] | NewlyCreatedProgress[]
+  setProgressList: React.Dispatch<React.SetStateAction<DesireOutcomeProgress[] | NewlyCreatedProgress[]>>
 }
 
-function DndProgress({ progressList }: DndProgressProps) {
-
-  // console.log(' in DndProgress, progressList: ', progressList)
-  const fetcher = useFetcher();
-  // const loaderData = useRouteLoaderData('routes/dash.desires');
-
-  // const [desires, setDesires] = useState<DesireWithValues[]>([]);
-  const [successMessage, setSuccessMessage] = useState<string>('');
-  // const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
-  const [progressListArray, setProgressListArray] = useState<DesireOutcomeProgress[] | NewlyCreatedProgress[]>([]);
-
-  // useEffect(() => {
-  //   if (loaderData?.progressList) { setDesires(transformProgressDates(loaderData?.progressList)) }
-  // }, [loaderData])
-
-  useEffect(() => {
-    if(fetcher.state === 'loading') {
-      setSuccessMessage('List was saved');
-      setTimeout(() => setSuccessMessage(''), 500);
-    }
-  }, [fetcher])
-
-
-  useEffect(() => {
-    if (progressList) { setProgressListArray(progressList) }
-  }, [progressList])
-
-
-  // const handleEditSortOrder = useCallback(async () => {
-  //   const progressListString = JSON.stringify(progressListArray);
-  //   try {
-  //     fetcher.submit({
-  //       progressListString
-  //     }, {
-  //       method: 'POST',
-  //       action: '/dash/desires/$desireId/outcomes/$outcomeId/edit',
-  //     })
-  //   } catch (error) { throw error }
-  //   setSaveNewSortOrder(false);
-  // }, [progressListArray, fetcher])
-
-
-  // useEffect(() => {
-  //   if (saveNewSortOrder) {
-  //     handleEditSortOrder()
-  //   }
-  // }, [saveNewSortOrder, handleEditSortOrder])
-
-
-  // function transformDesireDates(desires: DesireWithStringDates[]) {
-  //   return desires.map((desire: any) => ({
-  //     ...desire,
-  //     createdAt: new Date(desire.createdAt!),
-  //     updatedAt: new Date(desire.updatedAt!),
-  //   }));
-  // }
+function DndProgress({ progressList, setProgressList }: DndProgressProps) {
+  const [openEditProgressItemModal, setOpenEditProgressItemModal] = useState<boolean>(false);
+  const [progressItemToEdit, setProgressItemToEdit] = useState<DesireOutcomeProgress | NewlyCreatedProgress>();
 
 
   const resetProgressListSortOrder = (progressList: DesireOutcomeProgress[] | NewlyCreatedProgress[]) => {
@@ -85,7 +27,6 @@ function DndProgress({ progressList }: DndProgressProps) {
         sortOrder: index
       }
     })
-    // setSaveNewSortOrder(true)
     return reOrdered
   }
 
@@ -93,7 +34,8 @@ function DndProgress({ progressList }: DndProgressProps) {
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      setProgressListArray((prevProgressList: DesireOutcomeProgress[] | NewlyCreatedProgress[]) => {
+      setProgressList((prevProgressList: DesireOutcomeProgress[] | NewlyCreatedProgress[]) => {
+        // setProgressListArray((prevProgressList: DesireOutcomeProgress[] | NewlyCreatedProgress[]) => {
         const oldIndex = prevProgressList.findIndex(progress => progress.id === active.id);
         const newIndex = prevProgressList.findIndex(progress => progress.id === over?.id);
         const newProgressList = arrayMove(prevProgressList, oldIndex, newIndex);
@@ -111,42 +53,61 @@ function DndProgress({ progressList }: DndProgressProps) {
     }))
 
 
+  function handleDeleteProgressItem(id: string) {
+    setProgressList((prevProgressList: DesireOutcomeProgress[] | NewlyCreatedProgress[]) => {
+      return prevProgressList.filter(progress => progress.id !== id)
+    })
+  }
+
+  
+  function handleOpenEditProgressItem(progress: DesireOutcomeProgress | NewlyCreatedProgress) {
+    setProgressItemToEdit(progress)
+    setOpenEditProgressItemModal(true)
+  }
+
+
+  function handleSaveEditProgressItem(editedProgressItem: DesireOutcomeProgress | NewlyCreatedProgress) {
+    setProgressList((prevProgressList: DesireOutcomeProgress[] | NewlyCreatedProgress[]) => {
+      const index = prevProgressList.findIndex(progress => progress.id === editedProgressItem.id)
+      const newProgressList = [...prevProgressList]
+      newProgressList[index] = editedProgressItem
+      return newProgressList
+    })
+    setOpenEditProgressItemModal(false)
+    setProgressItemToEdit(undefined)
+  }
+
   return (
     <>
-      {/* {successMessage && (
-        <Modal onClose={() => { }} zIndex={20}>
-          {successMessage}
-          <SuccessMessage
-            text={'Order was updated'}
-          />
-        </Modal>)
-      } */}
-{/*       
-      <div className='mt-4'>
-        <HeadingH2 text={'Evidence of Progress towards Outcome'} />
-      </div> */}
+      {openEditProgressItemModal && progressItemToEdit && (
+        <div className='max-w-max'>
+          <Modal onClose={() => { }} zIndex={20}>
+            <EditProgressItemModal
+              progress={progressItemToEdit}
+              handleSaveEdits={handleSaveEditProgressItem}
+              handleCancel={() => setOpenEditProgressItemModal(false)}
+            />
+          </Modal>
+        </div>
+      )}
 
       <DndContext
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
         sensors={sensors}
       >
-
         <SortableContext
-          items={progressListArray.map((progress) => progress.id)}
+          items={progressList.map((progress) => progress.id)}
           strategy={verticalListSortingStrategy}
         >
-          {progressListArray?.map((progress) => {
-            // const desireValues = p.desireValues
-            // desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
-
+          {progressList?.map((progress) => {
             return (
               <ProgressEvidenceItem
                 key={progress.id}
                 id={progress.id}
                 progress={progress}
-                editTodo={() => { }}
-                removeTodo={() => { }}
+                editProgressItem={handleOpenEditProgressItem}
+                deleteProgressItem={handleDeleteProgressItem}
               />
             )
           })}

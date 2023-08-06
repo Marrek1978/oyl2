@@ -6,16 +6,17 @@ interface SolidBtnProps {
   icon?: React.ReactNode;
   daisyUIBtnColor?: string;
   disableSaveBtn?: boolean;
+  type?: 'button' | 'submit' | 'reset' | undefined;
 }
 
-function SolidBtn({ text, onClickFunction, icon, daisyUIBtnColor='primary', disableSaveBtn=false }: SolidBtnProps) {
+function SolidBtn({ text, onClickFunction, icon, daisyUIBtnColor='primary', disableSaveBtn=false, type='submit' }: SolidBtnProps) {
   return (
     <>
       <button
         className={`btn btn-${daisyUIBtnColor} font-mont rounded-none w-full px-4 py-2 border-1`}
-        type="submit"
         onClick={onClickFunction}
         disabled={disableSaveBtn}
+        type={type}
       >
         <div className='flex gap-2 items-center text-md uppercase '>
           {text}

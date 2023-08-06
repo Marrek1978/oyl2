@@ -22,8 +22,6 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     const desire: DesireWithValues | null = await getDesireById(desireId, userId)
     return { desire };
   } catch (error) { throw error }
-
-
 }
 
 function DesirePage() {
