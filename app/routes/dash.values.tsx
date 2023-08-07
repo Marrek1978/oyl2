@@ -1,5 +1,5 @@
 import { parse } from 'querystring';
-import type { LoaderArgs } from '@remix-run/server-runtime';
+import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
 
 import { requireUserId } from '~/models/session.server';
 import { getValues, updateValuesOrder } from '~/models/values.server';
@@ -15,7 +15,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   } catch (error) { throw error }
 };
 
-export const action = async ({ request }: LoaderArgs) => {
+export const action = async ({ request }: ActionArgs) => {
   const formBody = await request.text();
   const parsedBody = parse(formBody);
   const values = JSON.parse(parsedBody.valuesString as string);

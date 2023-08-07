@@ -1,4 +1,4 @@
-import type { Values } from '@prisma/client';
+import type { Value } from '@prisma/client';
 import {redirect } from '@remix-run/server-runtime';
 import { useMatches, useParams } from '@remix-run/react';
 
@@ -25,7 +25,7 @@ function DeleteValuePage() {
   const valueId = params.valueId as string
   const matches = useMatches();
   const values = matches.find(match => match.id === 'routes/dash.values')?.data
-  const value = values?.find((value: Values) => value.id === valueId)
+  const value = values?.find((value: Value) => value.id === valueId)
   const title = value?.valueTitle
 
   return (

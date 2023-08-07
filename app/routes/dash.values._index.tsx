@@ -12,6 +12,8 @@ export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData()
   const valueData = Object.fromEntries(formData);
 
+
+  //! do clentside validation to stop rerenders
   let validationErrors: validationErrorsTypes = {};
   !valueData.title && (validationErrors.title = 'A title is required')
   !valueData.description && (validationErrors.description = 'A description is required')

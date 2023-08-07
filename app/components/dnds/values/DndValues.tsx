@@ -14,11 +14,7 @@ import type { Value } from '@prisma/client'
 import type { ValuesWithStringDates } from '~/types/valueTypes'
 import DndSortableGeneric from '~/components/genericComponents/dnd/DndSortableGeneric';
 
-interface DndValuesProps {
-  setOrderBool?: (bool: boolean) => void
-}
-
-const DndValues: React.FC<DndValuesProps> = ({ setOrderBool }) => {
+const DndValues = () => {
 
   const fetcher = useFetcher();
   const valuesData = useLoaderData<ValuesWithStringDates[]>();

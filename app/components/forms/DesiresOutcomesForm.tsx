@@ -1,6 +1,6 @@
 import { v4 as uuidOutcomes } from "uuid";
 import { useEffect, useState } from 'react'
-import { Form, useActionData, useFetcher, useNavigation } from '@remix-run/react';
+import { Form, useActionData, useFetcher, useNavigation, useLocation, Link } from '@remix-run/react';
 
 import InputLabel from './InputLabel';
 import Divider from "../utilities/Divider";
@@ -21,16 +21,21 @@ import type { DesireOutcomeProgress } from "@prisma/client";
 import type { NewlyCreatedProgress } from "~/types/progressTypes";
 import Modal from "../modals/Modal";
 import SuccessMessage from "../modals/SuccessMessage";
+import type { OutcomeWithProgressList } from "~/types/outcomeTypes";
+import SolidBtnGreyBlue from "../buttons/SolidBtnGreyBlue";
 interface DesireFormProps {
-  desire?: DesireWithValues
+  desire?: DesireWithValues;
+  outcome?: OutcomeWithProgressList;
 }
 
-function DesiresOutcomesForm({ desire }: DesireFormProps) {
+function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
 
   const fetcher = useFetcher();
   const navigation = useNavigation();
   const validationErrors = useActionData()
 
+  //!!  make client side  console.log('validation errors = ', validationErrors)
+  
   const [desireId, setDesireId] = useState<string>('')
   const [successMessage, setSuccessMessage] = useState('');
   const [desireTitle, setDesireTitle] = useState<string>('')
@@ -39,6 +44,7 @@ function DesiresOutcomesForm({ desire }: DesireFormProps) {
   const [outcomeDescription, setOutcomeDescription] = useState<string>('')
   const [formattedOutcomeDueDate, setFormattedOutcomeDueDate] = useState<string | null>(null)
   const [progressList, setProgressList] = useState<DesireOutcomeProgress[] | NewlyCreatedProgress[]>([])
+  const [isNewOutcome, setIsNewOutcome] = useState<boolean>(true) //true if outcome is new, false if outcome is existing
 
   const [progress, setProgress] = useState<string>('') //if adding new desire, set to desires.length
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
@@ -46,21 +52,64 @@ function DesiresOutcomesForm({ desire }: DesireFormProps) {
 
   const isSubmitting = navigation.state === 'submitting'
 
+  const location = useLocation();
+
+  const saveBtnText =
+    isSubmitting
+      ? 'Saving...'
+      : isNewOutcome
+        ? "Save New Outcome"
+        : "Save Changes"
+
+
+  //loading data to edit
+  useEffect(() => {
+    if (outcome) {
+      setOutcomeTitle(outcome.title || '')
+      setOutcomeDescription(outcome.description || '')
+      setOutcomeDueDate(outcome.dueDate ? new Date(outcome.dueDate) : null)
+      setProgressList(outcome.desireOutcomeProgress || [])
+    }
+  }, [outcome])
+
+
+  //switch for edis vs new
+  useEffect(() => {
+    const pathArray = location.pathname.split('/');
+    if (pathArray.length === 5) {
+      setIsNewOutcome(true);
+    } else if (pathArray.length === 6) {
+      setIsNewOutcome(false);
+    }
+  }, [location.pathname]);
+
+
+  //load desire title, should always be available
   useEffect(() => {
     setDesireTitle(desire?.title || '')
     setDesireId(desire?.id || '')
   }, [desire])
 
 
+  // for turning buttons on/off, switching text
   useEffect(() => {
-    setIsSaveable(outcomeTitle ? true : false)
-  }, [outcomeTitle]);
+    const saveable =
+      !isNewOutcome
+        ? true
+        : outcomeTitle ? true : false
+    setIsSaveable(saveable)
+  }, [outcomeTitle, isNewOutcome]);
 
 
+
+  //formatting date for display
   useEffect(() => {
-    outcomeDueDate && setFormattedOutcomeDueDate(shortenDate(outcomeDueDate))
+    const outcomeDueDateDateObj = new Date(outcomeDueDate as Date)
+    outcomeDueDate && setFormattedOutcomeDueDate(shortenDate(outcomeDueDateDateObj))
   }, [outcomeDueDate])
 
+
+  //clearing form after submit
   useEffect(() => {
     if (fetcher.state === 'loading') {
       setOutcomeTitle('')
@@ -71,6 +120,7 @@ function DesiresOutcomesForm({ desire }: DesireFormProps) {
       setTimeout(() => setSuccessMessage(''), 1000);
     }
   }, [fetcher])
+
 
   const handleAddProgress = () => {
     if (progress) {
@@ -98,7 +148,6 @@ function DesiresOutcomesForm({ desire }: DesireFormProps) {
       desireId: desireId,
     }
     const outcomeString = JSON.stringify(outcomeObj);
-
     try {
       fetcher.submit({
         outcomeString
@@ -108,6 +157,25 @@ function DesiresOutcomesForm({ desire }: DesireFormProps) {
     } catch (error) { throw error }
   }
 
+
+  const handleEdit = () => {
+    const outcomeObj = {
+      id: outcome?.id,
+      title: outcomeTitle,
+      description: outcomeDescription,
+      dueDate: outcomeDueDate,
+      desireOutcomeProgress: progressList,
+      desireId: desireId,
+    }
+    const outcomeString = JSON.stringify(outcomeObj);
+    try {
+      fetcher.submit({
+        outcomeString
+      }, {
+        method: 'POST',
+      })
+    } catch (error) { throw error }
+  }
 
   return (
     <>
@@ -213,7 +281,15 @@ function DesiresOutcomesForm({ desire }: DesireFormProps) {
                     <SubHeading14px text={`Due On or Before:  ${formattedOutcomeDueDate}`} />
                   </div>
                 )}
+                {outcomeDescription && (
+                  <div className="mt-2">
+                    <p className="text-base-content/60">
+                      {outcomeDescription}
+                    </p>
+                  </div>
+                )}
               </div>
+
               <div>
                 <DndProgress
                   progressList={progressList}
@@ -224,13 +300,36 @@ function DesiresOutcomesForm({ desire }: DesireFormProps) {
 
             {/* //**************BUTTONS ***************  */}
             <div className="col-start-2 row-start-2">
-              <div className='mt-0 mb-0'>
-                <SolidBtn text={isSubmitting ? 'Saving...' : 'Save Edits'}
-                  onClickFunction={handleSave}
-                  icon={dbIcon}
-                  disableSaveBtn={isSubmitting || !isSaveable}
-                  type='button'
-                />
+
+              <div className="flex flex-col gap-4">
+                <div className='mt-0 mb-0'>
+                  <SolidBtn text={saveBtnText}
+                    onClickFunction={isNewOutcome ? handleSave : handleEdit}
+                    icon={dbIcon}
+                    disableSaveBtn={isSubmitting || !isSaveable}
+                    type='button'
+                  />
+                </div>
+
+                {!isNewOutcome && (
+                  <>
+                    <Link to='..' >
+                      <SolidBtnGreyBlue
+                        text='Close w/o saving'
+                        onClickFunction={() => { }}
+                      />
+                    </Link>
+
+                    <Link to='delete' >
+                      <OutlinedBtn
+                        text='Delete Outcome'
+                        onClickFunction={() => { }}
+                        daisyUIBtnColor='error'
+                      />
+                    </Link>
+                  </>
+                )}
+
               </div>
             </div>
           </div >
@@ -244,7 +343,13 @@ export default DesiresOutcomesForm
 
 
 const shortenDate = (date: Date) => {
-  return `${date.toLocaleString('default', { month: 'long' })} ${date.getDate()}, ${date.getFullYear()}`;
+
+  if (!(date instanceof Date)) {
+    throw new Error('date should be a Date object');
+  }
+
+
+  return `${date.toLocaleString('default', { month: 'long' })} ${date.getDay()}, ${date.getFullYear()}`;
 };
 
 

@@ -28,6 +28,18 @@ export function transformRoutineDataDates(routines: any) {
   }));
 }
 
+// export function transformOutcomesWithProgressDates(outcomes: any) {
+//   return outcomes.map((outcome: any) => ({
+//     ...outcome,
+//     createdAt: new Date(outcome.createdAt!),
+//     updatedAt: new Date(outcome.updatedAt!),
+//     dueDate and 
+//     dueDate: new Date(outcome.dueDate!),
+
+
+
+
+
 export function transformScheduledListsDataDates(lists: any) {
   return lists.map((list: any) => ({
     ...list,

@@ -11,9 +11,7 @@ import SuccessMessage from '~/components/modals/SuccessMessage';
 import SubHeading14px from '~/components/titles/SubHeading14px';
 import DndSortableGeneric from '~/components/genericComponents/dnd/DndSortableGeneric';
 
-import type { DesireOutcome } from '@prisma/client'
 import type { OutcomeWithProgressList } from '~/types/outcomeTypes';
-
 
 
 interface DndOutcomesProps {
@@ -30,7 +28,6 @@ const DndOutcomes: React.FC<DndOutcomesProps> = ({ setOrderBool, desireName }) =
   const [outcomes, setOutcomes] = useState<OutcomeWithProgressList[]>([]);
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
 
-  console.log('in dndoutcomes and outcomesData is ', outcomesData)
 
   useEffect(() => {
     if (outcomesData) { setOutcomes(transformOutcomeDates(outcomesData)) }
