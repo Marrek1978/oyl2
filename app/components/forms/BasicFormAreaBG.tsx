@@ -1,4 +1,5 @@
 import React from 'react'
+import GetHeaderBgColor from './GetHeaderBgColor';
 
 interface BasicFormAreaBGProps {
   children: React.ReactNode;
@@ -6,6 +7,9 @@ interface BasicFormAreaBGProps {
 }
 
 function BasicFormAreaBG({ children, title }: BasicFormAreaBGProps) {
+
+  const backgroundColor = GetHeaderBgColor()
+
   return (
     <div className='
       bg-base-100 shadow-xl
@@ -13,10 +17,14 @@ function BasicFormAreaBG({ children, title }: BasicFormAreaBGProps) {
       grid-rows-[72px_1fr_min-content]
       cursor-defaultshadow-lg
       w-full
+      max-h-full
+      overflow-auto
     '>
 
       <div className={`
-        w-full h-full px-8 bg-base-content flex items-center
+        w-full h-full px-8 
+        ${backgroundColor}
+        flex items-center
         text-xl font-mont uppercase font-normal tracking-widest 
         text-primary-300
         truncate wrap

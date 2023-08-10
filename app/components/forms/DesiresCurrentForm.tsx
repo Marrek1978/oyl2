@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
 
-import InputLabel from './InputLabel';
 import SolidBtn from '../buttons/SolidBtn';
-import { closeIcon, dbIcon } from '../utilities/icons';
 import BasicFormAreaBG from './BasicFormAreaBG';
+import { closeIcon, dbIcon } from '../utilities/icons';
+import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
+import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
 import { DesireCurrentSituation } from '~/components/utilities/PlaceHolderTexts';
 
-import type { DesireWithValues } from '~/types/desireTypes'
-import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
 
+import type { DesireWithValues } from '~/types/desireTypes'
+import { DesireCurrentSituationGuideLine } from '../utilities/Guidelines';
 interface DesireFormProps {
   desire?: DesireWithValues
 }
@@ -48,7 +49,11 @@ function DesiresCurrentForm({ desire }: DesireFormProps) {
         <div className="form-control vert-space-between-inputs">
           <input type="string" name='desireId' value={desireId} hidden readOnly />
 
-          <InputLabel text='Current Situation' />
+          <InputLabelWithGuideLineLink
+            text='Current Situation'
+            guideline={DesireCurrentSituationGuideLine}
+            title={'Current Situation'}
+          />
           <textarea
             className='input-field-text-para '
             placeholder={DesireCurrentSituation}

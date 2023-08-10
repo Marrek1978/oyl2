@@ -1,8 +1,7 @@
 import React from 'react'
-import { Link } from '@remix-run/react'
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from '@dnd-kit/sortable';
-import { EditIcon } from '~/components/utilities/icons'
+import H2WithLink from '~/components/titles/H2WithLink';
 
 interface basicTextAreaBGProps {
   children: React.ReactNode
@@ -38,14 +37,12 @@ function DndSortableGeneric({ children, id, title, description, linkTitle = 'Edi
             max-w-prose
           '>
           <div className="flex items-center justify-between gap-4 ">
-            <div className='text-xl font-medium'>{title}</div>
-            <Link to={id} >
-              <div className='flex gap-2 items-center
-                text-primary font-mont font-bold text-xs  uppercase
-                 hover:scale-105 transition-all '>
-                {linkTitle} {EditIcon}
-              </div>
-            </Link>
+            <H2WithLink
+              title={title}
+              linkDestination={id}
+              // linkColor={}
+              linkText={linkTitle}
+            />
           </div>
 
           {/* //! associations?? */}

@@ -1,6 +1,5 @@
-import InputLabel from './InputLabel';
+import HeadingH1 from './HeadingH1';
 import WithGuidelineLink from '../forms/WithGuidelineLink';
-
 
 interface InputLabelWithGuideLineLinkProps {
   text: string;
@@ -8,7 +7,7 @@ interface InputLabelWithGuideLineLinkProps {
   title: string;
 }
 
-function InputLabelWithGuideLineLink({ text, guideline, title }: InputLabelWithGuideLineLinkProps) {
+function H1WithGuideLineLink({ text, guideline, title }: InputLabelWithGuideLineLinkProps) {
 
   return (
     <>
@@ -17,11 +16,11 @@ function InputLabelWithGuideLineLink({ text, guideline, title }: InputLabelWithG
         guideline={guideline}
         title={title}
       >
-        <InputLabel text={text} />
+        <HeadingH1 text={text} />
       </WithGuidelineLink>
+
     </>
   )
 }
 
-
-export default InputLabelWithGuideLineLink
+export default H1WithGuideLineLink

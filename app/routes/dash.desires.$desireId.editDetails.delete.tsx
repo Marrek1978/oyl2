@@ -1,16 +1,14 @@
-import React from 'react'
 import { redirect } from '@remix-run/server-runtime';
 import { useMatches, useParams } from '@remix-run/react';
 import type { ActionArgs } from '@remix-run/server-runtime';
 
-import { deleteDesire } from '~/models/desires.server';
 import Modal from '~/components/modals/Modal'
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal'
+import { deleteDesire } from '~/models/desires.server';
 
 import type { DesireWithValues } from '~/types/desireTypes';
 
 export const action = async ({ request }: ActionArgs) => {
-
   const formData = await request.formData()
   const desireData = Object.fromEntries(formData);
   const desireId = desireData.rowId as string

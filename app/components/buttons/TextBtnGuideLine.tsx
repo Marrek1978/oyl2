@@ -8,13 +8,14 @@ interface TextBtnGuidelineProps {
   type?: 'button' | 'submit' | 'reset' | undefined;
   onMouseOver?: React.MouseEventHandler<HTMLButtonElement>;
   onMouseOut?: React.MouseEventHandler<HTMLButtonElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 function TextBtnGuideLine({ text, onClickFunction, icon, color = 'text-info', type='submit', onMouseOver, onMouseOut }: TextBtnGuidelineProps) {
 
   return (
     <>
-      <button className={`bg-none ${color}
+      <button className={`btn btn-ghost ${color}
         font-bold font-mont rounded-none
         transition-all duration-300 ease-linear 
          `}
@@ -22,6 +23,7 @@ function TextBtnGuideLine({ text, onClickFunction, icon, color = 'text-info', ty
         type={type}
         onMouseOver={onMouseOver}
         onMouseOut={onMouseOut}
+        
       >
         <div className=' flex gap-2 items-center'>
           <div>{text}</div>

@@ -16,18 +16,18 @@
   font-normal  
   
   hover:font-medium
-  hover:bg-white hover:outline-none 
+  hover:bg-base-100 hover:outline-none 
   hover:shadow-lg hover:scale-105 hover:z-10 hover:text-primary 
   
   outline-none transition-all duration-300 ease-linear 
   motion-reduce:transition-none
 
-  focus:bg-white focus:text-primary-focus focus:font-semibold focus:outline-none 
+  focus:bg-base-100 focus:text-primary-focus focus:font-semibold focus:outline-none 
   
 }
 
 #side-nav > li > a.active {
-  @apply bg-white text-primary font-semibold outline-none  ;
+  @apply bg-base-100 text-primary font-semibold outline-none  ;
 }
 
 .link__right {

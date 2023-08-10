@@ -1,14 +1,15 @@
+import { parse } from 'querystring';
 import { useMatches, useParams } from '@remix-run/react';
 
+import { requireUserId } from '~/models/session.server';
 import DesiresOutcomesForm from '~/components/forms/DesiresOutcomesForm'
+import { createDesireOutcomeAndProgressList } from '~/models/outcome.server';
 
 import type { Desire } from '@prisma/client';
-import type { DesireWithValues, validationErrorsTypes } from '~/types/desireTypes';
 import type { ActionArgs } from '@remix-run/server-runtime';
-import { requireUserId } from '~/models/session.server';
-import { parse } from 'querystring';
-import { createDesireOutcomeAndProgressList } from '~/models/outcome.server';
-import { NewlyCreatedProgress } from '~/types/progressTypes';
+import type { DesireWithValues, validationErrorsTypes } from '~/types/desireTypes';
+
+import type { NewlyCreatedProgress } from '~/types/progressTypes';
 
 export const action = async ({ request }: ActionArgs) => {
   const userId = await requireUserId(request)

@@ -17,7 +17,7 @@ function Dash() {
     <>
       <main className="
         w-full
-        mt-12 px-6 
+        my-12 px-6 
         min-h-screen 
         flex gap-6
           ">
@@ -25,6 +25,7 @@ function Dash() {
           <SideNav />
         </aside>
         <article className=" flex-1 min-h-[90vh]   ">
+          breadcrumbs
           <ListProvider>
             <Outlet />
           </ListProvider>

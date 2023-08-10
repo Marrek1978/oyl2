@@ -4,7 +4,6 @@ import { Outlet, useMatches, useParams } from '@remix-run/react';
 
 import H1WithLink from '~/components/titles/H1WithLink';
 import H2WithLink from '~/components/titles/H2WithLink';
-import BreadCrumb14px from '~/components/titles/BreadCrumb';
 import TextProseWidth from '~/components/text/TextProseWidth';
 import SubHeading14px from '~/components/titles/SubHeading14px';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
@@ -14,6 +13,7 @@ import { getDesireById } from '~/models/desires.server';
 
 import { redirect, type LoaderArgs } from '@remix-run/server-runtime';
 import type { DesireValues, DesireWithValues } from '~/types/desireTypes';
+import SubHeading16px from '~/components/titles/SubHeading16px';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   const userId = await requireUserId(request);
@@ -49,7 +49,7 @@ function DesirePage() {
           <div className='w-max'>
             <BasicTextAreaBG >
               <div className='text-success mb-2'>
-                <BreadCrumb14px text='Desire' />
+                <SubHeading16px text='Desire' />
               </div>
 
               <H1WithLink
@@ -58,7 +58,7 @@ function DesirePage() {
                 linkText={'Edit Desire Details'}
               />
 
-              <div className=" flex flex-wrap mt-2 max-w-prose text-info-content/70">
+              <div className=" flex flex-wrap mt-2 max-w-prose text-neutral-content">
                 <SubHeading14px
                   text={`Aligned with the Value${plural} of : `}
                 />
@@ -74,7 +74,7 @@ function DesirePage() {
                 })
                 }
               </div >
-              <div className='mt-2'>
+              <div className='mt-4'>
                 <TextProseWidth
                   text={description}
                 />
@@ -83,22 +83,8 @@ function DesirePage() {
           </div>
 
 
-          <div className=''>
-            <BasicTextAreaBG >
-              <H2WithLink
-                title={'The Ideal Scenario'}
-                linkDestination={'editIdeal'}
-                linkText={'Edit your Ideal Scenario'}
-              />
-              <div className='mt-2'>
-                <TextProseWidth
-                  text={ideal?.length ? ideal : DesireIdealPlaceholderText}
-                />
-              </div>
-            </BasicTextAreaBG >
-          </div>
 
-
+          {/* //?  THE CURRENT SITUATION  */}
           <div className=''>
             <BasicTextAreaBG >
               <H2WithLink
@@ -115,6 +101,23 @@ function DesirePage() {
           </div>
         </div>
 
+        {/* //?  THE IDEAL SITUATION  */}
+        <div className=''>
+          <BasicTextAreaBG >
+            <H2WithLink
+              title={'The Ideal Scenario'}
+              linkDestination={'editIdeal'}
+              linkText={'Edit your Ideal Scenario'}
+            />
+            <div className='mt-2'>
+              <TextProseWidth
+                text={ideal?.length ? ideal : DesireIdealPlaceholderText}
+              />
+            </div>
+          </BasicTextAreaBG >
+        </div>
+
+        {/* //?   Specific Outcomes */}
         <div className=''>
           <BasicTextAreaBG >
             <H2WithLink
@@ -128,15 +131,8 @@ function DesirePage() {
               />
             </div>
           </BasicTextAreaBG >
-
-          {/* <div className='flex-1  max-w-[800px]'>
-          <Outlet />
-        </div> */}
         </div>
-
       </section >
-
-
     </>
   )
 }

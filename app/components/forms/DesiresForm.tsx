@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Form, Link, useActionData, useLocation, useMatches, useNavigation } from '@remix-run/react';
 
 import ListLabel from './ListLabel';
-import InputLabel from './InputLabel';
 import SolidBtn from '../buttons/SolidBtn';
 import BasicFormAreaBG from './BasicFormAreaBG';
 import OutlinedBtn from '../buttons/OutlinedBtn';
@@ -11,6 +10,8 @@ import { closeIcon, dbIcon, trashIcon } from '../utilities/icons';
 
 import type { Desire, Value } from '@prisma/client'
 import type { DesireWithValues } from '~/types/desireTypes';
+import { DesireDescription, DesireTitle, DesireValuesServed } from '../utilities/Guidelines';
+import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
 
 
 interface DesireFormProps {
@@ -50,7 +51,7 @@ function DesiresForm({ desire }: DesireFormProps) {
   }, [location.pathname]);
 
 
-  
+
   useEffect(() => {
     setTitle(desire?.title || '')
     setDescription(desire?.description || '')
@@ -110,7 +111,11 @@ function DesiresForm({ desire }: DesireFormProps) {
             <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
             <input type="string" name='desireId' value={desireId} hidden readOnly />
 
-            <InputLabel text='Desire Title' />
+            <InputLabelWithGuideLineLink
+              text='Desire'
+              guideline={DesireTitle}
+              title='Desires'
+            />
             <input type="text"
               placeholder="Enter a Desire Title"
               name='title'
@@ -123,7 +128,11 @@ function DesiresForm({ desire }: DesireFormProps) {
             )}
 
             <div className='vert-space-between-inputs'>
-              <InputLabel text='Description' />
+              <InputLabelWithGuideLineLink
+                text='Description'
+                guideline={DesireDescription}
+                title='Desire Description'
+              />
               <textarea
                 className='input-field-text-para '
                 placeholder="Describe what you desire. You can describe why you desire somethihng, but do not spend any time justifying your desire."
@@ -142,7 +151,11 @@ function DesiresForm({ desire }: DesireFormProps) {
           {/* //**************VALUES CHECKBOXES ***************  */}
 
           <div className='vert-space-between-inputs'>
-            <InputLabel text='Values Served' />
+            <InputLabelWithGuideLineLink
+              text='Values Served'
+              guideline={DesireValuesServed}
+              title='Values Served'
+            />
             <div className="list-grid">
               {allUserValues?.map((value: Value) => (
                 <React.Fragment key={value.id}>

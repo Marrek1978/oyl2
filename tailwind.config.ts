@@ -17,10 +17,9 @@ module.exports = {
       colors: {
         // 'navy-dark': '#19203A',
         "base-400": "#D6E2F0",
-        "base-500": "#AEC7E4",
+        // "base-content": "#AEC7E4",
         "base-700": "#1D4574",
         "base-super-sat-text": "#004CA3",
-        goldText: "#C3B084",
       },
       fontFamily: {
         nanum: ["Nanum Myeongjo", "serif"],

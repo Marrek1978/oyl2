@@ -5,14 +5,13 @@ import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
 
-// import DndSortableValue from './DndSortableValue';
 import Modal from '~/components/modals/Modal';
-import HeadingH1 from '~/components/titles/HeadingH1';
 import SuccessMessage from '~/components/modals/SuccessMessage';
+import SubHeading16px from '~/components/titles/SubHeading16px';
+import DndSortableGeneric from '~/components/genericComponents/dnd/DndSortableGeneric';
 
 import type { Value } from '@prisma/client'
 import type { ValuesWithStringDates } from '~/types/valueTypes'
-import DndSortableGeneric from '~/components/genericComponents/dnd/DndSortableGeneric';
 
 const DndValues = () => {
 
@@ -96,7 +95,11 @@ const DndValues = () => {
           />
         </Modal>)
       }
-      <HeadingH1 text={'Your Values'} />
+      <div className='flex justify-between items-baseline'>
+        <div className='text-success mb-2'>
+        <SubHeading16px text='Your Values' />
+      </div>
+      </div>
       <DndContext
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
@@ -106,7 +109,7 @@ const DndValues = () => {
           items={values?.map(value => value.id)}
           strategy={verticalListSortingStrategy}
         >
-        
+
           {values?.map((value) => (
             <DndSortableGeneric
               key={value.id}

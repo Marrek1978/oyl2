@@ -23,6 +23,7 @@ import Modal from "../modals/Modal";
 import SuccessMessage from "../modals/SuccessMessage";
 import type { OutcomeWithProgressList } from "~/types/outcomeTypes";
 import SolidBtnGreyBlue from "../buttons/SolidBtnGreyBlue";
+import { CoreValue } from "../utilities/Guidelines";
 interface DesireFormProps {
   desire?: DesireWithValues;
   outcome?: OutcomeWithProgressList;
@@ -204,7 +205,7 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
                 <input type="string" name='desireId' value={desireId} hidden readOnly />
 
                 <div className=''>
-                  <InputLabelWithGuideLineLink text='Outcome Title' guideline={myLoremIpsumText} />
+                  <InputLabelWithGuideLineLink text='Outcome Title' guideline={CoreValue} />
                   <input type="text"
                     placeholder="Enter a List Title"
                     value={outcomeTitle}
@@ -352,17 +353,4 @@ const shortenDate = (date: Date) => {
   return `${date.toLocaleString('default', { month: 'long' })} ${date.getDay()}, ${date.getFullYear()}`;
 };
 
-
-const myLoremIpsumText = `
-Lorem ipsum dolor sit amet, \n
-   consectetur adipiscing elit. Sed non risus. \n
-   Suspendisse lectus tortor, dignissim sit amet, \n
-    adipiscing nec, ultricies sed, dolor. Cras elementum ultrices \n
-    Lorem ipsum dolor sit amet, \n
-   consectetur adipiscing elit. Sed non risus. \n
-   Suspendisse lectus tortor, dignissim sit amet, \n
-    adipiscing nec, ultricies sed, dolor. Cras elementum ultrices \n
-    Lorem ipsum dolor sit amet, \n
-   consectetur adipiscing elit. Sed non risus. \n
-   Suspendisse lectus tortor, dignissim sit amet, \n
-    adipiscing nec, ultricies sed, dolor. Cras elementum ultrices \n`
+ 

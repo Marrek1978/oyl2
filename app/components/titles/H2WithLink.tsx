@@ -13,13 +13,12 @@ interface Props {
 }
 
 
-
 function H2WithLink({ title, linkDestination, linkColor='text-primary', linkText='Edit' }: Props) {
   return (
     <>
       <div className="flex justify-between items-baseline gap-4 w-full">
         <HeadingH2 text={title} />
-        <Link to={linkDestination} className='text-sm'>
+        <Link to={linkDestination} className='text-sm min-w-max'>
           <TextBtn
             text={linkText}
             onClickFunction={() => { }}

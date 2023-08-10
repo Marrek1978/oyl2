@@ -7,10 +7,13 @@ import { closeIcon, dbIcon, trashIcon } from '../utilities/icons'
 import type { Value } from '@prisma/client';
 import SolidBtn from '../buttons/SolidBtn';
 import OutlinedBtn from '../buttons/OutlinedBtn';
+import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
+import { CoreValue, CoreValueStatement } from '../utilities/Guidelines';
+import BasicFormAreaBG from './BasicFormAreaBG';
+
 interface ValueFormProps {
   value?: Value
 }
-
 
 function ValueForm({ value }: ValueFormProps) {
 
@@ -60,36 +63,26 @@ function ValueForm({ value }: ValueFormProps) {
 
   return (
     <>
-      <div className='
-          bg-base-100 
-          grid grid-cols-[minmax(300px,800px)] grid-rows-[72px_1fr_min-content]
-          cursor-default  shadow-xl
-        '>
-        <div className='w-full h-full px-8 bg-base-content flex justify-between items-center'>
-          <div className={`
-              text-xl font-mont uppercase font-normal tracking-widest 
-              text-primary-300
-              truncate overflow-ellipsis 
-              `}>
-            {isAddNewValueRoute ? 'Create New Value' : (<div ><span className='text-sm' >Edit Value:</span>  {value?.valueTitle}</div>)}
-          </div>
-        </div>
+      <BasicFormAreaBG
+        title={isAddNewValueRoute
+          ? 'Create New Value'
+          : (<div ><span className='text-sm' >Edit Value:</span>  {value?.valueTitle}</div>)}
+      >
 
         <Form method='post' className='mx-8'>
           <div className="form-control mt-6">
             <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
             <input type="string" name='valueId' value={valueId} hidden readOnly />
-            <label className="label pl-0">
-              <span className="label-text text-base font-mont font-semibold">Value Title</span>
-            </label>
+
+            <InputLabelWithGuideLineLink
+              text='Value'
+              guideline={CoreValue}
+              title='Values'
+            />
             <input type="text"
               placeholder="Enter a Value Title"
               name='title'
-              className="
-                input border-none input-secondary 
-                bg-base-200 rounded-none
-                font-poppins font-normal tracking-wide
-                "
+              className=" input-field-text-title  "
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
@@ -98,16 +91,14 @@ function ValueForm({ value }: ValueFormProps) {
             )}
 
             <div className='mt-6'>
-              <label className="label pl-0">
-                <span className="label-text text-base font-mont font-semibold">Description</span>
-              </label>
+
+              <InputLabelWithGuideLineLink
+                text='Value Statement'
+                guideline={CoreValueStatement}
+                title='Value Statement'
+              />
               <textarea
-                className="w-full 
-                  textarea textarea-bordered h-24 
-                  input border-none input-secondary 
-                  bg-base-200 rounded-none
-                  font-poppins font-normal  leading-snug
-                  "
+                className="input-field-text-para "
                 placeholder="Describe what you value. You can describe why you value somethihng, but do not spend any time justifying your value."
                 name='description'
                 value={description}
@@ -156,7 +147,7 @@ function ValueForm({ value }: ValueFormProps) {
 
           </div>
         </Form>
-      </div>
+      </BasicFormAreaBG>
     </>
   )
 }

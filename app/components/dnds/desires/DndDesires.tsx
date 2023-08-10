@@ -1,19 +1,17 @@
 import { v4 as uuidv4 } from 'uuid';
+import type { DragEndEvent } from "@dnd-kit/core";
 import { useCallback, useEffect, useState } from 'react'
 import { useFetcher, useRouteLoaderData } from '@remix-run/react';
-import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
 
 import Modal from '~/components/modals/Modal';
 import SuccessMessage from '~/components/modals/SuccessMessage';
-// import DndSortableDesire from '~/components/dnds/desires/DndSortableDesire';
-
+import SubHeading12px from '~/components/titles/SubHeading12px';
+import SubHeading16px from '~/components/titles/SubHeading16px';
+import DndSortableGeneric from '~/components/genericComponents/dnd/DndSortableGeneric';
 
 import type { DesireWithStringDates, DesireWithValues } from '~/types/desireTypes'
-import HeadingH1 from '~/components/titles/HeadingH1';
-import DndSortableGeneric from '~/components/genericComponents/dnd/DndSortableGeneric';
-import SubHeading12px from '~/components/titles/SubHeading12px';
 
 
 const DndDesires = () => {
@@ -102,7 +100,9 @@ const DndDesires = () => {
           />
         </Modal>
       )}
-      <HeadingH1 text={'Your Desires'} />
+      <div className='text-success mb-2'>
+        <SubHeading16px text='Your Desires' />
+      </div>
       <DndContext
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
@@ -133,8 +133,8 @@ const DndDesires = () => {
                     return (
                       <div key={id}
                         className={`
-                        font-medium 
-                        text-slate-600
+                        font-bold
+                        text-secondary/70
                       `} >
                         <SubHeading12px
                           text={`${title}, `}
