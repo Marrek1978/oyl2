@@ -9,7 +9,7 @@ import Modal from '~/components/modals/Modal';
 import SuccessMessage from '~/components/modals/SuccessMessage';
 import SubHeading12px from '~/components/titles/SubHeading12px';
 import SubHeading16px from '~/components/titles/SubHeading16px';
-import DndSortableGeneric from '~/components/genericComponents/dnd/DndSortableGeneric';
+import DndSortableGeneric from '~/components/dnds/DndSortableGeneric';
 
 import type { DesireWithStringDates, DesireWithValues } from '~/types/desireTypes'
 
@@ -126,7 +126,10 @@ const DndDesires = () => {
                 linkTitle='Go to desire'
               >
 
-                <div className="flex flex-wrap gap-2 items-center mt-1 ">
+                <div className="flex flex-wrap gap-2 items-center mt-1 font-bold ">
+                  <div className='text-base-content/80'>
+                    <SubHeading12px text={'Serves Values:'} />
+                  </div>
                   {desireValues.map((value) => {
                     const title = value.value.valueTitle
                     let id = uuidv4();

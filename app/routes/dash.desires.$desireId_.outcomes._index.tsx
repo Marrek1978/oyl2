@@ -35,7 +35,6 @@ export const action = async ({ request }: ActionArgs) => {
 
   try {
     await createDesireOutcomeAndProgressList(outcome)
-    // return redirect('/dash/desires')
     return null
   } catch (error) { throw error }
 }
@@ -46,8 +45,6 @@ function DesireOutcomesIndexPage() {
   const matches = useMatches();
   const desires: DesireWithValues[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
   const desire: DesireWithValues | undefined = desires?.find((desire: Desire) => desire.id === params.desireId)
-
-
 
   return (
     <>

@@ -8,7 +8,7 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from 
 import Modal from '~/components/modals/Modal';
 import SuccessMessage from '~/components/modals/SuccessMessage';
 import SubHeading16px from '~/components/titles/SubHeading16px';
-import DndSortableGeneric from '~/components/genericComponents/dnd/DndSortableGeneric';
+import DndSortableGeneric from '~/components/dnds/DndSortableGeneric';
 
 import type { Value } from '@prisma/client'
 import type { ValuesWithStringDates } from '~/types/valueTypes'

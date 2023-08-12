@@ -5,6 +5,7 @@ import { EditIcon, smallTrashIcon } from '~/components/utilities/icons';
 
 import type { NewlyCreatedProgress } from '~/types/progressTypes';
 import type { DesireOutcomeProgress } from '@prisma/client';
+import { formatDate } from "~/utils/functions";
 
 interface ProgressEvidenceItemProps {
   id: DesireOutcomeProgress['id'];
@@ -72,8 +73,3 @@ function ProgressEvidenceItem({ id, progress, deleteProgressItem, editProgressIt
 
 export default ProgressEvidenceItem
 
-const formatDate = (dateString: Date | null) => {
-  if (!dateString) return null;
-  const date = new Date(dateString);
-  return `${date.toLocaleString('default', { month: 'long' })} ${date.getDate()}, ${date.getFullYear()}`;
-};

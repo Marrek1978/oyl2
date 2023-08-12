@@ -22,6 +22,8 @@ import type { DesireWithValues } from '~/types/desireTypes'
 import type { DesireOutcomeProgress } from "@prisma/client";
 import type { NewlyCreatedProgress } from "~/types/progressTypes";
 import type { OutcomeWithProgressList } from "~/types/outcomeTypes";
+import { formatDate } from "~/utils/functions";
+// import { parseISO } from "date-fns";
 
 interface DesireFormProps {
   desire?: DesireWithValues;
@@ -69,7 +71,8 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
     if (outcome) {
       setOutcomeTitle(outcome.title || '')
       setOutcomeDescription(outcome.description || '')
-      setOutcomeDueDate(outcome.dueDate ? new Date(outcome.dueDate) : null)
+      setOutcomeDueDate(outcome.dueDate ? outcome.dueDate : null)
+      // setOutcomeDueDate(outcome.dueDate ? new Date(outcome.dueDate) : null)
       setProgressList(outcome.desireOutcomeProgress || [])
     }
   }, [outcome])
@@ -105,36 +108,28 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
 
   useEffect(() => {
 
-    console.log('outcomeDueDate = ', outcomeDueDate)
     let date1;
     let date2;
     if (outcomeDueDate) {
       date1 = new Date(outcomeDueDate.getFullYear(), outcomeDueDate.getMonth(), outcomeDueDate.getDate());
-      console.log('date1 = ', date1)
     }
-
     if (outcome?.dueDate) {
       const date = new Date(outcome?.dueDate)
       date2 = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      console.log('date2 = ', date2)
     }
-
-
-    
 
     if (outcomeTitle !== outcome?.title) return setEditsMade(true)
     if (outcomeDescription !== outcome?.description) return setEditsMade(true)
-    if(date1 !== date2) return setEditsMade(true)
+    if (date1?.getTime() !== date2?.getTime()) return setEditsMade(true)
     if (progressList !== outcome?.desireOutcomeProgress) return setEditsMade(true)
+
     setEditsMade(false)
-
-
   }, [outcomeTitle, outcomeDescription, outcomeDueDate, progressList]) // eslint-disable-line react-hooks/exhaustive-deps
 
   //formatting date for display
   useEffect(() => {
     const outcomeDueDateDateObj = new Date(outcomeDueDate as Date)
-    outcomeDueDate && setFormattedOutcomeDueDate(shortenDate(outcomeDueDateDateObj))
+    outcomeDueDate && setFormattedOutcomeDueDate(formatDate(outcomeDueDateDateObj))
   }, [outcomeDueDate])
 
 
@@ -381,13 +376,4 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
 export default DesiresOutcomesForm
 
 
-const shortenDate = (date: Date) => {
-
-  if (!(date instanceof Date)) {
-    throw new Error('date should be a Date object');
-  }
-
-
-  return `${date.toLocaleString('default', { month: 'long' })} ${date.getDay()}, ${date.getFullYear()}`;
-};
 

@@ -7,10 +7,11 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from 
 
 import Modal from '~/components/modals/Modal';
 import SuccessMessage from '~/components/modals/SuccessMessage';
-import DndSortableGeneric from '~/components/genericComponents/dnd/DndSortableGeneric';
 
 import type { OutcomeWithProgressList } from '~/types/outcomeTypes';
 import SubHeading16px from '~/components/titles/SubHeading16px';
+import DndOutcomesSortable from './DndOutcomesSortable';
+import { formatDate } from '~/utils/functions';
 
 
 interface DndOutcomesProps {
@@ -111,7 +112,7 @@ const DndOutcomes: React.FC<DndOutcomesProps> = ({ desireName, description }) =>
       </div>
 
       {description && (
-        <div className='mt-2 max-w-prose'>
+        <div className='mt-2 max-w-prose text-base-content/70'>
           {description}
         </div>
       )}
@@ -125,23 +126,31 @@ const DndOutcomes: React.FC<DndOutcomesProps> = ({ desireName, description }) =>
           strategy={verticalListSortingStrategy}
         >
 
-          {outcomes?.map((outcome) => (
 
-            <DndSortableGeneric
-              key={outcome.id}
-              id={outcome.id}
-              description={outcome.description || ' '}
-              title={outcome.title}
-            >
+          <div className='mt-4'>
+            {outcomes?.map((outcome) => (
 
-              {outcome.desireOutcomeProgress.map((progress, index) => (
-                <div key={index} >
-                  {progress.title}
-                </div>
-              ))}
+              <DndOutcomesSortable
+                key={outcome.id}
+                id={outcome.id}
+                outcome={outcome}
+              >
 
-            </DndSortableGeneric>
-          ))}
+                {outcome.desireOutcomeProgress.map((progress, index) => (
+                  <div key={index} className='mt-1 grid grid-cols-2 gap-4'>
+                    {progress.title}
+                    {progress.dueDate && (
+                      <div className='text-sm text-base-content/70'>
+                        {progress.dueDate ? formatDate(progress.dueDate) : ''}
+
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+              </DndOutcomesSortable>
+            ))}
+          </div>
 
         </SortableContext>
       </DndContext >

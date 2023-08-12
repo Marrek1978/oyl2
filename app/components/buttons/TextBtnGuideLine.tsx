@@ -11,7 +11,7 @@ interface TextBtnGuidelineProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-function TextBtnGuideLine({ text, onClickFunction, icon, color = 'text-info', type='submit', onMouseOver, onMouseOut }: TextBtnGuidelineProps) {
+function TextBtnGuideLine({ text, onClickFunction, icon, color = 'text-secondary', type='submit', onMouseOver, onMouseOut }: TextBtnGuidelineProps) {
 
   return (
     <>

@@ -1,17 +1,14 @@
-import React from 'react'
-
-import { redirect, type ActionArgs } from '@remix-run/server-runtime'
-import Modal from '~/components/modals/Modal'
-import { useMatches, useParams, Outlet } from '@remix-run/react'
-import type { DesireWithValues } from '~/types/desireTypes'
-import type { Desire } from '@prisma/client'
-import DesiresOutcomesForm from '~/components/forms/DesiresOutcomesForm'
-import type { OutcomeWithProgressList } from '~/types/outcomeTypes'
-// import { createDesireOutcomeAndProgressList } from '~/models/outcome.server';
-
-// import { requireUserId } from '~/models/session.server'
 import { parse } from 'querystring'
+import { useMatches, useParams, Outlet } from '@remix-run/react'
+import { redirect, type ActionArgs } from '@remix-run/server-runtime'
+
+import Modal from '~/components/modals/Modal'
+import DesiresOutcomesForm from '~/components/forms/DesiresOutcomesForm'
 import { updateDesireOutcomeAndProgressList } from '~/models/outcome.server'
+
+import type { DesireWithValues } from '~/types/desireTypes'
+import type { Desire, DesireOutcomeProgress } from '@prisma/client'
+import type { DesireOutcomeProgressWithStringDates, OutcomeWithProgessWithStringDates, OutcomeWithProgressList } from '~/types/outcomeTypes'
 
 
 export const action = async ({ request }: ActionArgs) => {
@@ -31,9 +28,30 @@ function EditOutcomePage() {
   const desires: DesireWithValues[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
   const desire: DesireWithValues | undefined = desires?.find((desire: Desire) => desire.id === params.desireId)
 
-  const outcomes: OutcomeWithProgressList[] = matches.find(match => match.id === 'routes/dash.desires.$desireId_.outcomes')!.data
-  if (!outcomes) throw new Error('outcomes not found')
-  const outcome: OutcomeWithProgressList = outcomes.find((outcome: OutcomeWithProgressList) => outcome.id === params.outcomeId)!
+  const outcomesWithStringDates: OutcomeWithProgessWithStringDates[] = matches.find(match => match.id === 'routes/dash.desires.$desireId_.outcomes')!.data
+  if (!outcomesWithStringDates) throw new Error('outcomes not found')
+  const outcomeWithStringDates: OutcomeWithProgessWithStringDates = outcomesWithStringDates.find((outcome: OutcomeWithProgessWithStringDates) => outcome.id === params.outcomeId)!
+
+  const progressListWithStringDates: DesireOutcomeProgressWithStringDates[] = outcomeWithStringDates.desireOutcomeProgress
+  let progressList: DesireOutcomeProgress[] = [];
+
+  progressList = progressListWithStringDates?.map((progress: DesireOutcomeProgressWithStringDates) => {
+    return {
+      ...progress,
+      createdAt: new Date(progress.createdAt),
+      updatedAt: new Date(progress.updatedAt),
+      dueDate: new Date(progress.dueDate)
+    }
+  })
+
+  const outcome: OutcomeWithProgressList = {
+    ...outcomeWithStringDates,
+    createdAt: new Date(outcomeWithStringDates.createdAt),
+    updatedAt: new Date(outcomeWithStringDates.updatedAt),
+    dueDate: new Date(outcomeWithStringDates.dueDate),
+    desireOutcomeProgress: progressList,
+  }
+
 
   return (
     <>

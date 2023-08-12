@@ -2,6 +2,7 @@ import React from 'react';
 import { FiEdit, FiDelete } from 'react-icons/fi'
 import {ToDoItemStyles} from '../../../styles/ToDoItemStyles';
 import type { CreationTodo } from '~/types/listTypes';
+import { formatDate } from '~/utils/functions';
 
 interface ToDoItemProps {
   todo: CreationTodo;

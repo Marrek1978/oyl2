@@ -9,3 +9,9 @@ export function transformData(data: any) {
     dueDate: item.dueDate ? new Date(item.dueDate) : null,
   }));
 } 
+
+export const formatDate = (dateString: Date | null) => {
+  if (!dateString) return null;
+  const date = new Date(dateString);
+  return `${date.toLocaleString('default', { month: 'long' })} ${date.getDate()}, ${date.getFullYear()}`;
+};
