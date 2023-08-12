@@ -9,11 +9,12 @@ import { getOutcomesByDesireId, updateOutcomesOrder } from '~/models/outcome.ser
 import type { Desire } from '@prisma/client';
 import type { DesireWithValues } from '~/types/desireTypes';
 import type { OutcomeWithProgressList } from '~/types/outcomeTypes';
+import { DesireDescription } from './../components/utilities/Guidelines';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   const desireId = params.desireId!
   try {
-    const desireOutcomes : OutcomeWithProgressList[] = await getOutcomesByDesireId(desireId)
+    const desireOutcomes: OutcomeWithProgressList[] = await getOutcomesByDesireId(desireId)
     return desireOutcomes
   } catch (error) { throw error }
 }
@@ -41,7 +42,9 @@ function DesireSpecificOutcomesPage() {
   const desires: DesireWithValues[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
   const desire: DesireWithValues | undefined = desires?.find((desire: Desire) => desire.id === params.desireId)
 
+
   const desireName = desire?.title
+  const DesireDescription = desire?.description
   // if (!desire) {
   //   return null;
   // }
@@ -50,10 +53,11 @@ function DesireSpecificOutcomesPage() {
     <>
 
       <DndPlus1200OutletFlex >
-        <DndOutcomes 
-        // setOrderBool={setOrderBool}  
-        desireName={desireName}
-        
+        <DndOutcomes
+          // setOrderBool={setOrderBool}  
+          desireName={desireName}
+          description={DesireDescription}
+
         />
       </DndPlus1200OutletFlex>
 

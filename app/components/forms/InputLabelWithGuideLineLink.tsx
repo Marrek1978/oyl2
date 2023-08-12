@@ -12,13 +12,15 @@ function InputLabelWithGuideLineLink({ text, guideline, title }: InputLabelWithG
 
   return (
     <>
-      <WithGuidelineLink
-        text={text}
-        guideline={guideline}
-        title={title}
-      >
-        <InputLabel text={text} />
-      </WithGuidelineLink>
+      <div className="w-full ">
+        <WithGuidelineLink
+          text={text}
+          guideline={guideline}
+          title={title}
+        >
+          <InputLabel text={text} />
+        </WithGuidelineLink>
+      </div>
     </>
   )
 }

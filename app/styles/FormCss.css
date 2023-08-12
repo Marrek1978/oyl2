@@ -15,7 +15,7 @@
   @apply  
   w-full 
   textarea textarea-bordered h-24 
-  input border-none input-secondary 
+  input border-none textarea-secondary 
   bg-base-200 rounded-none
   font-poppins font-normal  
   leading-snug

@@ -2,28 +2,27 @@ import { v4 as uuidOutcomes } from "uuid";
 import { useEffect, useState } from 'react'
 import { Form, useActionData, useFetcher, useNavigation, useLocation, Link } from '@remix-run/react';
 
-import InputLabel from './InputLabel';
+import Modal from "../modals/Modal";
 import Divider from "../utilities/Divider";
 import SolidBtn from '../buttons/SolidBtn';
 import DatePicker from "../list/DatePicker";
 import HeadingH2 from "../titles/HeadingH2";
 import OutlinedBtn from '../buttons/OutlinedBtn';
+import SuccessMessage from "../modals/SuccessMessage";
 import SubHeading14px from "../titles/SubHeading14px";
 import LargeFormWithHeader from "./LargeFormWithHeader";
+import SolidBtnGreyBlue from "../buttons/SolidBtnGreyBlue";
 import { ArrowIcon45deg, dbIcon } from '../utilities/icons';
-import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
-
 import DndProgress from '../dnds/outcomes/progress/DndProgress';
+import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
 import { DesireCurrentSituation } from '~/components/utilities/PlaceHolderTexts';
+import { DesireOutcomeGuideline, EvidenceOfProgress, ProperDesireOutcomes } from "../utilities/Guidelines";
 
 import type { DesireWithValues } from '~/types/desireTypes'
 import type { DesireOutcomeProgress } from "@prisma/client";
 import type { NewlyCreatedProgress } from "~/types/progressTypes";
-import Modal from "../modals/Modal";
-import SuccessMessage from "../modals/SuccessMessage";
 import type { OutcomeWithProgressList } from "~/types/outcomeTypes";
-import SolidBtnGreyBlue from "../buttons/SolidBtnGreyBlue";
-import { CoreValue } from "../utilities/Guidelines";
+
 interface DesireFormProps {
   desire?: DesireWithValues;
   outcome?: OutcomeWithProgressList;
@@ -36,7 +35,7 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
   const validationErrors = useActionData()
 
   //!!  make client side  console.log('validation errors = ', validationErrors)
-  
+
   const [desireId, setDesireId] = useState<string>('')
   const [successMessage, setSuccessMessage] = useState('');
   const [desireTitle, setDesireTitle] = useState<string>('')
@@ -45,7 +44,9 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
   const [outcomeDescription, setOutcomeDescription] = useState<string>('')
   const [formattedOutcomeDueDate, setFormattedOutcomeDueDate] = useState<string | null>(null)
   const [progressList, setProgressList] = useState<DesireOutcomeProgress[] | NewlyCreatedProgress[]>([])
+
   const [isNewOutcome, setIsNewOutcome] = useState<boolean>(true) //true if outcome is new, false if outcome is existing
+  const [editsMade, setEditsMade] = useState<boolean>(false) //true if outcome is new, false if outcome is existing
 
   const [progress, setProgress] = useState<string>('') //if adding new desire, set to desires.length
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
@@ -96,12 +97,39 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
   useEffect(() => {
     const saveable =
       !isNewOutcome
-        ? true
+        ? editsMade
         : outcomeTitle ? true : false
     setIsSaveable(saveable)
-  }, [outcomeTitle, isNewOutcome]);
+  }, [outcomeTitle, isNewOutcome, editsMade]);
 
 
+  useEffect(() => {
+
+    console.log('outcomeDueDate = ', outcomeDueDate)
+    let date1;
+    let date2;
+    if (outcomeDueDate) {
+      date1 = new Date(outcomeDueDate.getFullYear(), outcomeDueDate.getMonth(), outcomeDueDate.getDate());
+      console.log('date1 = ', date1)
+    }
+
+    if (outcome?.dueDate) {
+      const date = new Date(outcome?.dueDate)
+      date2 = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      console.log('date2 = ', date2)
+    }
+
+
+    
+
+    if (outcomeTitle !== outcome?.title) return setEditsMade(true)
+    if (outcomeDescription !== outcome?.description) return setEditsMade(true)
+    if(date1 !== date2) return setEditsMade(true)
+    if (progressList !== outcome?.desireOutcomeProgress) return setEditsMade(true)
+    setEditsMade(false)
+
+
+  }, [outcomeTitle, outcomeDescription, outcomeDueDate, progressList]) // eslint-disable-line react-hooks/exhaustive-deps
 
   //formatting date for display
   useEffect(() => {
@@ -205,7 +233,10 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
                 <input type="string" name='desireId' value={desireId} hidden readOnly />
 
                 <div className=''>
-                  <InputLabelWithGuideLineLink text='Outcome Title' guideline={CoreValue} />
+                  <InputLabelWithGuideLineLink
+                    text='Outcome'
+                    title='Outcomes'
+                    guideline={DesireOutcomeGuideline} />
                   <input type="text"
                     placeholder="Enter a List Title"
                     value={outcomeTitle}
@@ -218,7 +249,10 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
                 </div>
 
                 <div className='  '>
-                  <InputLabel text='Outcome Description ( Optional )' />
+                  <InputLabelWithGuideLineLink
+                    text='Outcome Description'
+                    title='Defining Proper Outcomes'
+                    guideline={ProperDesireOutcomes} />
                   <textarea
                     className='input-field-text-para '
                     placeholder={DesireCurrentSituation}
@@ -243,7 +277,11 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
                 </div>
 
                 <div className=' '>
-                  <InputLabel text='Evidence of Progress towards Outcome' />
+                  <InputLabelWithGuideLineLink
+                    text='Evidence of Progress'
+                    title='Evidence of Progress'
+                    guideline={EvidenceOfProgress}
+                  />
                   <input type="text"
                     placeholder="Evidence of Progress"
                     value={progress}
@@ -353,4 +391,3 @@ const shortenDate = (date: Date) => {
   return `${date.toLocaleString('default', { month: 'long' })} ${date.getDay()}, ${date.getFullYear()}`;
 };
 
- 

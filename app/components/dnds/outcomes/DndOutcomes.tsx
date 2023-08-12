@@ -6,20 +6,19 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-ki
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
 
 import Modal from '~/components/modals/Modal';
-import HeadingH1 from '~/components/titles/HeadingH1';
 import SuccessMessage from '~/components/modals/SuccessMessage';
-import SubHeading14px from '~/components/titles/SubHeading14px';
 import DndSortableGeneric from '~/components/genericComponents/dnd/DndSortableGeneric';
 
 import type { OutcomeWithProgressList } from '~/types/outcomeTypes';
+import SubHeading16px from '~/components/titles/SubHeading16px';
 
 
 interface DndOutcomesProps {
-  setOrderBool?: (bool: boolean) => void
-  desireName?: string
+  desireName?: string;
+  description?: string;
 }
 
-const DndOutcomes: React.FC<DndOutcomesProps> = ({ setOrderBool, desireName }) => {
+const DndOutcomes: React.FC<DndOutcomesProps> = ({ desireName, description }) => {
 
   const fetcher = useFetcher();
   const outcomesData = useLoaderData<OutcomeWithProgressList[]>();
@@ -107,10 +106,15 @@ const DndOutcomes: React.FC<DndOutcomesProps> = ({ setOrderBool, desireName }) =
           />
         </Modal>)
       }
-      <HeadingH1 text={'Desired Outcomes'} />
-      <div className='text-base-content/70'>
-        <SubHeading14px text={`For desire: ${desireName}`} />
+      <div className='text-success mb-2'>
+        <SubHeading16px text={`Desired Outcomes for: ${desireName}`} />
       </div>
+
+      {description && (
+        <div className='mt-2 max-w-prose'>
+          {description}
+        </div>
+      )}
       <DndContext
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}

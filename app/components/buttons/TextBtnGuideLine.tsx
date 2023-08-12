@@ -16,6 +16,7 @@ function TextBtnGuideLine({ text, onClickFunction, icon, color = 'text-info', ty
   return (
     <>
       <button className={`btn btn-ghost ${color}
+      pr-0
         font-bold font-mont rounded-none
         transition-all duration-300 ease-linear 
          `}

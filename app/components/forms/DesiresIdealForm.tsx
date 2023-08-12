@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
 
-import InputLabel from './InputLabel';
 import SolidBtn from '../buttons/SolidBtn';
 import { closeIcon, dbIcon } from '../utilities/icons';
 import BasicFormAreaBG from './BasicFormAreaBG';
@@ -10,6 +9,8 @@ import { DesireIdealExplainationText, DesireIdealPlaceholderText } from '../util
 
 import type { DesireWithValues } from '~/types/desireTypes'
 import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
+import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
+import { DesireIdealGuideline } from '../utilities/Guidelines';
 
 
 interface DesireFormProps {
@@ -50,7 +51,11 @@ function DesiresIdealForm({ desire }: DesireFormProps) {
         <div className="form-control vert-space-between-inputs">
           <input type="string" name='desireId' value={desireId} hidden readOnly />
 
-          <InputLabel text='Ideal Scenario' />
+          <InputLabelWithGuideLineLink
+            text='Ideal Scenario'
+            guideline={DesireIdealGuideline}
+            title='Ideal Scenario'
+          />
           <textarea
             className='input-field-text-para '
             placeholder={DesireIdealPlaceholderText}
@@ -63,6 +68,9 @@ function DesiresIdealForm({ desire }: DesireFormProps) {
             <div className='validation-error'> {validationErrors.description}</div>
           )}
         </div>
+
+
+          upload images Here
 
         {/* //**************BUTTONS ***************  */}
         <div className='mt-6 mb-8 flex flex-col gap-4 '>

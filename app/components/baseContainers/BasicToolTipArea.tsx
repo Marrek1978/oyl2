@@ -13,10 +13,10 @@ function BasicToolTipArea({ children, title, closeFunction = () => { } }: basicT
   return (
     <div className='fixed left-1/2  top-1/2
       transform -translate-x-1/2 -translate-y-1/2 
-      max-w-[780px] 
-      whitespace-pre-line 
-      bg-warning p-8 shadow-xl
+      max-w-[780px]  p-8 shadow-xl
       z-50
+      whitespace-pre-line 
+      text-neutral bg-neutral-content
       '>
       <HeadingH1 text={title} />
       {children && typeof children === 'string' && (

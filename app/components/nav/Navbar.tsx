@@ -28,15 +28,15 @@ function Navbar() {
     // 👆 false parameter is required for react project
   }, [])
 
-  //  const darkBackground = isDark ? 'bg-base-300' : 'bg-base-content'
+   const darkBackground = isDark ? 'bg-base-300' : 'bg-base-content'
 
   return (
     <>
       <nav >
         <div className={`navbar p-6 h-24 
-           bg-base-200
+           ${darkBackground}
            shadow
-           text-base-content justify-between  `
+           text-success justify-between  `
         }>
           <Link className="text-3xl tracking-wide" to="/" >
             <div className='flex gap-2 items-baseline  font-poppins font-bold'>
@@ -66,7 +66,7 @@ function Navbar() {
                     text='Logout'
                     onClickFunction={() => { }}
                     icon={LogoutIcon}
-                    daisyUIBtnColor='primary'
+                    daisyUIBtnColor='warning'
                   />
                 </Form>
               </>

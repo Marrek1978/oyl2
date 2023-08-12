@@ -21,18 +21,18 @@ function WithGuidelineLink({ text, guideline, title, children }: WithGuidelineLi
 
   return (
     <>
-      <div className="w-full flex justify-between items-baseline ">
-
-        {children}
-
+      <div className="w-full flex justify-between items-baseline
+      ">
+        {children && (
+          <div>{children}</div>
+        )}
         {guideline && (
-          <div className='relative'>
+          <div className='relative '>
             <TextBtnGuideLine
               text={"GUIDELINES"}
               type='button'
               onClickFunction={() => setShowGuideLine(true)}
             />
-
             {showGuideLine && (
               <BasicToolTipArea
                 title={title}

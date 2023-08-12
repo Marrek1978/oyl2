@@ -1,4 +1,5 @@
 import React from 'react'
+import GetHeaderBgColor from './GetHeaderBgColor';
 
 interface FormProps {
   children: React.ReactNode;
@@ -6,6 +7,9 @@ interface FormProps {
 }
 
 function LargeFormWithHeader({ children, title }: FormProps) {
+
+  const backgroundColor = GetHeaderBgColor()
+  
   return (
     <div className='
       bg-base-100 shadow-xl
@@ -15,7 +19,9 @@ function LargeFormWithHeader({ children, title }: FormProps) {
     '>
 
       <div className={`
-        w-full h-full px-8 bg-base-content flex items-center
+        w-full h-full px-8 
+        ${backgroundColor}
+        flex items-center
         text-xl font-mont uppercase font-normal tracking-widest 
         text-primary-300
         truncate overflow-ellipsis 
