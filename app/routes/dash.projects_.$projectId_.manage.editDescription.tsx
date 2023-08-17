@@ -1,4 +1,4 @@
-import { useLoaderData } from '@remix-run/react';
+import { Outlet, useLoaderData } from '@remix-run/react';
 import { redirect, type ActionArgs, type LoaderFunction, type LoaderArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
@@ -65,14 +65,17 @@ function EditProjectPage() {
   const { project, desire, allUserDesires, allUserProjects } = useLoaderData()
 
   return (
-    <Modal onClose={() => { }} zIndex={10}>
-      <ProjectsForm
-        project={project}
-        desire={desire}
-        allUserDesires={allUserDesires}
-        allUserProjects={allUserProjects}
-      />
-    </Modal>
+    <>
+      <Outlet />
+      <Modal onClose={() => { }} zIndex={10}>
+        <ProjectsForm
+          project={project}
+          desire={desire}
+          allUserDesires={allUserDesires}
+          allUserProjects={allUserProjects}
+        />
+      </Modal>
+    </>
   )
 }
 

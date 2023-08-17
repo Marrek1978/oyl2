@@ -12,6 +12,7 @@
     "dev:server": "cross-env NODE_ENV=development node --inspect --require ./node_modules/dotenv/config --require ./mocks ./build/server.js",
     "dev:localDb": "cross-env NODE_ENV=development DB_CONNECTION=localdb dotenv -e prisma/dev.env remix dev",
     "dev:prodDb": "cross-env NODE_ENV=development DB_CONNECTION=proddb dotenv -e prisma/production.env remix dev",
+    "dev:vercelDb": "cross-env NODE_ENV=development DB_CONNECTION=proddb dotenv -e prisma/vercelDb.env remix dev",
     "docker": "docker-compose up -d",
     "format": "prettier --write .",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
@@ -24,6 +25,7 @@
     "pretest:e2e:run": "npm run build",
     "prisma:migrate:dev": "npx dotenv -e prisma/dev.env prisma migrate dev --preview-feature --schema=prisma/schema.prisma",
     "prisma:migrate:prod": "npx dotenv -e prisma/production.env prisma migrate dev --preview-feature --schema=prisma/schema.prisma",
+    "prisma:migrate:vercel": "npx dotenv -e prisma/vercelDb.env prisma migrate dev --preview-feature --schema=prisma/schema.prisma",
     "test:e2e:run": "cross-env PORT=8811 start-server-and-test start:mocks http://localhost:8811 \"npx cypress run\"",
     "typecheck": "tsc && tsc -p cypress",
     "validate": "run-p \"test -- --run\" lint typecheck test:e2e:run"

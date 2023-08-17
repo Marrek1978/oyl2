@@ -1,19 +1,27 @@
-import { Link, Outlet, useMatches, useParams } from '@remix-run/react'
+import { Link, Outlet, useLoaderData } from '@remix-run/react'
 import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime'
+import type { Desire } from '@prisma/client'
 
 import TextBtn from '~/components/buttons/TextBtn'
 import HeadingH1 from '~/components/titles/HeadingH1'
+import HeadingH2 from '~/components/titles/HeadingH2'
 import { EditIcon } from '~/components/utilities/icons'
+import SubHeading14px from '~/components/titles/SubHeading14px'
+import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
 
-import type { Project, Desire } from '@prisma/client'
-import HeadingH2 from '~/components/titles/HeadingH2'
-import SubHeading14px from '~/components/titles/SubHeading14px'
+import { getDesires } from '~/models/desires.server'
+import { requireUserId } from '~/models/session.server'
+import { getProjectById } from '~/models/project.server'
 
-export const loader = async ({ request }: LoaderArgs) => {
-
-  //load project from params
-  return 'yolo'
+export const loader = async ({ request, params }: LoaderArgs) => {
+  let userId = await requireUserId(request);
+  const projectId = params.projectId!
+  try {
+    const desires = await getDesires(userId)
+    const project = await getProjectById(projectId, userId)
+    return { project, desires, userId }
+  } catch (error) { throw error }
 }
 
 export const action = async ({ request }: ActionArgs) => {
@@ -25,16 +33,13 @@ export const action = async ({ request }: ActionArgs) => {
 // !  routine_tracker will not be available to schedule, required_savings will not be available to schedule
 export default function ProjectByIdPage() {
 
-  const matches = useMatches();
-  const params = useParams();
-  const projects = matches.find(match => match.id === 'routes/dash.projects')?.data.projects
-  const desires = matches.find(match => match.id === 'routes/dash.projects')?.data.desires
-  const project = projects?.find((project: Project) => project.id === params.projectId)
-
+  const { project, desires } = useLoaderData()
   const desireTitle = desires.find((desire: Desire) => desire.id === project.desireId)?.title
 
   return (
     <>
+      <BreadCrumbs title={project.title || ''} />
+
       <Outlet />
       <div className='flex flex-col gap-6'>
         <article>

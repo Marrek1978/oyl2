@@ -9,6 +9,7 @@ import { getOutcomesByDesireId, updateOutcomesOrder } from '~/models/outcome.ser
 import type { Desire } from '@prisma/client';
 import type { DesireWithValues } from '~/types/desireTypes';
 import type { OutcomeWithProgressList } from '~/types/outcomeTypes';
+import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   const desireId = params.desireId!
@@ -46,6 +47,7 @@ function DesireSpecificOutcomesPage() {
 
   return (
     <>
+    <BreadCrumbs title={desireName || ''} />
       <DndPlus1200OutletFlex >
         <DndOutcomes
           desireName={desireName}

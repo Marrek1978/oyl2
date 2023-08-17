@@ -7,15 +7,15 @@ import { getValues } from '~/models/values.server';
 import { requireUserId } from '~/models/session.server';
 import { getDesires, updateDesiresOrder } from '~/models/desires.server';
 
-import type {  Value } from '@prisma/client';
+import type { Value } from '@prisma/client';
 import type { DesireWithValues } from '~/types/desireTypes';
 
 export const loader = async ({ request }: LoaderArgs) => {
   let userId;
   userId = await requireUserId(request);
   try {
-    let desires:DesireWithValues[] = await getDesires(userId);
-    let allUserValues:Value[] = await getValues(userId);
+    let desires: DesireWithValues[] = await getDesires(userId);
+    let allUserValues: Value[] = await getValues(userId);
     return { desires, allUserValues }
   } catch (error) { throw error }
 };
@@ -33,6 +33,9 @@ export const action = async ({ request }: LoaderArgs) => {
 
 
 function DesiresPage() {
+
+ 
+
 
   return (
     <>

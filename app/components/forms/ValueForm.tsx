@@ -30,9 +30,9 @@ function ValueForm({ value }: ValueFormProps) {
   const [isAddNewValueRoute, setIsAddNewValueRoute] = useState(true) //true if /dash/values, false if /dash/values/:valueId
   const [saveBtnText, setSaveBtnText] = useState<string>('Save Value')
 
-
   const isSubmitting = navigation.state === 'submitting'
   const values = matches.find(match => match.id === 'routes/dash.values')?.data
+
 
   useEffect(() => {
     if (location.pathname === '/dash/values') {
@@ -44,6 +44,7 @@ function ValueForm({ value }: ValueFormProps) {
     }
   }, [location.pathname]);
 
+
   useEffect(() => {
     setTitle(value?.valueTitle || '')
     setDescription(value?.valueDescription || '')
@@ -51,13 +52,13 @@ function ValueForm({ value }: ValueFormProps) {
     setValueId(value?.id || '')
   }, [values, value])
 
+
   useEffect(() => {
     const isInputEmpty = !title || !description
     const isInputDifferent =
       title !== value?.valueTitle
       || description !== value?.valueDescription
     setIsSaveable(!isInputEmpty && (isInputDifferent))
-
   }, [title, description, value,]);
 
 
@@ -91,7 +92,6 @@ function ValueForm({ value }: ValueFormProps) {
             )}
 
             <div className='mt-6'>
-
               <InputLabelWithGuideLineLink
                 text='Value Statement'
                 guideline={CoreValueStatement}
@@ -144,7 +144,6 @@ function ValueForm({ value }: ValueFormProps) {
                   </div>
                 </div>
               </>)}
-
           </div>
         </Form>
       </BasicFormAreaBG>

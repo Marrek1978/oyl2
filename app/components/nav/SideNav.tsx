@@ -12,6 +12,8 @@ const SideNav = () => {
     || location.pathname.includes('/dash/routines')
   );
 
+  
+
   // const isValues = (
   //   location.pathname.includes('/dash/values')
   //   || location.pathname.includes('/dash/desires')
@@ -35,7 +37,7 @@ const SideNav = () => {
           </li>
 
           <li className="">
-            <NavLink to='/dash/projects' end >
+            <NavLink to='/dash/projects'  >
               <span>Projects</span>
             </NavLink>
           </li>
@@ -62,27 +64,21 @@ const SideNav = () => {
           </>
           )}
 
-        
-
-         
 
           <li className="">
-            <NavLink to='/dash/clarity' end >
+            <NavLink to='/dash/clarity'  >
               <span>Clarify / Life Calendar</span>
             </NavLink>
           </li>
 
           <li className="">
-            <NavLink to='/dash/values' end  >
+            <NavLink to='/dash/values'   >
               <span>Values</span>
             </NavLink>
           </li>
 
-          {/* {isValues && (<> */}
             <li className="">
-              <NavLink to='/dash/desires' end 
-              // className='link__indent1'
-                >
+              <NavLink to='/dash/desires'   >
                 <span>Desires</span>
               </NavLink>
             </li>

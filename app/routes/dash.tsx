@@ -13,6 +13,9 @@ export const loader = async ({ request }: LoaderArgs) => {
 };
 
 function Dash() {
+
+
+
   return (
     <>
       <main className="
@@ -25,7 +28,6 @@ function Dash() {
           <SideNav />
         </aside>
         <article className=" flex-1 min-h-[90vh]   ">
-          breadcrumbs
           <ListProvider>
             <Outlet />
           </ListProvider>

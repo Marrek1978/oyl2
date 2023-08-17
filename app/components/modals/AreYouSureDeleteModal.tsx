@@ -12,7 +12,8 @@ function AreYouSureDeleteModal({ item, title, id }: AreYouSureDeleteModalProps) 
 
   return (
     <>
-      <div className="card w-[700px] bg-base-100 
+      <div className="card w-[700px] 
+        bg-warning
         rounded-none
         font-mont
         shadow-xl z-30
@@ -22,7 +23,7 @@ function AreYouSureDeleteModal({ item, title, id }: AreYouSureDeleteModalProps) 
             Are you sure you want to delete the {item}:<br />
             <span className='underline'>{title}</span> ?
           </h2>
-          <p className='mt-2'>Deleting the list is permament</p>
+          <p className='mt-2'>Deleting the {item} is permament</p>
           <div className="flex gap-6 w-full justify-between mt-8">
             <Link to='..' className='w-6/12 flex gap-2 flex-1 '>
               <SolidBtnGreyBlue

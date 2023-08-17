@@ -6,11 +6,11 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-ki
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
 
 import Modal from '~/components/modals/Modal';
-import HeadingH1 from '~/components/titles/HeadingH1';
 import SuccessMessage from '~/components/modals/SuccessMessage';
 import DndSortableProject from './DndSortableProject';
 
 import type { ProjectWithDesires, ProjectWithStringDates } from '~/types/projectTypes';
+import SubHeading16px from '~/components/titles/SubHeading16px';
 
 //  highlight currenly selected project at dash/projects/$projectId
 //  highlihgt to project as current 'Focus'
@@ -113,8 +113,9 @@ function DndProjects() {
           </Modal>)
         }
 
-        <div className='mb-8'>
-          <HeadingH1 text={'Your Projects'} />
+
+        <div className='text-success mb-2'>
+          <SubHeading16px text='Your Projects' />
         </div>
 
         <DndContext

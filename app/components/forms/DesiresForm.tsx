@@ -43,7 +43,6 @@ function DesiresForm({ desire }: DesireFormProps) {
     if (location.pathname === '/dash/desires') {
       setIsAddNewDesireRoute(true)
       setSaveBtnText('Create Desire')
-      // setIsSaveable(true)
     } else if (location.pathname.startsWith('/dash/desires/')) {
       setIsAddNewDesireRoute(false)
       setSaveBtnText('Save Edits to Desire')
@@ -122,6 +121,7 @@ function DesiresForm({ desire }: DesireFormProps) {
               className='input-field-text-title'
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              required
             />
             {validationErrors?.title && (
               <div className='validation-error'> {validationErrors.title}</div>

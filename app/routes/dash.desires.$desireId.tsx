@@ -13,6 +13,7 @@ import { DesireCurrentDefaultText, DesireIdealPlaceholderText } from '~/componen
 import { formatDate } from '~/utils/functions';
 import { getOutcomesByDesireId } from '~/models/outcome.server';
 import SubHeading16px from '~/components/titles/SubHeading16px';
+import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
 
 import type { DesireValues, DesireWithValues } from '~/types/desireTypes';
 import type { DesireOutcomeProgressWithStringDates, OutcomeWithProgessWithStringDates, OutcomeWithProgressList } from '~/types/outcomeTypes';
@@ -28,7 +29,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
 
 function DesirePage() {
-
+ 
   const { desireOutcomes } = useLoaderData()
 
   const params = useParams();
@@ -41,8 +42,6 @@ function DesirePage() {
   const { title, description, current, ideal } = desire || {};
   const plural = desireValues && desireValues.length > 1 ? 's' : '';
 
-
-  console.log('desireOutcomes', desireOutcomes)
   const outcomes = desireOutcomes?.map((outcome: OutcomeWithProgessWithStringDates) => {
     const progressListWithDateDates = outcome.desireOutcomeProgress.map((progress: DesireOutcomeProgressWithStringDates) => {
       return {
@@ -61,11 +60,11 @@ function DesirePage() {
       desireOutcomeProgress: progressListWithDateDates
     }
   })
-  console.log('outcomes', outcomes)
 
 
   return (
     <>
+      <BreadCrumbs title={title || ''} />
       <Outlet />
       <section className='flex gap-8 flex-wrap '>
         <div className=' flex-1 flex flex-col gap-6 w-prose max-w-max basis '>
@@ -141,7 +140,7 @@ function DesirePage() {
             </BasicTextAreaBG >
           </div>
         </div>
-        
+
 
         {/* //?   Specific Outcomes */}
         <div className=''>
@@ -162,7 +161,7 @@ function DesirePage() {
                         <div className='mt-2 flex justify-between font-medium text-base-content' >
                           {progress.title}
                           <div className='font-normal text-base-content/70'>
-                          {progress.dueDate && <div className='text-sm  '>{formatDate(progress.dueDate)}</div>}
+                            {progress.dueDate && <div className='text-sm  '>{formatDate(progress.dueDate)}</div>}
                           </div>
                         </div>
                       </div>

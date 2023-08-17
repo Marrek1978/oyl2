@@ -5,6 +5,12 @@ import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
 import { closeIcon, dbIcon, trashIcon } from '../utilities/icons';
 
 import type { Desire, Project } from '@prisma/client'
+import SolidBtn from '../buttons/SolidBtn';
+import OutlinedBtn from '../buttons/OutlinedBtn';
+import BasicFormAreaBG from './BasicFormAreaBG';
+import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
+import { DesireDescription, DesireTitle, DesireValuesServed } from '../utilities/Guidelines';
+import ListLabel from './ListLabel';
 
 interface ProjectFormProps {
   project?: Project;
@@ -21,11 +27,12 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
   const validationErrors = useActionData()
 
   const [title, setTitle] = useState<string>('')
-  const [projectId, setProjectId] = useState<string>('')
   const [sortOrder, setSortOrder] = useState<number>(0) //if adding new desire, set to desires.length
+  const [projectId, setProjectId] = useState<string>('')
   const [description, setDescription] = useState<string>('')
-  const [saveEdits, setSaveEdits] = useState<boolean>(false)
+  const [isSaveable, setIsSaveable] = useState<boolean>(false)
   const [selectedDesireId, setSelectedDesireId] = useState<string>('')
+  const [saveBtnText, setSaveBtnText] = useState<string>('Save Project')
   const [isAddNewProjectRoute, setIsAddNewProjectRoute] = useState<boolean>(true) //true if /dash/desires, false if /dash/desires/:desireId
 
   let listOfUsedDesireIds = useRef(allUserProjects?.map((project) => project.desireId))
@@ -35,8 +42,10 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
   useEffect(() => {
     if (location.pathname === '/dash/projects') {
       setIsAddNewProjectRoute(true)
+      setSaveBtnText('Create Project')
     } else if (location.pathname.startsWith('/dash/projects/')) {
       setIsAddNewProjectRoute(false)
+      setSaveBtnText('Save Edits to Project')
     }
   }, [location.pathname]);
 
@@ -53,13 +62,17 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
 
 
   useEffect(() => {
-    setSaveEdits(
+
+    const isInputEmpty = !title || !description
+    console.log('isInputEmpty', isInputEmpty)
+
+    const isInputDifferent =
       title !== project?.title
       || description !== project?.description
       || !!(project?.desireId && selectedDesireId !== project?.desireId)   //original desire is changed
       || !!(!project?.desireId && selectedDesireId)  // originally no desire then one is added
-    )
-  }, [selectedDesireId, title, description, project])
+    setIsSaveable(!isInputEmpty && (isInputDifferent))
+  }, [selectedDesireId, title, description, project, isAddNewProjectRoute, isSubmitting])
 
 
   const handleCheckboxChange = (desireId: string) => {
@@ -75,36 +88,27 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
 
   return (
     <>
-      <div className='
-          bg-base-100 
-          grid grid-cols-[minmax(300px,800px)] grid-rows-[72px_1fr_min-content]
-          cursor-default
-        '>
-        <div className='w-full h-full px-8 bg-base-content flex justify-between items-center'>
-          <div className={`
-              text-xl font-mont uppercase font-normal tracking-widest 
-              text-primary-300
-              truncate overflow-ellipsis 
-              `}>
-            {isAddNewProjectRoute ? 'Create New Project' : (<div ><span className='text-sm' >Edit Project:</span>  {title}</div>)}
-          </div>
-        </div>
+      <BasicFormAreaBG
+        title={isAddNewProjectRoute
+          ? 'Create New Project'
+          : (<div ><span className='text-sm' >Edit Project: </span>{title}</div>)
+        }
+      >
 
         <Form method='post' className='mx-8'>
           <div className="form-control mt-6">
             <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
             <input type="string" name='projectId' value={projectId} hidden readOnly />
-            <label className="label pl-0">
-              <span className="label-text text-base font-mont font-semibold">Project Title</span>
-            </label>
+
+            <InputLabelWithGuideLineLink
+              text='Project'
+              guideline={DesireTitle}
+              title='Project Title'
+            />
             <input type="text"
               placeholder="Enter a Project Title"
               name='title'
-              className="
-                input border-none input-secondary 
-                bg-base-200 rounded-none
-                font-poppins font-normal tracking-wide
-                "
+              className='input-field-text-title'
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -113,17 +117,14 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
               <div className='text-red-700'> {validationErrors.title}</div>
             )}
 
-            <div className='mt-6'>
-              <label className="label pl-0">
-                <span className="label-text text-base font-mont font-semibold">Description</span>
-              </label>
+            <div className='vert-space-between-inputs'>
+              <InputLabelWithGuideLineLink
+                text='Description'
+                guideline={DesireDescription}
+                title='Project Description'
+              />
               <textarea
-                className="w-full 
-                  textarea textarea-bordered h-24 
-                  input border-none input-secondary 
-                  bg-base-200 rounded-none
-                  font-poppins font-normal  leading-snug
-                  "
+                className='input-field-text-para '
                 placeholder="Describe what you desire. You can describe why you desire somethihng, but do not spend any time justifying your desire."
                 name='description'
                 value={description}
@@ -140,20 +141,20 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
 
           {/* //**************Desires CHECKBOXES ***************  */}
 
-          <div className='mt-6'>
-            <label className="label pl-0">
-              <span className="label-text text-base font-mont font-semibold">Desire Served (Choose one) </span>
-            </label>
+          <div className='vert-space-between-inputs'>
+            <InputLabelWithGuideLineLink
+              text='Desire Served (Choose One)'
+              guideline={DesireValuesServed}
+              title='Desire Served'
+            />
 
-            <div className="grid grid-cols-[minmax(0,_max-content)_min-content] gap-x-6 ">
+            <div className="list-grid ">
               {allUserDesires?.map((desire: Desire) => {
                 let isNotAvailabeForAssociation = listOfUsedDesireIds.current?.includes(desire.id)
                 return (
                   <React.Fragment key={desire.id}>
-                    <div className="mr-12" >
-                      <label className={`cursor-pointer label ${isNotAvailabeForAssociation && 'line-through'}`}>
-                        <span className="label-text">{desire.title}</span>
-                      </label>
+                    <div className={` ${isNotAvailabeForAssociation && 'line-through'}`} >
+                      <ListLabel text={desire.title} />
                     </div>
                     <div className='label'>
                       {!isNotAvailabeForAssociation && (
@@ -162,7 +163,7 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
                           className="checkbox checkbox-secondary self-center "
                           name='desireId'
                           value={desire.id}
-                          checked={selectedDesireId.includes(desire.id)}
+                          checked={selectedDesireId?.includes(desire.id)}
                           onChange={() => handleCheckboxChange(desire.id)}
                         />
                       )}
@@ -174,38 +175,23 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
           </div>
 
           {/* //**************BUTTONS ***************  */}
-          {isAddNewProjectRoute
-            ? (
-              <button
-                className="w-full btn btn-primary rounded-none mt-8  mb-8   "
-                type='submit'
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Saving...' : 'Save New Project'} {dbIcon}
-              </button>
-            ) : (<>
+          <div className='mt-6 mb-8'>
+            <SolidBtn text={isSubmitting ? 'Saving...' : saveBtnText}
+              onClickFunction={() => { }}
+              icon={dbIcon}
+              disableSaveBtn={isSubmitting || !isSaveable}
+            />
 
-              <div className='mt-6'>
-                <button
-                  className="btn btn-primary rounded-none w-full   "
-                  type='submit'
-                  disabled={isSubmitting || !saveEdits}
-                >
-                  {isSubmitting ? 'Saving...' : 'Save Edits'} {dbIcon}
-                </button>
-              </div>
-
+            {!isAddNewProjectRoute && (
               <div className='w-full flex gap-4 mt-6 mb-8'>
                 <div className='flex-1'>
-                  <Link to='../delete' >
-                    <button className='btn btn-error btn-outline  
-                    w-full
-                    rounded-none
-                    font-mont font-semibold
-                  ' >
-                      Delete Project
-                      {trashIcon}
-                    </button>
+                  <Link to='delete' >
+                    <OutlinedBtn
+                      text='Delete Desire'
+                      onClickFunction={() => { }}
+                      icon={trashIcon}
+                      daisyUIBtnColor='error'
+                    />
                   </Link>
                 </div>
 
@@ -218,9 +204,10 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
                   </Link>
                 </div>
               </div>
-            </>)}
+            )}
+          </div>
         </Form >
-      </div >
+      </BasicFormAreaBG>
     </>
   )
 }

@@ -12,6 +12,7 @@ import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 
 // import type { Desire, Project } from '@prisma/client';
 import type { LoaderArgs, LoaderFunction } from '@remix-run/server-runtime';
+import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
 
 
 
@@ -36,6 +37,8 @@ function ManageProjectPage() {
   
   return (
     <>
+      <BreadCrumbs  title={project.title}  />
+
       <Outlet />
       <div className='flex flex-col gap-6 max-w-max'>
         <article>
