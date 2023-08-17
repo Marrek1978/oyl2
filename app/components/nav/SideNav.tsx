@@ -12,7 +12,7 @@ const SideNav = () => {
     || location.pathname.includes('/dash/routines')
   );
 
-  
+
 
   // const isValues = (
   //   location.pathname.includes('/dash/values')
@@ -36,15 +36,11 @@ const SideNav = () => {
             </NavLink>
           </li>
 
-          <li className="">
-            <NavLink to='/dash/projects'  >
-              <span>Projects</span>
-            </NavLink>
-          </li>
+
 
           <li className="">
             <NavLink to='/dash/lists' >
-              <span>ToDos & Routines</span>
+              <span>Lists & Routines</span>
             </NavLink>
           </li>
 
@@ -65,35 +61,19 @@ const SideNav = () => {
           )}
 
 
-          <li className="">
-            <NavLink to='/dash/clarity'  >
-              <span>Clarify / Life Calendar</span>
+          <li className="relative">
+            <NavLink to='/dashboard/todos' end  >
+              <span>Current Focus</span>
             </NavLink>
           </li>
 
+
           <li className="">
-            <NavLink to='/dash/values'   >
-              <span>Values</span>
+            <NavLink to='/dash/projects'  >
+              <span>Projects</span>
             </NavLink>
           </li>
 
-            <li className="">
-              <NavLink to='/dash/desires'   >
-                <span>Desires</span>
-              </NavLink>
-            </li>
-            {/* <li className="">
-              <NavLink to='/dash/desires' end className='link__indent2'  >
-                <span>Current Situation</span>
-              </NavLink>
-            </li>
-            <li className="">
-              <NavLink to='/dash/delta' end className='link__indent3'  >
-                <span>Delta</span>
-              </NavLink>
-            </li> */}
-          {/* </> */}
-          {/* )} */}
 
           <li className="relative">
             <NavLink to='/dashboard/todos' end >
@@ -101,11 +81,27 @@ const SideNav = () => {
             </NavLink>
           </li>
 
-          <li className="relative">
-            <NavLink to='/dashboard/todos' end  >
-              <span>Current Focus</span>
+
+          <li className="">
+            <NavLink to='/dash/desires'   >
+              <span>Desires</span>
             </NavLink>
           </li>
+
+
+          <li className="">
+            <NavLink to='/dash/values'   >
+              <span>Values</span>
+            </NavLink>
+          </li>
+
+
+          <li className="">
+            <NavLink to='/dash/clarity'  >
+              <span>Clarify / Life Calendar</span>
+            </NavLink>
+          </li>
+
         </ul>
       </nav>
     </>

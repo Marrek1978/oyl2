@@ -25,13 +25,15 @@ const DndDesires = () => {
 
 
   useEffect(() => {
-    if (loaderData?.desires) { setDesires(transformDesireDates(loaderData?.desires)) }
+    if (loaderData?.desires) {
+      setDesires(transformDesireDates(loaderData?.desires))
+    }
   }, [loaderData])
 
 
   useEffect(() => {
     if (fetcher.state === 'loading') {
-      setSuccessMessage('List was saved');
+      setSuccessMessage(fetcher.data);
       setTimeout(() => setSuccessMessage(''), 500);
     }
   }, [fetcher])
@@ -44,6 +46,7 @@ const DndDesires = () => {
         desiresString
       }, {
         method: 'POST',
+        action: '/dash/desires'
       })
     } catch (error) { throw error }
     setSaveNewSortOrder(false);
@@ -94,9 +97,8 @@ const DndDesires = () => {
     <>
       {successMessage && (
         <Modal onClose={() => { }} zIndex={20}>
-          {successMessage}
           <SuccessMessage
-            text={'Order was updated'}
+            text={successMessage}
           />
         </Modal>
       )}
@@ -113,7 +115,7 @@ const DndDesires = () => {
           strategy={verticalListSortingStrategy}
         >
 
-          {desires?.map((desire) => {
+          {desires?.sort((a, b) => a.sortOrder - b.sortOrder).map((desire) => {
             const desireValues = desire.desireValues
             desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
 

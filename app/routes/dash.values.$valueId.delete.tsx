@@ -1,11 +1,11 @@
-import type { Value } from '@prisma/client';
 import {redirect } from '@remix-run/server-runtime';
 import { useMatches, useParams } from '@remix-run/react';
 
 import Modal from '~/components/modals/Modal'
-import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
 import { deleteValue } from '~/models/values.server';
+import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
 
+import type { Value } from '@prisma/client';
 import type { ActionArgs } from '@remix-run/server-runtime';
 
 export const action = async ({request}:ActionArgs) => {

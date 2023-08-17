@@ -58,7 +58,7 @@ function ClarifyingQuestionsDisplay({ questions }: ClarifyingQuestionsDisplayPro
         <div className='text-xl font-semibold mt-8' >
           How would I spend my time if I only had...
         </div>
-        {questions[0] && keysInOrder.map((key, index) => {
+        { keysInOrder.map((key, index) => {
           if (key === 'twentyFourHours' || key === 'oneWeek' || key === 'oneMonth' || key === 'oneYear') {
             return (
               <div key={index} >
@@ -78,14 +78,14 @@ function ClarifyingQuestionsDisplay({ questions }: ClarifyingQuestionsDisplayPro
                 </div>
 
                 <div className='text-base-content mt-1  max-w-prose'>
-                  {questions[0][key]}
+                  {questions[0] ? questions[0][key] : ''}
                 </div>
 
                 <div className='text-md font-semibold mt-6'>
                   What regrets would I have?
                 </div>
                 <div className='text-base-content mt-1  max-w-prose'>
-                  {questions[0][(key + 'Regrets') as keyof ClarifyingQuestionsWithStringDates]}
+                  {questions[0] ? questions[0][(key + 'Regrets') as keyof ClarifyingQuestionsWithStringDates] : ''}
                 </div>
               </div >
             )
@@ -107,7 +107,7 @@ function ClarifyingQuestionsDisplay({ questions }: ClarifyingQuestionsDisplayPro
                   </Link>
                 </div>
                 <div className='text-base-content mt-4  max-w-prose'>
-                  {questions[0][key]}
+                  {questions[0] ? questions[0][key] :''}
                 </div>
               </div>
             )

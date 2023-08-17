@@ -22,9 +22,19 @@ const DndValues = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
 
+  
   useEffect(() => {
     if (valuesData) { setValues(transformValueDates(valuesData)) }
   }, [valuesData])
+
+
+  useEffect(() => {
+    if (fetcher.state === 'loading') {
+      setSuccessMessage(fetcher.data);
+      setTimeout(() => setSuccessMessage(''), 500); // Clear the message after 3 seconds
+    }
+  }, [fetcher])
+
 
   const handleEditSortOrder = useCallback(async () => {
     const valuesString = JSON.stringify(values);
@@ -34,8 +44,6 @@ const DndValues = () => {
       }, {
         method: 'POST',
       })
-      setSuccessMessage('List was saved');
-      setTimeout(() => setSuccessMessage(''), 500); // Clear the message after 3 seconds
     } catch (error) { throw error }
     setSaveNewSortOrder(false);
   }, [values, fetcher])
@@ -47,13 +55,6 @@ const DndValues = () => {
     }
   }, [saveNewSortOrder, handleEditSortOrder])
 
-  function transformValueDates(values: any) {
-    return values.map((value: any) => ({
-      ...value,
-      createdAt: new Date(value.createdAt!),
-      updatedAt: new Date(value.updatedAt!),
-    }));
-  }
 
   const resetValuesSortOrder = (values: Value[]) => {
     const reOrdered = values?.map((value, index) => {
@@ -65,6 +66,7 @@ const DndValues = () => {
     setSaveNewSortOrder(true)
     return reOrdered
   }
+
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -78,6 +80,7 @@ const DndValues = () => {
     }
   }
 
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -85,20 +88,20 @@ const DndValues = () => {
       },
     }))
 
+
   return (
     <>
       {successMessage && (
         <Modal onClose={() => { }} zIndex={20}>
-          {successMessage}
           <SuccessMessage
-            text={'Order was updated'}
+            text={successMessage}
           />
         </Modal>)
       }
       <div className='flex justify-between items-baseline'>
         <div className='text-success mb-2'>
-        <SubHeading16px text='Your Values' />
-      </div>
+          <SubHeading16px text='Your Values' />
+        </div>
       </div>
       <DndContext
         collisionDetection={closestCenter}
@@ -127,3 +130,12 @@ const DndValues = () => {
 }
 
 export default DndValues
+
+
+function transformValueDates(values: any) {
+  return values.map((value: any) => ({
+    ...value,
+    createdAt: new Date(value.createdAt!),
+    updatedAt: new Date(value.updatedAt!),
+  }));
+}

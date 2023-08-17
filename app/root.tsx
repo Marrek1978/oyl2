@@ -19,6 +19,7 @@ import { getUser } from "~/models/session.server";
 
 import navSytles from '~/styles/SideNav.css'
 import FormStyles from '~/styles/FormCss.css';
+import SolidBtn from "./components/buttons/SolidBtn";
 import datePickerStyles from "~/styles/CustomCss.css";
 import tailwindStylesheetUrl from "~/styles/tailwind.css";
 
@@ -71,7 +72,7 @@ function AppContent() {
         <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-          <Links />
+        <Links />
       </head>
       <body className="min-h-screen min-w-xs bg-base-200">
         <main className="flex flex-col min-h-screen min-w-xs m-auto ">
@@ -90,11 +91,17 @@ function AppContent() {
 export function ErrorBoundary() {
   const error = useRouteError();
 
-  if (isRouteErrorResponse(error)) {
-    return (
-      // <Documents title={error.statusText}>
-      <main>
-        <h1>The Catch Boundry was reached. </h1>
+  return (
+
+    <main>
+      <Link to='/'>
+        <SolidBtn
+          text='Back to Safety'
+          onClickFunction={() => { }}
+        />
+      </Link>
+
+      {isRouteErrorResponse(error) && (
         <Error title={error.statusText}>
           <p>
             {error.data?.message ||
@@ -104,40 +111,26 @@ export function ErrorBoundary() {
             Back to <Link to="/"> Safety</Link>
           </p>
         </Error>
-      </main>
-    );
-    {/* </Documents> */ }
-  } else if (error instanceof Error) {
-    return (
-      // <Documents title={error.statusText}>
-      <main>
+      )}
+
+      {!isRouteErrorResponse(error) && (error instanceof Error) && (
         <Error title={(error as CustomError).statusText} >
           <p>
-            "Something went wrong.  The Error Boundry was reached. Please try again later."
             {error instanceof Error && (error as Error).message || "Something went wrong. Please try again later."}
           </p>
-          <p>
-            Back to <Link to="/"> Safety</Link>
-          </p>
         </Error>
-      </main>
-    );
-    {/* </Documents> */ }
-  } else {
-    return (
-      // <Documents title="Unknown Error">
-      <main>
+      )}
+
+      {!isRouteErrorResponse(error) && !(error instanceof Error) && (
         <Error title="Unknown Error">
           <p>
             Something went wrong. An Unknown Error was created.  Please try again later.
             {error instanceof Error && (error as Error).message}
           </p>
-          <p>
-            Back to <Link to="/"> Safety</Link>
-          </p>
+
         </Error>
-      </main>
-      // </Documents>
-    );
-  }
+      )}
+
+    </main>
+  )
 }

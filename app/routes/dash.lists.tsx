@@ -35,6 +35,9 @@ function ListsPage() {
       <div className="mt-16">
         <AllRoutines routines={routines} />
       </div>
+      <div>special lists - grocery,  purchases, yard work, house work</div>
+      others ppl can access these lists
+      <div>view project lists and routines</div>
     </>
   )
 }

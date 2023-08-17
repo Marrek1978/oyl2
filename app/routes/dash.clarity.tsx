@@ -13,12 +13,7 @@ import type { ClarifyingQuestionsWithStringDates } from '~/types/clarityTypes';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 
 export const loader = async ({ request }: LoaderArgs) => {
-
-  let userId;
-  try {
-    userId = await requireUserId(request);
-  } catch (error) { throw error }
-
+  let userId = await requireUserId(request);
   try {
     let questions = await getClarifyingQuestions(userId);
     return questions

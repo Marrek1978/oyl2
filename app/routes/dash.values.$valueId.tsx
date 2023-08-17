@@ -1,8 +1,8 @@
 import { Outlet, useMatches, useParams } from '@remix-run/react'
 import { redirect, type ActionArgs } from '@remix-run/server-runtime'
 
-import { updateValue } from '~/models/values.server'
 import Modal from '~/components/modals/Modal'
+import { updateValue } from '~/models/values.server'
 import ValueForm from '~/components/forms/ValueForm'
 
 import type { Value } from '@prisma/client';

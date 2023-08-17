@@ -22,88 +22,121 @@ type DeleteDesire = {
 };
 
 export const getDesires = async (userId: User["id"]) => {
-  const result = await prisma.desire.findMany({
-    where: { userId },
-    include: {
-      desireValues: {
-        select: {
-          value: true,
+  try {
+    const result = await prisma.desire.findMany({
+      where: { userId },
+      include: {
+        desireValues: {
+          select: {
+            value: true,
+          },
         },
       },
-    },
-    orderBy: { sortOrder: "asc" },
-  });
+      orderBy: { sortOrder: "asc" },
+    });
 
-  return result;
+    return result;
+  } catch (error) {
+    throw error;
+  }
 };
 
-export const getDesireById = async ( desireId: Desire["id"], userId: User["id"]) => {
-  const result = await prisma.desire.findFirst({
-    where: { id: desireId, userId },
-    include: {
-      desireValues: {
-        select: {
-          value: true,
+export const getDesireById = async (
+  desireId: Desire["id"],
+  userId: User["id"]
+) => {
+  try {
+    const result = await prisma.desire.findFirst({
+      where: { id: desireId, userId },
+      include: {
+        desireValues: {
+          select: {
+            value: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  return result;
-}
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const getDesiresByUserId = async (userId: User["id"]) => {
-  const result = await prisma.desire.findMany({
-    where: { userId },
-    orderBy: { sortOrder: "asc" },
-  });
+  try {
+    const result = await prisma.desire.findMany({
+      where: { userId },
+      orderBy: { sortOrder: "asc" },
+    });
 
-  return result;
-}
-
-export const createDesire = async (desire: CreateDesire) => {
-  const result = await prisma.desire.create({
-    data: {
-      title: desire.title,
-      description: desire.description,
-      sortOrder: desire.sortOrder,
-      userId: desire.userId,
-      desireValues: {
-        create: desire.valueIds.map((valueId) => ({
-          value: { connect: { id: valueId } },
-        })),
-      },
-    },
-  });
-
-  return result;
+    return result;
+  } catch (error) {
+    throw error;
+  }
 };
 
-export const updateDesireCurrentSituation = async (desireId: Desire["id"], current: Desire["current"]) => {
-  const result = await prisma.desire.update({
-    where: {
-      id: desireId,
-    },
-    data: {
-      current,
-    },
-  });
+export const createDesire = async (desire: CreateDesire) => {
+  try {
+    const result = await prisma.desire.create({
+      data: {
+        title: desire.title,
+        description: desire.description,
+        sortOrder: desire.sortOrder,
+        userId: desire.userId,
+        desireValues: {
+          create: desire.valueIds.map((valueId) => ({
+            value: { connect: { id: valueId } },
+          })),
+        },
+      },
+    });
 
-  return result;
-}
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
 
-export const updateDesireIdealScenario = async (desireId: Desire["id"], ideal: Desire["ideal"]) => {
-  const result = await prisma.desire.update({
-    where: {
-      id: desireId,
-    },
-    data: {
-      ideal,
-    },
-  });
+export const updateDesireCurrentSituation = async (
+  desireId: Desire["id"],
+  current: Desire["current"]
+) => {
+  try {
+    const result = await prisma.desire.update({
+      where: {
+        id: desireId,
+      },
+      data: {
+        current,
+      },
+    });
 
-  return result;
-}
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateDesireIdealScenario = async (
+  desireId: Desire["id"],
+  ideal: Desire["ideal"]
+) => {
+  try {
+    const result = await prisma.desire.update({
+      where: {
+        id: desireId,
+      },
+      data: {
+        ideal,
+      },
+    });
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const updateDesire = async (desire: EditDesire) => {
   //delete all existing desireValues
@@ -113,48 +146,55 @@ export const updateDesire = async (desire: EditDesire) => {
         desireId: desire.id,
       },
     });
+
+    const result = await prisma.desire.update({
+      where: {
+        id: desire.id,
+      },
+      data: {
+        title: desire.title,
+        description: desire.description,
+        desireValues: {
+          create: desire.valueIds.map((valueId) => ({
+            value: { connect: { id: valueId } },
+          })),
+        },
+      },
+    });
+
+    return result;
   } catch (error) {
     throw error;
   }
-
-  const result = await prisma.desire.update({
-    where: {
-      id: desire.id,
-    },
-    data: {
-      title: desire.title,
-      description: desire.description,
-      desireValues: {
-        create: desire.valueIds.map((valueId) => ({
-          value: { connect: { id: valueId } },
-        })),
-      },
-    },
-  });
-
-  return result;
 };
 
 export const updateDesiresOrder = async (desires: DesireWithValues[]) => {
-  const updateSortOrder = desires.map((desire) => {
-    return prisma.desire.update({
-      where: { id: desire.id },
-      data: {
-        sortOrder: desire.sortOrder,
-      },
+  try {
+    const updateSortOrder = desires.map((desire) => {
+      return prisma.desire.update({
+        where: { id: desire.id },
+        data: {
+          sortOrder: desire.sortOrder,
+        },
+      });
     });
-  });
 
-  await Promise.all(updateSortOrder);
-  return { updateSortOrder };
-}
+    await Promise.all(updateSortOrder);
+    return { updateSortOrder };
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const deleteDesire = async (desireId: DeleteDesire) => {
-
-  const result = await prisma.desire.delete({
-    where:{
-      id: desireId.desireId
-    }
-  })
-  return result;
-}
+  try {
+    const result = await prisma.desire.delete({
+      where: {
+        id: desireId.desireId,
+      },
+    });
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};

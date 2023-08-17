@@ -7,9 +7,7 @@ import DndValues from '~/components/dnds/values/DndValues';
 import DndPlus800OutletFlex from '~/components/baseContainers/DndPlus800OutletFlex';
 
 export const loader = async ({ request }: LoaderArgs) => {
-  console.log('loader values.tsx')
   let userId = await requireUserId(request);
-  console.log('userId', userId)
   try {
     let values = await getValues(userId);
     return values
@@ -23,8 +21,11 @@ export const action = async ({ request }: ActionArgs) => {
 
   try {
     await updateValuesOrder(values)
-    return null
-  } catch (error) { throw error }
+    return 'Values Order was updated'
+  } catch (error) { 
+    // throw error 
+    return 'There was an issue updating the order'
+  }
 }
 
 function ValuesPage() {

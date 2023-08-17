@@ -27,16 +27,14 @@ export const action = async ({ request }: LoaderArgs) => {
 
   try {
     await updateDesiresOrder(desires)
-    return null
-  } catch (error) { throw error }
+    return 'Desires Order was updated'
+  } catch (error) {
+    return 'There was an issue updating the order'
+  }
 }
 
 
 function DesiresPage() {
-
- 
-
-
   return (
     <>
       <Outlet />
