@@ -7,8 +7,9 @@ import DndValues from '~/components/dnds/values/DndValues';
 import DndPlus800OutletFlex from '~/components/baseContainers/DndPlus800OutletFlex';
 
 export const loader = async ({ request }: LoaderArgs) => {
-  let userId;
-  userId = await requireUserId(request);
+  console.log('loader values.tsx')
+  let userId = await requireUserId(request);
+  console.log('userId', userId)
   try {
     let values = await getValues(userId);
     return values

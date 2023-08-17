@@ -8,7 +8,9 @@ import { createUserSession } from "./session.server";
 export type { User } from "@prisma/client";
 
 export async function getUserById(id: User["id"]) {
+  try{
   return prisma.user.findUnique({ where: { id } });
+  }catch(error){throw error}
 }
 
 export async function getUserByEmail(email: User["email"]) {

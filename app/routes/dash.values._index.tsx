@@ -1,10 +1,17 @@
-import { redirect, type ActionArgs } from '@remix-run/server-runtime'
+import { redirect, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
 
 import { createValue } from '~/models/values.server'
 import { requireUserId } from '~/models/session.server'
 import ValueForm from '~/components/forms/ValueForm'
 
 import type { validationErrorsTypes } from '~/types/valueTypes'
+
+export const loader = async ({request}: LoaderArgs) => {
+  console.log('loader values._index.tsx')
+  let userId;
+  userId = await requireUserId(request);
+  return userId
+}
 
 export const action = async ({ request }: ActionArgs) => {
 
