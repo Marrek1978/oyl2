@@ -12,7 +12,7 @@
     "dev:server": "cross-env NODE_ENV=development node --inspect --require ./node_modules/dotenv/config --require ./mocks ./build/server.js",
     "dev:localDb": "cross-env NODE_ENV=development DB_CONNECTION=localdb dotenv -e prisma/dev.env remix dev",
     "dev:supaDb": "cross-env NODE_ENV=development DB_CONNECTION=proddb dotenv -e prisma/production.env remix dev",
-    "dev:vercelDb": "cross-env NODE_ENV=development DB_CONNECTION=proddb dotenv -e prisma/vercel.env remix dev",
+    "dev:vercelDb": "cross-env NODE_ENV=production DB_CONNECTION=proddb dotenv -e prisma/vercel.env remix dev",
     "docker": "docker-compose up -d",
     "format": "prettier --write .",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",

@@ -69,6 +69,7 @@ export function ErrorBoundary() {
         <p><span className='font-bold'>Error Message:</span> {error.message}</p>
         <p>The stack trace is:</p>
         <pre><span className='font-bold'>Error Stack:</span> {error.stack}</pre>
+        <pre><span className='font-bold'>Error Named:</span> {error.name}</pre>
       </div>
     );
   } else {

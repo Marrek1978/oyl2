@@ -40,7 +40,10 @@ export const links: LinksFunction = () => [
 
 
 export const loader = async ({ request }: LoaderArgs) => {
-  return json({ user: await getUser(request) });
+  try {
+    return json({ user: await getUser(request) });
+  }
+  catch (error) { throw error; }
 };
 
 
