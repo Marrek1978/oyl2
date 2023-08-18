@@ -14,7 +14,6 @@ function WithGuidelineLink({ text, guideline, title, children }: WithGuidelineLi
   const [showGuideLine, setShowGuideLine] = useState(false)
 
   function handleClose() {
-    console.log('handleClose')
     setShowGuideLine(false)
   }
 

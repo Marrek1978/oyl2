@@ -36,6 +36,7 @@ function DesiresForm({ desire }: DesireFormProps) {
   const [saveBtnText, setSaveBtnText] = useState<string>('Save Desire')
 
   const isSubmitting = navigation.state === 'submitting'
+  const isIdle = navigation.state === 'idle'
   const desires: Desire[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
   const allUserValues: Value[] = matches.find(match => match.id === 'routes/dash.desires')?.data.allUserValues
 
@@ -181,7 +182,7 @@ function DesiresForm({ desire }: DesireFormProps) {
             <SolidBtn text={isSubmitting ? 'Saving...' : saveBtnText}
               onClickFunction={() => { }}
               icon={dbIcon}
-              disableSaveBtn={isSubmitting || !isSaveable}
+              disableSaveBtn={!isIdle || !isSaveable}
             />
 
             {!isAddNewDesireRoute &&

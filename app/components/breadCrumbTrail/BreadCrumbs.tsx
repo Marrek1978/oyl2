@@ -25,7 +25,7 @@ function BreadCrumbs({ title, title2, title3 }: BreadCrumbProps) {
   const endColor = 'text-base-content'
 
   return (
-    <div className="text-sm breadcrumbs items-baseline">
+    <div className="text-sm font-bold breadcrumbs items-baseline">
       {breadcrumbArray.length > 1 && (
         <ul>
           {breadcrumbArray.map((crumb, index) => {

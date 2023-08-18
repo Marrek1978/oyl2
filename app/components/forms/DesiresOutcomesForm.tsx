@@ -159,6 +159,7 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
       }
       setProgressList([...progressList, newProgressTyped])
       setProgress('')
+      setProgressDueDate(null)
     }
   }
 
