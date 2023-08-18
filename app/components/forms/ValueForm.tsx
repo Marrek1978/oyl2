@@ -29,6 +29,7 @@ function ValueForm({ value }: ValueFormProps) {
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
   const [isAddNewValueRoute, setIsAddNewValueRoute] = useState(true) //true if /dash/values, false if /dash/values/:valueId
   const [saveBtnText, setSaveBtnText] = useState<string>('Save Value')
+  const [isIdle, setIsIdle] = useState<boolean>(true) //true if title and description are not empty
 
   const isSubmitting = navigation.state === 'submitting'
   const values = matches.find(match => match.id === 'routes/dash.values')?.data
@@ -43,6 +44,15 @@ function ValueForm({ value }: ValueFormProps) {
       setSaveBtnText('Save Edits to Value')
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+    console.log('navigation.state', navigation.state)
+    if (navigation.state === 'idle') {
+      setIsIdle(true)
+    } else {
+      setIsIdle(false)
+    }
+  }, [navigation]);
 
 
   useEffect(() => {
@@ -117,7 +127,7 @@ function ValueForm({ value }: ValueFormProps) {
             <SolidBtn text={isSubmitting ? 'Saving...' : saveBtnText}
               onClickFunction={() => { }}
               icon={dbIcon}
-              disableSaveBtn={isSubmitting || !isSaveable}
+              disableSaveBtn={isSubmitting || !isSaveable || !isIdle}
             />
 
             {!isAddNewValueRoute &&

@@ -1,4 +1,4 @@
-import { Form, Link } from '@remix-run/react'
+import { Form, Link, useNavigation } from '@remix-run/react'
 import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue'
 import { closeIcon, trashIcon } from '../utilities/icons'
 
@@ -10,6 +10,9 @@ interface AreYouSureDeleteModalProps {
 
 function AreYouSureDeleteModal({ item, title, id }: AreYouSureDeleteModalProps) {
 
+  const navigation = useNavigation();
+  const isIdle = navigation.state === 'idle'
+
   return (
     <>
       <div className="card w-[700px] 
@@ -17,9 +20,10 @@ function AreYouSureDeleteModal({ item, title, id }: AreYouSureDeleteModalProps) 
         rounded-none
         font-mont
         shadow-xl z-30
+        text-warning-content
         ">
         <div className="card-body">
-          <h2 className="text-2xl  text-base-content">
+          <h2 className="text-2xl">
             Are you sure you want to delete the {item}:<br />
             <span className='underline'>{title}</span> ?
           </h2>
@@ -36,9 +40,11 @@ function AreYouSureDeleteModal({ item, title, id }: AreYouSureDeleteModalProps) 
               <Form method='post'>
                 <input type="hidden" name="rowId" value={id} />
                 <button
-                  className="btn btn-error rounded-none w-full"
+                  className="btn btn-error rounded-none w-full hover:bg-red-500"
                   type='submit'
-                >Delete {item} {trashIcon}
+                  disabled={!isIdle}
+                >
+                  {isIdle ? <>Delete  {trashIcon}</> : 'Deleting...'}
                 </button>
               </Form>
             </div>

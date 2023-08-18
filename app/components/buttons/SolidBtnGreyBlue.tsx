@@ -13,12 +13,12 @@ function SolidBtnGreyBlue({ text, onClickFunction, icon }: SolidBtnGreyBlueProps
       className='
       font-mont font-semibold uppercase 
       btn 
-      bg-base-400 border-none
-      text-base-700
+      bg-base-300 border-none
+      text-base-content
       rounded-none
       w-full
       hover:cursor-pointer
-      hover:text-base-super-sat-text hover:bg-base-500 
+      hover:text-primary hover:bg-primary/30
       '>
       {text}
       {icon}
