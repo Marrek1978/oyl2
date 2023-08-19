@@ -66,7 +66,7 @@ function ValueForm({ value }: ValueFormProps) {
     <>
       <BasicFormAreaBG
         title={isAddNewValueRoute
-          ? 'Create New Value'
+          ? 'Create a New Value'
           : (<div ><span className='text-sm' >Edit Value:</span>  {value?.valueTitle}</div>)}
       >
 

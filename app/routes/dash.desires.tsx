@@ -37,7 +37,9 @@ export const action = async ({ request }: LoaderArgs) => {
 function DesiresPage() {
   return (
     <>
+    <div className='flex-1'>
       <Outlet />
+    </div>
     </>
   )
 }

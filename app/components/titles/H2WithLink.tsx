@@ -24,12 +24,12 @@ function H2WithLink({ title, linkDestination, linkColor = 'text-primary', linkTe
 
   return (
     <>
-      <div className="flex justify-between items-baseline gap-4 w-full   ">
-        <div className='flex gap-2 items-baseline wrap max-w'>
+      <div className="flex flex-warp justify-between items-baseline gap-4 w-full  ">
+        <div className='flex  gap-2 items-baseline flex-wrap max-w-max'>
           <HeadingH2 text={title} />
           {formattedDate && <div className='text-sm text-success  '>{formattedDate}</div>}
         </div>
-        <Link to={linkDestination} className='text-sm min-w-max'>
+        <Link to={linkDestination} className='text-sm min-w-max self-end'>
           <TextBtn
             text={linkText}
             onClickFunction={() => { }}

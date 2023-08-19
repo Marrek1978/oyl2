@@ -2,6 +2,8 @@ import React from 'react'
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from '@dnd-kit/sortable';
 import H2WithLink from '~/components/titles/H2WithLink';
+import Heading16px from '~/components/titles/Heading16px';
+
 import type { OutcomeWithProgressList } from '~/types/outcomeTypes';
 
 interface SortableProps {
@@ -32,15 +34,14 @@ function DndOutcomesSortable({ children, id, outcome }: SortableProps) {
         <div key={id} id={id} className='
           px-3 py-4 
           mt-2
-          font-poppins
+          max-w-max
+          font-poppins text-left  para-color
           cursor-pointer 
-          text-left text-base-content
           transition duration-500
           hover:bg-primary/30 
           hover:text-primary-focus
-          max-w-prose
         '>
-          <div className="flex items-center justify-between gap-4 ">
+          <div className="flex items-center justify-between gap-4 text-base-content ">
             <H2WithLink
               title={title}
               linkDestination={id}
@@ -50,21 +51,20 @@ function DndOutcomesSortable({ children, id, outcome }: SortableProps) {
           </div>
 
           <div className='
-            text-base-content/70
+            para-color
             text-sm 
-            mt-0      
+            mt-0    
+            mr-8
             max-w-prose w-prose
             max-h-10 overflow-hidden
             '>
             {description}
           </div>
 
-          <div className='
-            mt-4
-            capitalize
-          '>
-            {children}
+          <div className='text-base-content mt-4 font-semibold '>
+            <Heading16px text={'Milestones'} />
           </div>
+          {children}
         </div>
       </div>
     </>

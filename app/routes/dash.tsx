@@ -7,10 +7,10 @@ import { requireUserId } from '~/models/session.server';
 import { ListProvider } from '~/components/list/ListContext';
 
 export const loader = async ({ request }: LoaderArgs) => {
-  try{
+  try {
     const userId = await requireUserId(request);
     return userId;
-  }catch(error){throw error}
+  } catch (error) { throw error }
 
 };
 
@@ -21,14 +21,16 @@ function Dash() {
     <>
       <main className="
         w-full
-        my-12 px-6 
+        max-w-full
+        my-12 px-8 
         min-h-screen 
-        flex gap-6
+        flex gap-6 flex-wrap
+        lg:flex-nowrap
           ">
         <aside className='w-56' >
           <SideNav />
         </aside>
-        <article className=" flex-1 min-h-[90vh]   ">
+        <article className=" flex-1 min-h-[90vh]  ">
           <ListProvider>
             <Outlet />
           </ListProvider>

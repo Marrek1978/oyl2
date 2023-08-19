@@ -59,7 +59,7 @@ function DndProgress({ progressList, setProgressList }: DndProgressProps) {
     })
   }
 
-  
+
   function handleOpenEditProgressItem(progress: DesireOutcomeProgress | NewlyCreatedProgress) {
     setProgressItemToEdit(progress)
     setOpenEditProgressItemModal(true)
@@ -100,18 +100,21 @@ function DndProgress({ progressList, setProgressList }: DndProgressProps) {
           items={progressList.map((progress) => progress.id)}
           strategy={verticalListSortingStrategy}
         >
-          {progressList?.map((progress) => {
-            return (
-              <ProgressEvidenceItem
-                key={progress.id}
-                id={progress.id}
-                progress={progress}
-                editProgressItem={handleOpenEditProgressItem}
-                deleteProgressItem={handleDeleteProgressItem}
-              />
-            )
-          })}
+          <div className='vert-space-between-inputs'>
 
+            {progressList?.map((progress) => {
+              return (
+                <ProgressEvidenceItem
+                  key={progress.id}
+                  id={progress.id}
+                  progress={progress}
+                  editProgressItem={handleOpenEditProgressItem}
+                  deleteProgressItem={handleDeleteProgressItem}
+                />
+              )
+            })}
+
+          </div>
         </SortableContext>
       </DndContext >
     </>

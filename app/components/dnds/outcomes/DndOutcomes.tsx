@@ -12,6 +12,7 @@ import type { OutcomeWithProgressList } from '~/types/outcomeTypes';
 import SubHeading16px from '~/components/titles/SubHeading16px';
 import DndOutcomesSortable from './DndOutcomesSortable';
 import { formatDate } from '~/utils/functions';
+import HeadingH2 from '~/components/titles/HeadingH2';
 
 
 interface DndOutcomesProps {
@@ -108,9 +109,12 @@ const DndOutcomes: React.FC<DndOutcomesProps> = ({ desireName, description }) =>
         </Modal>)
       }
       <div className='text-success mb-2'>
-        <SubHeading16px text={`Desired Outcomes for: ${desireName}`} />
+        <SubHeading16px text={`Measurable Outcomes for the Desire: `} />
       </div>
-
+      <div className=' max-w-prose'>
+        <HeadingH2 text={desireName || ''} />
+      </div>
+      
       {description && (
         <div className='mt-2 max-w-prose text-base-content/70'>
           {description}
@@ -137,7 +141,7 @@ const DndOutcomes: React.FC<DndOutcomesProps> = ({ desireName, description }) =>
               >
 
                 {outcome.desireOutcomeProgress.map((progress, index) => (
-                  <div key={index} className='mt-1 grid grid-cols-2 gap-4'>
+                  <div key={index} className='mt-0 grid grid-cols-[auto_max-content] items-baseline gap-4'>
                     {progress.title}
                     {progress.dueDate && (
                       <div className='text-sm text-base-content/70'>

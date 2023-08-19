@@ -11,11 +11,11 @@ interface ToDoItemProps {
   editTodo: (todoIndex: string) => void;
 }
 
-const formatDate = (dateString: Date | null) => {
-  if (!dateString) return null;
-  const date = new Date(dateString);
-  return `${date.toLocaleString('default', { month: 'long' })} ${date.getDate()}, ${date.getFullYear()}`;
-};
+// const formatDate = (dateString: Date | null) => {
+//   if (!dateString) return null;
+//   const date = new Date(dateString);
+//   return `${date.toLocaleString('default', { month: 'long' })} ${date.getDate()}, ${date.getFullYear()}`;
+// };
 
 const ToDoItem: React.FC<ToDoItemProps> = ({ todo, id, removeTodo, editTodo }) => {
   const formattedDate = formatDate(todo['dueDate']);

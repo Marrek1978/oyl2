@@ -16,7 +16,7 @@ function BasicFormAreaBG({ children, title }: BasicFormAreaBGProps) {
       grid grid-cols-[minmax(300px,800px)]
       grid-rows-[72px_1fr_min-content]
       cursor-defaultshadow-lg
-      w-full
+      w-full max-w-max
       max-h-full
       overflow-auto
     '>

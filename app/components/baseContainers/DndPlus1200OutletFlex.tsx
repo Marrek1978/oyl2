@@ -9,13 +9,13 @@ interface FlexPlusOutletProps {
 function DndPlus1200OutletFlex({children} : FlexPlusOutletProps) {
   return (
     <>
-    <section className='flex gap-8 '>
-      <div className='flex-1 max-w-max'>
+    <section className='flex gap-8 flex-wrap '>
+      <div className='flex-1 max-w-max min-w-[400px]'>
         <BasicTextAreaBG >
         {children}
         </BasicTextAreaBG>
       </div>
-      <div className='flex-1 max-w-[1200px]'>
+      <div className='flex-1 max-w-[1200px]  min-w-[800px]'>
         <Outlet />
       </div>
     </section >

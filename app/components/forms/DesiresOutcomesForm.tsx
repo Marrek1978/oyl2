@@ -16,7 +16,7 @@ import { ArrowIcon45deg, dbIcon } from '../utilities/icons';
 import DndProgress from '../dnds/outcomes/progress/DndProgress';
 import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
 import { DesireCurrentSituation } from '~/components/utilities/PlaceHolderTexts';
-import { DesireOutcomeGuideline, EvidenceOfProgress, ProperDesireOutcomes } from "../utilities/Guidelines";
+import { DesireOutcomeGuideline, Milestones, ProperDesireOutcomes } from "../utilities/Guidelines";
 
 import type { DesireWithValues } from '~/types/desireTypes'
 import type { DesireOutcomeProgress } from "@prisma/client";
@@ -55,6 +55,7 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
   const [progressDueDate, setProgressDueDate] = useState<Date | null>(null)
 
   const isSubmitting = navigation.state === 'submitting'
+  const isIdle = navigation.state === 'idle'
 
   const location = useLocation();
 
@@ -216,12 +217,15 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
       <LargeFormWithHeader
         title={`Create Outcome for  ${desireTitle}`}
       >
-        <Form method='post' className='mx-0'>
+        <Form method='post' className='mx-8 pb-8'>
           <div className=' 
           bg-base-100 
           grid grid-cols-2 grid-rows-[1fr_min-content]
           cursor-default 
-          p-12  gap-x-20 gap-y-8
+          gap-x-12 gap-y-8
+          form-control vert-space-between-inputs
+          max-h-full
+          overflow-auto
           '>
 
             <div className="col-start-1 row-start-1">
@@ -274,12 +278,12 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
 
                 <div className=' '>
                   <InputLabelWithGuideLineLink
-                    text='Evidence of Progress'
-                    title='Evidence of Progress'
-                    guideline={EvidenceOfProgress}
+                    text='Milestone'
+                    title='Milestones'
+                    guideline={Milestones}
                   />
                   <input type="text"
-                    placeholder="Evidence of Progress"
+                    placeholder="Add a Milestone"
                     value={progress}
                     onChange={(e) => setProgress(e.target.value)}
                     className=" input-field-text-title "
@@ -289,7 +293,7 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
                 <DatePicker
                   setSelectedDate={setProgressDueDate}
                   selectedDate={progressDueDate}
-                  labelText="Progress Due On or Before"
+                  labelText="Milestone Due On or Before"
                 />
 
               </div>
@@ -298,7 +302,7 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
             <div className="col-start-1 row-start-2">
               <div className='mt-0'>
                 <OutlinedBtn
-                  text='Add Evidence'
+                  text='Add Milestone'
                   icon={ArrowIcon45deg}
                   onClickFunction={handleAddProgress}
                   disabledBtnBoolean={!progress}
@@ -309,6 +313,9 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
             </div>
 
             <div className="col-start-2 row-start-1">
+              <div className='label pt-3 text-success'>
+                <SubHeading14px text='Preview' />
+              </div>
               <div className={outcomeTitle ? 'text-base-content' : 'text-base-content/60'}  >
                 <HeadingH2 text={outcomeTitle || 'Outcome Title'} />
                 {outcomeDueDate && (
@@ -341,7 +348,7 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
                   <SolidBtn text={saveBtnText}
                     onClickFunction={isNewOutcome ? handleSave : handleEdit}
                     icon={dbIcon}
-                    disableSaveBtn={isSubmitting || !isSaveable}
+                    disableSaveBtn={!isIdle || !isSaveable}
                     type='button'
                   />
                 </div>

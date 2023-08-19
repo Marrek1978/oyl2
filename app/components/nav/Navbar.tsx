@@ -3,14 +3,11 @@ import { json } from "@remix-run/node";
 import type { LoaderArgs } from '@remix-run/node';
 import { getUserId } from "~/models/session.server";
 import { Link, useLoaderData, Form } from "@remix-run/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSun, faMoon } from "@fortawesome/free-solid-svg-icons";
 
 import { themeChange } from 'theme-change'
 import { useTheme } from '~/styles/ThemeContext';
-// import OutlinedBtnGold from '~/components/buttons/OutlinedBtnGold';
 import OutlinedBtn from '../buttons/OutlinedBtn';
-import { LogoutIcon } from '~/components/utilities/icons';
+import { LogoutIcon, MoonIcon, SunIcon } from '~/components/utilities/icons';
 
 export const loader = async ({ request }: LoaderArgs) => {
   let userId = await getUserId(request);
@@ -33,7 +30,7 @@ function Navbar() {
   return (
     <>
       <nav >
-        <div className={`navbar p-6 h-24 
+        <div className={`navbar p-8 h-24 
            ${darkBackground}
            shadow
            text-success justify-between  `
@@ -50,11 +47,12 @@ function Navbar() {
             </div>
           </Link>
 
-          <div>
+          <div className='max-h-4 flex gap-8'>
             {user && (<span className=' text-md font-poppins font-normal '> Hi, {user.name} </span>)}
-            <button onClick={toggleTheme} className="flex items-center pl-6 pr-3 text-warning">
-              <FontAwesomeIcon icon={isDark ? faSun : faMoon} size='lg' />
-              {/* <span className="ml-2">{isDark ? 'Light Mode' : 'Dark Mode'}</span> */}
+            <button onClick={toggleTheme} className="btn btn-ghost text-warning ">
+             { isDark ? SunIcon : MoonIcon}
+             {/* {isDark ? faSun : MoonIcon} */}
+              <span className="ml-2">{isDark ? 'Light Mode' : 'Dark Mode'}</span>
             </button>
           </div>
 

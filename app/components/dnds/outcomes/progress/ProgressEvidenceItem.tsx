@@ -28,12 +28,12 @@ function ProgressEvidenceItem({ id, progress, deleteProgressItem, editProgressIt
 
   return (
     <>
-      <div ref={setNodeRef} style={style} {...attributes} {...listeners} className=" mt-4">
+      <div ref={setNodeRef} style={style} {...attributes} {...listeners} className=" mt-0">
         <div key={id} id={id}
           className={`block 
           rounded-none
           px-3 py-2 w-full  
-          mt-2
+          mt-0
           font-poppins
           cursor-pointer 
           text-left text-base-content

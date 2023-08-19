@@ -9,3 +9,7 @@
   max-width: 37.5em;
 }
 
+.para-color {
+  @apply
+  text-base-content/80
+}

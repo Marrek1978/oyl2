@@ -13,12 +13,13 @@ const Modal: React.FC<ModalProps> = ({ children, onClose, zIndex = 10 }) => {
           fixed top-0 left-0 w-full h-full
           bg-base-content/50
           flex justify-center items-center
+         
          `}
         onClick={onClose}>
         <dialog
-          className="modal"
+          className="modal  overflow-auto	"
           open
-        // onClick={(event) => event.stopPropagation()}
+        onClick={(event) => event.stopPropagation()}
         >
           {children}
         </dialog>

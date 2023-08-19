@@ -78,7 +78,7 @@ function AppContent() {
         <Links />
       </head>
       <body className="min-h-screen min-w-xs bg-base-200">
-        <main className="flex flex-col min-h-screen min-w-xs m-auto ">
+        <main className=" min-h-screen min-w-xs m-auto ">
           <Navbar />
           <Outlet />
         </main>

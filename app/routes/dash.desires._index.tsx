@@ -46,13 +46,13 @@ export const action = async ({ request }: ActionArgs) => {
 function AddNewDesirePage() {
   return (
     <>
-      <section className='flex gap-8 mb-12'>
-        <div className=' flex-1 min-w-[300px] max-w-max  '>
+      <section className='flex gap-8 flex-wrap mb-12'>
+        <div className=' flex-1 min-w-[400px] max-w-max  '>
           <BasicTextAreaBG >
             <DndDesires />
           </BasicTextAreaBG >
         </div>
-        <div className='flex-1 max-w-[800px]'>
+        <div className='flex-1 max-w-[800px]min-w-[400px] '>
           <DesiresForm />
         </div>
       </section >

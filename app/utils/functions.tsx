@@ -13,5 +13,5 @@ export function transformData(data: any) {
 export const formatDate = (dateString: Date | null) => {
   if (!dateString) return null;
   const date = new Date(dateString);
-  return `${date.toLocaleString('default', { month: 'long' })} ${date.getDate()}, ${date.getFullYear()}`;
+  return `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}, ${date.getFullYear()}`;
 };

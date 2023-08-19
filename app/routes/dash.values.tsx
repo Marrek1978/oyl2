@@ -2,8 +2,8 @@ import { parse } from 'querystring';
 import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
 
 import { requireUserId } from '~/models/session.server';
-import { getValues, updateValuesOrder } from '~/models/values.server';
 import DndValues from '~/components/dnds/values/DndValues';
+import { getValues, updateValuesOrder } from '~/models/values.server';
 import DndPlus800OutletFlex from '~/components/baseContainers/DndPlus800OutletFlex';
 
 export const loader = async ({ request }: LoaderArgs) => {
@@ -32,7 +32,6 @@ function ValuesPage() {
 
   return (
     <>
-
       <DndPlus800OutletFlex >
         <DndValues />
       </DndPlus800OutletFlex>
