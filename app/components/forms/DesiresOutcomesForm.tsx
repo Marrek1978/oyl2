@@ -8,12 +8,12 @@ import SolidBtn from '../buttons/SolidBtn';
 import DatePicker from "../list/DatePicker";
 import HeadingH2 from "../titles/HeadingH2";
 import { formatDate } from "~/utils/functions";
+import BasicFormAreaBG from "./BasicFormAreaBG";
 import OutlinedBtn from '../buttons/OutlinedBtn';
 import SuccessMessage from "../modals/SuccessMessage";
 import SubHeading14px from "../titles/SubHeading14px";
-import LargeFormWithHeader from "./LargeFormWithHeader";
 import SolidBtnGreyBlue from "../buttons/SolidBtnGreyBlue";
-import { ArrowIcon45deg, dbIcon } from '../utilities/icons';
+import {  dbIcon } from '../utilities/icons';
 import DndProgress from '../dnds/outcomes/progress/DndProgress';
 import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
 import { DesireCurrentSituation } from '~/components/utilities/PlaceHolderTexts';
@@ -23,7 +23,6 @@ import type { DesireWithValues } from '~/types/desireTypes'
 import type { DesireOutcomeProgress } from "@prisma/client";
 import type { NewlyCreatedProgress } from "~/types/progressTypes";
 import type { OutcomeWithProgressList } from "~/types/outcomeTypes";
-// import { parseISO } from "date-fns";
 
 interface DesireFormProps {
   desire?: DesireWithValues;
@@ -214,36 +213,29 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
         </Modal>)
       }
 
-      <LargeFormWithHeader
+      <BasicFormAreaBG
+        maxWidth="1200"
         title={isNewOutcome
           ? (<div ><span className='text-sm' >Create a New Outcome for: </span> {desireTitle}</div>)
           : (<div ><span className='text-sm' >Edit Outcomes for:</span> {desireTitle}</div>)}
       >
-    
-    
-      <Form method='post' className='mx-8 '>
-       
-        <div className=' 
-            bg-base-100 
-            md:grid md:grid-cols-2 grid-rows-[1fr_min-content]
-            cursor-default 
-            gap-x-12 gap-y-8
-            form-control vert-space-between-inputs
-            max-h-full
-            overflow-auto
+
+        <Form method='post' className='mx-8 '>
+          <div className='vert-space-between-inputs 
+            md:grid md:grid-cols-2 md:grid-rows-[1fr_min-content]
+            md:gap-x-8
           '>
+            <input type="string" name='desireId' value={desireId} hidden readOnly />
 
-          <div className="col-start-1 row-start-1">
-            <div className="form-control gap-6 ">
-              <input type="string" name='desireId' value={desireId} hidden readOnly />
-
-              <div className=''>
+            <div className="form-control gap-6">
+              <div>
                 <InputLabelWithGuideLineLink
                   text='Outcome'
                   title='Outcomes'
                   guideline={DesireOutcomeGuideline} />
                 <input type="text"
                   placeholder="Enter a List Title"
+                  name='title'
                   value={outcomeTitle}
                   onChange={(e) => setOutcomeTitle(e.target.value)}
                   className=" input-field-text-title "
@@ -277,13 +269,11 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
                 labelText="Due On or Before"
               />
 
-              <div className="m-8">
-                <Divider />
-              </div>
+              <div className='mt-8 mb-5'>  <Divider />   </div>
 
               <div className=' '>
                 <InputLabelWithGuideLineLink
-                  text='Milestone'
+                  text='Add a Milestone'
                   title='Milestones'
                   guideline={Milestones}
                 />
@@ -302,92 +292,90 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
               />
 
             </div>
-          </div>
 
-          <div className="col-start-1 row-start-2">
-            <div className='mt-0'>
-              <OutlinedBtn
-                text='Add Milestone'
-                icon={ArrowIcon45deg}
-                onClickFunction={handleAddProgress}
-                disabledBtnBoolean={!progress}
-                daisyUIBtnColor='primary'
-                type='button'
-              />
-            </div>
-          </div>
-
-
-          {/* //? PREVIEW PANEL */}
-
-          <div className="col-start-2 row-start-1">
-            <div className='pt-3 text-success'>
-              <SubHeading14px text='Outcome Preview' />
-            </div>
-            <div className={`mt-2 ${outcomeTitle ? 'text-base-content' : 'text-base-content/60'} `}>
-              <HeadingH2 text={outcomeTitle || 'Outcome Title'} />
-              {outcomeDueDate && (
-                <div className="text-base-content/60">
-                  <SubHeading14px text={`Due On or Before:  ${formattedOutcomeDueDate}`} />
-                </div>
-              )}
-              {outcomeDescription && (
-                <div className="mt-2">
-                  <p className="text-base-content/60">
-                    {outcomeDescription}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            <div className={` ${progressList.length ? 'text-base-content' : 'text-base-content/60'}  mt-8`}>
-              <SubHeading14px text={`Milestones`} />
-            </div>
-            <div>
-              <DndProgress
-                progressList={progressList}
-                setProgressList={setProgressList}
-              />
-            </div>
-          </div>
-
-          {/* //**************BUTTONS ***************  */}
-          <div className="col-start-2 row-start-2 mb-8">
-
-            <div className="flex flex-col gap-4">
-              <div className='mt-0 mb-0'>
-                <SolidBtn text={saveBtnText}
-                  onClickFunction={isNewOutcome ? handleSave : handleEdit}
-                  icon={dbIcon}
-                  disableSaveBtn={!isIdle || !isSaveable}
+            <div className="col-start-1 row-start-2 vert-space-between-inputs">
+              <div className=''>
+                <OutlinedBtn
+                  text='Add Milestone'
+                  onClickFunction={handleAddProgress}
+                  disabledBtnBoolean={!progress}
+                  daisyUIBtnColor='primary'
                   type='button'
                 />
               </div>
+            </div>
 
-              {!isNewOutcome && (
-                <>
-                  <Link to='..' >
-                    <SolidBtnGreyBlue
-                      text='Close w/o saving'
-                      onClickFunction={() => { }}
-                    />
-                  </Link>
 
-                  <Link to='delete' >
-                    <OutlinedBtn
-                      text='Delete Outcome'
-                      onClickFunction={() => { }}
-                      daisyUIBtnColor='error'
-                    />
-                  </Link>
-                </>
-              )}
+            {/* //? PREVIEW PANEL */}
 
+            <div className="col-start-2 row-start-1 mt-8 md:mt-0 ">
+              <div className='pt-3 text-success'>
+                <SubHeading14px text='Outcome Preview' />
+              </div>
+              <div className={`mt-2 ${outcomeTitle ? 'text-base-content' : 'text-base-content/60'} `}>
+                <HeadingH2 text={outcomeTitle || 'Outcome Title'} />
+                {outcomeDueDate && (
+                  <div className="text-base-content/60">
+                    <SubHeading14px text={`Due On or Before:  ${formattedOutcomeDueDate}`} />
+                  </div>
+                )}
+                {outcomeDescription && (
+                  <div className="mt-2">
+                    <p className="text-base-content/60">
+                      {outcomeDescription}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className={` ${progressList.length ? 'text-base-content' : 'text-base-content/60'}  mt-8`}>
+                <SubHeading14px text={`Milestones`} />
+              </div>
+              <div>
+                <DndProgress
+                  progressList={progressList}
+                  setProgressList={setProgressList}
+                />
+              </div>
+            </div>
+
+            {/* //**************BUTTONS ***************  */}
+            <div className="col-start-2 row-start-2 mb-8  vert-space-between-inputs">
+
+              <div className="flex flex-col gap-4">
+                <div className='mt-0 mb-0'>
+                  <SolidBtn text={saveBtnText}
+                    onClickFunction={isNewOutcome ? handleSave : handleEdit}
+                    icon={dbIcon}
+                    disableSaveBtn={!isIdle || !isSaveable}
+                    type='button'
+                  />
+                </div>
+
+                {!isNewOutcome && (
+                  <>
+                    <Link to='..' >
+                      <SolidBtnGreyBlue
+                        text='Close w/o saving'
+                        onClickFunction={() => { }}
+                      />
+                    </Link>
+
+                    <Link to='delete' >
+                      <OutlinedBtn
+                        text='Delete Outcome'
+                        onClickFunction={() => { }}
+                        daisyUIBtnColor='error'
+                      />
+                    </Link>
+                  </>
+                )}
+
+              </div>
             </div>
           </div>
-        </div >
-      </Form>
-    </LargeFormWithHeader >
+        </Form>
+      </BasicFormAreaBG >
     </>
   )
 }

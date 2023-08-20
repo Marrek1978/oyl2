@@ -71,7 +71,7 @@ function ValueForm({ value }: ValueFormProps) {
       >
 
         <Form method='post' className='mx-8'>
-          <div className="form-control mt-6">
+          <div className="form-control vert-space-between-inputs">
             <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
             <input type="string" name='valueId' value={valueId} hidden readOnly />
 
@@ -91,7 +91,7 @@ function ValueForm({ value }: ValueFormProps) {
               <div className='text-red-700'> {validationErrors.title}</div>
             )}
 
-            <div className='mt-6'>
+            <div className='vert-space-between-inputs'>
               <InputLabelWithGuideLineLink
                 text='Value Statement'
                 guideline={CoreValueStatement}
@@ -113,7 +113,7 @@ function ValueForm({ value }: ValueFormProps) {
 
 
           {/* //**************BUTTONS ***************  */}
-          <div className='mt-6 mb-8'>
+          <div className='vert-space-between-inputs mb-8'>
             <SolidBtn text={isSubmitting ? 'Saving...' : saveBtnText}
               onClickFunction={() => { }}
               icon={dbIcon}
@@ -122,7 +122,7 @@ function ValueForm({ value }: ValueFormProps) {
 
             {!isAddNewValueRoute &&
               (<>
-                <div className='two-button-spacing mt-6 mb-8'>
+                <div className='two-button-spacing vert-space-between-inputs mb-8'>
                   <div className='flex-1'>
                     <Link to='delete' >
                       <OutlinedBtn

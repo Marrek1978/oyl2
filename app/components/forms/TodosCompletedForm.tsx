@@ -8,6 +8,7 @@ import ToDoWithCompletedBox from '~/components/list/todos/ToDoWithCompletedBox';
 import { EditIcon, closeIcon, downArrowsIcon, trashIcon } from '~/components/utilities/icons';
 
 import type { ListAndToDos } from '~/types/listTypes';
+import OutlinedBtn from '../buttons/OutlinedBtn';
 
 interface TodosCompletedFormProps {
   list: ListAndToDos;
@@ -112,14 +113,11 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
           <div className='w-full mt-6 flex gap-6 '>
             <div className='w-full flex-1 '>
               <Link to='delete' >
-                <button className='btn btn-error btn-outline  
-                w-full
-                rounded-none
-                font-mont font-semibold
-              ' >
-                  Delete List
-                  {trashIcon}
-                </button>
+                <OutlinedBtn
+                  text='Delete List'
+                  onClickFunction={() => { }}
+                  daisyUIBtnColor='error'
+                />
               </Link>
             </div>
 
