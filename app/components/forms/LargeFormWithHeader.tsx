@@ -9,13 +9,16 @@ interface FormProps {
 function LargeFormWithHeader({ children, title }: FormProps) {
 
   const backgroundColor = GetHeaderBgColor()
-  
+
   return (
     <div className='
       bg-base-100 shadow-xl
       grid grid-cols-[minmax(300px,1200px)]
       grid-rows-[72px_1fr_min-content]
       cursor-defaultshadow-lg
+      w-full max-w-max
+      max-h-full
+      overflow-auto
     '>
 
       <div className={`
@@ -24,11 +27,10 @@ function LargeFormWithHeader({ children, title }: FormProps) {
         flex items-center
         text-xl font-mont uppercase font-normal tracking-widest 
         text-primary-300
-        truncate overflow-ellipsis 
+        truncate overflow-ellipsis
       `}>
         {title}
       </div>
-
       {children}
     </div>
   )

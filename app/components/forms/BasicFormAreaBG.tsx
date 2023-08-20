@@ -27,7 +27,7 @@ function BasicFormAreaBG({ children, title }: BasicFormAreaBGProps) {
         flex items-center
         text-xl font-mont uppercase font-normal tracking-widest 
         text-primary-300
-        truncate wrap
+        truncate overflow-ellipsis 
       `}>
         {title}
       </div>

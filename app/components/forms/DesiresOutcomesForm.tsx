@@ -7,6 +7,7 @@ import Divider from "../utilities/Divider";
 import SolidBtn from '../buttons/SolidBtn';
 import DatePicker from "../list/DatePicker";
 import HeadingH2 from "../titles/HeadingH2";
+import { formatDate } from "~/utils/functions";
 import OutlinedBtn from '../buttons/OutlinedBtn';
 import SuccessMessage from "../modals/SuccessMessage";
 import SubHeading14px from "../titles/SubHeading14px";
@@ -22,7 +23,6 @@ import type { DesireWithValues } from '~/types/desireTypes'
 import type { DesireOutcomeProgress } from "@prisma/client";
 import type { NewlyCreatedProgress } from "~/types/progressTypes";
 import type { OutcomeWithProgressList } from "~/types/outcomeTypes";
-import { formatDate } from "~/utils/functions";
 // import { parseISO } from "date-fns";
 
 interface DesireFormProps {
@@ -215,168 +215,179 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
       }
 
       <LargeFormWithHeader
-        title={`Create Outcome for  ${desireTitle}`}
+        title={isNewOutcome
+          ? (<div ><span className='text-sm' >Create a New Outcome for: </span> {desireTitle}</div>)
+          : (<div ><span className='text-sm' >Edit Outcomes for:</span> {desireTitle}</div>)}
       >
-        <Form method='post' className='mx-8 pb-8'>
-          <div className=' 
-          bg-base-100 
-          grid grid-cols-2 grid-rows-[1fr_min-content]
-          cursor-default 
-          gap-x-12 gap-y-8
-          form-control vert-space-between-inputs
-          max-h-full
-          overflow-auto
+    
+    
+      <Form method='post' className='mx-8 '>
+       
+        <div className=' 
+            bg-base-100 
+            md:grid md:grid-cols-2 grid-rows-[1fr_min-content]
+            cursor-default 
+            gap-x-12 gap-y-8
+            form-control vert-space-between-inputs
+            max-h-full
+            overflow-auto
           '>
 
-            <div className="col-start-1 row-start-1">
-              <div className="form-control gap-6 ">
-                <input type="string" name='desireId' value={desireId} hidden readOnly />
+          <div className="col-start-1 row-start-1">
+            <div className="form-control gap-6 ">
+              <input type="string" name='desireId' value={desireId} hidden readOnly />
 
-                <div className=''>
-                  <InputLabelWithGuideLineLink
-                    text='Outcome'
-                    title='Outcomes'
-                    guideline={DesireOutcomeGuideline} />
-                  <input type="text"
-                    placeholder="Enter a List Title"
-                    value={outcomeTitle}
-                    onChange={(e) => setOutcomeTitle(e.target.value)}
-                    className=" input-field-text-title "
-                  />
-                  {validationErrors?.title && (
-                    <div className='validation-error'> {validationErrors.title}</div>
-                  )}
-                </div>
-
-                <div className='  '>
-                  <InputLabelWithGuideLineLink
-                    text='Outcome Description'
-                    title='Defining Proper Outcomes'
-                    guideline={ProperDesireOutcomes} />
-                  <textarea
-                    className='input-field-text-para '
-                    placeholder={DesireCurrentSituation}
-                    name='outcomeDescription'
-                    value={outcomeDescription}
-                    onChange={(e) => setOutcomeDescription(e.target.value)}
-                  >
-                  </textarea>
-                  {validationErrors?.description && (
-                    <div className='validation-error'> {validationErrors.description}</div>
-                  )}
-                </div>
-
-                <DatePicker
-                  setSelectedDate={setOutcomeDueDate}
-                  selectedDate={outcomeDueDate}
-                  labelText="Due On or Before"
+              <div className=''>
+                <InputLabelWithGuideLineLink
+                  text='Outcome'
+                  title='Outcomes'
+                  guideline={DesireOutcomeGuideline} />
+                <input type="text"
+                  placeholder="Enter a List Title"
+                  value={outcomeTitle}
+                  onChange={(e) => setOutcomeTitle(e.target.value)}
+                  className=" input-field-text-title "
                 />
-
-                <div className="m-8">
-                  <Divider />
-                </div>
-
-                <div className=' '>
-                  <InputLabelWithGuideLineLink
-                    text='Milestone'
-                    title='Milestones'
-                    guideline={Milestones}
-                  />
-                  <input type="text"
-                    placeholder="Add a Milestone"
-                    value={progress}
-                    onChange={(e) => setProgress(e.target.value)}
-                    className=" input-field-text-title "
-                  />
-                </div>
-
-                <DatePicker
-                  setSelectedDate={setProgressDueDate}
-                  selectedDate={progressDueDate}
-                  labelText="Milestone Due On or Before"
-                />
-
+                {validationErrors?.title && (
+                  <div className='validation-error'> {validationErrors.title}</div>
+                )}
               </div>
+
+              <div className='  '>
+                <InputLabelWithGuideLineLink
+                  text='Outcome Description'
+                  title='Defining Proper Outcomes'
+                  guideline={ProperDesireOutcomes} />
+                <textarea
+                  className='input-field-text-para '
+                  placeholder={DesireCurrentSituation}
+                  name='outcomeDescription'
+                  value={outcomeDescription}
+                  onChange={(e) => setOutcomeDescription(e.target.value)}
+                >
+                </textarea>
+                {validationErrors?.description && (
+                  <div className='validation-error'> {validationErrors.description}</div>
+                )}
+              </div>
+
+              <DatePicker
+                setSelectedDate={setOutcomeDueDate}
+                selectedDate={outcomeDueDate}
+                labelText="Due On or Before"
+              />
+
+              <div className="m-8">
+                <Divider />
+              </div>
+
+              <div className=' '>
+                <InputLabelWithGuideLineLink
+                  text='Milestone'
+                  title='Milestones'
+                  guideline={Milestones}
+                />
+                <input type="text"
+                  placeholder="Add a Milestone"
+                  value={progress}
+                  onChange={(e) => setProgress(e.target.value)}
+                  className=" input-field-text-title "
+                />
+              </div>
+
+              <DatePicker
+                setSelectedDate={setProgressDueDate}
+                selectedDate={progressDueDate}
+                labelText="Milestone Due On or Before"
+              />
+
+            </div>
+          </div>
+
+          <div className="col-start-1 row-start-2">
+            <div className='mt-0'>
+              <OutlinedBtn
+                text='Add Milestone'
+                icon={ArrowIcon45deg}
+                onClickFunction={handleAddProgress}
+                disabledBtnBoolean={!progress}
+                daisyUIBtnColor='primary'
+                type='button'
+              />
+            </div>
+          </div>
+
+
+          {/* //? PREVIEW PANEL */}
+
+          <div className="col-start-2 row-start-1">
+            <div className='pt-3 text-success'>
+              <SubHeading14px text='Outcome Preview' />
+            </div>
+            <div className={`mt-2 ${outcomeTitle ? 'text-base-content' : 'text-base-content/60'} `}>
+              <HeadingH2 text={outcomeTitle || 'Outcome Title'} />
+              {outcomeDueDate && (
+                <div className="text-base-content/60">
+                  <SubHeading14px text={`Due On or Before:  ${formattedOutcomeDueDate}`} />
+                </div>
+              )}
+              {outcomeDescription && (
+                <div className="mt-2">
+                  <p className="text-base-content/60">
+                    {outcomeDescription}
+                  </p>
+                </div>
+              )}
             </div>
 
-            <div className="col-start-1 row-start-2">
-              <div className='mt-0'>
-                <OutlinedBtn
-                  text='Add Milestone'
-                  icon={ArrowIcon45deg}
-                  onClickFunction={handleAddProgress}
-                  disabledBtnBoolean={!progress}
-                  daisyUIBtnColor='primary'
+            <div className={` ${progressList.length ? 'text-base-content' : 'text-base-content/60'}  mt-8`}>
+              <SubHeading14px text={`Milestones`} />
+            </div>
+            <div>
+              <DndProgress
+                progressList={progressList}
+                setProgressList={setProgressList}
+              />
+            </div>
+          </div>
+
+          {/* //**************BUTTONS ***************  */}
+          <div className="col-start-2 row-start-2 mb-8">
+
+            <div className="flex flex-col gap-4">
+              <div className='mt-0 mb-0'>
+                <SolidBtn text={saveBtnText}
+                  onClickFunction={isNewOutcome ? handleSave : handleEdit}
+                  icon={dbIcon}
+                  disableSaveBtn={!isIdle || !isSaveable}
                   type='button'
                 />
               </div>
+
+              {!isNewOutcome && (
+                <>
+                  <Link to='..' >
+                    <SolidBtnGreyBlue
+                      text='Close w/o saving'
+                      onClickFunction={() => { }}
+                    />
+                  </Link>
+
+                  <Link to='delete' >
+                    <OutlinedBtn
+                      text='Delete Outcome'
+                      onClickFunction={() => { }}
+                      daisyUIBtnColor='error'
+                    />
+                  </Link>
+                </>
+              )}
+
             </div>
-
-            <div className="col-start-2 row-start-1">
-              <div className='label pt-3 text-success'>
-                <SubHeading14px text='Preview' />
-              </div>
-              <div className={outcomeTitle ? 'text-base-content' : 'text-base-content/60'}  >
-                <HeadingH2 text={outcomeTitle || 'Outcome Title'} />
-                {outcomeDueDate && (
-                  <div className="text-base-content/60">
-                    <SubHeading14px text={`Due On or Before:  ${formattedOutcomeDueDate}`} />
-                  </div>
-                )}
-                {outcomeDescription && (
-                  <div className="mt-2">
-                    <p className="text-base-content/60">
-                      {outcomeDescription}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <DndProgress
-                  progressList={progressList}
-                  setProgressList={setProgressList}
-                />
-              </div>
-            </div>
-
-            {/* //**************BUTTONS ***************  */}
-            <div className="col-start-2 row-start-2">
-
-              <div className="flex flex-col gap-4">
-                <div className='mt-0 mb-0'>
-                  <SolidBtn text={saveBtnText}
-                    onClickFunction={isNewOutcome ? handleSave : handleEdit}
-                    icon={dbIcon}
-                    disableSaveBtn={!isIdle || !isSaveable}
-                    type='button'
-                  />
-                </div>
-
-                {!isNewOutcome && (
-                  <>
-                    <Link to='..' >
-                      <SolidBtnGreyBlue
-                        text='Close w/o saving'
-                        onClickFunction={() => { }}
-                      />
-                    </Link>
-
-                    <Link to='delete' >
-                      <OutlinedBtn
-                        text='Delete Outcome'
-                        onClickFunction={() => { }}
-                        daisyUIBtnColor='error'
-                      />
-                    </Link>
-                  </>
-                )}
-
-              </div>
-            </div>
-          </div >
-        </Form>
-      </LargeFormWithHeader>
+          </div>
+        </div >
+      </Form>
+    </LargeFormWithHeader >
     </>
   )
 }
