@@ -36,14 +36,13 @@ function DndSortableGeneric({ children, id, title, description, linkTitle = 'Edi
             hover:text-primary-focus
             max-w-prose
           '>
-          <div className="flex items-center justify-between gap-4 ">
-            <H2WithLink
-              title={title}
-              linkDestination={id}
-              // linkColor={}
-              linkText={linkTitle}
-            />
-          </div>
+
+          <H2WithLink
+            title={title}
+            linkDestination={id}
+            // linkColor={}
+            linkText={linkTitle}
+          />
 
           {/* //! associations?? */}
           <div className=' '>  {children}</div>

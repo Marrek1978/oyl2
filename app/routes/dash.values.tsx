@@ -21,10 +21,10 @@ export const action = async ({ request }: ActionArgs) => {
 
   try {
     await updateValuesOrder(values)
-    return 'Values Order was updated'
+    return 'Values order was updated'
   } catch (error) { 
     // throw error 
-    return 'There was an issue updating the order'
+    return 'There was an issue updating the sorting order'
   }
 }
 

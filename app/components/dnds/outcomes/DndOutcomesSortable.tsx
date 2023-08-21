@@ -2,14 +2,14 @@ import React from 'react'
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from '@dnd-kit/sortable';
 import H2WithLink from '~/components/titles/H2WithLink';
-import Heading16px from '~/components/titles/Heading16px';
 
-import type { OutcomeWithProgressList } from '~/types/outcomeTypes';
+import type { DesireOutcome } from '@prisma/client';
+
 
 interface SortableProps {
   children: React.ReactNode
   id: string;
-  outcome: OutcomeWithProgressList;
+  outcome: DesireOutcome;
 }
 
 
@@ -41,12 +41,11 @@ function DndOutcomesSortable({ children, id, outcome }: SortableProps) {
           hover:bg-primary/30 
           hover:text-primary-focus
         '>
-          <div className="flex items-center justify-between gap-4 text-base-content ">
+          <div className="flex items-center justify-between gap-4 text-base-content">
             <H2WithLink
               title={title}
               linkDestination={id}
               linkText={linkTitle}
-              date={outcome.dueDate}
             />
           </div>
 
@@ -61,9 +60,9 @@ function DndOutcomesSortable({ children, id, outcome }: SortableProps) {
             {description}
           </div>
 
-          <div className='text-base-content mt-4 font-semibold '>
+          {/* <div className='text-base-content mt-4 font-semibold '>
             <Heading16px text={'Milestones'} />
-          </div>
+          </div> */}
           {children}
         </div>
       </div>

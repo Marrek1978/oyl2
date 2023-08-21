@@ -76,7 +76,7 @@ function DndSortableProject({ id, project }: DndSortableProjectProps) {
             {highlightedProjectId !== project.id ?
               <Link to={project.id} >
                 <TextBtn
-                  text='Show Summary'
+                  text='Go To Project'
                   onClickFunction={() => { }}
                   color={`
                     ${project.sortOrder !== 0 && 'text-primary/70'}

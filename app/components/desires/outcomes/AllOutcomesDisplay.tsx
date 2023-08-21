@@ -1,14 +1,13 @@
 
-import H2WithLink from '../../titles/H2WithLink';
-import SubHeading16px from '../../titles/SubHeading16px';
-import BasicTextAreaBG from '../../baseContainers/BasicTextAreaBG';
+import H2WithLink from '~/components/titles/H2WithLink';
+import SubHeading16px from '~/components/titles/SubHeading16px';
+import OutcomeDisplay from '~/components/desires/outcomes/OutcomeDisplay';
+import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 
-import OutcomeDisplay from './OutcomeDisplay';
-
-import type { OutcomeWithProgressList } from '~/types/outcomeTypes';
+import type { DesireOutcome } from '@prisma/client';
 
 interface SpecificOutcomeDisplayProps {
-  outcomes: OutcomeWithProgressList[];
+  outcomes: DesireOutcome[];
   plural: string;
   title: string;
 }
@@ -20,9 +19,8 @@ function AllOutcomesDisplay({ outcomes, plural, title }: SpecificOutcomeDisplayP
       <div className=''>
 
         <BasicTextAreaBG >
-
           <div className='text-success mb-2'>
-            <SubHeading16px text='Outcomes for Desire' />
+            <SubHeading16px text='Outcomes of Reaching the Ideal Situation' />
           </div>
 
           {/* //?  THE TITLE SECTION  */}
@@ -34,7 +32,7 @@ function AllOutcomesDisplay({ outcomes, plural, title }: SpecificOutcomeDisplayP
 
           {/* //? DESCRIPTION AND LIST OF MILESTOONES */}
           <div className='mt-4'>
-            {outcomes?.map((outcome: OutcomeWithProgressList) => {
+            {outcomes?.map((outcome: DesireOutcome) => {
               return (
                 <OutcomeDisplay
                   key={outcome.id}

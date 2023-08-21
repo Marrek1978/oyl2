@@ -18,7 +18,7 @@ function H2WithLinkAndProsePara({ title, linkDestination, linkText, paragraph }:
           linkDestination={linkDestination}
           linkText={linkText}
         />
-        <div className='mt-2 mr-12'>
+        <div className='mt-2 mr-12 para-color'>
           <TextProseWidth
             text={paragraph || ''}
           />

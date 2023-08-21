@@ -40,8 +40,8 @@ function DndProjects() {
 
 
   useEffect(() => {
-    if (fetcher.data?.status === 'success') {
-      setSuccessMessage('Projects Order was saved');
+    if (fetcher.state === 'loading') {
+      setSuccessMessage(fetcher.data);
       setTimeout(() => setSuccessMessage(''), 500);
     }
   }, [fetcher])
@@ -106,9 +106,8 @@ function DndProjects() {
       <>
         {successMessage && (
           <Modal onClose={() => { }} zIndex={20}>
-            {successMessage}
             <SuccessMessage
-              text={'Order was updated'}
+              text= {successMessage}
             />
           </Modal>)
         }

@@ -27,9 +27,9 @@ export const action = async ({ request }: LoaderArgs) => {
 
   try {
     await updateDesiresOrder(desires)
-    return 'Desires Order was updated'
+    return 'Desires order was updated'
   } catch (error) {
-    return 'There was an issue updating the order'
+    return 'There was an issue updating the sorting order'
   }
 }
 

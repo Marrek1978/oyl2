@@ -20,7 +20,6 @@ function LargeFormWithHeader({ children, title }: FormProps) {
       max-h-full
       overflow-auto
     '>
-
       <div className={`
         w-full h-full px-8 
         ${backgroundColor}

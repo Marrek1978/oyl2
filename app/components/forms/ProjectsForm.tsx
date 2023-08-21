@@ -119,13 +119,13 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
 
             <div className='vert-space-between-inputs'>
               <InputLabelWithGuideLineLink
-                text='Description'
+                text='Description or Desire Served (Choose 1)'
                 guideline={DesireDescription}
                 title='Project Description'
               />
               <textarea
                 className='input-field-text-para '
-                placeholder="Describe what you desire. You can describe why you desire somethihng, but do not spend any time justifying your desire."
+                placeholder="Leave blank if choosing a Desire, otherwise describe what you desire. You can describe why you desire somethihng, but do not spend any time justifying your desire."
                 name='description'
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}

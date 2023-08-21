@@ -5,16 +5,15 @@ import { type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime';
 import DndOutcomes from '~/components/dnds/outcomes/DndOutcomes';
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
 import { getOutcomesByDesireId, updateOutcomesOrder } from '~/models/outcome.server';
-import DndPlus1200OutletFlex from '~/components/baseContainers/DndPlus1200OutletFlex';
 
-import type { Desire } from '@prisma/client';
+import type { Desire, DesireOutcome } from '@prisma/client';
 import type { DesireWithValues } from '~/types/desireTypes';
-import type { OutcomeWithProgressList } from '~/types/outcomeTypes';
+import DndPlus800OutletFlex from '~/components/baseContainers/DndPlus800OutletFlex';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   const desireId = params.desireId!
   try {
-    const desireOutcomes: OutcomeWithProgressList[] = await getOutcomesByDesireId(desireId)
+    const desireOutcomes: DesireOutcome[] = await getOutcomesByDesireId(desireId)
     return desireOutcomes
   } catch (error) { throw error }
 }
@@ -27,9 +26,10 @@ export const action = async ({ request }: ActionArgs) => {
 
   try {
     await updateOutcomesOrder(outcomes)
-    console.log(' outcome order saved')
-    return null
-  } catch (error) { throw error }
+    return 'Outcomes order was updated'
+  } catch (error) {
+    return 'There was an issue updating the sorting order'
+  }
 }
 
 
@@ -48,12 +48,12 @@ function DesireSpecificOutcomesPage() {
   return (
     <>
       <BreadCrumbs title={desireName || ''} />
-      <DndPlus1200OutletFlex >
+      <DndPlus800OutletFlex >
         <DndOutcomes
           desireName={desireName}
           description={DesireDescription}
         />
-      </DndPlus1200OutletFlex>
+      </DndPlus800OutletFlex>
     </>
   )
 }

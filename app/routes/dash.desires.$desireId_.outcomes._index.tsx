@@ -2,14 +2,13 @@ import { parse } from 'querystring';
 import { useMatches, useParams } from '@remix-run/react';
 
 import { requireUserId } from '~/models/session.server';
+import { createDesireOutcome } from '~/models/outcome.server';
 import DesiresOutcomesForm from '~/components/forms/DesiresOutcomesForm'
-import { createDesireOutcomeAndProgressList } from '~/models/outcome.server';
 
 import type { Desire } from '@prisma/client';
 import type { ActionArgs } from '@remix-run/server-runtime';
 import type { DesireWithValues, validationErrorsTypes } from '~/types/desireTypes';
 
-import type { NewlyCreatedProgress } from '~/types/progressTypes';
 
 export const action = async ({ request }: ActionArgs) => {
   const userId = await requireUserId(request)
@@ -20,7 +19,6 @@ export const action = async ({ request }: ActionArgs) => {
   !outcomeData.title && (validationErrors.title = 'A title is required')
   if (!outcomeData.title) return validationErrors
 
-  const progressList = outcomeData.progressList as NewlyCreatedProgress[]
 
   let outcome = {
     userId,
@@ -30,11 +28,10 @@ export const action = async ({ request }: ActionArgs) => {
     dueDate: outcomeData.dueDate ? new Date(outcomeData.dueDate as string) : null,
     complete: false,
     desireId: outcomeData.desireId as string,
-    progressList: progressList,
   }
 
   try {
-    await createDesireOutcomeAndProgressList(outcome)
+    await createDesireOutcome(outcome)
     return null
   } catch (error) { throw error }
 }

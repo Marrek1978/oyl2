@@ -6,13 +6,12 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-ki
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
 
 import Modal from '~/components/modals/Modal';
+import HeadingH2 from '~/components/titles/HeadingH2';
+import DndOutcomesSortable from './DndOutcomesSortable';
+import SubHeading16px from '~/components/titles/SubHeading16px';
 import SuccessMessage from '~/components/modals/SuccessMessage';
 
-import type { OutcomeWithProgressList } from '~/types/outcomeTypes';
-import SubHeading16px from '~/components/titles/SubHeading16px';
-import DndOutcomesSortable from './DndOutcomesSortable';
-import { formatDate } from '~/utils/functions';
-import HeadingH2 from '~/components/titles/HeadingH2';
+import type { DesireOutcome } from '@prisma/client';
 
 
 interface DndOutcomesProps {
@@ -23,10 +22,10 @@ interface DndOutcomesProps {
 const DndOutcomes: React.FC<DndOutcomesProps> = ({ desireName, description }) => {
 
   const fetcher = useFetcher();
-  const outcomesData = useLoaderData<OutcomeWithProgressList[]>();
+  const outcomesData = useLoaderData<DesireOutcome[]>();
 
   const [successMessage, setSuccessMessage] = useState('');
-  const [outcomes, setOutcomes] = useState<OutcomeWithProgressList[]>([]);
+  const [outcomes, setOutcomes] = useState<DesireOutcome[]>([]);
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
 
 
@@ -37,8 +36,7 @@ const DndOutcomes: React.FC<DndOutcomesProps> = ({ desireName, description }) =>
 
   useEffect(() => {
     if (fetcher.state === 'loading') {
-
-      setSuccessMessage('List was saved');
+      setSuccessMessage(fetcher.data);
       setTimeout(() => setSuccessMessage(''), 500);
     }
   }, [fetcher])
@@ -64,7 +62,7 @@ const DndOutcomes: React.FC<DndOutcomesProps> = ({ desireName, description }) =>
   }, [saveNewSortOrder, handleEditSortOrder])
 
 
-  const resetOutcomesSortOrder = (outcomes: OutcomeWithProgressList[]) => {
+  const resetOutcomesSortOrder = (outcomes: DesireOutcome[]) => {
     const reOrdered = outcomes?.map((outcome, index) => {
       return {
         ...outcome,
@@ -79,7 +77,7 @@ const DndOutcomes: React.FC<DndOutcomesProps> = ({ desireName, description }) =>
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      setOutcomes((prevOutcomes: OutcomeWithProgressList[]) => {
+      setOutcomes((prevOutcomes: DesireOutcome[]) => {
         const oldIndex = prevOutcomes.findIndex(outcome => outcome.id === active.id);
         const newIndex = prevOutcomes.findIndex(outcome => outcome.id === over?.id);
         const newOutcomes = arrayMove(prevOutcomes, oldIndex, newIndex);
@@ -102,9 +100,9 @@ const DndOutcomes: React.FC<DndOutcomesProps> = ({ desireName, description }) =>
     <>
       {successMessage && (
         <Modal onClose={() => { }} zIndex={20}>
-          {successMessage}
+         
           <SuccessMessage
-            text={'Order was updated'}
+            text={successMessage}
           />
         </Modal>)
       }
@@ -133,25 +131,11 @@ const DndOutcomes: React.FC<DndOutcomesProps> = ({ desireName, description }) =>
 
           <div className='mt-4'>
             {outcomes?.map((outcome) => (
-
               <DndOutcomesSortable
                 key={outcome.id}
                 id={outcome.id}
                 outcome={outcome}
               >
-
-                {outcome.desireOutcomeProgress.map((progress, index) => (
-                  <div key={index} className='mt-0 grid grid-cols-[auto_max-content] items-baseline gap-4'>
-                    {progress.title}
-                    {progress.dueDate && (
-                      <div className='text-sm text-base-content/70'>
-                        {progress.dueDate ? formatDate(progress.dueDate) : ''}
-
-                      </div>
-                    )}
-                  </div>
-                ))}
-
               </DndOutcomesSortable>
             ))}
           </div>

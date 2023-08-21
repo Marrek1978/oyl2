@@ -1,6 +1,7 @@
 datasource db {
   provider = "postgresql"
    url = env("DATABASE_PRISMA_URL") // uses connection pooling
+  //  url = env("DATABASE_URL") // uses connection pooling
   directUrl = env("DATABASE_URL_NON_POOLING") // uses a direct connection
 }
 
@@ -220,8 +221,8 @@ model DesireOutcome {
   title String
   description String?
   sortOrder Int @default(0)
-  desireOutcomeProgress DesireOutcomeProgress[]
-  dueDate DateTime?
+  // desireOutcomeProgress DesireOutcomeProgress[]
+  // dueDate DateTime?
   complete Boolean @default(false)
 
   desireId String
@@ -240,7 +241,7 @@ model DesireOutcomeProgress {
   complete Boolean @default(false)
 
   desireOutcomeId String
-  desireOutcome DesireOutcome @relation(fields: [desireOutcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  // desireOutcome DesireOutcome @relation(fields: [desireOutcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
 }
  

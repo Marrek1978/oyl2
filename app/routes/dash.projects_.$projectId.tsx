@@ -1,18 +1,14 @@
-import { Link, Outlet, useLoaderData } from '@remix-run/react'
-import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime'
-import type { Desire } from '@prisma/client'
-
-import TextBtn from '~/components/buttons/TextBtn'
-import HeadingH1 from '~/components/titles/HeadingH1'
-import HeadingH2 from '~/components/titles/HeadingH2'
-import { EditIcon } from '~/components/utilities/icons'
-import SubHeading14px from '~/components/titles/SubHeading14px'
-import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
-import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
+import { Outlet, useLoaderData } from '@remix-run/react'
 
 import { getDesires } from '~/models/desires.server'
 import { requireUserId } from '~/models/session.server'
 import { getProjectById } from '~/models/project.server'
+import { getOutcomesByDesireId } from '~/models/outcome.server'
+import ProjectDisplay from '~/components/projects/ProjectDisplay'
+import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
+
+import type { Desire } from '@prisma/client'
+import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime'
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   let userId = await requireUserId(request);
@@ -20,7 +16,11 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   try {
     const desires = await getDesires(userId)
     const project = await getProjectById(projectId, userId)
-    return { project, desires, userId }
+    if (!project) throw new Error('Project not found')
+    const desire = desires.find((desire: Desire) => desire.id === project?.desireId)
+    const outcomes = await getOutcomesByDesireId(desire?.id || '0')
+
+    return { project, desires, outcomes }
   } catch (error) { throw error }
 }
 
@@ -34,115 +34,27 @@ export const action = async ({ request }: ActionArgs) => {
 export default function ProjectByIdPage() {
 
   const { project, desires } = useLoaderData()
-  const desireTitle = desires.find((desire: Desire) => desire.id === project.desireId)?.title
+  const desire = desires.find((desire: Desire) => desire.id === project.desireId)
+  // const desireTitle = desire.title
 
   return (
     <>
       <BreadCrumbs title={project.title || ''} />
 
       <Outlet />
-      <div className='flex flex-col gap-6'>
-        <article>
-          <BasicTextAreaBG >
-            <div className='flex justify-between items-baseline'>
-              <div className='flex gap-4 items-baseline '>
-                <HeadingH1 text={project.title} />
-              </div>
-              <Link to={'manage'} >
-                <TextBtn
-                  text='Manage Project'
-                  onClickFunction={() => { }}
-                  icon={EditIcon}
-                />
-              </Link>
-            </div>
-            {desireTitle && (
-              <div className='mt-1 mb-2 text-base-content/50  '>
-                <SubHeading14px
-                  text={`To realize the desire: ${desireTitle}`}
-                />
-              </div>
-            )}
-            <p className='text-md mt-4 text-base-content font-poppins' >{project.description}</p>
-          </BasicTextAreaBG >
-        </article>
 
-        <article>
-          <BasicTextAreaBG >
-            <div className='flex justify-between items-baseline'>
-              <HeadingH2 text='MileStones' />
-              <Link to={'milestones'} >
-                <TextBtn
-                  text='Go To Milestones'
-                  onClickFunction={() => { }}
-                  icon={EditIcon}
-                />
-              </Link>
-            </div>
-          </BasicTextAreaBG >
-        </article>
-
-        <article>
-          <BasicTextAreaBG >
-            <div className='flex justify-between items-baseline'>
-              <HeadingH2 text='Habits Tracked' />
-              <Link to={'milestones'} >
-                <TextBtn
-                  text='Go To Habits Tracked'
-                  onClickFunction={() => { }}
-                  icon={EditIcon}
-                />
-              </Link>
-            </div>
-          </BasicTextAreaBG >
-        </article>
-
-        <article>
-          <BasicTextAreaBG >
-            <div className='flex justify-between items-baseline'>
-              <HeadingH2 text='Budgeting' />
-              <Link to={'milestones'} >
-                <TextBtn
-                  text='Go To Budgeting'
-                  onClickFunction={() => { }}
-                  icon={EditIcon}
-                />
-              </Link>
-            </div>
-
-          </BasicTextAreaBG >
-        </article>
-
-        <article>
-          <BasicTextAreaBG >
-            <div className='flex justify-between items-baseline'>
-              <HeadingH2 text='Lists' />
-              <Link to={'edit'} >
-                <TextBtn
-                  text='Go To Lists'
-                  onClickFunction={() => { }}
-                  icon={EditIcon}
-                />
-              </Link>
-            </div>
-          </BasicTextAreaBG >
-        </article>
-
-        <article>
-          <BasicTextAreaBG >
-            <div className='flex justify-between items-baseline'>
-              <HeadingH2 text='Habits/Routines' />
-              <Link to={'edit'} >
-                <TextBtn
-                  text='Go To Habits/Routines'
-                  onClickFunction={() => { }}
-                  icon={EditIcon}
-                />
-              </Link>
-            </div>
-          </BasicTextAreaBG >
-        </article>
+      <div className='flex flex-col w-full'>
+        <div className='flex-1 w-full'>
+          <ProjectDisplay
+            project={project}
+            desire={desire}
+          />
+        </div>
       </div>
+
+
+
+
 
     </>
   )
