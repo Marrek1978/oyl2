@@ -70,6 +70,18 @@ export async function getOutcomesByDesireId(desireId: Desire["id"]) {
   }
 }
 
+export async function getOutcomeByOutcomeId(outcomeId: DesireOutcome["id"]) {
+  try{
+    const outcome = await prisma.desireOutcome.findFirst({
+      where: { id: outcomeId },
+    })
+    return outcome
+  }catch(error){throw error}
+
+
+
+}
+
 export async function updateOutcomesOrder(outcomes: DesireOutcome[]) {
   try {
     const updatedOutcomes = await outcomes.map((outcome) => {

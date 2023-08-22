@@ -22,7 +22,7 @@ function ProjectOutcome({ desiredOutcome }: Props) {
 
           <H2WithLinkAndProsePara
             title={desiredOutcome.title}
-            linkDestination={`/dash/desires/${desiredOutcome.desireId}/outcomes/${desiredOutcome.id}`}
+            linkDestination={`${desiredOutcome.id}`}
             linkText='Go To Outcome Tasks'
             paragraph={desiredOutcome.description || ' '}
           />
@@ -43,6 +43,8 @@ function ProjectOutcome({ desiredOutcome }: Props) {
         </div>
 
         <div className='flex-1' >
+        <SubHeading14px text={'Habits, Tasks, and Trackers'} />
+
           <div className=' flex gap-4'>
             <div>
               <div>block 1</div>

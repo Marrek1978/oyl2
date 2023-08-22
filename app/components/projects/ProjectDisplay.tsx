@@ -1,5 +1,3 @@
-import { Link } from '@remix-run/react';
-import type { Desire, Project } from '@prisma/client'
 
 import HeadingH1 from '../titles/HeadingH1';
 import SubHeading16px from '../titles/SubHeading16px';
@@ -9,6 +7,7 @@ import ProjectAllDesiredOutcomes from './ProjectAllDesiredOutcomes';
 import H2WithLinkAndProsePara from '../text/H2WithLinkAndProsePara';
 import { DesireIdealPlaceholderText } from '../utilities/PlaceHolderTexts';
 
+import type { Desire, Project } from '@prisma/client'
 
 interface ProjectDisplayProps {
   project: Project;
@@ -52,14 +51,7 @@ function ProjectDisplay({ project, desire }: ProjectDisplayProps) {
               </div>
             </div>
 
-            <div id='links' className='mt-8'>
-              <ul>
-                <li> <Link to='..'>All Project Milestones</Link></li>
-                <li> <Link to='..'>All Project Lists and Routines</Link></li>
-                <li> <Link to='..'>All Project Habit Trackers</Link></li>
-                <li><Link to='..'>All Project Money Trackers</Link></li>
-              </ul>
-            </div>
+           
           </div>
 
           <div className=' mt-8 flex-1 '>

@@ -6,7 +6,7 @@ interface Props {
   textColor?: string;
 }
 
-function TextProseWidth({ text, textSize = 'text-base', textColor = 'text-base-content/70' }: Props) {
+function TextProseWidth({ text, textSize = 'text-base', textColor = 'para-color' }: Props) {
   return (
     <>
       <div className={`
