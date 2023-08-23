@@ -29,7 +29,7 @@ function ProjectAllDesiredOutcomes({ }: Props) {
 
           return (
             //?DND these???
-            <>
+            <div key={desiredOutcome.id}>
               <div className='mt-12'>
                 <div className='text-success'>
                   <SubHeading14px text='Desired Outcome' />
@@ -39,7 +39,7 @@ function ProjectAllDesiredOutcomes({ }: Props) {
                   key={desiredOutcome.id}
                 />
               </div>
-            </>
+            </div>
           )
         })}
       </div>

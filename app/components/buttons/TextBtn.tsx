@@ -11,7 +11,7 @@ interface TextBtnProps {
 }
 
 
-function TextBtn({ text, onClickFunction, icon, color = 'text-primary', type='submit', onMouseOver, onMouseOut }: TextBtnProps) {
+function TextBtn({ text, onClickFunction, icon, color = 'text-primary', type = 'submit', onMouseOver, onMouseOut }: TextBtnProps) {
 
   const getHoverClass = color === 'error' ? 'hover:text-red-500' : 'hover:opacity-70'
 

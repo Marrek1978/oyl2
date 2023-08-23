@@ -1,22 +1,54 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { Form } from '@remix-run/react';
 
+import SolidBtn from '../buttons/SolidBtn';
+import InputLabel from '../forms/InputLabel';
 import DatePicker from '~/components/list/DatePicker'
+import BasicFormAreaBG from '../forms/BasicFormAreaBG';
+import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
+import { DesireOutcomeGuideline } from '../utilities/Guidelines';
+import InputLabelWithGuideLineLink from '../forms/InputLabelWithGuideLineLink';
+
 import type { CreationTodo } from '~/types/listTypes';
 
 interface EditToDoProps {
   todo: CreationTodo | null;
   setIsEditToDoModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  todos: CreationTodo[];
   updateTodo: (index: number, updatedTodo: CreationTodo) => void;
   index: number | null;
 }
 
-const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOpen, todos, updateTodo, index }) => {
+const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOpen, updateTodo, index }) => {
 
-  const [body, setBody] = React.useState<string>(todo?.body || '');
-  const [urgent, setUrgent] = React.useState<boolean>(todo?.urgent || false);
-  const [important, setImportant] = React.useState<boolean>(todo?.important || false);
-  const [selectedDate, setSelectedDate] = React.useState<Date | null>(todo?.dueDate || null);
+  const [body, setBody] = useState<string>(todo?.body || '');
+  const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
+  const [urgent, setUrgent] = useState<boolean>(todo?.urgent || false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [important, setImportant] = useState<boolean>(todo?.important || false);
+
+
+  useEffect(() => {
+    if (todo?.dueDate) {
+      const parsedDate = new Date(todo.dueDate);
+      setSelectedDate(parsedDate);
+    }else{
+      setSelectedDate(null)
+    }
+  }, [todo])
+
+
+  useEffect(() => {
+    const dueDate = todo?.dueDate ? new Date(todo.dueDate) : null
+
+    if (body !== todo?.body
+      || urgent !== todo?.urgent
+      || important !== todo?.important
+      || selectedDate?.getTime() !== dueDate?.getTime()) {
+      setIsSaveable(true)
+    } else {
+      setIsSaveable(false)
+    }
+  }, [body, urgent, important, selectedDate, todo])
 
 
   const handleSave = () => {
@@ -55,70 +87,72 @@ const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOp
         className="modal-toggle" />
 
       <div className="modal z-40 ">
-        <div className="modal-box relative rounded-none  overflow-visible min-w-[500px]">
-
-          <h3 className="font-semibold font-nanum text-2xl 
-          base-content ">Edit your To-Do Item</h3>
-          <div className=" w-full mt-6">
-            <input type="text" placeholder="Type here"
-              className="input border-none w-full bg-base-200 font-mont"
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-            />
-          </div>
-
-          <div className=" flex items-center mt-4 gap-16 ">
-            <div className="">
-              <label className="cursor-pointer label justify-start">
-                <span className="label-text mr-2 font-mont font-semibold">Urgent</span>
-                <input type="checkbox"
-                  className="toggle toggle-secondary"
-                  checked={urgent}
-                  onChange={handleIsUrgent}
+        <BasicFormAreaBG
+          title='Edit your To-Do Item'
+        >
+          <Form method='post' className='mx-8'>
+            <div className="form-control gap-6 vert-space-between-inputs ">
+              <div >
+                <InputLabelWithGuideLineLink
+                  text='To Do Item'
+                  title='To Do Item'
+                  guideline={DesireOutcomeGuideline} />
+                <input type="text"
+                  placeholder="Enter a To Do Item"
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  className=" input-field-text-title "
                 />
-              </label>
+              </div>
+
+
+              <div className="flex  items-center gap-12  flex-wrap">
+                <div className="checkbox-label-flex">
+                  <InputLabel text='Urgent' />
+                  <input type="checkbox"
+                    className="toggle toggle-secondary"
+                    checked={urgent}
+                    onChange={handleIsUrgent}
+                  />
+                </div>
+
+                <div className=" checkbox-label-flex">
+                  <InputLabel text='Important' />
+                  <input type="checkbox"
+                    className="toggle toggle-secondary"
+                    checked={important}
+                    onChange={handleIsImportant}
+                  />
+                </div>
+              </div>
+
+              <DatePicker
+                setSelectedDate={setSelectedDate}
+                selectedDate={selectedDate}
+              />
             </div>
 
-            <div className="">
-              <label className="cursor-pointer label justify-start">
-                <span className="label-text mr-2 font-mont font-semibold">Important</span>
-                <input type="checkbox"
-                  className="toggle toggle-secondary"
-                  checked={important}
-                  onChange={handleIsImportant}
+
+            <div className="flex justify-between my-8 gap-4">
+              <div className='flex-1'>
+                <SolidBtnGreyBlue
+                  text='Cancel Edits'
+                  onClickFunction={() => setIsEditToDoModalOpen(false)}
                 />
-              </label>
+              </div>
+
+              <div className='flex-1'>
+                <SolidBtn
+                  text='Accept Edits'
+                  onClickFunction={handleSave}
+                  disableSaveBtn={!isSaveable}
+                />
+              </div>
             </div>
-          </div>
 
-          <div className='mt-4'>
-            <DatePicker
-              setSelectedDate={setSelectedDate}
-              selectedDate={selectedDate}
-            />
-          </div>
-
-          <div className="modal-action flex justify-between mt-12">
-            <label htmlFor="my-modal-5"
-              className="btn btn-outline btn-primary 
-                font-mont rounded-none 
-                w-40
-                "
-              onClick={() => setIsEditToDoModalOpen(false)}
-            >Cancel Edits
-            </label>
-            <label htmlFor="my-modal-5"
-              className="btn btn-primary 
-                font-mont place-content-center 
-                rounded-none w-40
-                "
-              onClick={handleSave}
-            >Accept Edits
-            </label>
-          </div>
-
-        </div>
-      </div>
+          </Form>
+        </BasicFormAreaBG >
+      </div >
     </>
   )
 }

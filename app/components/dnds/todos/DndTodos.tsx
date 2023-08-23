@@ -18,6 +18,7 @@ interface DndTodosProps {
   setSelectedTodo: React.Dispatch<React.SetStateAction<CreationTodo | null>>;
 }
 
+
 function DndTodos({setTodos, todos, setTodoSortOrder, setIsEditToDoModalOpen, setSelectedTodoIndex, setSelectedTodo}: DndTodosProps) {
 
   const sensors = useSensors(

@@ -1,5 +1,5 @@
 import React from 'react'
-import type { ListAndToDos, Todo } from '~/types/listTypes' // adjust the path according to your project structure
+import type {  Todo } from '~/types/listTypes' // adjust the path according to your project structure
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { ToDoItemStylesNoBg } from '../../styles/ToDoItemStyles';

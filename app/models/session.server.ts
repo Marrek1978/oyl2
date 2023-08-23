@@ -71,12 +71,8 @@ export async function requireUserId(
   request: Request,
   redirectTo: string = new URL(request.url).pathname
 ) {
-
-  console.log('requireUserId', redirectTo)
   const userId = await getUserId(request);
-  console.log('userId', userId)
   if (!userId) {
-    console.log('no user id so redirect to login')
     const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
     throw redirect(`/login?${searchParams}`);
   }

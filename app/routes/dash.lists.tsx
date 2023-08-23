@@ -12,7 +12,6 @@ import AllRoutines from '~/components/routines/AllRoutines';
 
 
 export const loader = async ({ request }: LoaderArgs) => {
-
   try {
     const userId = await requireUserId(request);
     const todoLists = await getListAndTodos({ userId });

@@ -11,11 +11,7 @@ type Props = {
 
 function ProjectOutcome({ desiredOutcome }: Props) {
   return (
-    //display desiredOutcome title and description
-    // due date  from outcome page
-    // add project outcome, link to desiredOutcome data, date, inked lists, routines, $$, habits, and milestones.
-    //consider how to add milestones, routines, lists, habits, and $$
-    <>
+     <>
       <div className=' mb-20 flex gap-8'>
 
         <div className='flex-1' >

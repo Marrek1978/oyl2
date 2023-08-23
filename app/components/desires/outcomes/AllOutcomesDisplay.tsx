@@ -23,12 +23,15 @@ function AllOutcomesDisplay({ outcomes, plural, title }: SpecificOutcomeDisplayP
             <SubHeading16px text='Outcomes of Reaching the Ideal Situation' />
           </div>
 
-          {/* //?  THE TITLE SECTION  */}
-          <H2WithLink
-            title={`${title} Outcomes` || ''}
-            linkDestination={'outcomes'}
-            linkText={'Go To Outcomes'}
-          />
+          <div className='max-w-max '>
+
+            {/* //?  THE TITLE SECTION  */}
+            <H2WithLink
+              title={`${title} Outcomes` || ''}
+              linkDestination={'outcomes'}
+              linkText={'Go To Outcomes'}
+            />
+          </div>
 
           {/* //? DESCRIPTION AND LIST OF MILESTOONES */}
           <div className='mt-4'>

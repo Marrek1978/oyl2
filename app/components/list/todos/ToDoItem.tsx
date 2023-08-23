@@ -1,8 +1,11 @@
 import React from 'react';
-import { FiEdit, FiDelete } from 'react-icons/fi'
-import {ToDoItemStyles} from '../../../styles/ToDoItemStyles';
-import type { CreationTodo } from '~/types/listTypes';
 import { formatDate } from '~/utils/functions';
+
+import { ToDoItemStyles } from '../../../styles/ToDoItemStyles';
+import { EditIcon, trashIcon } from '~/components/utilities/icons';
+import OutlinedIconOnlyBtn from '~/components/buttons/OutlinedIconOnlyBtn';
+
+import type { CreationTodo } from '~/types/listTypes';
 
 interface ToDoItemProps {
   todo: CreationTodo;
@@ -11,12 +14,7 @@ interface ToDoItemProps {
   editTodo: (todoIndex: string) => void;
 }
 
-// const formatDate = (dateString: Date | null) => {
-//   if (!dateString) return null;
-//   const date = new Date(dateString);
-//   return `${date.toLocaleString('default', { month: 'long' })} ${date.getDate()}, ${date.getFullYear()}`;
-// };
-
+ 
 const ToDoItem: React.FC<ToDoItemProps> = ({ todo, id, removeTodo, editTodo }) => {
   const formattedDate = formatDate(todo['dueDate']);
 
@@ -47,18 +45,19 @@ const ToDoItem: React.FC<ToDoItemProps> = ({ todo, id, removeTodo, editTodo }) =
             </div>
           )}
 
-          <div className="flex">
-            <label 
-            htmlFor={`edit-todo-modal-${todo?.id}`}
-              className="btn btn-xs btn-outline btn-info mr-3"
+          <div className="flex gap-4">
+            <label
+              htmlFor={`edit-todo-modal-${todo?.id}`}
+              className="btn btn-xs btn-outline btn-info rounded-none"
               onClick={() => editTodo(id)}
-            ><FiEdit /> </label>
-         
-            <button
-              className="btn btn-xs btn-outline btn-error"
-              onClick={() => removeTodo(id)}
-            ><FiDelete />
-            </button>
+            >{EditIcon} </label>
+
+            <OutlinedIconOnlyBtn
+              onClickFunction={() => removeTodo(id)}
+              icon={trashIcon}
+              daisyUIBtnColor='error'
+            />
+
           </div>
         </div>
 

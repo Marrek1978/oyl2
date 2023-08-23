@@ -46,17 +46,25 @@ const SideNav = () => {
 
           {isListPage && (<>
             <li >
+              <NavLink to='/dash/routines' end className='link__right '  >
+                <span>Special Lists</span>
+              </NavLink>
+            </li>
+
+            <li >
+              <NavLink to='/dash/routines' end className='link__right '  >
+                <span>Generic Routines</span>
+              </NavLink>
+            </li>
+
+            <li >
               <NavLink className='link__right'
                 to='/dash/todos'
               >
-                <span >Todos</span>
+                <span >Generic Todos</span>
               </NavLink>
             </li>
-            <li >
-              <NavLink to='/dash/routines' end className='link__right '  >
-                <span>Routines</span>
-              </NavLink>
-            </li>
+
           </>
           )}
 
