@@ -18,7 +18,7 @@ export const action = async ({ request }: ActionArgs) => {
   
   try {
     await createListAndTodos({ title: listTitle, userId, todos })
-    return null
+    return 'List was created.'
   } catch (error) { throw error }
 }
 
@@ -26,8 +26,12 @@ function NewTodosPage() {
 
   return (
     <>
+    
       <Modal onClose={() => { }} >
-        <TodosListForm />
+        <TodosListForm 
+          isNew={true}
+          isProject={false}
+        />
       </Modal>
     </>
   )

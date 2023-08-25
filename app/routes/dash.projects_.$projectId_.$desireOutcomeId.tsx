@@ -1,4 +1,4 @@
-import {  useLoaderData } from '@remix-run/react'
+import {  Outlet, useLoaderData } from '@remix-run/react'
 import type { LoaderArgs } from '@remix-run/server-runtime'
 
 import { getDesireById } from '~/models/desires.server'
@@ -41,6 +41,7 @@ function OutcomeTasksPage({ }: Props) {
 
   return (
     <>
+    <Outlet />
       <OutcomeTasksDisplay
         project={project}
         desire={desire}

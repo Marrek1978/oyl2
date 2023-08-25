@@ -17,8 +17,8 @@ export const action = async ({ request }: ActionArgs) => {
     const complete = JSON.parse(parsedBody.completeString as string);
     try {
       await updateToDoComplete({ id, complete });
-    } catch (error) { throw error }
-    return null;
+      return 'success'
+    } catch (error) { return 'failed' }
   }
 
   if (request.method === 'PUT') {

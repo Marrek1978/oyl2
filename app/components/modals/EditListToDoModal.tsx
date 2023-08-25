@@ -57,7 +57,6 @@ const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOp
       return;
     }
 
-
     const updatedTodo: CreationTodo = {
       ...todo,
       body,
@@ -145,7 +144,7 @@ const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOp
                 <SolidBtn
                   text='Accept Edits'
                   onClickFunction={handleSave}
-                  disableSaveBtn={!isSaveable}
+                  disableBtn={!isSaveable}
                 />
               </div>
             </div>

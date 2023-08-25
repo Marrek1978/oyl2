@@ -7,9 +7,10 @@ interface H2WithLinkAndProseParaProps {
   linkDestination: string;
   linkText: string;
   paragraph: string;
+  isTextBtn?: boolean;
 }
 
-function H2WithLinkAndProsePara({ title, linkDestination, linkText, paragraph }: H2WithLinkAndProseParaProps) {
+function H2WithLinkAndProsePara({ title, linkDestination, linkText, paragraph, isTextBtn=true }: H2WithLinkAndProseParaProps) {
   return (
     <>
       <div className=' max-w-max'>
@@ -17,6 +18,7 @@ function H2WithLinkAndProsePara({ title, linkDestination, linkText, paragraph }:
           title={title}
           linkDestination={linkDestination}
           linkText={linkText}
+          isTextBtn={isTextBtn}
         />
         <div className='mt-2 mr-12 para-color'>
           <TextProseWidth

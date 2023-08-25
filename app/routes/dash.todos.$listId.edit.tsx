@@ -35,7 +35,10 @@ function EditListPage() {
     <>
       <Outlet />
       <Modal onClose={() => { }} zIndex={30}>
-        <TodosListForm list={list} />
+        <TodosListForm list={list}
+          isNew={false}
+          isProject={false}
+        />
       </Modal>
     </>
   )

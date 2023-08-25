@@ -1,5 +1,5 @@
 interface HeadingH2Props {
-  text: string;
+  text: string | React.ReactNode;
 }
 
 function HeadingH2({ text }: HeadingH2Props) {

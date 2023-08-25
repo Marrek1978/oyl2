@@ -2,6 +2,7 @@
 import SubHeading14px from '../titles/SubHeading14px';
 import H2WithLinkAndProsePara from '~/components/text/H2WithLinkAndProsePara';
 
+import HeadingH3 from '../titles/HeadingH3';
 import type { DesireOutcomeWithStringDates } from '~/types/outcomeTypes';
 
 
@@ -9,7 +10,7 @@ type Props = {
   desiredOutcome: DesireOutcomeWithStringDates;
 }
 
-function ProjectOutcome({ desiredOutcome }: Props) {
+function ProjectSpecficOutcome({ desiredOutcome }: Props) {
   return (
      <>
       <div className=' mb-20 flex gap-8'>
@@ -39,6 +40,7 @@ function ProjectOutcome({ desiredOutcome }: Props) {
         </div>
 
         <div className='flex-1' >
+          <HeadingH3 text={`Tasks to Achieve the Outcome: ${desiredOutcome.title}`} />
         <SubHeading14px text={'Habits, Tasks, and Trackers'} />
 
           <div className=' flex gap-4'>
@@ -64,4 +66,4 @@ function ProjectOutcome({ desiredOutcome }: Props) {
   )
 }
 
-export default ProjectOutcome
+export default ProjectSpecficOutcome

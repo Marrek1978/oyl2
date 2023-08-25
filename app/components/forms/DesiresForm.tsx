@@ -182,7 +182,7 @@ function DesiresForm({ desire }: DesireFormProps) {
             <SolidBtn text={isSubmitting ? 'Saving...' : saveBtnText}
               onClickFunction={() => { }}
               icon={dbIcon}
-              disableSaveBtn={!isIdle || !isSaveable}
+              disableBtn={!isIdle || !isSaveable}
             />
 
             {!isAddNewDesireRoute &&

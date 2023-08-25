@@ -1,14 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useFetcher } from '@remix-run/react';
-import TextBtn from '~/components/buttons/TextBtn';
 import Divider from '~/components/utilities/Divider'
 import { sortTodos } from '~/components/utilities/helperFunctions';
 import SolidBtnGreyBlue from '~/components/buttons/SolidBtnGreyBlue';
 import ToDoWithCompletedBox from '~/components/list/todos/ToDoWithCompletedBox';
-import { EditIcon, closeIcon, downArrowsIcon, trashIcon } from '~/components/utilities/icons';
+import { closeIcon, downArrowsIcon, trashIcon } from '~/components/utilities/icons';
 
 import type { ListAndToDos } from '~/types/listTypes';
 import OutlinedBtn from '../buttons/OutlinedBtn';
+import BasicFormAreaBG from './BasicFormAreaBG';
+import SolidBtn from '../buttons/SolidBtn';
 
 interface TodosCompletedFormProps {
   list: ListAndToDos;
@@ -18,11 +19,18 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
 
   const fetcher = useFetcher();
   const todos = list.todos;
+  const [isDeletingToDos, setIsDeletingToDos] = useState<boolean>(false)
+
+
+  useEffect(() => {
+    if (fetcher.data === 'deleted' && fetcher.state === 'idle') {
+      setIsDeletingToDos(false)
+    }
+  }, [fetcher])
 
   const handleCompletedToBottom = async (): Promise<void> => {
     const completedToDosAtBottom = sortTodos(todos);
     const completedToDosAtBottomString = JSON.stringify(completedToDosAtBottom)
-
     try {
       fetcher.submit({
         todos: completedToDosAtBottomString,
@@ -30,11 +38,10 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
         method: 'PUT',
       })
     } catch (error) { throw error }
-
   };
 
   const handleDeleteCompletedToDos = async (): Promise<void> => {
-
+    setIsDeletingToDos(true)
     try {
       fetcher.submit({
         id: list.id,
@@ -44,30 +51,17 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
     } catch (error) { throw error }
   }
 
+
+
   return (
     <>
-      <div className='
-          bg-base-100 
-          grid grid-cols-[minmax(300px,600px)] grid-rows-[72px_1fr_min-content]
-          cursor-default
-        '>
-        <div className='w-full h-full px-8 bg-base-content flex justify-between items-center'>
-          <div className={`
-              text-xl font-mont uppercase font-normal tracking-widest 
-              text-primary-300
-              truncate overflow-ellipsis 
-              `}>
-            {list.title}
-          </div>
-          <Link to='edit'>
-            <div className='flex gap-2 items-center 
-                font-mont font-bold text-info
-                hover:scale-105 transition-all
-                 '>
-              Edit {EditIcon}
-            </div>
-          </Link>
-        </div>
+
+      <BasicFormAreaBG
+        title={list.title}
+        linkDestination='edit'
+        linkText='EDIT TO-DO LIST'
+        linkColor='text-info'
+      >
 
         <div className='py-6 px-8 font-poppins  '>
           <div className=" max-h-[50vh] min-h-[200px] overflow-y-auto">
@@ -79,38 +73,40 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
             })}
           </div>
 
-          <div>
-            <Divider />
-          </div>
-
           {todos.some(todo => todo.complete === true) && (
-            <div className='w-full mt-8 flex justify-between items-center'>
+            <div>
+              <Divider />
+              <div className='w-full mt-8 flex justify-between items-center gap-8'>
 
-              <div className='text-base font-mont font-semibold'>Completed To-Dos</div>
-              <div>
-                {todos.filter(todo => todo.complete).length > 0
-                  && todos.filter(todo => !todo.complete).length > 0
-                  && (
-                    <TextBtn
-                      text={'Move Down'}
-                      icon={downArrowsIcon}
-                      onClickFunction={handleCompletedToBottom}
-                    />
-                  )}
-              </div>
+                <div className='flex-1'>
+                  {todos.filter(todo => todo.complete).length > 0
+                    && todos.filter(todo => !todo.complete).length > 0
+                    && (
 
-              <div>
-                <TextBtn
-                  text={'Delete'}
-                  icon={trashIcon}
-                  onClickFunction={handleDeleteCompletedToDos}
-                  color={'error'}
-                />
+                      <OutlinedBtn
+                        text='Move Completed ToDos Down'
+                        onClickFunction={handleCompletedToBottom}
+                        daisyUIBtnColor='primary'
+                        icon={downArrowsIcon}
+                      />
+                    )}
+                </div>
+
+                <div className='flex-1'>
+                  <SolidBtn
+                    text='Delete Completed To-Dos'
+                    onClickFunction={handleDeleteCompletedToDos}
+                    daisyUIBtnColor='error'
+                    icon={trashIcon}
+                    disableBtn={isDeletingToDos}
+                  />
+
+                </div>
               </div>
             </div>
           )}
 
-          <div className='w-full mt-6 flex gap-6 '>
+          <div className='w-full mt-8 flex gap-8 '>
             <div className='w-full flex-1 '>
               <Link to='delete' >
                 <OutlinedBtn
@@ -132,7 +128,9 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
 
           </div>
         </div>
-      </div>
+        {/* </div> */}
+      </BasicFormAreaBG>
+
     </>
   )
 }

@@ -9,7 +9,7 @@ import SolidBtn from '../buttons/SolidBtn';
 import OutlinedBtn from '../buttons/OutlinedBtn';
 import BasicFormAreaBG from './BasicFormAreaBG';
 import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
-import { DesireDescription, DesireTitle, DesireValuesServed } from '../utilities/Guidelines';
+import { DesireTitle, DesireValuesServed } from '../utilities/Guidelines';
 import ListLabel from './ListLabel';
 
 interface ProjectFormProps {
@@ -22,6 +22,11 @@ interface ProjectFormProps {
 
 export default function ProjectsForm({ project, desire, allUserDesires, allUserProjects }: ProjectFormProps) {
 
+  console.log('allUserDesires', allUserDesires)
+  console.log('allUserProjects', allUserProjects)
+
+
+
   const location = useLocation()
   const navigation = useNavigation();
   const validationErrors = useActionData()
@@ -33,7 +38,7 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
   const [isSaveable, setIsSaveable] = useState<boolean>(false)
   const [selectedDesireId, setSelectedDesireId] = useState<string>('')
   const [saveBtnText, setSaveBtnText] = useState<string>('Save Project')
-  const [isAddNewProjectRoute, setIsAddNewProjectRoute] = useState<boolean>(true) //true if /dash/desires, false if /dash/desires/:desireId
+  const [isNew, setIsNew] = useState<boolean>(true) //true if /dash/desires, false if /dash/desires/:desireId
 
   let listOfUsedDesireIds = useRef(allUserProjects?.map((project) => project.desireId))
 
@@ -41,10 +46,10 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
 
   useEffect(() => {
     if (location.pathname === '/dash/projects') {
-      setIsAddNewProjectRoute(true)
+      setIsNew(true)
       setSaveBtnText('Create Project')
     } else if (location.pathname.startsWith('/dash/projects/')) {
-      setIsAddNewProjectRoute(false)
+      setIsNew(false)
       setSaveBtnText('Save Edits to Project')
     }
   }, [location.pathname]);
@@ -62,17 +67,15 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
 
 
   useEffect(() => {
-
-    const isInputEmpty = !title || !description
-    console.log('isInputEmpty', isInputEmpty)
-
+    const isInputEmpty = !title
+    // const isInputEmpty = !title || !description
     const isInputDifferent =
       title !== project?.title
-      || description !== project?.description
+      // || description !== project?.description
       || !!(project?.desireId && selectedDesireId !== project?.desireId)   //original desire is changed
       || !!(!project?.desireId && selectedDesireId)  // originally no desire then one is added
     setIsSaveable(!isInputEmpty && (isInputDifferent))
-  }, [selectedDesireId, title, description, project, isAddNewProjectRoute, isSubmitting])
+  }, [selectedDesireId, title, description, project, isNew, isSubmitting])
 
 
   const handleCheckboxChange = (desireId: string) => {
@@ -89,7 +92,7 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
   return (
     <>
       <BasicFormAreaBG
-        title={isAddNewProjectRoute
+        title={isNew
           ? 'Create New Project'
           : (<div ><span className='text-sm' >Edit Project: </span>{title}</div>)
         }
@@ -117,7 +120,7 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
               <div className='text-red-700'> {validationErrors.title}</div>
             )}
 
-            <div className='vert-space-between-inputs'>
+            {/* <div className='vert-space-between-inputs'>
               <InputLabelWithGuideLineLink
                 text='Description or Desire Served (Choose 1)'
                 guideline={DesireDescription}
@@ -135,7 +138,10 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
               {validationErrors?.description && (
                 <div className='text-red-700'> {validationErrors.description}</div>
               )}
-            </div>
+            </div> */}
+            {validationErrors?.description && (
+              <div className='text-red-700'> {validationErrors.description}</div>
+            )}
           </div>
 
 
@@ -143,7 +149,7 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
 
           <div className='vert-space-between-inputs'>
             <InputLabelWithGuideLineLink
-              text='Desire Served (Choose One)'
+              text='Desire Served : Required (Choose One)'
               guideline={DesireValuesServed}
               title='Desire Served'
             />
@@ -159,18 +165,22 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
                     <div className='label'>
                       {!isNotAvailabeForAssociation && (
                         <input
-                          type="checkbox"
+                          type="radio"
                           className="checkbox checkbox-secondary self-center "
                           name='desireId'
                           value={desire.id}
                           checked={selectedDesireId?.includes(desire.id)}
                           onChange={() => handleCheckboxChange(desire.id)}
+                          required
                         />
                       )}
                     </div>
                   </React.Fragment >
                 )
               })}
+              {validationErrors?.description && (
+                <div className='text-red-700'> {validationErrors.desireList}</div>
+              )}
             </div>
           </div>
 
@@ -179,10 +189,10 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
             <SolidBtn text={isSubmitting ? 'Saving...' : saveBtnText}
               onClickFunction={() => { }}
               icon={dbIcon}
-              disableSaveBtn={isSubmitting || !isSaveable}
+              disableBtn={isSubmitting || !isSaveable}
             />
 
-            {!isAddNewProjectRoute && (
+            {!isNew && (
               <div className='w-full flex gap-4 mt-6 mb-8'>
                 <div className='flex-1'>
                   <Link to='delete' >

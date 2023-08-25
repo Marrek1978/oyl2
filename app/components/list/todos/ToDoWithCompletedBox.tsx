@@ -1,22 +1,41 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFetcher } from '@remix-run/react';
 import { format } from 'date-fns'
 import { enUS } from 'date-fns/locale';
 import { ToDoItemStylesNoBg } from '~/styles/ToDoItemStyles'
 
 import type { Todo } from '~/types/listTypes';
+import Modal from '~/components/modals/Modal';
+import ErrorMessage from '~/components/modals/ErrorMessage';
+// import SuccessMessage from '~/components/modals/SuccessMessage';
 
 interface ToDoItemProps {
-  todoItem: Todo ;
+  todoItem: Todo;
 }
 
-const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem}) => {
+const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem }) => {
 
   const fetcher = useFetcher();
-  const [isUpdating, setIsUpdating] = React.useState(false)
-  const [isChecked, setIsChecked] = React.useState(todoItem.complete)
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [isChecked, setIsChecked] = useState(todoItem.complete)
+  const [errorMessage, setErrorMessage] = useState<string>()
+  // const [successMessage, setSuccessMessage] = useState<string>()
 
   const borderClass = ToDoItemStylesNoBg({ todo: todoItem })
+
+  useEffect(() => {
+    if(fetcher.data === 'success' && fetcher.state === 'idle'){
+      setIsUpdating(false)
+      // setSuccessMessage('ToDo updated successfully!');
+      // setTimeout(() => setSuccessMessage(''), 500);
+    }
+
+    if (fetcher.data === 'failed' && fetcher.state === 'idle') {
+      setIsUpdating(false)
+      setErrorMessage('Failed to update todo completed status')
+      setTimeout(() => setErrorMessage(''), 1000);
+    }
+  }, [fetcher])
 
   const handleCheckboxChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -24,21 +43,35 @@ const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem}) => {
     const complete = event.target.checked;
     const completeString = JSON.stringify(complete)
 
-    try{
+    try {
       fetcher.submit({
         todoId: todoItem.id,
         completeString
-      },{
+      }, {
         method: 'POST',
       })
-    }catch(error){ throw error}
-
-    setIsUpdating(false);
+    } catch (error) { throw error }
   };
 
 
   return (
     <>
+      {errorMessage && (
+        <Modal onClose={() => { }} zIndex={20}>
+          <ErrorMessage
+            text={errorMessage}
+          />
+        </Modal>
+      )}
+      
+      {/* {successMessage && (
+        <Modal onClose={() => { }} zIndex={20}>
+          <SuccessMessage
+            text={successMessage}
+          />
+        </Modal>
+      )} */}
+
       <div className={` 
         flex w-full gap-4 items-center justify-between
         px-3 py-1 mb-1
@@ -63,7 +96,7 @@ const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem}) => {
 
           <div className="form-control">
             <label className="cursor-pointer label">
-              {isUpdating && <progress className="progress w-20"></progress>}
+              {isUpdating && <span className="loading loading-ring loading-md"></span>}
               <input
                 type="checkbox"
                 onChange={handleCheckboxChange}

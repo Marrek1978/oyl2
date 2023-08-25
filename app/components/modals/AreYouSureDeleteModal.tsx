@@ -11,8 +11,10 @@ interface AreYouSureDeleteModalProps {
 function AreYouSureDeleteModal({ item, title, id }: AreYouSureDeleteModalProps) {
 
   const navigation = useNavigation();
-  const isIdle = navigation.state === 'idle'
+  let isIdle = navigation.state === 'idle'
+  console.log('isIdle', isIdle)
 
+ 
   return (
     <>
       <div className="card w-[700px] 

@@ -45,10 +45,18 @@ export default function ProjectByIdPage() {
 
       <div className='flex flex-col w-full'>
         <div className='flex-1 w-full'>
-          <ProjectDisplay
-            project={project}
-            desire={desire}
-          />
+          {/* {desire && project ? ( */}
+
+            <ProjectDisplay
+              project={project}
+              desire={desire}
+            />
+          {/* ):( */}
+            {/* <HeadingH2  */}
+            {/* text={'A project must be associated with a desire'} */}
+            {/* /> */}
+          {/* ) */}
+        {/* } */}
         </div>
       </div>
 

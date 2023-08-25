@@ -24,9 +24,11 @@ import HeadingH2 from "../titles/HeadingH2";
 
 interface TodosListFormProps {
   list?: ListAndToDos;
+  isNew: boolean;
+  isProject: boolean;
 }
 
-function TodosListForm({ list }: TodosListFormProps) {
+function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormProps) {
 
   const fetcher = useFetcher();
   const navigation = useNavigation();
@@ -37,7 +39,7 @@ function TodosListForm({ list }: TodosListFormProps) {
   const [todos, setTodos] = useState<CreationTodo[]>([]);
   const [listTitle, setListTitle] = useState<string>('');
 
-  const [isNewList, setIsNewList] = useState<boolean>(false);
+  // const [isNewList, setIsNewList] = useState<boolean>(false);
 
   const [successMessage, setSuccessMessage] = useState('');
   const [isUrgent, setIsUrgent] = useState<boolean>(false);
@@ -60,10 +62,27 @@ function TodosListForm({ list }: TodosListFormProps) {
   const saveBtnText =
     isSubmitting
       ? 'Saving...'
-      : isNewList
+      : isNew
         ? "Save New List"
         : "Save Changes"
 
+  //set actionpath based on if new or edit, project or random
+  let actionPath: string;
+
+  if (isNew && !isProject) {
+    actionPath = '/dash/todos/new'
+  }
+  if (!isNew && !isProject) {
+    actionPath = `/dash/todos/${listId}/edit`
+  }
+
+
+  useEffect(() => {
+    if (fetcher.data) {
+      setSuccessMessage(fetcher.data);
+      setTimeout(() => setSuccessMessage(''), 1000);
+    }
+  }, [fetcher])
 
   useEffect(() => {
     if (list) {
@@ -72,28 +91,19 @@ function TodosListForm({ list }: TodosListFormProps) {
     }
   }, [list])
 
-  useEffect(() => {
-    if (todoParam === 'new') {
-      setIsNewList(true);
-    }
-
-    if (listId) {
-      setIsNewList(false);
-    }
-  }, [todoParam, listId])
-
 
   useEffect(() => {
     let saveable =
-      isNewList
+      isNew
         ? (listTitle && todos.length > 0) ? true : false
         : (listTitle !== list?.title || todos !== list?.todos) ? true : false
     setIsSaveable(saveable)
-  }, [isNewList, todos, listTitle, list, isIdle])
+  }, [isNew, todos, listTitle, list, isIdle])
 
 
   const handleSave = async () => {
 
+    console.log('saving new list')
     if (!projectId) {
       const todosString = JSON.stringify(todos);
 
@@ -103,10 +113,10 @@ function TodosListForm({ list }: TodosListFormProps) {
           todosString
         }, {
           method: 'POST',
-          action: '/dash/todos/new',
+          action: actionPath,
         })
-        setSuccessMessage('List was saved');
-        setTimeout(() => setSuccessMessage(''), 1000); // Clear the message after 3 seconds
+        // setSuccessMessage('List was saved');
+        // setTimeout(() => setSuccessMessage(''), 1000); // Clear the message after 3 seconds
       } catch (error) { throw error }
       clearListState();
     }
@@ -126,7 +136,7 @@ function TodosListForm({ list }: TodosListFormProps) {
         editedListString
       }, {
         method: 'PUT',
-        action: '/dash/todos/$listId/edit',
+        action: actionPath,
       })
 
       // Clear the message after 3 seconds
@@ -184,16 +194,15 @@ function TodosListForm({ list }: TodosListFormProps) {
     <>
       {successMessage && (
         <Modal onClose={() => { }} zIndex={20}>
-          {successMessage}
           <SuccessMessage
-            text={isNewList ? 'List was saved' : 'List was updated'}
+            text={isNew ? successMessage : 'List was updated'}
           />
         </Modal>)
       }
 
       <BasicFormAreaBG
         maxWidth="1200"
-        title={!isNewList
+        title={!isNew
           ? (<div ><span className='text-sm' >Update your To-Do List: </span> {listTitle}</div>)
           : (<div className='' >Make a New List of To-Dos</div>)
         }
@@ -301,14 +310,14 @@ function TodosListForm({ list }: TodosListFormProps) {
               <div className="flex flex-col gap-4">
                 <SolidBtn
                   text={saveBtnText}
-                  onClickFunction={isNewList ? handleSave : handleEdits}
+                  onClickFunction={isNew ? handleSave : handleEdits}
                   icon={dbIcon}
                   daisyUIBtnColor='primary'
-                  disableSaveBtn={!isSaveable}
+                  disableBtn={!isSaveable}
                   type='button'
                 />
 
-                <Link to='/dash/todos'>
+                <Link to='..'>
                   <SolidBtnGreyBlue
                     text={listTitle || todos.length > 0
                       ? ('Close without Saving')
@@ -318,7 +327,7 @@ function TodosListForm({ list }: TodosListFormProps) {
                   />
                 </Link>
 
-                {!isNewList && (
+                {!isNew && (
                   <Link to='../delete'>
                     <OutlinedBtn
                       text='Delete List'
@@ -335,16 +344,16 @@ function TodosListForm({ list }: TodosListFormProps) {
       </BasicFormAreaBG >
       {/* //! ******* End of new form   **************** */}
 
-      { isEditToDoModalOpen && (
-          <>
-            <EditListToDoModal
-              todo={selectedTodo}
-              setIsEditToDoModalOpen={setIsEditToDoModalOpen}
-              updateTodo={updateTodo}
-              index={selectedTodoIndex}
-            />
-          </>
-        )
+      {isEditToDoModalOpen && (
+        <>
+          <EditListToDoModal
+            todo={selectedTodo}
+            setIsEditToDoModalOpen={setIsEditToDoModalOpen}
+            updateTodo={updateTodo}
+            index={selectedTodoIndex}
+          />
+        </>
+      )
       }
     </>
   )

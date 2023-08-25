@@ -9,21 +9,31 @@ interface Props {
   linkDestination: string;
   linkColor?: string;
   linkText?: string;
+  isTextBtn?: boolean;
+  daisyUIColor?: string;
 }
 
 
-function H1WithLink({ title, linkDestination, linkColor='text-primary' , linkText='Edit'}: Props) {
+function H1WithLink({ title, linkDestination, linkColor = 'text-primary', linkText = 'Edit', isTextBtn = true, daisyUIColor = 'primary' }: Props) {
   return (
     <>
       <div className="flex justify-between items-baseline gap-4 w-full">
         <HeadingH1 text={title} />
         <Link to={linkDestination} className='text-sm'>
-          <TextBtn
-            text={linkText}
-            onClickFunction={() => { }}
-            icon={EditIcon}
-            color={linkColor}
-          />
+          {isTextBtn ?
+            (
+              <TextBtn
+
+                text={linkText}
+                onClickFunction={() => { }}
+                icon={EditIcon}
+                color={linkColor}
+              />
+            ) : (
+              <button className={`btn btn-sm btn-${daisyUIColor}`}>
+                {linkText}{EditIcon}
+              </button>
+            )}
         </Link>
       </div>
     </>

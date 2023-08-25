@@ -2,7 +2,6 @@ import React from 'react'
 
 interface SuccessMessageProps {
   text:string;
-
 }
 
 function SuccessMessage({text} : SuccessMessageProps) {

@@ -50,7 +50,7 @@ model Project {
   userId String
 
   desireId String? @unique
-  desire Desire? @relation(fields: [desireId], references: [id])
+  desire Desire? @relation(fields: [desireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   notes    Note[]
   lists    List[]

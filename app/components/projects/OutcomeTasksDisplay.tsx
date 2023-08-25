@@ -29,10 +29,12 @@ function OutcomeTasksDisplay({ project, desire, outcome }: Props) {
         {/* //?  THE TITLE SECTION  */}
         <HeadingH1 text={outcome.title || ''} />
 
-        <div className=" flex flex-wrap mt-2 text-secondary/70">
+        <div className="mt-2 text-secondary/70">
           <SubHeading14px
-            text={`Desire  -> Project  ->  Outcome  ->  Outcome Tasks`}
+            text={`Desire  ->  Desired Outcomes  ->  Project  ->  Tasks`}
           />
+        </div>
+        <div className="para-color">
           <SubHeading14px
             text={`To achieve your Desire for : ` + desire.title}
           />
@@ -209,9 +211,9 @@ function OutcomeTasksDisplay({ project, desire, outcome }: Props) {
         <div>
           <div className='mt-20 max-w-max'>
             <H2WithLink
-              title={' To-Do Lists'}
-              linkDestination={''}
-              linkText={'Go To To-Do Lists'}
+              title={'To-Do Lists'}
+              linkDestination={'newlist'}
+              linkText={'Create New To-Do List'}
             />
           </div>
           <div className='mt-6'>

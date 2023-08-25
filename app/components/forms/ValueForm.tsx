@@ -117,7 +117,7 @@ function ValueForm({ value }: ValueFormProps) {
             <SolidBtn text={isSubmitting ? 'Saving...' : saveBtnText}
               onClickFunction={() => { }}
               icon={dbIcon}
-              disableSaveBtn={!isSaveable || !isIdle}
+              disableBtn={!isSaveable || !isIdle}
             />
 
             {!isAddNewValueRoute &&
