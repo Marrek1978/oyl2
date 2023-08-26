@@ -1,7 +1,7 @@
 import { prisma } from "~/db.server";
 import type { List, User, ListToDo } from "@prisma/client";
 
-import type { ListAndToDos, Todo } from "~/types/listTypes";
+import type { Todo } from "~/types/listTypes";
 
 type CreateTodo = {
   body: ListToDo["body"];
@@ -229,7 +229,7 @@ export async function getToDosWhere(
     }
 
     // Flatten the todos into a single array
-    const flattenedTodos = user.lists.flatMap((list:ListAndToDos) => list.todos);
+    const flattenedTodos = user.lists.flatMap((list) => list.todos);
     return flattenedTodos;
   } catch (error) {
     throw error;
@@ -264,7 +264,7 @@ export async function getToDosWhereDueDate({ userId }: { userId: User["id"] }) {
     }
 
     // Flatten the todos into a single array
-    const flattenedTodos = user.lists.flatMap((list:ListAndToDos) => list.todos);
+    const flattenedTodos = user.lists.flatMap((list) => list.todos);
     return flattenedTodos;
   } catch (error) {
     throw error;

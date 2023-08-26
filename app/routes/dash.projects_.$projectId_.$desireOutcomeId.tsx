@@ -1,12 +1,14 @@
+
 import {  Outlet, useLoaderData } from '@remix-run/react'
-import type { LoaderArgs } from '@remix-run/server-runtime'
 
 import { getDesireById } from '~/models/desires.server'
 import { requireUserId } from '~/models/session.server'
 import { getProjectById } from '~/models/project.server'
 import { getOutcomeByOutcomeId } from '~/models/outcome.server'
-import OutcomeTasksDisplay from '~/components/projects/OutcomeTasksDisplay'
+import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
+import ProjectTasksForOutcome from '~/components/projects/ProjectTasksForOutcome'
 
+import type { LoaderArgs } from '@remix-run/server-runtime'
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   let userId = await requireUserId(request);
@@ -25,6 +27,8 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
 
 
+
+
 type Props = {}
 
 
@@ -34,15 +38,16 @@ function OutcomeTasksPage({ }: Props) {
   // console.log('projectId', projectId)
   // console.log('desireOutcomeId', desireOutcomeId)
   // console.log('project', project)
-  // console.log('outcome', outcome)
+  console.log('outcome', outcome)
   // console.log('desire', desire)
 
 
 
   return (
     <>
+     <BreadCrumbs title={project.title || ''} title2={outcome.title}/>
     <Outlet />
-      <OutcomeTasksDisplay
+      <ProjectTasksForOutcome
         project={project}
         desire={desire}
         outcome={outcome}

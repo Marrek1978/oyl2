@@ -63,11 +63,21 @@ function ValueForm({ value }: ValueFormProps) {
 
 
   return (
-    <>
+    <div>
       <BasicFormAreaBG
         title={isAddNewValueRoute
           ? 'Create a New Value'
-          : (<div ><span className='text-sm' >Edit Value:</span>  {value?.valueTitle}</div>)}
+          : (<>
+            <div>
+              <span className='text-sm' >
+                Edit Value:
+              </span>
+            </div>
+            <div  >
+              {value?.valueTitle}
+            </div>
+          </>
+          )}
       >
 
         <Form method='post' className='mx-8'>
@@ -147,7 +157,7 @@ function ValueForm({ value }: ValueFormProps) {
           </div>
         </Form>
       </BasicFormAreaBG>
-    </>
+    </div>
   )
 }
 

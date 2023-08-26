@@ -21,14 +21,14 @@ function BasicFormAreaBG({ children, title, maxWidth = '800', linkDestination, l
     <div className={`
       bg-base-100 shadow-xl
       grid grid-cols-[minmax(300px,${maxWidth}px)]
-      grid-rows-[72px_1fr_min-content]
+      grid-rows-[min-content_1fr_min-content]
       cursor-defaultshadow-lg
       w-full max-w-max
       max-h-full
       overflow-auto
     `}>
       <div className={`
-        w-full h-full px-8 
+        w-full min-h-[72px]  px-8 pt-2 pb-3
         ${backgroundColor}
         flex items-center
         text-xl font-mont uppercase font-normal tracking-widest 

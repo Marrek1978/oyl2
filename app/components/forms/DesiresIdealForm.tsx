@@ -45,7 +45,17 @@ function DesiresIdealForm({ desire }: DesireFormProps) {
 
   return (
     <BasicFormAreaBG
-      title={`Ideal Scenario for  ${title}`}
+      title={
+        <>
+          <div >
+            <span className='text-sm' >
+              Ideal Scenario for:
+            </span>
+          </div>
+          <div>
+            {title}
+          </div>
+        </>}
     >
       <Form method='post' className='mx-8'>
         <div className="form-control vert-space-between-inputs">
@@ -70,16 +80,16 @@ function DesiresIdealForm({ desire }: DesireFormProps) {
         </div>
 
 
-          upload images Here
+        upload images Here
 
         {/* //**************BUTTONS ***************  */}
         <div className='mt-6 mb-8 flex flex-col gap-4 '>
           <SolidBtn text={isSubmitting ? 'Saving...' : 'Save Edits to Ideal Scenario'}
             onClickFunction={() => { }}
             icon={dbIcon}
-            disableSaveBtn={isSubmitting || !isSaveable}
+            disableBtn={isSubmitting || !isSaveable}
           />
-          
+
           <Link to='..' >
             <SolidBtnGreyBlue text='Close w/o saving'
               onClickFunction={() => { }}
@@ -88,7 +98,7 @@ function DesiresIdealForm({ desire }: DesireFormProps) {
           </Link>
         </div>
       </Form>
-    </BasicFormAreaBG>
+    </ BasicFormAreaBG>
   )
 }
 

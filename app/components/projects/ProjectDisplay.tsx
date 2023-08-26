@@ -1,16 +1,14 @@
-import { Link } from '@remix-run/react';
 import type { Desire, Project } from '@prisma/client'
 
-import SmlBtn from '~/components/buttons/SmlBtn';
-import HeadingH2 from '~/components/titles/HeadingH2';
-import { EditIcon } from '~/components/utilities/icons';
+import HeadingH2 from '../titles/HeadingH2';
+import H2WithLink from '../titles/H2WithLink';
 import H1WithLink from '~/components/titles/H1WithLink';
 import H2WithProsePara from '~/components/text/H2WithProsePara';
 import SubHeading14px from '~/components/titles/SubHeading14px';
 import SubHeading16px from '~/components/titles/SubHeading16px';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
-import ProjectAllDesiredOutcomes from '~/components/projects/ProjectAllDesiredOutcomes';
 import { DesireIdealPlaceholderText } from '~/components/utilities/PlaceHolderTexts';
+import ProjectAllDesiredOutcomes from '~/components/projects/ProjectAllDesiredOutcomes';
 
 
 interface ProjectDisplayProps {
@@ -54,19 +52,18 @@ function ProjectDisplay({ project, desire }: ProjectDisplayProps) {
               <div className='flex-1'>
                 <div className='text-base-content'>
                   <div className='mt-8 '>
+                    <H2WithLink
+                      title={'The Desire:'}
+                      linkDestination={`/dash/desires/${desire?.id}`}
+                      linkText='Go to Desire'
+                      isTextBtn={true}
+                      daisyUIColor='primary'
+                    />
                     <H2WithProsePara
                       title={desire?.title}
                       paragraph={desire?.description || ''}
                     />
-                    <div className='mt-8'>
-                      <Link to={'/dash/desires/' + desire?.id} >
-                      <SmlBtn
-                        linkText={'Edit Desire'}
-                        icon={EditIcon}
-                        size='xs'
-                      />
-                      </Link>
-                    </div>
+                   
                   </div>
                 </div>
               </div>

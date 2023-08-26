@@ -103,7 +103,17 @@ function DesiresForm({ desire }: DesireFormProps) {
       <BasicFormAreaBG
         title={isAddNewDesireRoute
           ? 'Create New Desire'
-          : (<div ><span className='text-sm' >Edit Desire: </span>{title}</div>)
+          : (<>
+            <div >
+              <span className='text-sm' >
+                Edit Desire:
+              </span>
+            </div>
+            <div>
+              {title}
+            </div>
+          </>
+          )
         }
       >
         <Form method='post' className='mx-8'>

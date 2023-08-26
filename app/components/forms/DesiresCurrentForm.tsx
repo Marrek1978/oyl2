@@ -43,7 +43,17 @@ function DesiresCurrentForm({ desire }: DesireFormProps) {
 
   return (
     <BasicFormAreaBG
-      title={`Current Situation for  ${title}`}
+      title={
+        <>
+          <div >
+            <span className='text-sm' >
+              Current Situation for:
+            </span>
+          </div>
+          <div>
+            {title}
+          </div>
+        </>}
     >
       <Form method='post' className='mx-8'>
         <div className="form-control vert-space-between-inputs">
@@ -73,7 +83,7 @@ function DesiresCurrentForm({ desire }: DesireFormProps) {
           <SolidBtn text={isSubmitting ? 'Saving...' : 'Save Edits to Current Situation'}
             onClickFunction={() => { }}
             icon={dbIcon}
-            disableSaveBtn={isSubmitting || !isSaveable}
+            disableBtn={isSubmitting || !isSaveable}
           />
 
           <Link to='..' >

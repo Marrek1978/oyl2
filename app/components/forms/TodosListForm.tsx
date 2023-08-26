@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import React, { useEffect, useRef, useState } from 'react'
-import { Form, Link, useFetcher, useNavigation, useParams, useSearchParams } from '@remix-run/react';
+import { Form, Link, useFetcher, useNavigation, useParams } from '@remix-run/react';
 
 import InputLabel from './InputLabel';
 import Modal from '~/components/modals/Modal';
@@ -24,8 +24,8 @@ import HeadingH2 from "../titles/HeadingH2";
 
 interface TodosListFormProps {
   list?: ListAndToDos;
-  isNew: boolean;
-  isProject: boolean;
+  isNew?: boolean;
+  isProject?: boolean;
 }
 
 function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormProps) {
@@ -33,13 +33,14 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
   const fetcher = useFetcher();
   const navigation = useNavigation();
   const inputToDoRef = useRef<HTMLInputElement>(null);
-  const [searchParams] = useSearchParams();
-  const { listId, projectId } = useParams()
+  const { listId, projectId, desireOutcomeId } = useParams()
+  console.log('listId', listId)
+  console.log('projectId', projectId)
+  console.log('desireOutcomeId', desireOutcomeId)
+
 
   const [todos, setTodos] = useState<CreationTodo[]>([]);
   const [listTitle, setListTitle] = useState<string>('');
-
-  // const [isNewList, setIsNewList] = useState<boolean>(false);
 
   const [successMessage, setSuccessMessage] = useState('');
   const [isUrgent, setIsUrgent] = useState<boolean>(false);
@@ -50,10 +51,11 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
   const [selectedTodoIndex, setSelectedTodoIndex] = useState<number | null>(null);
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
 
-  const todoParam = searchParams.get('todo')
-  console.log('todoParam', todoParam);
+
   console.log('listId is ', listId)
   console.log('projectId is ', projectId)
+  console.log('isNew is ', isNew)
+  console.log('isProject is ', isProject)
 
   const isSubmitting = navigation.state === 'submitting'
   const isIdle = navigation.state === 'idle'
@@ -67,14 +69,13 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
         : "Save Changes"
 
   //set actionpath based on if new or edit, project or random
-  let actionPath: string;
+  let actionPath = '';
+  if (isNew && !isProject) { actionPath = '/dash/todos/new' }
+  else if (!isNew && !isProject) { actionPath = `/dash/todos/${listId}/edit` }
+  else if (isNew && isProject) { actionPath = `/dash/projects/${projectId}/${desireOutcomeId}/newlist` }
+  console.log('actionPath is ', actionPath)
 
-  if (isNew && !isProject) {
-    actionPath = '/dash/todos/new'
-  }
-  if (!isNew && !isProject) {
-    actionPath = `/dash/todos/${listId}/edit`
-  }
+
 
 
   useEffect(() => {
@@ -102,25 +103,35 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
 
 
   const handleSave = async () => {
+    console.log('handle save')
+    console.log('actionpath is ', actionPath)
 
-    console.log('saving new list')
-    if (!projectId) {
-      const todosString = JSON.stringify(todos);
+    const todosString = JSON.stringify(todos);
+    console.log('todosString is ', todosString)
+    const projectIdNum = projectId ? projectId : 'ab'
+    const outcomeIdNum = desireOutcomeId ? desireOutcomeId : 'ab'
 
+    // if (!projectId) {
       try {
         fetcher.submit({
           listTitle,
-          todosString
+          todosString,
+          projectIdNum,
+          outcomeIdNum,
         }, {
           method: 'POST',
           action: actionPath,
         })
-        // setSuccessMessage('List was saved');
-        // setTimeout(() => setSuccessMessage(''), 1000); // Clear the message after 3 seconds
       } catch (error) { throw error }
       clearListState();
-    }
+    // }
+
+    // if (projectId) {
+    //   console.log('projectId is ', projectId)
+    // }
+
   }
+
 
   const clearListState = () => {
     setListTitle('')
@@ -130,7 +141,6 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
   const handleEdits = async () => {
     const editedList = { ...list, title: listTitle, todos }
     const editedListString = JSON.stringify(editedList);
-
     try {
       fetcher.submit({
         editedListString
@@ -138,10 +148,7 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
         method: 'PUT',
         action: actionPath,
       })
-
-      // Clear the message after 3 seconds
     } catch (error) { throw error }
-
     clearListState();
   }
 
@@ -156,6 +163,7 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
   }
 
   const addTodoToTodosState = (newTodo: string) => {
+    console.log('addTodoToTodosState')
     const id = uuidv4();
     const todo: CreationTodo = {
       id,
@@ -216,6 +224,7 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
           '>
             <input type="string" name='listId' value={list?.id} hidden readOnly />
             <input type="string" name='projectId' value={projectId} hidden readOnly />
+            <input type='string' name='outcomeId' value={desireOutcomeId} hidden readOnly />
 
             <div className="form-control gap-6 ">
               <div >
@@ -269,7 +278,7 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
                 setSelectedDate={setSelectedDate}
                 selectedDate={selectedDate}
               />
-            </div>
+              i</div>
 
             <div className="col-start-1 row-start-2 vert-space-between-inputs">
               <OutlinedBtn

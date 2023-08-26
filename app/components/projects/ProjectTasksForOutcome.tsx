@@ -1,16 +1,16 @@
-import React from 'react'
-import BasicTextAreaBG from '../baseContainers/BasicTextAreaBG'
-import SubHeading16px from '../titles/SubHeading16px'
-import HeadingH1 from '../titles/HeadingH1'
-import SubHeading14px from '../titles/SubHeading14px'
-import TextProseWidth from '../text/TextProseWidth'
 import { Link } from '@remix-run/react'
-import type { DesireWithStringDates } from '~/types/desireTypes'
-import type { DesireOutcomeWithStringDates } from '~/types/outcomeTypes'
-import type { ProjectWithStringDates } from '~/types/projectTypes'
+
+import HeadingH1 from '../titles/HeadingH1'
+import H2WithLink from '../titles/H2WithLink'
+import SubHeading14px from '../titles/SubHeading14px'
+import SubHeading16px from '../titles/SubHeading16px'
+import BasicTextAreaBG from '../baseContainers/BasicTextAreaBG'
 import H2WithLinkAndProsePara from '../text/H2WithLinkAndProsePara'
 import { DesireIdealPlaceholderText } from '../utilities/PlaceHolderTexts'
-import H2WithLink from '../titles/H2WithLink'
+
+import type { DesireWithStringDates } from '~/types/desireTypes'
+import type { ProjectWithStringDates } from '~/types/projectTypes'
+import type { DesireOutcomeWithStringDates } from '~/types/outcomeTypes'
 
 type Props = {
   project: ProjectWithStringDates
@@ -18,17 +18,15 @@ type Props = {
   outcome: DesireOutcomeWithStringDates
 }
 
-function OutcomeTasksDisplay({ project, desire, outcome }: Props) {
+function ProjectTasksForOutcome({ project, desire, outcome }: Props) {
   return (
     <>
-
       <BasicTextAreaBG >
         <div className='text-success mb-2'>
           <SubHeading16px text='Project Tasks for Specific Outcome' />
         </div>
         {/* //?  THE TITLE SECTION  */}
         <HeadingH1 text={outcome.title || ''} />
-
         <div className="mt-2 text-secondary/70">
           <SubHeading14px
             text={`Desire  ->  Desired Outcomes  ->  Project  ->  Tasks`}
@@ -47,7 +45,12 @@ function OutcomeTasksDisplay({ project, desire, outcome }: Props) {
             <div className='text-base-content'>
               {/* //?  THE DESIRE  */}
               <div className='mt-8 '>
-                <TextProseWidth text={outcome.description || ''} />
+                <H2WithLinkAndProsePara
+                  title={`Desired Outcome`}
+                  paragraph={desire?.description || ''}
+                  linkDestination={`/dash/desires/${desire.id}/outcomes/${outcome.id}`}
+                  linkText={`Edit Desire Outcome `}
+                />
               </div>
             </div>
 
@@ -64,7 +67,7 @@ function OutcomeTasksDisplay({ project, desire, outcome }: Props) {
           <div className=' mt-8 flex-1 '>
             <H2WithLinkAndProsePara
               title={'The Ideal Scenario'}
-              linkDestination={'editIdeal'}
+              linkDestination={`/dash/desires/${desire.id}/editIdeal`}
               linkText={'Edit Ideal Scenario'}
               paragraph={desire.ideal?.length ? desire.ideal : DesireIdealPlaceholderText}
             />
@@ -263,4 +266,4 @@ function OutcomeTasksDisplay({ project, desire, outcome }: Props) {
   )
 }
 
-export default OutcomeTasksDisplay
+export default ProjectTasksForOutcome

@@ -2,17 +2,15 @@
 import SubHeading14px from '../titles/SubHeading14px';
 import H2WithLinkAndProsePara from '~/components/text/H2WithLinkAndProsePara';
 
-import HeadingH3 from '../titles/HeadingH3';
 import type { DesireOutcomeWithStringDates } from '~/types/outcomeTypes';
-
 
 type Props = {
   desiredOutcome: DesireOutcomeWithStringDates;
 }
 
-function ProjectSpecficOutcome({ desiredOutcome }: Props) {
+function ProjectTasksForOutcomeDisplayAll({ desiredOutcome }: Props) {
   return (
-     <>
+    <>
       <div className=' mb-20 flex gap-8'>
 
         <div className='flex-1' >
@@ -20,7 +18,7 @@ function ProjectSpecficOutcome({ desiredOutcome }: Props) {
           <H2WithLinkAndProsePara
             title={desiredOutcome.title}
             linkDestination={`${desiredOutcome.id}`}
-            linkText='Go To Outcome Tasks'
+            linkText='Go To Project Outcome Tasks'
             paragraph={desiredOutcome.description || ' '}
           />
 
@@ -40,8 +38,12 @@ function ProjectSpecficOutcome({ desiredOutcome }: Props) {
         </div>
 
         <div className='flex-1' >
-          <HeadingH3 text={`Tasks to Achieve the Outcome: ${desiredOutcome.title}`} />
-        <SubHeading14px text={'Habits, Tasks, and Trackers'} />
+          <div className='text-secondary'>
+            <SubHeading14px text={`Tasks to Achieve the Outcome`} />
+          </div>
+          <div className='mt-4'>
+            <SubHeading14px text={'Habits, Tasks, and Trackers'} />
+          </div>
 
           <div className=' flex gap-4'>
             <div>
@@ -66,4 +68,4 @@ function ProjectSpecficOutcome({ desiredOutcome }: Props) {
   )
 }
 
-export default ProjectSpecficOutcome
+export default ProjectTasksForOutcomeDisplayAll

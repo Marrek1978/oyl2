@@ -1,13 +1,11 @@
-import { Link, useLoaderData } from '@remix-run/react'
-
 import { useEffect, useState } from 'react'
-import H1WithLink from '~/components/titles/H1WithLink'
+import { useLoaderData } from '@remix-run/react'
+
+import H2WithLink from '../titles/H2WithLink'
 import SubHeading14px from '~/components/titles/SubHeading14px'
-import ProjectSpecficOutcome from '~/components/projects/ProjectSpecficOutcome'
+import ProjectTasksForOutcomeDisplayAll from '~/components/projects/ProjectTasksForOutcomeDisplayAll'
 
 import type { DesireOutcomeWithStringDates } from '~/types/outcomeTypes'
-import HeadingH1 from '../titles/HeadingH1'
-import SmlBtn from '../buttons/SmlBtn'
 
 type Props = {}
 
@@ -18,6 +16,7 @@ function ProjectAllDesiredOutcomes({ }: Props) {
 
   useEffect(() => {
     setIsOutcomes(outcomes.length > 0 ? true : false)
+    console.log('outcomes', outcomes)
   }, [outcomes])
 
 
@@ -26,26 +25,25 @@ function ProjectAllDesiredOutcomes({ }: Props) {
       <div className='max-w-max t-20'>
         {isOutcomes ? (
           <>
-            <div className='flex gap-12 justify-between items-center w-full'>
-              <HeadingH1
-                text={'Tasks to Reach Desired Outcomes'}
+            <div className=' '>
+              {/* <div className='flex gap-12 justify-between items-center w-full'> */}
+              <H2WithLink
+                title={'Desired Outcomes and their Tasks'}
+                linkDestination={`/dash/desires/${outcomes[0]?.desireId}/outcomes`}
+                linkText='Go To Desired Outcomes'
+                daisyUIColor='primary'
               />
-              <Link to={`/dash/desires/${outcomes[0].desireId}/outcomes`}>
-                <SmlBtn
-                  linkText='Go To Desire -> Outcomes'
-                  size='xs'
-                />
-              </Link>
             </div>
           </>
         ) : (
-          <H1WithLink
-            title={'Desires must have Outcomes for Tasks'}
-            linkDestination={`/dash/desires`}
-            linkText='Go To Desire to Add Outcomes'
-            isTextBtn={false}
-            daisyUIColor='primary'
-          />
+          <>
+            <H2WithLink
+              title={'Desires must have Outcomes for Tasks'}
+              linkDestination={`/dash/desires`}
+              linkText='Go To Desire to Add Outcomes'
+              isTextBtn={false}
+              daisyUIColor='primary' />
+          </>
 
         )}
       </div>
@@ -61,7 +59,7 @@ function ProjectAllDesiredOutcomes({ }: Props) {
                 <div className='text-success'>
                   <SubHeading14px text='Desired Outcome' />
                 </div>
-                <ProjectSpecficOutcome
+                <ProjectTasksForOutcomeDisplayAll
                   desiredOutcome={desiredOutcome}
                   key={desiredOutcome.id}
                 />

@@ -12,13 +12,11 @@ function BreadCrumbs({ title, title2, title3 }: BreadCrumbProps) {
   const pathname = useLocation()
 
   let pathArray = pathname.pathname.split('/')
-  // console.log(pathArray)
-  // const reconstituedPath = pathArray.join('/')
   let breadcrumbArray:string[] = []
   if (pathArray.length > 3) {
     breadcrumbArray = pathArray.slice(2)
-    // console.log('breadcrumbArray', breadcrumbArray)
     breadcrumbArray[1] = title
+    breadcrumbArray[2] = title2 || breadcrumbArray[2]
   } 
 
   const linkColor = 'text-primary'

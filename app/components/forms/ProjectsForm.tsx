@@ -94,7 +94,18 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
       <BasicFormAreaBG
         title={isNew
           ? 'Create New Project'
-          : (<div ><span className='text-sm' >Edit Project: </span>{title}</div>)
+          : (
+            <>
+              <div >
+                <span className='text-sm' >
+                  Edit Project:
+                </span>
+              </div>
+              <div>
+                {title}
+              </div>
+            </>
+          )
         }
       >
 

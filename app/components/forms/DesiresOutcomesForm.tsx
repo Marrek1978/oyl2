@@ -151,8 +151,28 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
       <BasicFormAreaBG
         maxWidth="1200"
         title={isNewOutcome
-          ? (<div ><span className='text-sm' >Create a New Outcome for: </span> {desireTitle}</div>)
-          : (<div ><span className='text-sm' >Edit Outcomes for:</span> {desireTitle}</div>)}
+          ? (<>
+            <div >
+              <span className='text-sm' >
+                Create a New Outcome for:
+              </span>
+            </div>
+            <div>
+              {desireTitle}
+            </div>
+          </>
+          ) : (
+            <>
+              <div >
+                <span className='text-sm' >
+                  Edit Outcome:
+                </span>
+              </div>
+              <div>
+                {outcomeTitle}
+              </div>
+            </>
+          )}
       >
 
         <Form method='post' className='mx-8 '>
@@ -203,7 +223,7 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
                   <SolidBtn text={saveBtnText}
                     onClickFunction={isNewOutcome ? handleSave : handleEdit}
                     icon={dbIcon}
-                    disableSaveBtn={!isIdle || !isSaveable}
+                    disableBtn={!isIdle || !isSaveable}
                     type='button'
                   />
                 </div>

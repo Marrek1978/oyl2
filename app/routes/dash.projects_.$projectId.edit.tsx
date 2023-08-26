@@ -5,7 +5,7 @@ import ProjectsForm from '~/components/forms/ProjectsForm'
 import { requireUserId } from '~/models/session.server'
 import {  getProjects, updateProjectDetails } from '~/models/project.server'
 
-import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime'
+import { redirect, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
 import type { ProjectValidationErrorsTypes } from '~/types/projectTypes'
 
 
@@ -49,7 +49,7 @@ export const action = async ({ request }: ActionArgs) => {
 
   try {
     await updateProjectDetails(project)
-    return null
+    return redirect('..')
   } catch (error) { throw error }
 }
 
