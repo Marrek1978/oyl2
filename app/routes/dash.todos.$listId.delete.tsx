@@ -9,7 +9,6 @@ import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal'
 import type { ListAndToDos } from '~/types/listTypes'
 
 export const action = async ({ request }: ActionArgs) => {
-
   const formBody = await request.text();
   const parsedBody = parse(formBody);
   const listId = parsedBody.rowId as string
@@ -30,10 +29,7 @@ function DeleteTodosListPage() {
   const title = list?.title
 
   return (
-    <Modal
-      onClose={() => { }}
-      zIndex={40}
-    >
+    <Modal onClose={() => { }} zIndex={40}  >
       < AreYouSureDeleteModal
         item={'to-do list'}
         title={title}

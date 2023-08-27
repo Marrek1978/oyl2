@@ -1,5 +1,11 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import type { CreationRoutineToDo } from '~/types/routineTypes'
+import BasicFormAreaBG from '../forms/BasicFormAreaBG';
+import { Form } from '@remix-run/react';
+import { DesireOutcomeGuideline } from '../utilities/Guidelines';
+import InputLabelWithGuideLineLink from '../forms/InputLabelWithGuideLineLink';
+import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
+import SolidBtn from '../buttons/SolidBtn';
 
 interface EditRoutineToDoProps {
   todo: CreationRoutineToDo | null;
@@ -10,7 +16,14 @@ interface EditRoutineToDoProps {
 
 const EditRoutineToDoModal: React.FC<EditRoutineToDoProps> = ({ todo, setIsEditRoutineToDoModalOpen, updateRoutineToDo, index }) => {
 
-  const [body, setBody] = React.useState<string>(todo?.body || '');
+  const [body, setBody] = useState<string>(todo?.body || '');
+  const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
+
+
+  useEffect(() => {
+    setIsSaveable(body !== todo?.body)
+  }, [body, todo]);
+
 
   const handleSave = () => {
     if (todo === null || index === null) {
@@ -20,6 +33,7 @@ const EditRoutineToDoModal: React.FC<EditRoutineToDoProps> = ({ todo, setIsEditR
       ...todo,
       body,
     };
+
     updateRoutineToDo(index, updatedTodo);
     setIsEditRoutineToDoModalOpen(false);
   }
@@ -32,21 +46,46 @@ const EditRoutineToDoModal: React.FC<EditRoutineToDoProps> = ({ todo, setIsEditR
         className="modal-toggle" />
 
       <div className="modal z-40 ">
-        <div className="modal-box relative rounded-none  overflow-visible min-w-[500px]">
+        <BasicFormAreaBG
+          title='Edit your Routine Item'
+        >
+          <Form method='post' className='mx-8'>
+            <div className="form-control gap-6 vert-space-between-inputs ">
+              <div >
+                <InputLabelWithGuideLineLink
+                  text='To Do Item'
+                  title='To Do Item'
+                  guideline={DesireOutcomeGuideline} />
+                <input type="text"
+                  placeholder="Enter a Routine To-Do Item"
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  className=" input-field-text-title "
+                />
+              </div>
+            </div>
 
-          <h3 className="font-semibold font-nanum text-2xl base-content ">
-            Edit your To-Do Item
-          </h3>
-          <div className=" w-full mt-6">
-            <input type="text" placeholder="Type here"
-              className="input border-none w-full bg-base-200 font-mont"
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-            />
-          </div>
+            <div className="flex justify-between my-8 gap-4">
+              <div className='flex-1'>
+                <SolidBtnGreyBlue
+                  text='Cancel Edits'
+                  onClickFunction={() => setIsEditRoutineToDoModalOpen(false)}
+                />
+              </div>
 
-          <div className="modal-action flex justify-between mt-12">
-            <label htmlFor="my-modal-5"
+              <div className='flex-1'>
+                <SolidBtn
+                  text='Accept Edits'
+                  onClickFunction={handleSave}
+                  disableBtn={!isSaveable}
+                />
+              </div>
+            </div>
+
+          </Form>
+        </BasicFormAreaBG >
+
+        {/* <label htmlFor="my-modal-5"
               className="btn btn-outline btn-primary 
                 font-mont rounded-none 
                 w-40
@@ -62,10 +101,10 @@ const EditRoutineToDoModal: React.FC<EditRoutineToDoProps> = ({ todo, setIsEditR
               onClick={handleSave}
             >Accept Edits
             </label>
-          </div>
+          </div> */}
 
-        </div>
-      </div>
+        {/* </div> */}
+      </div >
     </>
   )
 }

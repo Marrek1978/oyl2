@@ -1,15 +1,16 @@
-import { parse } from 'querystring';
-import type { ActionArgs } from '@remix-run/server-runtime';
+import type { ActionArgs } from "@remix-run/node";
 import { Outlet, useMatches, useParams } from '@remix-run/react';
 
 import Modal from '~/components/modals/Modal';
 import TodosCompletedForm from '~/components/forms/TodosCompletedForm';
-import { deleteCompletedToDosFromList, reorderCompletedToDos, updateToDoComplete } from '~/models/list.server';
 
 import type { ListAndToDos } from '~/types/listTypes';
+import { deleteCompletedToDosFromList, reorderCompletedToDos, updateToDoComplete } from "~/models/list.server";
+import { parse } from "querystring";
+
+
 
 export const action = async ({ request }: ActionArgs) => {
-
   if (request.method === 'POST') {
     const formBody = await request.text();
     const parsedBody = parse(formBody);
@@ -35,19 +36,23 @@ export const action = async ({ request }: ActionArgs) => {
     const formBody = await request.text();
     const parsedBody = parse(formBody);
     await deleteCompletedToDosFromList({ id: parsedBody.id as string })
-    return 'deleted'
+    return null
   }
 
   throw new Error('Invalid action method in Update List Page');
 }
 
 
-function UpdateListPage() {
 
+function ProjectOutcomeListCompletedPage() {
   const matches = useMatches();
   const params = useParams();
-  const lists = matches.find(match => match.id === 'routes/dash.todos')?.data
+  // console.log('matches is ', matches)
+  // const lists = matches.find(match => match.id === `routes/dash.projects.${params.projectId}.${params.deisreOutcomeId}`)?.data.todoLists
+  const lists = matches.find(match => match.id === "routes/dash.projects_.$projectId_.$desireOutcomeId")?.data.outcomeLists
+  // console.log('lists', lists)
   const list = lists?.find((list: ListAndToDos) => list.id === params.listId)
+  // console.log('list', list)
 
   return (
     <>
@@ -59,4 +64,4 @@ function UpdateListPage() {
   )
 }
 
-export default UpdateListPage
+export default ProjectOutcomeListCompletedPage

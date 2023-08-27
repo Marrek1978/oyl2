@@ -1,4 +1,3 @@
-import React from 'react'
 import { parse } from 'querystring';
 import type { ActionArgs } from '@remix-run/server-runtime';
 import { Outlet, useMatches, useParams } from '@remix-run/react'
@@ -18,7 +17,7 @@ export const action = async ({ request }: ActionArgs) => {
     const complete = JSON.parse(parsedBody.completeString as string);
     try {
       await updateRoutineToDoComplete({ id, complete });
-      return null;
+      return 'success'
     } catch (error) { throw error }
   }
 
@@ -38,7 +37,7 @@ function UpdateRoutinesCompletedPage() {
 
   const matches = useMatches();
   const params = useParams();
-  const routines = matches.find(match => match.id === 'routes/dash.routines')?.data.routines
+  const routines = matches.find(match => match.id === 'routes/dash.routines')?.data
   const routine = routines?.find((routine: RoutineAndToDos) => routine.id === params.routineId)
 
   return (

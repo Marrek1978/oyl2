@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useFetcher } from '@remix-run/react';
+
+import SolidBtn from '../buttons/SolidBtn';
+import BasicFormAreaBG from './BasicFormAreaBG';
+import OutlinedBtn from '../buttons/OutlinedBtn';
 import Divider from '~/components/utilities/Divider'
 import { sortTodos } from '~/components/utilities/helperFunctions';
 import SolidBtnGreyBlue from '~/components/buttons/SolidBtnGreyBlue';
 import ToDoWithCompletedBox from '~/components/list/todos/ToDoWithCompletedBox';
 import { closeIcon, downArrowsIcon, trashIcon } from '~/components/utilities/icons';
 
+
 import type { ListAndToDos } from '~/types/listTypes';
-import OutlinedBtn from '../buttons/OutlinedBtn';
-import BasicFormAreaBG from './BasicFormAreaBG';
-import SolidBtn from '../buttons/SolidBtn';
 
 interface TodosCompletedFormProps {
   list: ListAndToDos;
@@ -20,13 +22,22 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
   const fetcher = useFetcher();
   const todos = list.todos;
   const [isDeletingToDos, setIsDeletingToDos] = useState<boolean>(false)
+  const [isDisableAllBtns, setIsDisableAllBtns] = useState<boolean>(false)
+  const [isDisableMoveDownBtn, setIsDisableMoveDownBtn] = useState<boolean>(false)
 
 
   useEffect(() => {
-    if (fetcher.data === 'deleted' && fetcher.state === 'idle') {
-      setIsDeletingToDos(false)
-    }
+    fetcher.data === 'deleted' && fetcher.state === 'idle' && (  setIsDeletingToDos(false))
   }, [fetcher])
+
+
+  useEffect(() => {
+    const properlySortedTodos = sortTodos(todos);
+    const todosBySortOrder = todos.sort((a, b) => a.sortOrder - b.sortOrder)
+    const isSorted = properlySortedTodos.every((todo, index) => todo.id === todosBySortOrder[index].id)
+    setIsDisableMoveDownBtn(isSorted)
+  }, [todos])
+
 
   const handleCompletedToBottom = async (): Promise<void> => {
     const completedToDosAtBottom = sortTodos(todos);
@@ -40,6 +51,7 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
     } catch (error) { throw error }
   };
 
+
   const handleDeleteCompletedToDos = async (): Promise<void> => {
     setIsDeletingToDos(true)
     try {
@@ -52,10 +64,8 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
   }
 
 
-
   return (
     <>
-
       <BasicFormAreaBG
         title={list.title}
         linkDestination='edit'
@@ -66,10 +76,14 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
         <div className='py-6 px-8 font-poppins  '>
           <div className=" max-h-[50vh] min-h-[200px] overflow-y-auto">
             {todos.map((todoItem, index) => {
-              return <ToDoWithCompletedBox
-                key={todoItem.id}
-                todoItem={todoItem}
-              />
+              return (
+                <ToDoWithCompletedBox
+                  key={todoItem.id}
+                  todoItem={todoItem}
+                  setIsDisableAllBtns={setIsDisableAllBtns}
+                  isDisableAllBtns={isDisableAllBtns}
+                />
+              )
             })}
           </div>
 
@@ -82,12 +96,12 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
                   {todos.filter(todo => todo.complete).length > 0
                     && todos.filter(todo => !todo.complete).length > 0
                     && (
-
                       <OutlinedBtn
-                        text='Move Completed ToDos Down'
+                        text='Move Completed To-Dos Down'
                         onClickFunction={handleCompletedToBottom}
                         daisyUIBtnColor='primary'
                         icon={downArrowsIcon}
+                        disabledBtnBoolean={isDisableMoveDownBtn || isDisableAllBtns}
                       />
                     )}
                 </div>
@@ -98,9 +112,8 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
                     onClickFunction={handleDeleteCompletedToDos}
                     daisyUIBtnColor='error'
                     icon={trashIcon}
-                    disableBtn={isDeletingToDos}
+                    disableBtn={isDeletingToDos || isDisableAllBtns}
                   />
-
                 </div>
               </div>
             </div>
@@ -113,6 +126,7 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
                   text='Delete List'
                   onClickFunction={() => { }}
                   daisyUIBtnColor='error'
+                  disabledBtnBoolean={isDisableAllBtns}
                 />
               </Link>
             </div>
@@ -122,15 +136,13 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
                 <SolidBtnGreyBlue text='Close'
                   onClickFunction={() => { }}
                   icon={closeIcon}
+                  disabledBtnBoolean={isDisableAllBtns}
                 />
               </Link>
             </div>
-
           </div>
         </div>
-        {/* </div> */}
       </BasicFormAreaBG>
-
     </>
   )
 }

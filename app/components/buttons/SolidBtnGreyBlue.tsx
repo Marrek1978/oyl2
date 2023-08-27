@@ -4,11 +4,13 @@ interface SolidBtnGreyBlueProps {
   text: string;
   onClickFunction: () => void;
   icon?: React.ReactNode;
+  disabledBtnBoolean?: boolean;
 }
 
-function SolidBtnGreyBlue({ text, onClickFunction, icon }: SolidBtnGreyBlueProps) {
+function SolidBtnGreyBlue({ text, onClickFunction, icon, disabledBtnBoolean = false }: SolidBtnGreyBlueProps) {
   return (
     <button
+      disabled={disabledBtnBoolean}
       onClick={onClickFunction}
       className='
       font-mont font-semibold uppercase 

@@ -4,31 +4,41 @@ import { Link } from '@remix-run/react'
 import { EditIcon } from '../utilities/icons'
 import RoutineCard from './RoutineCard'
 import type { RoutineAndToDos } from '~/types/routineTypes'
+import HeadingH1 from '../titles/HeadingH1'
+import HeadingH2 from '../titles/HeadingH2'
+import TextBtn from '../buttons/TextBtn'
 
 interface AllRoutinesProps {
   routines: RoutineAndToDos[]
+  headingSize?: 'H1' | 'H2' | 'H3' | 'H4' | 'H5' | 'H6'
+  headingText?: string
 }
 
-function AllRoutines({ routines }: AllRoutinesProps) {
+function AllRoutines({ routines, headingSize = 'H1', headingText = 'Routines' }: AllRoutinesProps) {
+
+  let heading =
+    headingSize === 'H1' ? (
+      <HeadingH1 text={headingText} />
+    ) : headingSize === 'H2' ? (
+      <HeadingH2 text={headingText} />
+    ) : null
 
   return (
     <>
       <article className="relative w-full  ">
-        <div className='flex justify-between items-end content-end mb-12'>
-          <div className='text-4xl font-medium font-nanum tracking-wide'>Routines</div>
-          <Link to='/dash/routines/new' >
-            <div className='w-72'>
-              <button
-                className="
-                w-full
-                btn btn-primary btn-outline rounded-none font-mont">
-                Make New Routine
-                {EditIcon}
-              </button>
-            </div>
+        <div className='flex gap-8 items-baseline '>
+          {heading}
+          <Link to='new' >
+            <TextBtn
+              text='Create New Routine'
+              onClickFunction={() => { }}
+              icon={EditIcon}
+              color='text-primary'
+            />
           </Link>
         </div>
-        <div className='flex flex-wrap gap-6 mt-6'>
+ 
+        <div className='flex flex-wrap gap-4 mt-8'>
           {routines?.map((routine: RoutineAndToDos) => (
             <RoutineCard
               key={routine.id}

@@ -8,17 +8,23 @@ import BasicTextAreaBG from '../baseContainers/BasicTextAreaBG'
 import H2WithLinkAndProsePara from '../text/H2WithLinkAndProsePara'
 import { DesireIdealPlaceholderText } from '../utilities/PlaceHolderTexts'
 
+import type { ListAndToDos } from "~/types/listTypes";
 import type { DesireWithStringDates } from '~/types/desireTypes'
 import type { ProjectWithStringDates } from '~/types/projectTypes'
 import type { DesireOutcomeWithStringDates } from '~/types/outcomeTypes'
+import TodoLists from '../list/TodoLists'
+
+
+
 
 type Props = {
   project: ProjectWithStringDates
   desire: DesireWithStringDates
   outcome: DesireOutcomeWithStringDates
+  outcomeLists: ListAndToDos[]
 }
 
-function ProjectTasksForOutcome({ project, desire, outcome }: Props) {
+function ProjectTasksForOutcome({ project, desire, outcome, outcomeLists }: Props) {
   return (
     <>
       <BasicTextAreaBG >
@@ -211,54 +217,11 @@ function ProjectTasksForOutcome({ project, desire, outcome }: Props) {
         </div>
 
 
-        <div>
-          <div className='mt-20 max-w-max'>
-            <H2WithLink
-              title={'To-Do Lists'}
-              linkDestination={'newlist'}
-              linkText={'Create New To-Do List'}
-            />
-          </div>
-          <div className='mt-6'>
-            <div className="stats   stats-vertical lg:stats-horizontal shadow">
-
-              <div className="card w-96 bg-base-100 shadow-xl image-full">
-                <figure><img src="/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg" alt="Shoes" /></figure>
-                <div className="card-body">
-                  <h2 className="card-title">Shoes!</h2>
-                  <p>If a dog chews shoes whose shoes does he choose?</p>
-                  <div className="card-actions justify-end">
-                    <button className="btn btn-primary">Buy Now</button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card w-96 bg-base-100 shadow-xl image-full">
-                <figure><img src="/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg" alt="Shoes" /></figure>
-                <div className="card-body">
-                  <h2 className="card-title">Shoes!</h2>
-                  <p>If a dog chews shoes whose shoes does he choose?</p>
-                  <div className="card-actions justify-end">
-                    <button className="btn btn-primary">Buy Now</button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card w-96 bg-base-100 shadow-xl image-full">
-                <figure><img src="/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg" alt="Shoes" /></figure>
-                <div className="card-body">
-                  <h2 className="card-title">Shoes!</h2>
-                  <p>If a dog chews shoes whose shoes does he choose?</p>
-                  <div className="card-actions justify-end">
-                    <button className="btn btn-primary">Buy Now</button>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
+        <div className='mt-20 w-full'>
+          <TodoLists
+            lists={outcomeLists}
+            headingSize='H2' />
         </div>
-
 
       </BasicTextAreaBG >
 

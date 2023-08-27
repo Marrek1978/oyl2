@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { useFetcher } from '@remix-run/react';
 import { format } from 'date-fns'
 import { enUS } from 'date-fns/locale';
+import { useFetcher } from '@remix-run/react';
+import React, { useEffect, useState } from 'react'
 import { ToDoItemStylesNoBg } from '~/styles/ToDoItemStyles'
 
 import type { Todo } from '~/types/listTypes';
@@ -11,38 +11,38 @@ import ErrorMessage from '~/components/modals/ErrorMessage';
 
 interface ToDoItemProps {
   todoItem: Todo;
+  setIsDisableAllBtns: React.Dispatch<React.SetStateAction<boolean>>
+  isDisableAllBtns: boolean
 }
 
-const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem }) => {
+const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem, setIsDisableAllBtns, isDisableAllBtns }) => {
 
   const fetcher = useFetcher();
   const [isUpdating, setIsUpdating] = useState(false)
   const [isChecked, setIsChecked] = useState(todoItem.complete)
   const [errorMessage, setErrorMessage] = useState<string>()
-  // const [successMessage, setSuccessMessage] = useState<string>()
 
   const borderClass = ToDoItemStylesNoBg({ todo: todoItem })
 
   useEffect(() => {
-    if(fetcher.data === 'success' && fetcher.state === 'idle'){
+    if (fetcher.data === 'success' && fetcher.state === 'idle') {
       setIsUpdating(false)
-      // setSuccessMessage('ToDo updated successfully!');
-      // setTimeout(() => setSuccessMessage(''), 500);
+      setIsDisableAllBtns(false);
     }
 
     if (fetcher.data === 'failed' && fetcher.state === 'idle') {
       setIsUpdating(false)
-      setErrorMessage('Failed to update todo completed status')
+      setIsDisableAllBtns(false);
+      setErrorMessage('Failed to update to-do status')
       setTimeout(() => setErrorMessage(''), 1000);
     }
-  }, [fetcher])
+  }, [fetcher, setIsDisableAllBtns])
 
   const handleCheckboxChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-
     setIsUpdating(true); // Start progress bar
+    setIsDisableAllBtns(true); // Disable all other checkboxes
     const complete = event.target.checked;
     const completeString = JSON.stringify(complete)
-
     try {
       fetcher.submit({
         todoId: todoItem.id,
@@ -63,14 +63,6 @@ const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem }) => {
           />
         </Modal>
       )}
-      
-      {/* {successMessage && (
-        <Modal onClose={() => { }} zIndex={20}>
-          <SuccessMessage
-            text={successMessage}
-          />
-        </Modal>
-      )} */}
 
       <div className={` 
         flex w-full gap-4 items-center justify-between
@@ -103,7 +95,7 @@ const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem }) => {
                 className="checkbox checkbox-secondary"
                 checked={isChecked}
                 onClick={() => setIsChecked(!isChecked)}
-                disabled={isUpdating} // Disable while updating
+                disabled={isUpdating || isDisableAllBtns} // Disable while updating
               />
             </label>
           </div>

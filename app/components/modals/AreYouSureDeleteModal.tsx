@@ -12,7 +12,6 @@ function AreYouSureDeleteModal({ item, title, id }: AreYouSureDeleteModalProps) 
 
   const navigation = useNavigation();
   let isIdle = navigation.state === 'idle'
-  console.log('isIdle', isIdle)
 
  
   return (

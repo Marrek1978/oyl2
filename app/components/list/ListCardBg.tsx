@@ -29,7 +29,7 @@ function ListCardBg({ children, title, maxWidth = '800px', listId }: Props) {
       `}>
         <Heading14pxWithLink
           title={title?.toLocaleString() || ''}
-          linkDestination={'/dash/todos/' + listId}
+          linkDestination={listId}
           linkColor={'text-info'}
           linkText={'OPEN'}
         />

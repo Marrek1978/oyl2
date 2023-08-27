@@ -9,37 +9,33 @@ import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
 import ProjectTasksForOutcome from '~/components/projects/ProjectTasksForOutcome'
 
 import type { LoaderArgs } from '@remix-run/server-runtime'
+import { getProjectDesiredOutcomeListsAndToDos } from '~/models/list.server'
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   let userId = await requireUserId(request);
   const projectId = params.projectId!
-  const desireOutcomeId = params.desireOutcomeId!
+  const outcomeId = params.desireOutcomeId!
 
   try {
     const project = await getProjectById(projectId, userId)
-    const outcome = await getOutcomeByOutcomeId(desireOutcomeId)
+    const outcome = await getOutcomeByOutcomeId(outcomeId)
     const desire = await getDesireById(outcome!.desireId, userId)
+    const outcomeLists = await getProjectDesiredOutcomeListsAndToDos(userId, projectId, outcomeId )
 
-    return { project, desire, outcome }
-
+    return { project, desire, outcome, outcomeLists }
   } catch (error) { throw error }
 }
 
 
+function OutcomeTasksPage( ) {
 
-
-
-type Props = {}
-
-
-function OutcomeTasksPage({ }: Props) {
-
-  const { project, desire, outcome } = useLoaderData()
+  const { project, desire, outcome, outcomeLists } = useLoaderData()
   // console.log('projectId', projectId)
   // console.log('desireOutcomeId', desireOutcomeId)
   // console.log('project', project)
-  console.log('outcome', outcome)
+  // console.log('outcome', outcome)
   // console.log('desire', desire)
+  console.log('outcomeLists', outcomeLists)
 
 
 
@@ -51,6 +47,7 @@ function OutcomeTasksPage({ }: Props) {
         project={project}
         desire={desire}
         outcome={outcome}
+        outcomeLists={outcomeLists}
         />
     </>
   )

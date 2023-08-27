@@ -1,21 +1,20 @@
-import React from 'react'
 import { parse } from 'querystring';
 import { useMatches, useParams } from '@remix-run/react';
 import { type ActionArgs, redirect } from '@remix-run/server-runtime';
 
-import { deleteRoutine } from '~/models/routines.server';
 import Modal from '~/components/modals/Modal'
+import { deleteRoutine } from '~/models/routines.server';
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
 
 import type { RoutineAndToDos } from '~/types/routineTypes';
 
-export const action = async ({request}: ActionArgs) => {
+export const action = async ({ request }: ActionArgs) => {
   const formBody = await request.text();
   const parsedBody = parse(formBody);
   const routineId = parsedBody.rowId as string
   try {
     await deleteRoutine({ id: routineId })
-    return redirect('/dash/routines')
+    return redirect('../..')
   } catch (error) { throw error }
 }
 
@@ -28,13 +27,10 @@ function DeleteRoutinePage() {
   const routines = matches.find(match => match.id === 'routes/dash.routines')?.data.routines
   const routine = routines?.find((routine: RoutineAndToDos) => routine.id === routineId)
   const title = routine?.title
-  
+
   return (
     <>
-      <Modal
-        onClose={() => { }}
-        zIndex={40}
-      >
+      <Modal onClose={() => { }} zIndex={40}  >
         < AreYouSureDeleteModal
           item={'routine'}
           title={title}

@@ -7,9 +7,8 @@ import ProjectTasksForOutcomeDisplayAll from '~/components/projects/ProjectTasks
 
 import type { DesireOutcomeWithStringDates } from '~/types/outcomeTypes'
 
-type Props = {}
 
-function ProjectAllDesiredOutcomes({ }: Props) {
+function ProjectAllDesiredOutcomes() {
 
   const { outcomes } = useLoaderData()
   const [isOutcomes, setIsOutcomes] = useState<boolean>()
@@ -26,7 +25,6 @@ function ProjectAllDesiredOutcomes({ }: Props) {
         {isOutcomes ? (
           <>
             <div className=' '>
-              {/* <div className='flex gap-12 justify-between items-center w-full'> */}
               <H2WithLink
                 title={'Desired Outcomes and their Tasks'}
                 linkDestination={`/dash/desires/${outcomes[0]?.desireId}/outcomes`}
@@ -39,8 +37,8 @@ function ProjectAllDesiredOutcomes({ }: Props) {
           <>
             <H2WithLink
               title={'Desires must have Outcomes for Tasks'}
-              linkDestination={`/dash/desires`}
-              linkText='Go To Desire to Add Outcomes'
+              linkDestination={`/dash/desires/${outcomes[0]?.desireId}`}
+              linkText='Edit Desire to Add Outcomes'
               isTextBtn={false}
               daisyUIColor='primary' />
           </>

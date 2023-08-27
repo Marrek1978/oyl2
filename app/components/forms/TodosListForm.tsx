@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import React, { useEffect, useRef, useState } from 'react'
-import { Form, Link, useFetcher, useNavigation, useParams } from '@remix-run/react';
+import { Form, Link, useFetcher, useLocation, useNavigation, useParams } from '@remix-run/react';
 
 import InputLabel from './InputLabel';
 import Modal from '~/components/modals/Modal';
@@ -24,24 +24,18 @@ import HeadingH2 from "../titles/HeadingH2";
 
 interface TodosListFormProps {
   list?: ListAndToDos;
-  isNew?: boolean;
-  isProject?: boolean;
 }
 
-function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormProps) {
+function TodosListForm({ list }: TodosListFormProps) {
 
   const fetcher = useFetcher();
+  const location = useLocation();
   const navigation = useNavigation();
   const inputToDoRef = useRef<HTMLInputElement>(null);
-  const { listId, projectId, desireOutcomeId } = useParams()
-  console.log('listId', listId)
-  console.log('projectId', projectId)
-  console.log('desireOutcomeId', desireOutcomeId)
-
+  const { projectId, desireOutcomeId } = useParams()
 
   const [todos, setTodos] = useState<CreationTodo[]>([]);
   const [listTitle, setListTitle] = useState<string>('');
-
   const [successMessage, setSuccessMessage] = useState('');
   const [isUrgent, setIsUrgent] = useState<boolean>(false);
   const [isImportant, setIsImportant] = useState<boolean>(false);
@@ -51,11 +45,8 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
   const [selectedTodoIndex, setSelectedTodoIndex] = useState<number | null>(null);
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
 
-
-  console.log('listId is ', listId)
-  console.log('projectId is ', projectId)
-  console.log('isNew is ', isNew)
-  console.log('isProject is ', isProject)
+  const pathArray = location.pathname.split('/')
+  const isNew = pathArray[pathArray.length - 1] === 'new'
 
   const isSubmitting = navigation.state === 'submitting'
   const isIdle = navigation.state === 'idle'
@@ -68,15 +59,6 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
         ? "Save New List"
         : "Save Changes"
 
-  //set actionpath based on if new or edit, project or random
-  let actionPath = '';
-  if (isNew && !isProject) { actionPath = '/dash/todos/new' }
-  else if (!isNew && !isProject) { actionPath = `/dash/todos/${listId}/edit` }
-  else if (isNew && isProject) { actionPath = `/dash/projects/${projectId}/${desireOutcomeId}/newlist` }
-  console.log('actionPath is ', actionPath)
-
-
-
 
   useEffect(() => {
     if (fetcher.data) {
@@ -84,6 +66,7 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
       setTimeout(() => setSuccessMessage(''), 1000);
     }
   }, [fetcher])
+
 
   useEffect(() => {
     if (list) {
@@ -103,33 +86,20 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
 
 
   const handleSave = async () => {
-    console.log('handle save')
-    console.log('actionpath is ', actionPath)
-
     const todosString = JSON.stringify(todos);
-    console.log('todosString is ', todosString)
-    const projectIdNum = projectId ? projectId : 'ab'
-    const outcomeIdNum = desireOutcomeId ? desireOutcomeId : 'ab'
-
-    // if (!projectId) {
-      try {
-        fetcher.submit({
-          listTitle,
-          todosString,
-          projectIdNum,
-          outcomeIdNum,
-        }, {
-          method: 'POST',
-          action: actionPath,
-        })
-      } catch (error) { throw error }
-      clearListState();
-    // }
-
-    // if (projectId) {
-    //   console.log('projectId is ', projectId)
-    // }
-
+    const projectIdNum = projectId ? projectId : null
+    const outcomeIdNum = desireOutcomeId ? desireOutcomeId : null
+    try {
+      fetcher.submit({
+        listTitle,
+        todosString,
+        projectIdNum,
+        outcomeIdNum,
+      }, {
+        method: 'POST',
+      })
+    } catch (error) { throw error }
+    clearListState();
   }
 
 
@@ -146,11 +116,11 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
         editedListString
       }, {
         method: 'PUT',
-        action: actionPath,
       })
     } catch (error) { throw error }
     clearListState();
   }
+
 
   const handleAddTodoToList = () => {
     if (inputToDoRef.current?.value) {
@@ -162,8 +132,8 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
     }
   }
 
+
   const addTodoToTodosState = (newTodo: string) => {
-    console.log('addTodoToTodosState')
     const id = uuidv4();
     const todo: CreationTodo = {
       id,
@@ -203,25 +173,22 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
       {successMessage && (
         <Modal onClose={() => { }} zIndex={20}>
           <SuccessMessage
-            text={isNew ? successMessage : 'List was updated'}
+            text={successMessage}
           />
         </Modal>)
       }
 
       <BasicFormAreaBG
         maxWidth="1200"
-        title={!isNew
-          ? (<div ><span className='text-sm' >Update your To-Do List: </span> {listTitle}</div>)
+        title={!isNew ? (<div ><span className='text-sm' >Update your To-Do List: </span> {listTitle}</div>)
           : (<div className='' >Make a New List of To-Dos</div>)
         }
       >
-
         <Form method='post' className='mx-8'>
-
           <div className='vert-space-between-inputs 
             md:grid md:grid-cols-2 md:grid-rows-[1fr_min-content]
             md:gap-x-8
-          '>
+            '>
             <input type="string" name='listId' value={list?.id} hidden readOnly />
             <input type="string" name='projectId' value={projectId} hidden readOnly />
             <input type='string' name='outcomeId' value={desireOutcomeId} hidden readOnly />
@@ -278,7 +245,7 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
                 setSelectedDate={setSelectedDate}
                 selectedDate={selectedDate}
               />
-              i</div>
+            </div>
 
             <div className="col-start-1 row-start-2 vert-space-between-inputs">
               <OutlinedBtn
@@ -351,7 +318,7 @@ function TodosListForm({ list, isNew = true, isProject = false }: TodosListFormP
           </div>
         </Form >
       </BasicFormAreaBG >
-      {/* //! ******* End of new form   **************** */}
+
 
       {isEditToDoModalOpen && (
         <>

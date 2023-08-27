@@ -7,15 +7,11 @@ import Modal from '~/components/modals/Modal';
 import TodosListForm from '~/components/forms/TodosListForm';
 
 export const action = async ({ request }: ActionArgs) => {
-
-  //?  handle diff between random and project
-  //ehck for hidden input project Id... switch db call
   const userId = await requireUserId(request);
   const formBody = await request.text();
   const parsedBody = parse(formBody);
   const listTitle = parsedBody.listTitle as string;
   const todos = JSON.parse(parsedBody.todosString as string);
-  
   try {
     await createListAndTodos({ title: listTitle, userId, todos })
     return 'List was created.'
@@ -23,15 +19,10 @@ export const action = async ({ request }: ActionArgs) => {
 }
 
 function NewTodosPage() {
-
   return (
     <>
-    
       <Modal onClose={() => { }} >
-        <TodosListForm 
-          isNew={true}
-          isProject={false}
-        />
+        <TodosListForm  />
       </Modal>
     </>
   )

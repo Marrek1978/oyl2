@@ -1,14 +1,15 @@
+import { useEffect, useState } from 'react'
 import type { RoutineToDo } from '@prisma/client';
 import { Link, useFetcher } from '@remix-run/react';
-import React from 'react'
-import type { RoutineAndToDos } from '~/types/routineTypes'
-import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
-import { EditIcon, closeIcon, downArrowsIcon, trashIcon } from '../utilities/icons';
-// import ToDoWithCompletedBox from '../list/todos/ToDoWithCompletedBox';
+
 import Divider from '../utilities/Divider';
-import TextBtn from '../buttons/TextBtn';
+import BasicFormAreaBG from './BasicFormAreaBG';
+import OutlinedBtn from '../buttons/OutlinedBtn';
+import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
+import { closeIcon, downArrowsIcon } from '../utilities/icons';
 import RoutineToDoWithCompletedBox from '../routines/RoutineToDoWithCompletedBox';
 
+import type { RoutineAndToDos } from '~/types/routineTypes'
 
 interface RoutineTodosCompletedFormProps {
   routine: RoutineAndToDos
@@ -18,6 +19,17 @@ function RoutineTodosCompletedForm({ routine }: RoutineTodosCompletedFormProps) 
 
   const fetcher = useFetcher();
   const todos: RoutineToDo[] = routine.routineToDos;
+  const [isDisableAllBtns, setIsDisableAllBtns] = useState<boolean>(false)
+  const [isDisableMoveDownBtn, setIsDisableMoveDownBtn] = useState<boolean>(false)
+
+
+  useEffect(() => {
+    const properlySortedTodos = sortTodos(todos);
+    const todosBySortOrder = todos.sort((a, b) => a.sortOrder - b.sortOrder)
+    const isSorted = properlySortedTodos.every((todo, index) => todo.id === todosBySortOrder[index].id)
+    setIsDisableMoveDownBtn(isSorted)
+  }, [todos])
+
 
   const handleCompletedToBottom = async (): Promise<void> => {
     const completedToDosAtBottom = sortTodos(todos);
@@ -34,71 +46,55 @@ function RoutineTodosCompletedForm({ routine }: RoutineTodosCompletedFormProps) 
 
   return (
     <>
-      <div className='
-          bg-base-100 
-          grid grid-cols-[minmax(300px,600px)] grid-rows-[72px_1fr_min-content]
-          cursor-default
-        '>
-        <div className='w-full h-full px-8 bg-base-content flex justify-between items-center'>
-          <div className={`
-              text-xl font-mont uppercase font-normal tracking-widest 
-              text-primary-300
-              truncate overflow-ellipsis 
-              `}>
-            {routine.title}
-          </div>
-          <Link to='edit'>
-            <div className='flex gap-2 items-center 
-                font-mont font-bold text-info
-                hover:scale-105 transition-all
-                 '>
-              Edit {EditIcon}
-            </div>
-          </Link>
-        </div>
-
+      <BasicFormAreaBG
+        title={routine.title}
+        linkDestination='edit'
+        linkText='EDIT ROUTINE'
+        linkColor='text-info'
+      >
         <div className='py-6 px-8 font-poppins  '>
           <div className=" max-h-[50vh] min-h-[200px] overflow-y-auto">
             {todos.map((todoItem, index) => {
-              return <RoutineToDoWithCompletedBox
-                key={todoItem.id}
-                routineToDoItem={todoItem}
-              />
+              return (
+                <RoutineToDoWithCompletedBox
+                  key={todoItem.id}
+                  routineToDoItem={todoItem}
+                  setIsDisableAllBtns={setIsDisableAllBtns}
+                  isDisableAllBtns={isDisableAllBtns}
+                />
+              )
             })}
           </div>
 
-          <div>
-            <Divider />
-          </div>
-
           {todos.some(todo => todo.complete === true) && (
-            <div className='w-full mt-8 flex justify-between items-center'>
-              <div className='text-base font-mont font-semibold'>Completed To-Dos</div>
-              <div>
+            <div>
+              <Divider />
+              <div className='w-full mt-8 F'>
                 {todos.filter(todo => todo.complete).length > 0
                   && todos.filter(todo => !todo.complete).length > 0
-                  && (
-                    <TextBtn
-                      text={'Move Down'}
-                      icon={downArrowsIcon}
+                  && (<>
+                    <OutlinedBtn
+                     text='Move Completed To-Dos Down'
                       onClickFunction={handleCompletedToBottom}
+                      daisyUIBtnColor='primary'
+                      icon={downArrowsIcon}
+                      disabledBtnBoolean={isDisableMoveDownBtn || isDisableAllBtns}
                     />
+                  </>
                   )}
               </div>
             </div>
           )}
 
-          <div className='w-full mt-6 flex gap-6 '>
+          <div className='w-full mt-8 flex gap-8 '>
             <div className='w-full flex-1 '>
               <Link to='delete' >
-                <button className='btn btn-error btn-outline  
-                w-full
-                rounded-none
-                font-mont font-semibold
-              ' >
-                  Delete Routine
-                  {trashIcon}
-                </button>
+                <OutlinedBtn
+                  text='Delete Routine'
+                  onClickFunction={() => { }}
+                  daisyUIBtnColor='error'
+                  disabledBtnBoolean={isDisableAllBtns}
+                />
               </Link>
             </div>
 
@@ -107,13 +103,16 @@ function RoutineTodosCompletedForm({ routine }: RoutineTodosCompletedFormProps) 
                 <SolidBtnGreyBlue text='Close'
                   onClickFunction={() => { }}
                   icon={closeIcon}
+                  disabledBtnBoolean={isDisableAllBtns}
                 />
               </Link>
             </div>
-
           </div>
+
         </div>
-      </div>
+      </BasicFormAreaBG>
+
+
     </>
   )
 }

@@ -1,5 +1,11 @@
 import { prisma } from "~/db.server";
-import type { List, User, ListToDo } from "@prisma/client";
+import type {
+  List,
+  User,
+  ListToDo,
+  Project,
+  DesireOutcome,
+} from "@prisma/client";
 
 import type { Todo } from "~/types/listTypes";
 
@@ -41,8 +47,7 @@ export function getListItems({ userId }: { userId: User["id"] }) {
 export function getListAndTodos({ userId }: { userId: User["id"] }) {
   try {
     return prisma.list.findMany({
-      // where: { userId },
-      where: { userId },
+      where: { userId, projectId: null, outcomeId: null },
       include: {
         todos: {
           orderBy: { sortOrder: "asc" },
@@ -95,14 +100,18 @@ export async function createListAndTodos({
   title,
   userId,
   todos,
-}: Pick<List, "title"> & { userId: User["id"] } & {
-  todos: CreateTodo[];
-}) {
+  projectId,
+  outcomeId,
+}: Pick<List, "title"> & { userId: User["id"] } & { todos: CreateTodo[] } & {
+  projectId?: Project["id"];
+} & { outcomeId?: DesireOutcome["id"] }) {
   try {
     return await prisma.list.create({
       data: {
         title,
         userId,
+        projectId,
+        outcomeId,
         todos: {
           createMany: {
             data: todos,
@@ -120,9 +129,7 @@ export async function updateListAndTodos({
   title,
   userId,
   todos,
-}: Pick<List, "id" | "title"> & { userId: User["id"] } & {
-  todos: Todo[];
-}) {
+}: Pick<List, "id" | "title"> & { userId: User["id"] } & { todos: Todo[] }) {
   try {
     const updateList = await prisma.list.update({
       where: { id },
@@ -286,3 +293,42 @@ export async function deleteCompletedToDosFromPriorityList(
     throw error;
   }
 }
+
+//?  ------------------ Project Lists ----------------- //
+
+export async function getProjectDesiredOutcomeListsAndToDos(
+  userId: User["id"],
+  projectId: Project["id"],
+  outcomeId: DesireOutcome["id"]
+) {
+  try {
+    return prisma.list.findMany({
+      where: { userId, projectId, outcomeId },
+      include: {
+        todos: {
+          orderBy: { sortOrder: "asc" },
+        },
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+// export function getListAndTodos({ userId }: { userId: User["id"] }) {
+//   try {
+//     return prisma.list.findMany({
+//       // where: { userId },
+//       where: { userId },
+//       include: {
+//         todos: {
+//           orderBy: { sortOrder: "asc" },
+//         },
+//       },
+//       orderBy: { updatedAt: "desc" },
+//     });
+//   } catch (error) {
+//     throw error;
+//   }
+// }

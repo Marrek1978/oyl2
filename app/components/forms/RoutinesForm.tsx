@@ -1,75 +1,106 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { useFetcher, useNavigate } from '@remix-run/react';
 import { v4 as uuidRoutines } from "uuid";
+import React, { useEffect, useRef, useState } from 'react'
+import { Form, Link, useFetcher, useLocation, useNavigation, useParams } from '@remix-run/react';
 
-
-import SolidBtn from '../buttons/SolidBtn';
-import OutlinedBtn from '../buttons/OutlinedBtn';
-import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
-import Divider from '../utilities/Divider';
-import { ArrowIcon45deg, ArrowIconUp, closeIcon, dbIcon } from '../utilities/icons';
 import Modal from '../modals/Modal';
+import SolidBtn from '../buttons/SolidBtn';
+import Divider from '../utilities/Divider';
+import HeadingH2 from '../titles/HeadingH2';
+import BasicFormAreaBG from './BasicFormAreaBG';
+import OutlinedBtn from '../buttons/OutlinedBtn';
+import SubHeading14px from '../titles/SubHeading14px';
 import SuccessMessage from '../modals/SuccessMessage';
+import { closeIcon, dbIcon } from '../utilities/icons';
+import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
+import DndRoutineToDos from '../dnds/routines/DndRoutineToDos';
+import { DesireOutcomeGuideline } from '../utilities/Guidelines';
+import EditRoutineToDoModal from '../modals/EditRoutineToDoModal';
+import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
+import { resetRoutineTodosSortOrder } from '../utilities/helperFunctions';
 
 import type { CreationRoutineToDo, RoutineAndToDos } from '~/types/routineTypes'
-import DndRoutineToDos from '../dnds/routines/DndRoutineToDos';
-import { resetRoutineTodosSortOrder } from '../utilities/helperFunctions';
-import EditRoutineToDoModal from '../modals/EditRoutineToDoModal';
 
 interface RoutinesFormProps {
   routine?: RoutineAndToDos
 }
 
 function RoutinesForm({ routine }: RoutinesFormProps) {
+
   const fetcher = useFetcher();
-  const navigate = useNavigate();
+  const location = useLocation();
+  const navigation = useNavigation();
   const inputToDoRef = useRef<HTMLInputElement>(null);
+  const { projectId, desireOutcomeId } = useParams()
 
-  // const { listTitle, setListTitle, isRecurring, setIsRecurring, todos, setTodos } = useList();
-  const [todos, setTodos] = useState<CreationRoutineToDo[]>([]);
-  const [routineTitle, setRoutineTitle] = useState<string>('');
-  const [isEditingTodoList, setIsEditingTodoList] = useState<boolean>(false);
+  const [isSaveable, setIsSaveable] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [routineTitle, setRoutineTitle] = useState<string>('');
+  const [todos, setTodos] = useState<CreationRoutineToDo[]>([]);
   const [isEditToDoModalOpen, setIsEditToDoModalOpen] = useState(false);
-  const [selectedTodo, setSelectedTodo] = useState<CreationRoutineToDo | null>(null);
   const [selectedTodoIndex, setSelectedTodoIndex] = useState<number | null>(null);
+  const [selectedTodo, setSelectedTodo] = useState<CreationRoutineToDo | null>(null);
 
-  let disableSaveBtn = !routineTitle || !todos;
+  const pathArray = location.pathname.split('/')
+  const isNew = pathArray[pathArray.length - 1] === 'new'
+
+  const isSubmitting = navigation.state === 'submitting'
+  const isIdle = navigation.state === 'idle'
+
+
+  const saveBtnText =
+    isSubmitting
+      ? 'Saving...'
+      : isNew
+        ? "Save New List"
+        : "Save Changes"
+
+
+  useEffect(() => {
+    if (fetcher.data) {
+      setSuccessMessage(fetcher.data);
+      setTimeout(() => setSuccessMessage(''), 1000);
+    }
+  }, [fetcher])
+
 
   useEffect(() => {
     if (routine) {
       setRoutineTitle(routine.title);
       setTodos(routine.routineToDos);
-      setIsEditingTodoList(true);
     }
   }, [routine])
 
 
-  const handleCreateRoutineAndToDosInDb = async () => {
-    const routineToDosString = JSON.stringify(todos);
+  useEffect(() => {
+    let saveable =
+      isNew
+        ? (routineTitle && todos.length > 0) ? true : false
+        : (routineTitle !== routine?.title || todos !== routine?.routineToDos) ? true : false
+    setIsSaveable(saveable)
+  }, [isNew, todos, routineTitle, routine, isIdle])
 
+
+  const handleSave = async () => {
+    const routineToDosString = JSON.stringify(todos);
     try {
       fetcher.submit({
         routineTitle,
         routineToDosString
       }, {
         method: 'POST',
-        action: '/dash/routines/new',
       })
-
-      setSuccessMessage('New Routine was saved');
-      setTimeout(() => setSuccessMessage(''), 1000); // Clear the message after 3 seconds
     } catch (error) { throw error }
-
     clearRoutineState();
   }
+
 
   const clearRoutineState = () => {
     setRoutineTitle('')
     setTodos([])
   }
 
-  const handleSaveRoutineEditsToDb = async () => {
+
+  const handleEdit = async () => {
     const editedRoutine = { ...routine, title: routineTitle, todos }
     const editedRoutineString = JSON.stringify(editedRoutine);
     try {
@@ -77,13 +108,8 @@ function RoutinesForm({ routine }: RoutinesFormProps) {
         editedRoutineString
       }, {
         method: 'PUT',
-        action: '/dash/routines/$routineId/edit',
       })
-
-      setSuccessMessage('List was saved');
-      setTimeout(() => setSuccessMessage(''), 1000); // Clear the message after 3 seconds
     } catch (error) { throw error }
-
     clearRoutineState();
   }
 
@@ -116,151 +142,129 @@ function RoutinesForm({ routine }: RoutinesFormProps) {
     <>
       {successMessage && (
         <Modal onClose={() => { }} zIndex={20}>
-          {successMessage}
           <SuccessMessage
-            text={isEditingTodoList ? 'Routine was saved' : 'Routine was updated'}
+            text={successMessage}
           />
         </Modal>)
       }
-      <div className='
-        bg-base-100 
-        grid grid-cols-[400px_400px] grid-rows-[72px_1fr_min-content]
-        cursor-default
-        '>
 
-        {/* //******** TITLES   **************** */}
-        {/* //? *****Form Title ******  */}
-        <div
-          className='
-          font-semibold font-nanum text-2xl 
-          base-content 
-          flex items-center
-          mx-8
+
+      <BasicFormAreaBG
+        maxWidth="1200"
+        title={isNew ? (<div className='' >Make a New Routine</div>)
+          : (<div ><span className='text-sm' >Update your Routine: </span> {routineTitle}</div>)
+        }
+      >
+        <Form method='post' className='mx-8'>
+          <div className='vert-space-between-inputs 
+            md:grid md:grid-cols-2 md:grid-rows-[1fr_min-content]
+            md:gap-x-8
           '>
-          {isEditingTodoList ? 'Update your Routine' : 'Make a New Routine'}
-        </div>
+            <input type="string" name='listId' value={routine?.id} hidden readOnly />
+            <input type="string" name='projectId' value={projectId} hidden readOnly />
+            <input type='string' name='outcomeId' value={desireOutcomeId} hidden readOnly />
 
-        {/* //? *****List Title ******  */}
-        <div
-          className={`
-          bg-base-content 
-          flex items-center
-          px-8
-          font-mont uppercase tracking-[.25em] text-xl
-          overflow-hidden 
-          truncate text-ellipsis whitespace-nowrap
-          // ${!routineTitle ? 'text-neutral-content' : ' text-primary-200'}
-        `}>
-          <div className='truncate text-ellipsis whitespace-nowrap'>
-            {routineTitle
-              ? <> {routineTitle}</>
-              : <>Enter a title </>
-            }
-          </div>
-        </div>
+            <div className="form-control gap-6 ">
+              <div >
+                <InputLabelWithGuideLineLink
+                  text='Routine Title'
+                  title='Routine Title'
+                  guideline={DesireOutcomeGuideline} />
+                <input type="text"
+                  placeholder="Enter a Routine Title"
+                  value={routineTitle}
+                  onChange={(e) => setRoutineTitle(e.target.value)}
+                  className=" input-field-text-title "
+                />
+              </div>
 
-        {/* //******** BODY   **************** */}
-        {/* //? *****Form Inputs ******  */}
-        <div className='mx-8'>
-          <div> <Divider /> </div>
+              <div className='mt-8 mb-5'>  <Divider />   </div>
 
-          <div className="mt-4 mb-8 ">
-            <div className="form-control mt-0">
-              <label className="label pl-0">
-                <span className="label-text text-base font-mont font-semibold">List Title</span>
-              </label>
-              <input type="text"
-                placeholder="Enter a List Title"
-                value={routineTitle}
-                onChange={(e) => setRoutineTitle(e.target.value)}
-                className="
-                  input border-none input-secondary 
-                  bg-base-200 rounded-none
-                  font-poppins font-normal tracking-wide
-                  "
+              <div className='  '>
+                <InputLabelWithGuideLineLink
+                  text='Add a To-do'
+                  title='To-dos'
+                  guideline={DesireOutcomeGuideline} />
+                <input type="text"
+                  placeholder="Enter a To-Do"
+                  ref={inputToDoRef}
+                  className=" input-field-text-title "
+                />
+              </div>
+            </div>
+
+            <div className="col-start-1 row-start-2 vert-space-between-inputs">
+              <OutlinedBtn
+                text='Add To-Do to List'
+                onClickFunction={handleAddTodoToList}
+                daisyUIBtnColor='primary'
+                type='button'
               />
-              <label className="label min-h-8">
-                {!routineTitle &&
-                  <span className="label-text-alt text-red-700">
-                    <div className='flex gap-2'>
-                      {ArrowIconUp}
-                      A List must have a Title
-                    </div>
-                  </span>
-                }
-              </label>
             </div>
 
-            <div className='my-8'>  <Divider />   </div>
 
-            <div className="form-control mt-0 pt-0 pl-0">
-              <label className="label pt-0 pl-0">
-                <span className="label-text text-base font-mont font-semibold">Add To-do</span>
-              </label>
-              <input type="text"
-                placeholder="Enter a To-Do"
-                ref={inputToDoRef}
-                className="input border-none input-secondary  
-                  bg-base-200
-                  rounded-none
-                  font-poppins font-normal tracking-wide
-                " />
+            {/* //? PREVIEW PANEL */}
+            <div className="col-start-2 row-start-1 mt-8 md:mt-0 ">
+
+              <div className='pt-3 text-success'>
+                <SubHeading14px text='To-Do List Preview' />
+              </div>
+              <div className={`mt-2 ${routineTitle ? 'text-base-content' : 'text-base-content/60'} `}>
+                <HeadingH2 text={routineTitle || 'Routine Title'} />
+              </div>
+              <div className={` ${todos.length ? 'text-base-content' : 'text-base-content/60'}  mt-8`}>
+                <SubHeading14px text={`To-Dos`} />
+              </div>
+
+              <div className=' max-h-[426px] overflow-auto overflow-x-hidden pt-6'>
+                <DndRoutineToDos
+                  setTodos={setTodos}
+                  todos={todos}
+                  setTodoSortOrder={resetRoutineTodosSortOrder}
+                  setIsEditToDoModalOpen={setIsEditToDoModalOpen}
+                  setSelectedTodoIndex={setSelectedTodoIndex}
+                  setSelectedTodo={setSelectedTodo} />
+              </div>
+            </div>
+
+            {/* //******** BUTTONS   **************** */}
+            <div className="col-start-2 row-start-2 mb-8  vert-space-between-inputs">
+              <div className="flex flex-col gap-4">
+                <SolidBtn
+                  text={saveBtnText}
+                  onClickFunction={isNew ? handleSave : handleEdit}
+                  icon={dbIcon}
+                  daisyUIBtnColor='primary'
+                  disableBtn={!isSaveable}
+                  type='button'
+                />
+
+                <Link to='..'>
+                  <SolidBtnGreyBlue
+                    text={routineTitle || todos.length > 0
+                      ? ('Close without Saving')
+                      : ('Close')}
+                    onClickFunction={() => { }}
+                    icon={closeIcon}
+                  />
+                </Link>
+
+                {!isNew && (
+                  <Link to='../delete'>
+                    <OutlinedBtn
+                      text='Delete Routine'
+                      onClickFunction={() => { }}
+                      daisyUIBtnColor='error'
+                    />
+                  </Link>
+                )}
+              </div>
             </div>
 
           </div>
-        </div>
+        </Form>
+      </BasicFormAreaBG>
 
-        {/* //? *****Editable List of Todos Inputs ******  */}
-        <div className=''>
-          <div className='flex flex-col justify-between px-6 m-auto '>
-            <div className='min-h-[426px] max-h-[426px] overflow-auto overflow-x-hidden pt-6'>
-              <DndRoutineToDos
-                setTodos={setTodos}
-                todos={todos}
-                setTodoSortOrder={resetRoutineTodosSortOrder}
-                setIsEditToDoModalOpen={setIsEditToDoModalOpen}
-                setSelectedTodoIndex={setSelectedTodoIndex}
-                setSelectedTodo={setSelectedTodo} />
-            </div>
-          </div>
-        </div>
-
-        {/* //******** BUTTONS   **************** */}
-        {/* //? *****form buttons ******  */}
-        <div className='mx-8 '>
-          <OutlinedBtn
-            text='Add to List'
-            onClickFunction={handleAddTodoToList}
-            icon={ArrowIcon45deg}
-            daisyUIBtnColor='primary'
-          />
-        </div>
-
-        {/* //? *****list buttons ******  */}
-
-        <div className='mx-8'>
-          <div className=''>
-            <SolidBtn
-              text={isEditingTodoList ? 'Save Updates to Routine' : 'Save New Routine'}
-              onClickFunction={isEditingTodoList ? handleSaveRoutineEditsToDb : handleCreateRoutineAndToDosInDb}
-              icon={dbIcon}
-              daisyUIBtnColor='primary'
-              disableSaveBtn={disableSaveBtn}
-            />
-          </div>
-
-          <div className=' my-6 '>
-            <SolidBtnGreyBlue
-              text={routineTitle || todos.length > 0
-                ? ('Close without Saving')
-                : ('Close')}
-              onClickFunction={() => navigate('/dash/routines')}
-              icon={closeIcon}
-            />
-          </div>
-        </div>
-      </div>
-      {/* //! ******* End of new form   **************** */}
 
       {isEditToDoModalOpen && (
         <>
