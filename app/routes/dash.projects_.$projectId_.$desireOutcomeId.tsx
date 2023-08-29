@@ -10,6 +10,7 @@ import ProjectTasksForOutcome from '~/components/projects/ProjectTasksForOutcome
 
 import type { LoaderArgs } from '@remix-run/server-runtime'
 import { getProjectDesiredOutcomeListsAndToDos } from '~/models/list.server'
+import { getProjectDesiredOutcomeRoutinesWithToDos } from '~/models/routines.server'
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   let userId = await requireUserId(request);
@@ -21,21 +22,22 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     const outcome = await getOutcomeByOutcomeId(outcomeId)
     const desire = await getDesireById(outcome!.desireId, userId)
     const outcomeLists = await getProjectDesiredOutcomeListsAndToDos(userId, projectId, outcomeId )
-
-    return { project, desire, outcome, outcomeLists }
+    const outcomeRoutines = await getProjectDesiredOutcomeRoutinesWithToDos(userId, projectId, outcomeId )
+    return { project, desire, outcome, outcomeLists, outcomeRoutines }
   } catch (error) { throw error }
 }
 
 
 function OutcomeTasksPage( ) {
 
-  const { project, desire, outcome, outcomeLists } = useLoaderData()
+  const { project, desire, outcome, outcomeLists, outcomeRoutines } = useLoaderData()
   // console.log('projectId', projectId)
   // console.log('desireOutcomeId', desireOutcomeId)
   // console.log('project', project)
   // console.log('outcome', outcome)
   // console.log('desire', desire)
-  console.log('outcomeLists', outcomeLists)
+  // console.log('outcomeLists', outcomeLists)
+  // console.log('outcomeRoutines', outcomeRoutines)
 
 
 
@@ -48,6 +50,7 @@ function OutcomeTasksPage( ) {
         desire={desire}
         outcome={outcome}
         outcomeLists={outcomeLists}
+        outcomeRoutines={outcomeRoutines}
         />
     </>
   )

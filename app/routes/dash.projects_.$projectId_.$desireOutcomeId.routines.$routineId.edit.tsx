@@ -1,13 +1,12 @@
 import { parse } from 'querystring';
 import { Outlet, useMatches, useParams } from '@remix-run/react';
-import { redirect, type ActionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal';
 import RoutinesForm from '~/components/forms/RoutinesForm';
+import type { RoutineAndToDos } from '~/types/routineTypes';
 import { updateRoutineAndTodos } from '~/models/routines.server';
 
-import type { RoutineAndToDos } from '~/types/routineTypes';
-
+import {type ActionArgs, redirect } from '@remix-run/server-runtime';
 
 export const action = async ({ request }: ActionArgs) => {
   const formBody = await request.text();
@@ -21,12 +20,15 @@ export const action = async ({ request }: ActionArgs) => {
 }
 
 
-function EditRoutinePage() {
+
+function EditProjectOutcomeRoutinePage() {
 
   const params = useParams();
   const matches = useMatches();
-  const routines = matches.find(match => match.id === 'routes/dash.routines')?.data
+  const routines = matches.find(match => match.id === "routes/dash.projects_.$projectId_.$desireOutcomeId")?.data.outcomeRoutines
   const routine = routines?.find((routine: RoutineAndToDos) => routine.id === params.routineId)
+
+
 
   return (
     <>
@@ -38,4 +40,4 @@ function EditRoutinePage() {
   )
 }
 
-export default EditRoutinePage
+export default EditProjectOutcomeRoutinePage

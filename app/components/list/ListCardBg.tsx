@@ -5,18 +5,20 @@ import Heading14pxWithLink from '../titles/Heading14pxWithLink';
 type Props = {
   children: React.ReactNode;
   title: string | React.ReactNode;
-  maxWidth?: string;
-  listId: string;
+  maxWidthTailWindSize?: string;
+  linkUrl: string;
 }
 
-function ListCardBg({ children, title, maxWidth = '800px', listId }: Props) {
+function ListCardBg({ children, title, maxWidthTailWindSize = 'md', linkUrl }: Props) {
+
+
 
   const backgroundColor = GetHeaderBgColor()
 
   return (
     <div className={`
       flex-[1_1_300px] 
-      max-w-[${maxWidth}] min-w-[250px]
+      max-w-${maxWidthTailWindSize} min-w-[250px]
       bg-base-100 shadow-xl
       truncate
     `}>
@@ -29,7 +31,7 @@ function ListCardBg({ children, title, maxWidth = '800px', listId }: Props) {
       `}>
         <Heading14pxWithLink
           title={title?.toLocaleString() || ''}
-          linkDestination={listId}
+          linkDestination={linkUrl}
           linkColor={'text-info'}
           linkText={'OPEN'}
         />

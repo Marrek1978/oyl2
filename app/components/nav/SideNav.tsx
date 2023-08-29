@@ -7,8 +7,8 @@ const SideNav = () => {
 
   const location = useLocation();
   const isListPage = (
-    location.pathname.includes('/dash/lists')
-    || location.pathname.includes('/dash/todos')
+    location.pathname.includes('/dash/alllists')
+    || location.pathname.includes('/dash/lists')
     || location.pathname.includes('/dash/routines')
   );
 
@@ -39,7 +39,7 @@ const SideNav = () => {
 
 
           <li className="">
-            <NavLink to='/dash/lists' >
+            <NavLink to='/dash/alllists' >
               <span>Lists & Routines</span>
             </NavLink>
           </li>
@@ -59,7 +59,7 @@ const SideNav = () => {
 
             <li >
               <NavLink className='link__right'
-                to='/dash/todos'
+                to='/dash/lists'
               >
                 <span >Generic Todos</span>
               </NavLink>
@@ -70,7 +70,7 @@ const SideNav = () => {
 
 
           <li className="relative">
-            <NavLink to='/dashboard/todos' end  >
+            <NavLink to='/dash' end  >
               <span>Current Focus</span>
             </NavLink>
           </li>
@@ -84,7 +84,7 @@ const SideNav = () => {
 
 
           <li className="relative">
-            <NavLink to='/dashboard/todos' end >
+            <NavLink to='/dash' end >
               <span>Vision Board</span>
             </NavLink>
           </li>

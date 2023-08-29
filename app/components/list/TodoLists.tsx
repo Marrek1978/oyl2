@@ -13,9 +13,10 @@ interface TodoListsProps {
   lists: ListAndToDos[],
   headingSize?: 'H1' | 'H2' | 'H3' | 'H4' | 'H5' | 'H6'
   headingText?: string
+  linkText?: string
 }
 
-function TodoLists({ lists, headingSize = 'H1', headingText = 'To Do Lists' }: TodoListsProps) {
+function TodoLists({ lists, headingSize = 'H1', headingText = 'To Do Lists', linkText='new' }: TodoListsProps) {
 
   let heading =
     headingSize === 'H1' ? (
@@ -30,7 +31,7 @@ function TodoLists({ lists, headingSize = 'H1', headingText = 'To Do Lists' }: T
       <article className="w-full ">
         <div className='flex gap-8 items-baseline '>
           {heading}
-          <Link to='new' >
+          <Link to={linkText} >
             <TextBtn
               text='Create New To-Do List'
               onClickFunction={() => { }}

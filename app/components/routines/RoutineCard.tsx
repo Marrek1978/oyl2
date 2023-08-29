@@ -1,3 +1,4 @@
+import { useLocation } from '@remix-run/react';
 import ListCardBg from '../list/ListCardBg';
 import RoutineToDoItem from './RoutineToDoItem';
 
@@ -10,16 +11,21 @@ interface RoutineCardProps {
 
 function RoutineCard({ routine }: RoutineCardProps) {
 
+  const location = useLocation()
+  
   const title = routine.title
   const routineToDosArray: RoutineToDo[] = routine.routineToDos
   const id = routine.id
+
+  let relativeUrl =  location.pathname === '/dash/routines' ? `${id}` :  `routines/${id}`
+
 
   return (
     <>
       <ListCardBg
         title={title}
-        maxWidth='400px'
-        listId={id}
+        maxWidthTailWindSize='md'
+        linkUrl={relativeUrl}
       >
         < div className="mx-6 my-4 max-h-32" >
           {routineToDosArray.map((routineItemObj, index) => {

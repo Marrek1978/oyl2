@@ -14,7 +14,7 @@ export const action = async ({ request }: ActionArgs) => {
   const listId = parsedBody.rowId as string
   try {
     await deleteList({ id: listId })
-    return redirect('/dash/todos')
+    return redirect('../..')
   } catch (error) { throw error }
 }
 

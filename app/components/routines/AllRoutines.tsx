@@ -12,9 +12,10 @@ interface AllRoutinesProps {
   routines: RoutineAndToDos[]
   headingSize?: 'H1' | 'H2' | 'H3' | 'H4' | 'H5' | 'H6'
   headingText?: string
+  linkText?: string
 }
 
-function AllRoutines({ routines, headingSize = 'H1', headingText = 'Routines' }: AllRoutinesProps) {
+function AllRoutines({ routines, headingSize = 'H1', headingText = 'Routines', linkText='new' }: AllRoutinesProps) {
 
   let heading =
     headingSize === 'H1' ? (
@@ -28,7 +29,7 @@ function AllRoutines({ routines, headingSize = 'H1', headingText = 'Routines' }:
       <article className="relative w-full  ">
         <div className='flex gap-8 items-baseline '>
           {heading}
-          <Link to='new' >
+          <Link to={linkText} >
             <TextBtn
               text='Create New Routine'
               onClickFunction={() => { }}
@@ -38,7 +39,7 @@ function AllRoutines({ routines, headingSize = 'H1', headingText = 'Routines' }:
           </Link>
         </div>
  
-        <div className='flex flex-wrap gap-4 mt-8'>
+        <div className='flex flex-wrap gap-4 mt-8 '>
           {routines?.map((routine: RoutineAndToDos) => (
             <RoutineCard
               key={routine.id}

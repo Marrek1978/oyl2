@@ -82,10 +82,15 @@ function RoutinesForm({ routine }: RoutinesFormProps) {
 
   const handleSave = async () => {
     const routineToDosString = JSON.stringify(todos);
+    const projectIdNum = projectId ? projectId : null
+    const outcomeIdNum = desireOutcomeId ? desireOutcomeId : null
+
     try {
       fetcher.submit({
         routineTitle,
-        routineToDosString
+        routineToDosString,
+        projectIdNum,
+        outcomeIdNum,
       }, {
         method: 'POST',
       })
@@ -207,7 +212,7 @@ function RoutinesForm({ routine }: RoutinesFormProps) {
             <div className="col-start-2 row-start-1 mt-8 md:mt-0 ">
 
               <div className='pt-3 text-success'>
-                <SubHeading14px text='To-Do List Preview' />
+                <SubHeading14px text='Routine List Preview' />
               </div>
               <div className={`mt-2 ${routineTitle ? 'text-base-content' : 'text-base-content/60'} `}>
                 <HeadingH2 text={routineTitle || 'Routine Title'} />

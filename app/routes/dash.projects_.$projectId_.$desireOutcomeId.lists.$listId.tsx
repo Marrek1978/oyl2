@@ -47,12 +47,8 @@ export const action = async ({ request }: ActionArgs) => {
 function ProjectOutcomeListCompletedPage() {
   const matches = useMatches();
   const params = useParams();
-  // console.log('matches is ', matches)
-  // const lists = matches.find(match => match.id === `routes/dash.projects.${params.projectId}.${params.deisreOutcomeId}`)?.data.todoLists
   const lists = matches.find(match => match.id === "routes/dash.projects_.$projectId_.$desireOutcomeId")?.data.outcomeLists
-  // console.log('lists', lists)
   const list = lists?.find((list: ListAndToDos) => list.id === params.listId)
-  // console.log('list', list)
 
   return (
     <>

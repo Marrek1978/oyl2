@@ -1,11 +1,5 @@
 import { prisma } from "~/db.server";
-import type {
-  List,
-  User,
-  ListToDo,
-  Project,
-  DesireOutcome,
-} from "@prisma/client";
+import type { List, User, ListToDo } from "@prisma/client";
 
 import type { Todo } from "~/types/listTypes";
 
@@ -103,8 +97,8 @@ export async function createListAndTodos({
   projectId,
   outcomeId,
 }: Pick<List, "title"> & { userId: User["id"] } & { todos: CreateTodo[] } & {
-  projectId?: Project["id"];
-} & { outcomeId?: DesireOutcome["id"] }) {
+  projectId?: List["projectId"];
+} & { outcomeId?: List["outcomeId"] }) {
   try {
     return await prisma.list.create({
       data: {
@@ -298,8 +292,8 @@ export async function deleteCompletedToDosFromPriorityList(
 
 export async function getProjectDesiredOutcomeListsAndToDos(
   userId: User["id"],
-  projectId: Project["id"],
-  outcomeId: DesireOutcome["id"]
+  projectId: List["projectId"],
+  outcomeId: List["outcomeId"]
 ) {
   try {
     return prisma.list.findMany({
@@ -315,20 +309,3 @@ export async function getProjectDesiredOutcomeListsAndToDos(
     throw error;
   }
 }
-
-// export function getListAndTodos({ userId }: { userId: User["id"] }) {
-//   try {
-//     return prisma.list.findMany({
-//       // where: { userId },
-//       where: { userId },
-//       include: {
-//         todos: {
-//           orderBy: { sortOrder: "asc" },
-//         },
-//       },
-//       orderBy: { updatedAt: "desc" },
-//     });
-//   } catch (error) {
-//     throw error;
-//   }
-// }

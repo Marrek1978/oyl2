@@ -2,12 +2,12 @@ import { format } from 'date-fns'
 import { enUS } from 'date-fns/locale';
 import { useFetcher } from '@remix-run/react';
 import React, { useEffect, useState } from 'react'
-import { ToDoItemStylesNoBg } from '~/styles/ToDoItemStyles'
+
 
 import type { Todo } from '~/types/listTypes';
 import Modal from '~/components/modals/Modal';
 import ErrorMessage from '~/components/modals/ErrorMessage';
-// import SuccessMessage from '~/components/modals/SuccessMessage';
+import { ToDoItemStylesNoBg } from '~/styles/ToDoItemStyles'
 
 interface ToDoItemProps {
   todoItem: Todo;

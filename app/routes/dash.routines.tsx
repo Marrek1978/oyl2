@@ -10,6 +10,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   try {
     const userId = await requireUserId(request);
     const routines = await getRoutines({ userId });
+    console.log('routines', routines)
     return routines;
   } catch (error) {
     throw error

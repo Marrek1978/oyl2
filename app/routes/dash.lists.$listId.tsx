@@ -44,9 +44,10 @@ export const action = async ({ request }: ActionArgs) => {
 
 function UpdateListPage() {
 
+  console.log('UpdateListPage')
   const matches = useMatches();
   const params = useParams();
-  const lists = matches.find(match => match.id === 'routes/dash.todos')?.data
+  const lists = matches.find(match => match.id === 'routes/dash.lists')?.data
   const list = lists?.find((list: ListAndToDos) => list.id === params.listId)
 
   return (
