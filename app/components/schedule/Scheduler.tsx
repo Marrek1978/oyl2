@@ -52,6 +52,7 @@ function Scheduler({
   // console.log('in scheduler and loadedToDos is ', loadedToDos)
 
 
+
   const dragFromOutsideItem = useCallback(() => {
     return (event: object) => {
       if (draggedList !== undefined) return new Date();
@@ -108,7 +109,7 @@ function Scheduler({
     const { allDay } = event
     if (!allDay && droppedOnAllDaySlot) event.allDay = true
 
-    setSaveScheduledLists(true)
+    // setSaveScheduledLists(true)
     setScheduledLists((prev) => {
       const existing = prev.find((ev) => ev.id === event.id)!
       const filtered = prev.filter((ev) => ev.id !== event.id)
@@ -116,7 +117,7 @@ function Scheduler({
       const newEnd = typeof end === 'string' ? new Date(end) : end;
       return [...filtered, { ...existing, start: newStart, end: newEnd, allDay, id: existing.id, title: existing.title }]
     })
-  }, [setScheduledLists, setSaveScheduledLists])
+  }, [setScheduledLists])
 
 
   const resizeEvent = useCallback((
@@ -204,7 +205,9 @@ function Scheduler({
       todosArrayName = type
     }
 
-    const currentList = loadedList?.filter((list) => list.id === listId)
+
+    //!!! sopmething giong on here with types.
+    const currentList = loadedList?.filter((list:any) => list.id === listId)
     const currentToDos = currentList[0]?.[todosArrayName]
 
     return `\nToDos:\n${currentToDos?.map((todo: any) => todo.body).join('\n')}`

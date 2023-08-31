@@ -1,4 +1,4 @@
-import type { Routines as PrismaRoutine, RoutineToDos } from "@prisma/client";
+import type { Routine as PrismaRoutine, RoutineToDo as RoutineToDos} from "@prisma/client";
 
 export type RoutineAndToDos = PrismaRoutine & { routineToDos: RoutineToDos[] };
 

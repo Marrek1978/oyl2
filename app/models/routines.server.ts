@@ -2,7 +2,7 @@ import { prisma } from "~/db.server";
 import type { RoutineToDo, Routine, User } from "@prisma/client";
 import type { CreationRoutineToDo } from "~/types/routineTypes";
 
-export function getRoutines({ userId }: { userId: User["id"] }) {
+export function getRoutines(  userId: User["id"] ) {
   try {
     const result = prisma.routine.findMany({
       where: { userId, projectId: null, outcomeId: null },

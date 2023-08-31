@@ -27,7 +27,7 @@ export function getList({
 }
 
 // Get all list for a specific user
-export function getListItems({ userId }: { userId: User["id"] }) {
+export function getListItems(userId: User["id"] ) {
   try {
     return prisma.list.findMany({
       where: { userId },
@@ -38,10 +38,26 @@ export function getListItems({ userId }: { userId: User["id"] }) {
   }
 }
 
-export function getListAndTodos({ userId }: { userId: User["id"] }) {
+export function getListAndTodos( userId: User["id"]  ) {
   try {
     return prisma.list.findMany({
       where: { userId, projectId: null, outcomeId: null },
+      include: {
+        todos: {
+          orderBy: { sortOrder: "asc" },
+        },
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export function getAllListAndTodos(userId: User["id"] ) {
+  try {
+    return prisma.list.findMany({
+      where: { userId },
       include: {
         todos: {
           orderBy: { sortOrder: "asc" },
@@ -237,7 +253,7 @@ export async function getToDosWhere(
   }
 }
 
-export async function getToDosWhereDueDate({ userId }: { userId: User["id"] }) {
+export async function getToDosWhereDueDate(userId: User["id"] ) {
   try {
     const user = await prisma.user.findUnique({
       where: {

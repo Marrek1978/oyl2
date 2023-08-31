@@ -37,7 +37,6 @@ export const action = async ({ request }: ActionArgs) => {
     desireId: projectData.desireId as string,
   }
 
-  console.log('trying to crate project' )
   try {
     await createProject(project)
     return null

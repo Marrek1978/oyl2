@@ -1,9 +1,9 @@
-import type { Values } from "@prisma/client";
+import type { Value } from "@prisma/client";
 
-export type ValuesWithStringDates = Values & { createdAt: String, updatedAt: String }
+export type ValuesWithStringDates = Value & { createdAt: String, updatedAt: String }
 
 
 export interface validationErrorsTypes {
-  title?: Values['valueTitle']
-  description?: Values['valueDescription']
+  title?: Value['valueTitle']
+  description?: Value['valueDescription']
 }

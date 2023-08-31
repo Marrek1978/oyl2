@@ -9,8 +9,7 @@ import { transformRoutineDataDates } from '~/components/utilities/helperFunction
 export const loader = async ({ request }: LoaderArgs) => {
   try {
     const userId = await requireUserId(request);
-    const routines = await getRoutines({ userId });
-    console.log('routines', routines)
+    const routines = await getRoutines( userId);
     return routines;
   } catch (error) {
     throw error

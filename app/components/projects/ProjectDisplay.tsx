@@ -18,7 +18,6 @@ interface ProjectDisplayProps {
 
 function ProjectDisplay({ project, desire }: ProjectDisplayProps) {
 
-
   return (
     <>
 
@@ -34,7 +33,6 @@ function ProjectDisplay({ project, desire }: ProjectDisplayProps) {
             title={project.title}
             linkDestination={`/dash/projects/${project.id}/edit`}
             linkText='Edit Project Name or Associated Desire'
-
             isTextBtn={true}
             daisyUIColor='primary'
           />

@@ -1,5 +1,6 @@
 import type { Desire, Project, User } from "@prisma/client";
 import { prisma } from "~/db.server";
+import type { ProjectFromDB} from "~/types/projectTypes";
 
 type CreateProject = {
   title: Project["title"];
@@ -13,7 +14,7 @@ type UpdateProject = CreateProject & {
   id: Project["id"];
 };
 
-export const getProjects = async (userId: User["id"]) => {
+export const getProjects = async ( userId: User["id"] ): Promise<ProjectFromDB[]> => {
   try {
     const result = await prisma.project.findMany({
       where: { userId },
@@ -25,10 +26,10 @@ export const getProjects = async (userId: User["id"]) => {
   }
 };
 
-export const getProjectById = async (id: Project["id"], userId: User["id"]) => {
+export const getProjectById = async (id: Project["id"], userId: User["id"]): Promise<ProjectFromDB | null> => {
   try {
     const result = await prisma.project.findFirst({
-      where: { id, userId },
+      where: { id, userId }
     });
     return result;
   } catch (error) {

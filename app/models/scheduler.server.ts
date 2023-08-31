@@ -39,7 +39,7 @@ export async function saveScheduledLists({
   return { results };
 }
 
-export async function getScheduledLists({ userId }: { userId: User["id"] }) {
+export async function getScheduledLists(  userId: User["id"]  ) {
   const scheduledLists = await prisma.scheduledList.findMany({
     where: { userId: userId },
   });

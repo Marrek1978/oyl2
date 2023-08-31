@@ -9,7 +9,7 @@ import { transformToDoDataDates } from '~/components/utilities/helperFunctions';
 export const loader = async ({ request }: LoaderArgs) => {
   try {
     const userId = await requireUserId(request);
-    const todoLists = await getListAndTodos({ userId });
+    const todoLists = await getListAndTodos(userId);
     return todoLists;
   } catch (error) {
     throw error

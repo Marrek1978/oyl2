@@ -1,6 +1,9 @@
 import type { CreationTodo, Todo } from "~/types/listTypes";
 import type { CreationRoutineToDo } from "~/types/routineTypes";
 
+import type { Project } from "@prisma/client";
+import type { ProjectFromDBWithStringDates } from "~/types/projectTypes";
+
 export function transformToDoDataDates(data: any) {
   return data.map((item: any) => ({
     ...item,
@@ -37,7 +40,13 @@ export function transformRoutineDataDates(routines: any) {
 //     dueDate: new Date(outcome.dueDate!),
 
 
-
+export function transformProjectDataDates(projects: ProjectFromDBWithStringDates[]) : Project[] {
+  return projects.map((project: ProjectFromDBWithStringDates) => ({
+    ...project,
+    createdAt: new Date(project.createdAt!),
+    updatedAt: new Date(project.updatedAt!),
+  }));
+}
 
 
 export function transformScheduledListsDataDates(lists: any) {

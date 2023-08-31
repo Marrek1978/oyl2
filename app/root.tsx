@@ -46,7 +46,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   catch (error) { throw error; }
 };
 
-
+//!!  set type for server files, and '...FromDb' for loader functions.  Also, set type for 'user' in loader function
 
 export default function App() {
 

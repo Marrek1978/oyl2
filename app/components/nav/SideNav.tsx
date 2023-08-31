@@ -13,13 +13,6 @@ const SideNav = () => {
   );
 
 
-
-  // const isValues = (
-  //   location.pathname.includes('/dash/values')
-  //   || location.pathname.includes('/dash/desires')
-  // );
-  // console.log('isListPage is:', isListPage); // logs the current URL path
-
   return (
     <>
       <nav >
