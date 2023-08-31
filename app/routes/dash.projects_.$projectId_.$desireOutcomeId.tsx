@@ -1,5 +1,5 @@
 
-import {  Outlet, useLoaderData } from '@remix-run/react'
+import { Outlet, useLoaderData } from '@remix-run/react'
 
 import { getDesireById } from '~/models/desires.server'
 import { requireUserId } from '~/models/session.server'
@@ -21,14 +21,14 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     const project = await getProjectById(projectId, userId)
     const outcome = await getOutcomeByOutcomeId(outcomeId)
     const desire = await getDesireById(outcome!.desireId, userId)
-    const outcomeLists = await getProjectDesiredOutcomeListsAndToDos(userId, projectId, outcomeId )
-    const outcomeRoutines = await getProjectDesiredOutcomeRoutinesWithToDos(userId, projectId, outcomeId )
+    const outcomeLists = await getProjectDesiredOutcomeListsAndToDos(userId, projectId, outcomeId)
+    const outcomeRoutines = await getProjectDesiredOutcomeRoutinesWithToDos(userId, projectId, outcomeId)
     return { project, desire, outcome, outcomeLists, outcomeRoutines }
   } catch (error) { throw error }
 }
 
 
-function OutcomeTasksPage( ) {
+function OutcomeTasksPage() {
 
   const { project, desire, outcome, outcomeLists, outcomeRoutines } = useLoaderData()
   // console.log('projectId', projectId)
@@ -43,15 +43,15 @@ function OutcomeTasksPage( ) {
 
   return (
     <>
-     <BreadCrumbs title={project.title || ''} title2={outcome.title}/>
-    <Outlet />
+      <BreadCrumbs title={project.title || ''} title2={outcome.title} />
+      <Outlet />
       <ProjectTasksForOutcome
         project={project}
         desire={desire}
         outcome={outcome}
         outcomeLists={outcomeLists}
         outcomeRoutines={outcomeRoutines}
-        />
+      />
     </>
   )
 }

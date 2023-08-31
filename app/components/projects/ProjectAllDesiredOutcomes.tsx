@@ -5,51 +5,43 @@ import H2WithLink from '../titles/H2WithLink'
 import SubHeading14px from '~/components/titles/SubHeading14px'
 import ProjectTasksForOutcomeDisplayAll from '~/components/projects/ProjectTasksForOutcomeDisplayAll'
 
+import type { Desire } from '@prisma/client'
 import type { DesireOutcomeWithStringDates } from '~/types/outcomeTypes'
 
 
-function ProjectAllDesiredOutcomes() {
+interface Props {
+  desire?: Desire;
+}
+
+function ProjectAllDesiredOutcomes({ desire }: Props) {
 
   const { outcomes } = useLoaderData()
   const [isOutcomes, setIsOutcomes] = useState<boolean>()
 
   useEffect(() => {
     setIsOutcomes(outcomes.length > 0 ? true : false)
-    console.log('outcomes', outcomes)
   }, [outcomes])
 
 
   return (
     <>
-      <div className='max-w-max t-20'>
-        {isOutcomes ? (
-          <>
-            <div className=' '>
-              <H2WithLink
-                title={'Desired Outcomes and their Tasks'}
-                linkDestination={`/dash/desires/${outcomes[0]?.desireId}/outcomes`}
-                linkText='Go To Desired Outcomes'
-                daisyUIColor='primary'
-              />
-            </div>
-          </>
-        ) : (
+      <div className='mt-20'>
+        {!isOutcomes && (
           <>
             <H2WithLink
-              title={'Desires must have Outcomes for Tasks'}
-              linkDestination={`/dash/desires/${outcomes[0]?.desireId}`}
-              linkText='Edit Desire to Add Outcomes'
+              title={'Desires must have Specified Outcomes for Projects'}
+              linkDestination={`/dash/desires/${desire?.id}`}
+              linkText='Edit the Desire to Add Outcomes'
               isTextBtn={false}
-              daisyUIColor='primary' />
+              daisyUIColor='primary'
+            />
           </>
-
         )}
       </div>
 
 
       <div>
         {outcomes.map((desiredOutcome: DesireOutcomeWithStringDates) => {
-
           return (
             //?DND these???
             <div key={desiredOutcome.id}>

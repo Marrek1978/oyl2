@@ -1,31 +1,25 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Form, Link, useActionData, useLocation, useNavigation } from '@remix-run/react'
 
+import ListLabel from './ListLabel';
+import SolidBtn from '../buttons/SolidBtn';
+import BasicFormAreaBG from './BasicFormAreaBG';
+import OutlinedBtn from '../buttons/OutlinedBtn';
 import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
 import { closeIcon, dbIcon, trashIcon } from '../utilities/icons';
-
-import type { Desire, Project } from '@prisma/client'
-import SolidBtn from '../buttons/SolidBtn';
-import OutlinedBtn from '../buttons/OutlinedBtn';
-import BasicFormAreaBG from './BasicFormAreaBG';
 import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
 import { DesireTitle, DesireValuesServed } from '../utilities/Guidelines';
-import ListLabel from './ListLabel';
+
+import type { Desire, Project } from '@prisma/client'
 
 interface ProjectFormProps {
   project?: Project;
   desire?: Desire;
   allUserDesires: Desire[];
   allUserProjects: Project[];
-
 }
 
 export default function ProjectsForm({ project, desire, allUserDesires, allUserProjects }: ProjectFormProps) {
-
-  console.log('allUserDesires', allUserDesires)
-  console.log('allUserProjects', allUserProjects)
-
-
 
   const location = useLocation()
   const navigation = useNavigation();
@@ -68,10 +62,8 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
 
   useEffect(() => {
     const isInputEmpty = !title
-    // const isInputEmpty = !title || !description
     const isInputDifferent =
       title !== project?.title
-      // || description !== project?.description
       || !!(project?.desireId && selectedDesireId !== project?.desireId)   //original desire is changed
       || !!(!project?.desireId && selectedDesireId)  // originally no desire then one is added
     setIsSaveable(!isInputEmpty && (isInputDifferent))
@@ -130,26 +122,6 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
             {validationErrors?.title && (
               <div className='text-red-700'> {validationErrors.title}</div>
             )}
-
-            {/* <div className='vert-space-between-inputs'>
-              <InputLabelWithGuideLineLink
-                text='Description or Desire Served (Choose 1)'
-                guideline={DesireDescription}
-                title='Project Description'
-              />
-              <textarea
-                className='input-field-text-para '
-                placeholder="Leave blank if choosing a Desire, otherwise describe what you desire. You can describe why you desire somethihng, but do not spend any time justifying your desire."
-                name='description'
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              >
-              </textarea>
-              {validationErrors?.description && (
-                <div className='text-red-700'> {validationErrors.description}</div>
-              )}
-            </div> */}
             {validationErrors?.description && (
               <div className='text-red-700'> {validationErrors.description}</div>
             )}

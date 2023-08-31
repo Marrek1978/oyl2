@@ -48,7 +48,7 @@ function H2WithLink({ title, linkDestination, linkColor = 'text-primary', linkTe
             />
           ) : (
             <button
-              className={`btn btn-sm btn-${daisyUIColor}`}
+              className={`btn btn-sm btn-${daisyUIColor} rounded-none`}
               onClick={onClickFunction}
             >{linkText}{EditIcon}
             </button>

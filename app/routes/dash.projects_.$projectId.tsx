@@ -8,7 +8,7 @@ import ProjectDisplay from '~/components/projects/ProjectDisplay'
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
 
 import type { Desire } from '@prisma/client'
-import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime'
+import type { LoaderArgs } from '@remix-run/server-runtime'
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   let userId = await requireUserId(request);
@@ -24,18 +24,10 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   } catch (error) { throw error }
 }
 
-export const action = async ({ request }: ActionArgs) => {
-  return null
-}
-
-//! add lists, routines, routine_tracker, and required_savings, associated to project.
-// ! nested lists will be available to schedule, routines will be available to schedule,
-// !  routine_tracker will not be available to schedule, required_savings will not be available to schedule
 export default function ProjectByIdPage() {
 
   const { project, desires } = useLoaderData()
   const desire = desires.find((desire: Desire) => desire.id === project.desireId)
-  // const desireTitle = desire.title
 
   return (
     <>

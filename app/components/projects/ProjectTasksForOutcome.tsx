@@ -19,8 +19,6 @@ import type { DesireOutcomeWithStringDates } from '~/types/outcomeTypes'
 
 
 
-
-
 type Props = {
   project: ProjectWithStringDates
   desire: DesireWithStringDates
