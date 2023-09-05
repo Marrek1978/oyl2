@@ -1,8 +1,38 @@
 .rbc-allday-cell {
   display: none !important;
-  background-color:blue;
+  background-color: blue;
 }
 
-.rbc-event-label{
-  display:none !important;
+.rbc-event-label {
+  display: none !important;
 }
+
+.scheduler-projects-nav {
+  @apply w-full cursor-pointer  
+  truncate overflow-ellipsis
+  px-4 py-3 
+  text-left font-mont font-medium text-base-content
+  outline-none transition-all 
+  duration-300 ease-linear hover:z-10 
+  hover:scale-105
+  hover:bg-base-100
+  hover:font-bold
+  hover:shadow-xl
+  motion-reduce:transition-none;
+}
+
+.project-main-focus {
+  @apply hover:font-bold;
+}
+
+
+.project-draggable-mainfocus-time-block{}
+.project-draggable-mainfocus{}
+.project-draggable-time-block{}
+.project-draggable{}
+
+
+/* 
+#scheduler-projects-nav > li > a:active {
+  @apply bg-base-100 text-primary font-semibold outline-none  ;
+} */
