@@ -7,11 +7,12 @@
   display: none !important;
 }
 
-.scheduler-projects-nav {
+.scheduler-projectsList {
   @apply w-full cursor-pointer  
   truncate overflow-ellipsis
+  capitalize
   px-4 py-3 
-  text-left font-mont font-medium text-base-content
+  text-left font-mont text-base font-medium text-base-content
   outline-none transition-all 
   duration-300 ease-linear hover:z-10 
   hover:scale-105
@@ -25,14 +26,53 @@
   @apply hover:font-bold;
 }
 
+.scheduler-draggableLists-common {
+  @apply mb-2 cursor-pointer px-4
+  py-2
+  font-mont capitalize font-medium
+  shadow-lg
 
-.project-draggable-mainfocus-time-block{}
-.project-draggable-mainfocus{}
-.project-draggable-time-block{}
-.project-draggable{}
+  outline-none transition-all 
+  duration-300 ease-linear hover:z-10 
+  hover:scale-105
+  hover:shadow-xl
+  motion-reduce:transition-none;
+}
 
+.projects-draggable-timeBlock-mainFocus {
+  @apply border-2  border-success
+  bg-success/90
+   
+  text-base text-success-content;
+}
 
-/* 
-#scheduler-projects-nav > li > a:active {
-  @apply bg-base-100 text-primary font-semibold outline-none  ;
-} */
+.project-draggable-mainfocus {
+  @apply border-2 border-success-content/10
+  bg-success/50 px-4
+ 
+  text-base text-success-content;
+}
+
+.projects-draggable-timeBlock-default {
+  @apply border-2 border-info-content
+  bg-base-content
+   text-base-200;
+}
+
+.project-draggable-default {
+  @apply border-2 border-base-content/30
+  bg-base-100
+  text-base  text-base-content;
+}
+
+.misc-draggable-routine {
+  @apply border-2 border-warning-content/30
+  bg-warning
+  text-base text-warning-content
+}
+
+.misc-draggable-list {
+  @apply border-2 border-error-content/30
+  bg-accent-content
+  text-base text-accent-focus
+}

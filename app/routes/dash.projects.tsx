@@ -8,7 +8,6 @@ import { getProjects, updateProjectsOrder } from '~/models/project.server';
 import DndPlus800OutletFlex from '~/components/baseContainers/DndPlus800OutletFlex';
 
 export const loader = async ({ request }: LoaderArgs) => {
-  console.log('projects loader')
   let userId = await requireUserId(request);
   try {
     const desires = await getDesires(userId)

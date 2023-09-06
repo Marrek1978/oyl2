@@ -1,7 +1,7 @@
 import React from 'react'
-import GetHeaderBgColor from './GetHeaderBgColor';
-import H2WithLink from '../titles/H2WithLink';
-import HeadingH2 from '../titles/HeadingH2';
+import {GetHeaderBgColor} from '~/components/forms/GetHeaderBgColor';
+import H2WithLink from '~/components/titles/H2WithLink';
+import HeadingH2 from '~/components/titles/HeadingH2';
 
 interface BasicFormAreaBGProps {
   children: React.ReactNode;

@@ -8,11 +8,11 @@ import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 import styleSheet from "~/styles/SchedulerCss.css";
 
 import { getProjects } from '~/models/project.server'
-import { getRoutines } from '~/models/routines.server'
+import { getAllRoutines } from '~/models/routines.server'
 import { requireUserId } from '~/models/session.server'
 import Scheduler from '~/components/schedule/Scheduler'
 import { getAllListAndTodos } from '~/models/list.server'
-import ListsAsDraggableItems from '~/components/schedule/ListsAsDraggableItems'
+// import ListsAsDraggableItems from '~/components/schedule/ListsAsDraggableItems'
 import { deleteScheduledList, getScheduledLists, saveScheduledLists } from '~/models/scheduler.server'
 import { transformRoutineDataDates, transformToDoDataDates, transformScheduledListsDataDates, transformProjectDataDates } from '~/components/utilities/helperFunctions'
 
@@ -22,7 +22,10 @@ import type { Project, ScheduledList } from '@prisma/client'
 import type { ProjectWithListsAndRoutines } from '~/types/projectTypes'
 import SolidBtn from '~/components/buttons/SolidBtn'
 import HeadingH2 from '~/components/titles/HeadingH2'
-import SchedulerProjectsNavAndDraggables from '~/components/nav/SchedulerProjectsNavAndDraggables'
+import ProjectsListAndDraggables from '~/components/schedule/ProjectsListAndDraggables'
+import SubHeading16px from '~/components/titles/SubHeading16px'
+// import SpecialLists from '~/components/schedule/SpecialLists'
+import MiscellaneousLists from '~/components/schedule/MiscellaneousLists'
 
 
 //example from https://github.com/jquense/react-big-calendar/blob/master/stories/demos/exampleCode/dndOutsideSource.js
@@ -35,8 +38,9 @@ export const links: LinksFunction = () => [
 export const loader = async ({ request }: LoaderArgs) => {
   try {
     const userId = await requireUserId(request);
+    // const loadedToDos = await getListAndTodos(userId); //! get all and filter on client
     const loadedToDos = await getAllListAndTodos(userId); //! get all and filter on client
-    const loadedRoutines = await getRoutines(userId);//! get all and filter on client
+    const loadedRoutines = await getAllRoutines(userId);//! get all and filter on client
     const loadedProjects = await getProjects(userId);
     const scheduledLists = await getScheduledLists(userId)
     return json({ loadedToDos, loadedRoutines, scheduledLists, loadedProjects });
@@ -77,10 +81,10 @@ export const action = async ({ request }: ActionArgs) => {
 function Schedule() {
 
   const fetcher = useFetcher();
+  const [currentTab, setCurrentTab] = useState<string>('projects')
   const [saveScheduledLists, setSaveScheduledLists] = useState<boolean>(false)   //  SaveButton
   const [draggedList, setDraggedList] = useState<ListAndToDos | RoutineAndToDos>()
   const [scheduledLists, setScheduledLists] = useState<ScheduledList[] | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[]>([])
-
   //?  when added to the calendar, they should be converted to the event structure, with start and end dates, is draggable, all day, id
   //? loaded scheduled events will be of the correct format, and will be loaded from db
 
@@ -92,30 +96,27 @@ function Schedule() {
   //! make all memoized functions, and move to helper functions doc?  
   //! need to separate the lists and todos, and the routines, and then convert the dates
   //! need to assemble project data, and convert dates, associated routines and lists, -- needs new types
-  //* always load and sort all, each can be reused multiple times
 
   const initialListsData = useLoaderData<typeof loader>();
-  const loadedToDos: ListAndToDos[] = useMemo(() => transformToDoDataDates(initialListsData.loadedToDos), [initialListsData.loadedToDos]) //initialListsData.loadedToDos as ListAndToDos[
-  const loadedRoutines: RoutineAndToDos[] = useMemo(() => transformRoutineDataDates(initialListsData.loadedRoutines), [initialListsData.loadedRoutines]) //initialListsData.loadedRoutines as RoutineAndToDos[]
-  const loadedProjects: Project[] = useMemo(() => transformProjectDataDates(initialListsData.loadedProjects), [initialListsData.loadedProjects]) //initialListsData.loadedProjects as Project[]
   const loadedScheduledLists: ScheduledList[] = useMemo(() => transformScheduledListsDataDates(initialListsData.scheduledLists), [initialListsData.scheduledLists])
-  const thisWeeksScheduledLists = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledLists), [loadedScheduledLists])
 
-  const miscellaneousLists = loadedToDos.filter(list => (list.projectId !== null && list.outcomeId !== null))
-  const miscellaneousRoutines = loadedRoutines.filter(routine => (routine.projectId !== null && routine.outcomeId !== null))
+  const thisWeeksScheduledLists = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledLists), [loadedScheduledLists])
+  const loadedToDos: ListAndToDos[] = useMemo(() => transformToDoDataDates(initialListsData.loadedToDos), [initialListsData.loadedToDos]) //initialListsData.loadedToDos as ListAndToDos[
+  const loadedProjects: Project[] = useMemo(() => transformProjectDataDates(initialListsData.loadedProjects), [initialListsData.loadedProjects]) //initialListsData.loadedProjects as Project[]
+  const loadedRoutines: RoutineAndToDos[] = useMemo(() => transformRoutineDataDates(initialListsData.loadedRoutines), [initialListsData.loadedRoutines]) //initialListsData.loadedRoutines as RoutineAndToDos[]
+
+  const miscellaneousLists = loadedToDos.filter(list => (list.projectId === null && list.outcomeId === null))
+  const miscellaneousRoutines = loadedRoutines.filter(routine => (routine.projectId === null && routine.outcomeId === null))
   const projectsWithListsAndRoutines: ProjectWithListsAndRoutines[] = loadedProjects.map(project => {
     const projectLists = loadedToDos.filter(list => list.projectId === project.id)
-    // console.log(projectLists)
     const projectRoutines = loadedRoutines.filter(routine => routine.projectId === project.id)
+
     return {
       ...project,
       lists: projectLists,
       routines: projectRoutines
     }
   })
-
-  // console.log('projectsWithListsAndRoutines', projectsWithListsAndRoutines)
-  // console.log('miscellaneousLists', miscellaneousLists)
 
 
   useEffect(() => {
@@ -151,51 +152,114 @@ function Schedule() {
     setSaveScheduledLists(false)
   }
 
+  const handleTabsClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 
+    console.log('handled tabs click', event.currentTarget.id)
+    setCurrentTab(event.currentTarget.id)
+  }
 
   return (
     <>
-      {/* {//! color code bgs based on list type! */}
-      <ListsAsDraggableItems
-        loadedToDos={miscellaneousLists}
-        loadedRoutines={miscellaneousRoutines}
-        handleDragStart={handleDragStart}
-      />
 
-      <HeadingH2 text='Projects' />
-      <div className='mt-4'>
-        <SchedulerProjectsNavAndDraggables
-          projectsWithListsAndRoutines={projectsWithListsAndRoutines}
-        />
+      <SubHeading16px text='Schedule' />
+
+      <div className='my-4'>
+        <div className="tabs">
+          <div className={`tab tab-lg tab-lifted ${currentTab === 'projects' ? 'tab-active' : ''}`} id='projects'
+            onClick={handleTabsClick}
+          >Projects</div>
+          <div className={`tab tab-lg tab-lifted ${currentTab === 'special' ? 'tab-active' : ''}`} id='special'
+            onClick={handleTabsClick}
+          >Special Lists</div>
+          <div className={`tab tab-lg tab-lifted ${currentTab === 'misc' ? 'tab-active' : ''}`} id='misc'
+            onClick={handleTabsClick}
+          >Miscellaneous</div>
+        </div>
       </div>
 
-      <div className='mt-12'>
-        <strong>
-          Drag and Drop a "list" from above into the Calendar below. Move, Resize, or Duplicate as necessary
-        </strong>
-      </div>
-      <div className='my-6'>
-        {saveScheduledLists &&
-          <SolidBtn
-            onClickFunction={handleSaveScheduledLists}
-            text='Save Changes to Schedule'
+
+      <section className='flex flex-wrap gap-12'>
+        {currentTab === 'projects' && (
+          <>
+            <div>
+              <HeadingH2 text='Projects' />
+              <div className='mt-4'>
+                <ProjectsListAndDraggables
+                  projectsWithListsAndRoutines={projectsWithListsAndRoutines}
+                  handleDragStart={handleDragStart}
+                />
+              </div>
+            </div>
+          </>
+        )}
+
+
+        {currentTab === 'special' && (
+          <>
+            <div>
+              <HeadingH2 text='Special Lists' />
+              <div className='mt-4'>
+                {/* <SpecialLists
+                  projectsWithListsAndRoutines={projectsWithListsAndRoutines}
+                  handleDragStart={handleDragStart}
+                /> */}
+              </div>
+            </div>
+          </>
+        )}
+
+        {currentTab === 'misc' && (
+          <>
+            <div>
+              <HeadingH2 text='Miscellaneous Lists' />
+              <div className='mt-4'>
+                <MiscellaneousLists
+                  handleDragStart={handleDragStart}
+                  miscellaneousLists={miscellaneousLists}
+                  miscellaneousRoutines={miscellaneousRoutines}
+                />
+              </div>
+            </div>
+          </>
+        )}
+
+
+
+
+
+        <div className='flex-1'>
+          <div className='mt-0'>
+            <strong>
+              Drag and Drop a "list" from above into the Calendar below. Move, Resize, or Duplicate as necessary
+            </strong>
+          </div>
+
+          <div className='my-6'>
+            {saveScheduledLists &&
+              <SolidBtn
+                onClickFunction={handleSaveScheduledLists}
+                text='Save Changes to Schedule'
+              />
+            }
+          </div>
+
+
+
+          {/* uses a different type for scheduled events, and saved events */}
+          <Scheduler
+            scheduledLists={scheduledLists}
+            setScheduledLists={setScheduledLists}
+            draggedList={draggedList}
+            setDraggedList={setDraggedList}
+            // saveScheduledLists={saveScheduledLists}
+            setSaveScheduledLists={setSaveScheduledLists}
+            loadedToDos={loadedToDos}
+            loadedRoutines={loadedRoutines}
           />
-        }
-      </div>
 
-      {/* uses a different type for scheduled events, and saved events */}
-      <Scheduler
-        scheduledLists={scheduledLists}
-        setScheduledLists={setScheduledLists}
-        draggedList={draggedList}
-        setDraggedList={setDraggedList}
-        // saveScheduledLists={saveScheduledLists}
-        setSaveScheduledLists={setSaveScheduledLists}
-        loadedToDos={loadedToDos}
-        loadedRoutines={loadedRoutines}
-      />
+        </div>
 
-
+      </section>
     </>
   )
 }

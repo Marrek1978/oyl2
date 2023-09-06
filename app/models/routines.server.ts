@@ -19,6 +19,23 @@ export function getRoutines(  userId: User["id"] ) {
   }
 }
 
+export function getAllRoutines(  userId: User["id"] ) {
+  try {
+    const result = prisma.routine.findMany({
+      where: { userId },
+      include: {
+        routineToDos: {
+          orderBy: { sortOrder: "asc" },
+        },
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export function createRoutineAndToDos({
   userId,
   title,

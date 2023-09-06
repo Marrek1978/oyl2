@@ -5,9 +5,11 @@ import { useSortable } from '@dnd-kit/sortable';
 import TextBtn from '~/components/buttons/TextBtn';
 import SubHeading12px from '~/components/titles/SubHeading12px';
 import SubHeading14px from '~/components/titles/SubHeading14px';
-import { ArrowUpperRight, EditIcon } from "../../utilities/icons";
+import { EditIcon } from "../../utilities/icons";
 
 import type { Desire, Project } from '@prisma/client';
+import { GetSpecialLinkColor} from "~/components/forms/GetHeaderBgColor";
+import { useEffect } from "react";
 interface DndSortableProjectProps {
   id: string;
   project: Project
@@ -35,6 +37,12 @@ function DndSortableProject({ id, project }: DndSortableProjectProps) {
     associatedDesire = allUserDesires.filter(desire => desire.id === associatedDesireId)[0]?.title
   }
 
+  useEffect(() => {
+    console.log('highlightedProjectId', highlightedProjectId)
+  }, [highlightedProjectId])
+
+  const linkColor = GetSpecialLinkColor();
+  console.log('linkColor', linkColor)
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} className=" mt-5">
@@ -47,62 +55,48 @@ function DndSortableProject({ id, project }: DndSortableProjectProps) {
           cursor-pointer 
           text-left text-base-content
           transition duration-500
-          hover:bg-primary/30 
-          hover:text-primary-focus
-          ${project.sortOrder === 0 && 'bg-base-content text-base-100   hover:bg-info-content '}
-          ${highlightedProjectId === project.id && project.sortOrder !== 0 && ' bg-info/50'}
+          ${project.sortOrder === 0 ? `bg-success/90  text-success-content hover:bg-primary/70` : 'hover:bg-primary/30 '}
+        }
       `}
       >
 
         {project.sortOrder === 0 && (
-          <div className='mt-0 mb-2 text-info/70  '>
+          <div className='mt-0 mb-2 text-base-200  '>
             <SubHeading14px
               text='Project to focus on'
             />
           </div>
         )}
-        {/* <div className='flex items-center justify-between gap-12  '> */}
+
         <div className="flex items-baseline justify-between gap-4">
           <div className={`
               text-xl font-medium 
               ${highlightedProjectId !== project.id && project.sortOrder !== 0 && 'text-base-content'}
-              ${project.sortOrder === 0 && 'text-base-100'}
-              ${highlightedProjectId === project.id && project.sortOrder !== 0 && 'text-success-content'} 
+              ${project.sortOrder === 0 && ' text-success-content'}
+             
             `} >
             {project.title}
           </div>
 
           <div className=''>
-            {highlightedProjectId !== project.id ?
-              <Link to={project.id} >
-                <TextBtn
-                  text='Go To Project'
-                  onClickFunction={() => { }}
-                  color={`
+            <Link to={project.id} >
+              <TextBtn
+                text='Go To Project'
+                onClickFunction={() => { }}
+                color={`
                     ${project.sortOrder !== 0 && 'text-primary/70'}
-                    ${project.sortOrder === 0 && 'text-info'}
+                    ${project.sortOrder === 0 && linkColor}
                   `}
-                  icon={EditIcon}
-                />
-              </Link>
-              :
-              <div className={` 
-              ${project.sortOrder === 0 && 'text-info'}
-              ${highlightedProjectId === project.id && project.sortOrder !== 0 && 'text-primary/70'} 
-              `} >
-                {ArrowUpperRight}
-              </div>
-            }
+                icon={EditIcon}
+              />
+            </Link>
           </div>
         </div>
 
-        {/* //!  add value-badges here */}
         {associatedDesire && (
           <div className={`
                 font-medium 
-                ${highlightedProjectId !== project.id && project.sortOrder !== 0 && 'text-slate-600'}
-                ${project.sortOrder === 0 && 'text-base-300'}
-                ${highlightedProjectId === project.id && project.sortOrder !== 0 && 'text-base-content'} 
+                ${project.sortOrder === 0 && 'text-success-content'}
               `} >
             <SubHeading12px
               text={associatedDesire}
@@ -110,14 +104,6 @@ function DndSortableProject({ id, project }: DndSortableProjectProps) {
           </div>
         )}
 
-        <div className={`
-          mt-2 w-prose max-w-prose text-sm 
-          ${highlightedProjectId !== project.id && project.sortOrder !== 0 && 'text-base-content/80'}
-          ${project.sortOrder === 0 && 'text-base-300/70'}
-          ${highlightedProjectId === project.id && project.sortOrder !== 0 && 'text-info-content/70'} 
-          `}>
-          {project.description}
-        </div>
 
       </div>
     </div>

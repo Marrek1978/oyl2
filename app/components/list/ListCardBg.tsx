@@ -1,5 +1,5 @@
 import React from 'react'
-import GetHeaderBgColor from '../forms/GetHeaderBgColor';
+import {GetHeaderBgColor} from '../forms/GetHeaderBgColor';
 import Heading14pxWithLink from '../titles/Heading14pxWithLink';
 
 type Props = {

@@ -25,7 +25,7 @@ function Navbar() {
     // 👆 false parameter is required for react project
   }, [])
 
-   const darkBackground = isDark ? 'bg-base-300' : 'bg-base-content'
+   const darkBackground = isDark ? 'bg-base-100' : 'bg-base-content'
 
   return (
     <>

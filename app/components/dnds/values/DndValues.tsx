@@ -22,7 +22,7 @@ const DndValues = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
 
-  
+
   useEffect(() => {
     if (valuesData) { setValues(transformValueDates(valuesData)) }
   }, [valuesData])
@@ -98,33 +98,38 @@ const DndValues = () => {
           />
         </Modal>)
       }
+
       <div className='flex justify-between items-baseline'>
         <div className='text-success mb-2'>
           <SubHeading16px text='Your Values' />
         </div>
       </div>
-      <DndContext
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-        sensors={sensors}
-      >
-        <SortableContext
-          items={values?.map(value => value.id)}
-          strategy={verticalListSortingStrategy}
+
+      <div className=''>
+
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+          sensors={sensors}
         >
+          <SortableContext
+            items={values?.map(value => value.id)}
+            strategy={verticalListSortingStrategy}
+          >
 
-          {values?.map((value) => (
-            <DndSortableGeneric
-              key={value.id}
-              id={value.id}
-              description={value.valueDescription}
-              title={value.valueTitle}
-            >
-            </DndSortableGeneric>
-          ))}
+            {values?.map((value) => (
+              <DndSortableGeneric
+                key={value.id}
+                id={value.id}
+                description={value.valueDescription}
+                title={value.valueTitle}
+              >
+              </DndSortableGeneric>
+            ))}
 
-        </SortableContext>
-      </DndContext >
+          </SortableContext>
+        </DndContext >
+      </div>
     </>
   )
 }
