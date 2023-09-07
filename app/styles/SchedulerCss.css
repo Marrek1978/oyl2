@@ -42,8 +42,8 @@
 .projects-draggable-timeBlock-mainFocus {
   @apply border-2  border-success
   bg-success/90
-   
-  text-base text-success-content;
+  text-base text-success-content
+  mb-8
 }
 
 .project-draggable-mainfocus {

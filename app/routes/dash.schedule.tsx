@@ -83,7 +83,7 @@ function Schedule() {
   const fetcher = useFetcher();
   const [currentTab, setCurrentTab] = useState<string>('projects')
   const [saveScheduledLists, setSaveScheduledLists] = useState<boolean>(false)   //  SaveButton
-  const [draggedList, setDraggedList] = useState<ListAndToDos | RoutineAndToDos>()
+  const [draggedList, setDraggedList] = useState<ListAndToDos | RoutineAndToDos | ProjectWithListsAndRoutines>()
   const [scheduledLists, setScheduledLists] = useState<ScheduledList[] | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[]>([])
   //?  when added to the calendar, they should be converted to the event structure, with start and end dates, is draggable, all day, id
   //? loaded scheduled events will be of the correct format, and will be loaded from db
@@ -99,7 +99,6 @@ function Schedule() {
 
   const initialListsData = useLoaderData<typeof loader>();
   const loadedScheduledLists: ScheduledList[] = useMemo(() => transformScheduledListsDataDates(initialListsData.scheduledLists), [initialListsData.scheduledLists])
-
   const thisWeeksScheduledLists = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledLists), [loadedScheduledLists])
   const loadedToDos: ListAndToDos[] = useMemo(() => transformToDoDataDates(initialListsData.loadedToDos), [initialListsData.loadedToDos]) //initialListsData.loadedToDos as ListAndToDos[
   const loadedProjects: Project[] = useMemo(() => transformProjectDataDates(initialListsData.loadedProjects), [initialListsData.loadedProjects]) //initialListsData.loadedProjects as Project[]
@@ -110,7 +109,6 @@ function Schedule() {
   const projectsWithListsAndRoutines: ProjectWithListsAndRoutines[] = loadedProjects.map(project => {
     const projectLists = loadedToDos.filter(list => list.projectId === project.id)
     const projectRoutines = loadedRoutines.filter(routine => routine.projectId === project.id)
-
     return {
       ...project,
       lists: projectLists,
@@ -126,18 +124,19 @@ function Schedule() {
 
   const handleDragStart = useCallback((draggedItem: ListAndToDos | RoutineAndToDos) => {
     setDraggedList(draggedItem)
+    console.log('draggedItem is ', draggedItem)
   }, [])
 
-  useEffect(() => {
 
+  useEffect(() => {
     if (scheduledLists !== thisWeeksScheduledLists) {
       console.log('scheduledLists !== loadedScheduledLists')
       setSaveScheduledLists(true)
     } else {
       setSaveScheduledLists(false)
     }
-
   }, [scheduledLists, thisWeeksScheduledLists])
+
 
   const handleSaveScheduledLists = async () => {
     const scheduledListsString = JSON.stringify(scheduledLists)
@@ -146,17 +145,18 @@ function Schedule() {
         scheduledListsString
       }, {
         method: 'POST',
-        action: '/dash/schedule',
+        // action: '/dash/schedule',
       })
     } catch (error) { throw error }
     setSaveScheduledLists(false)
   }
 
-  const handleTabsClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 
-    console.log('handled tabs click', event.currentTarget.id)
+  const handleTabsClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    // console.log('handled tabs click', event.currentTarget.id)
     setCurrentTab(event.currentTarget.id)
   }
+
 
   return (
     <>

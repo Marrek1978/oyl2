@@ -1,21 +1,20 @@
-import React, { useCallback, useMemo, useState } from 'react'
-
-// import type { SlotInfo } from 'react-big-calendar'
-import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
-import { Calendar, momentLocalizer, Views, } from 'react-big-calendar'
-import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
-import type { EventInteractionArgs, DragFromOutsideItemArgs } from 'react-big-calendar/lib/addons/dragAndDrop'
-
 import moment from 'moment'
 import { v4 as uuidv4 } from 'uuid';
+import React, { useCallback, useMemo, useState } from 'react'
 
+import Modal from '~/components/modals/Modal'
+import SuccessMessage from '~/components/modals/SuccessMessage'
+import DeleteEventModal from '~/components/modals/DeleteEventModal'
+import { Calendar, momentLocalizer, Views, } from 'react-big-calendar'
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
+
+import type { ListToDo, RoutineToDo, ScheduledList } from '@prisma/client'
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndToDos } from '~/types/routineTypes'
-import type { ScheduledList } from '@prisma/client'
-import Modal from '../modals/Modal'
-import DeleteEventModal from '../modals/DeleteEventModal'
-import SuccessMessage from '../modals/SuccessMessage'
-// import { events } from './../calendar/events/events';
+import type { EventInteractionArgs, DragFromOutsideItemArgs } from 'react-big-calendar/lib/addons/dragAndDrop'
+
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
+import { ProjectWithListsAndRoutines } from '~/types/projectTypes';
 
 const localizer = momentLocalizer(moment)
 const DragAndDropCalendar = withDragAndDrop(Calendar)
@@ -23,15 +22,15 @@ const DragAndDropCalendar = withDragAndDrop(Calendar)
 interface SchedulerProps {
   scheduledLists: ScheduledList[] | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[];
   setScheduledLists: React.Dispatch<React.SetStateAction<ScheduledList[] | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[]>>;
-  draggedList: ListAndToDos | RoutineAndToDos | undefined;
-  setDraggedList: React.Dispatch<React.SetStateAction<ListAndToDos | RoutineAndToDos | undefined>>;
+  draggedList: ListAndToDos | RoutineAndToDos | ProjectWithListsAndRoutines | undefined;
+  setDraggedList: React.Dispatch<React.SetStateAction<ListAndToDos | RoutineAndToDos | ProjectWithListsAndRoutines | undefined>>;
   setSaveScheduledLists: React.Dispatch<React.SetStateAction<boolean>>;
   // saveScheduledLists: boolean;
   loadedToDos: ListAndToDos[];
   loadedRoutines: RoutineAndToDos[];
 }
 
-//!  have to decide on styling
+
 
 function Scheduler({
   scheduledLists,
@@ -48,10 +47,6 @@ function Scheduler({
   const [deleteEventBool, setDeleteEventBool] = useState<boolean>(false)
   const [successMessage, setSuccessMessage] = useState('');
   const [eventToDelete, setEventToDelete] = useState<ScheduledList | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>>()
-
-  // console.log('in scheduler and loadedToDos is ', loadedToDos)
-
-
 
   const dragFromOutsideItem = useCallback(() => {
     return (event: object) => {
@@ -75,20 +70,20 @@ function Scheduler({
   }, [setScheduledLists, setSaveScheduledLists])
 
 
-  const onDrdopFromOutside = useCallback((
-    { start: startDate, end: endDate }: DragFromOutsideItemArgs
-  ) => {
+  const onDrdopFromOutside = useCallback(({ start: startDate, end: endDate }: DragFromOutsideItemArgs) => {
 
     if (draggedList === undefined) return
+
     const start = typeof startDate === 'string' ? new Date(startDate) : startDate;
     const end = typeof endDate === 'string' ? new Date(endDate) : endDate;
+    let description = {};
 
-    const description: { [key: string]: string } = descriptionTypeLabelAndId(draggedList!)
+    'todos' in draggedList && (description = { todos: draggedList.id })
+    'routineToDos' in draggedList && (description = { routineToDos: draggedList.id })
+    'lists' in draggedList && (description = { projectLists: draggedList.lists })
 
-    // randome id is needed to create a new scheduled list
-    // if id is in db => update
-    // if this id is not in DB ( adn won't be) => create new scheduled list with DB givin ID
-    const list: Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'> = {
+    type DescriptionType = { lists: ListAndToDos[] } | { todos: string } | { routineToDos: string };
+    const list: Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId' | 'description' & { description: DescriptionType }> = {
       id: uuidv4(),
       listId: draggedList.id,
       title: draggedList.title,
@@ -100,16 +95,15 @@ function Scheduler({
 
     setDraggedList(undefined)
     addListToScheduledList(list)
+
   }, [draggedList, setDraggedList, addListToScheduledList])
 
 
-  const moveEvent = useCallback((
-    { event, start, end, isAllDay: droppedOnAllDaySlot = false }: EventInteractionArgs<any>
-  ): void => {
+  const moveEvent = useCallback(({ event, start, end, isAllDay: droppedOnAllDaySlot = false }: EventInteractionArgs<any>): void => {
+    // console.log('in move event and event is ', event)
     const { allDay } = event
     if (!allDay && droppedOnAllDaySlot) event.allDay = true
 
-    // setSaveScheduledLists(true)
     setScheduledLists((prev) => {
       const existing = prev.find((ev) => ev.id === event.id)!
       const filtered = prev.filter((ev) => ev.id !== event.id)
@@ -169,6 +163,7 @@ function Scheduler({
     // list todos??
   }
 
+
   const eventPropGetter = useCallback(
     (event: object) => {
       // console.log('in event prop getter and event is ', event)
@@ -181,6 +176,7 @@ function Scheduler({
   //   console.log('in handle select list')
   // }
 
+
   function handleDoubleClickEvent(
     event: any,
     e: React.SyntheticEvent<HTMLElement, Event>
@@ -189,33 +185,50 @@ function Scheduler({
     setEventToDelete(event as ScheduledList | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>)
   }
 
+
   function handleToolTipAccessor(event: any) {
 
     const type = Object.keys(event.description)[0]
     const { listId } = event
     let loadedList: ListAndToDos[] | RoutineAndToDos[] = [];
-    let todosArrayName: string = '';
+    let currentList: ListAndToDos[] | RoutineAndToDos[] | undefined;
+    let currentToDos: ListToDo[] | RoutineToDo[] | undefined;
+
 
     if (type === 'todos') {
       loadedList = loadedToDos
-      todosArrayName = type
+      currentList = loadedList?.filter((list: ListAndToDos) => list.id === listId);
+      currentList && (currentToDos = currentList[0]?.[type])
     }
+
+
     if (type === 'routineToDos') {
       loadedList = loadedRoutines
-      todosArrayName = type
+      currentList = loadedList?.filter((list: RoutineAndToDos) => list.id === listId);
+      currentList && (currentToDos = currentList[0]?.[type])
+    }
+
+
+    if (type === 'projectLists') {
+      console.log('projectList event is', event.description[type])
+
+      const titles = event.description[type].map((list: ListAndToDos) => list.title)
+      return `\nLists:\n${titles.join('\n')}`
     }
 
 
     //!!! sopmething giong on here with types.
-    const currentList = loadedList?.filter((list:any) => list.id === listId)
-    const currentToDos = currentList[0]?.[todosArrayName]
+    // const currentList = loadedList?.filter((list: any) => list.id === listId)
+    // const currentToDos = currentList[0]?.[type]
 
     return `\nToDos:\n${currentToDos?.map((todo: any) => todo.body).join('\n')}`
+
   }
+
+
 
   return (
     <>
-
       {successMessage && (
         <Modal onClose={() => { }} zIndex={30}>
           {successMessage}Yolo
@@ -224,7 +237,6 @@ function Scheduler({
           />
         </Modal>)
       }
-
 
       {deleteEventBool && eventToDelete && (
         <Modal onClose={() => { }} zIndex={20}>
@@ -273,12 +285,4 @@ function Scheduler({
 export default Scheduler
 
 
-function descriptionTypeLabelAndId(list: ListAndToDos | RoutineAndToDos): { [key: string]: string } {
-  if ('todos' in list) {
-    return { todos: list.id }
-  } else if ('routineToDos' in list) {
-    return { routineToDos: list.id }
-  } else {
-    return {}
-  }
-}
+
