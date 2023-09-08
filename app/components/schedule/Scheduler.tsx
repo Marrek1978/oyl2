@@ -187,13 +187,11 @@ function Scheduler({
 
 
   function handleToolTipAccessor(event: any) {
-
     const type = Object.keys(event.description)[0]
     const { listId } = event
     let loadedList: ListAndToDos[] | RoutineAndToDos[] = [];
     let currentList: ListAndToDos[] | RoutineAndToDos[] | undefined;
     let currentToDos: ListToDo[] | RoutineToDo[] | undefined;
-
 
     if (type === 'todos') {
       loadedList = loadedToDos
@@ -201,28 +199,18 @@ function Scheduler({
       currentList && (currentToDos = currentList[0]?.[type])
     }
 
-
     if (type === 'routineToDos') {
       loadedList = loadedRoutines
       currentList = loadedList?.filter((list: RoutineAndToDos) => list.id === listId);
       currentList && (currentToDos = currentList[0]?.[type])
     }
 
-
     if (type === 'projectLists') {
-      console.log('projectList event is', event.description[type])
-
       const titles = event.description[type].map((list: ListAndToDos) => list.title)
       return `\nLists:\n${titles.join('\n')}`
     }
 
-
-    //!!! sopmething giong on here with types.
-    // const currentList = loadedList?.filter((list: any) => list.id === listId)
-    // const currentToDos = currentList[0]?.[type]
-
     return `\nToDos:\n${currentToDos?.map((todo: any) => todo.body).join('\n')}`
-
   }
 
 
