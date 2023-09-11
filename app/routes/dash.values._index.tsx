@@ -6,11 +6,12 @@ import ValueForm from '~/components/forms/ValueForm'
 
 import type { validationErrorsTypes } from '~/types/valueTypes'
 
-export const loader = async ({request}: LoaderArgs) => {
-  console.log('loader values._index.tsx')
+export const loader = async ({ request }: LoaderArgs) => {
   let userId;
-  userId = await requireUserId(request);
-  return userId
+  try {
+    userId = await requireUserId(request);
+    return userId
+  } catch (error) { throw error }
 }
 
 export const action = async ({ request }: ActionArgs) => {
@@ -30,7 +31,7 @@ export const action = async ({ request }: ActionArgs) => {
     valueTitle: valueData.title as string,
     valueDescription: valueData.description as string,
     userId,
-    sortOrder: valueData.sortOrder ? parseInt(valueData.sortOrder as string) : 0, 
+    sortOrder: valueData.sortOrder ? parseInt(valueData.sortOrder as string) : 0,
   }
 
   try {
