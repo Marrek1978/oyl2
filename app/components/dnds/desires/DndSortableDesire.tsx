@@ -89,7 +89,7 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
                     <div key={id}
                       className={`
                       font-bold
-                      text-base-content
+                      text-success
                     `} >
                       <SubHeading12px text={`${title}, `} />
                     </div>
