@@ -15,7 +15,7 @@ export function GetSpecialLinkColor() {
   const isDark = theme === 'night'; 
 
   const LinkColor = isDark ? 'text-primary-content' : 'text-primary'
-  console.log('isDark', isDark)
+  // console.log('isDark', isDark)
 
   return LinkColor
 }

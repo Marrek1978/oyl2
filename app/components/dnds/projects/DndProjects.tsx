@@ -26,7 +26,20 @@ function DndProjects() {
 
 
   useEffect(() => {
-    if (loadedProjects?.projects) { setProjects(transformProjectDates(loadedProjects?.projects)) }
+
+    if (!loadedProjects?.projects) return
+
+    const projectsWithProperDates: ProjectWithDesires[] = transformProjectDates(loadedProjects?.projects)
+    projectsWithProperDates.sort((a, b) => a.sortOrder - b.sortOrder)
+    const notProjectsWithSequentialSortOrder = projectsWithProperDates.some((project, index) => {
+      return project.sortOrder !== index
+    })
+
+    setProjects(notProjectsWithSequentialSortOrder
+      ? resetProjectsSortOrder(projectsWithProperDates)
+      : projectsWithProperDates
+    )
+
   }, [loadedProjects])
 
 
@@ -47,13 +60,14 @@ function DndProjects() {
   }, [fetcher])
 
 
-  const handleEditSortOrder = useCallback(async () => {
+  const handleSaveSortOrder = useCallback(async () => {
     const projectString = JSON.stringify(projects);
     try {
       fetcher.submit({
         projectString
       }, {
         method: 'POST',
+        action: '/dash/projects',
       })
     } catch (error) { throw error }
 
@@ -62,10 +76,8 @@ function DndProjects() {
 
 
   useEffect(() => {
-    if (saveNewSortOrder) {
-      handleEditSortOrder()
-    }
-  }, [saveNewSortOrder, handleEditSortOrder])
+    saveNewSortOrder && handleSaveSortOrder()
+  }, [saveNewSortOrder, handleSaveSortOrder])
 
 
   const resetProjectsSortOrder = (projects: ProjectWithDesires[]) => {
@@ -82,14 +94,14 @@ function DndProjects() {
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-    if (active.id !== over?.id) {
-      setProjects((prevProjects: ProjectWithDesires[]) => {
-        const oldIndex = prevProjects.findIndex(project => project.id === active.id);
-        const newIndex = prevProjects.findIndex(project => project.id === over?.id);
-        const newDesires = arrayMove(prevProjects, oldIndex, newIndex);
-        return resetProjectsSortOrder(newDesires);
-      })
-    }
+    if (active.id === over?.id) return
+
+    setProjects((prevProjects: ProjectWithDesires[]) => {
+      const oldIndex = prevProjects.findIndex(project => project.id === active.id);
+      const newIndex = prevProjects.findIndex(project => project.id === over?.id);
+      const newProjectsOrder = arrayMove(prevProjects, oldIndex, newIndex);
+      return resetProjectsSortOrder(newProjectsOrder);
+    })
   }
 
 
@@ -107,7 +119,7 @@ function DndProjects() {
         {successMessage && (
           <Modal onClose={() => { }} zIndex={20}>
             <SuccessMessage
-              text= {successMessage}
+              text={successMessage}
             />
           </Modal>)
         }

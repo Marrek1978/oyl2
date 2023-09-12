@@ -54,7 +54,7 @@ export const createProject = async (project: CreateProject) => {
   }
 };
 
-export const updateProjectsOrder = async (projects: Project[]) => {
+export const updateProjectsSortOrder = async (projects: Project[]) => {
   try {
     const updateSortOrder = projects.map((project) => {
       return prisma.project.update({

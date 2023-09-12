@@ -8,6 +8,7 @@ import ValueForm from '~/components/forms/ValueForm'
 import type { Value } from '@prisma/client';
 import type { validationErrorsTypes } from '~/types/valueTypes'
 
+
 export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData()
   const valueData = Object.fromEntries(formData);
@@ -41,7 +42,10 @@ function EditValueRoute() {
     <>
       <Outlet />
       <Modal onClose={() => { }} zIndex={10}>
-        <ValueForm value={value} />
+        <ValueForm
+          value={value}
+          isNew={false}
+        />
       </Modal>
     </>
   )

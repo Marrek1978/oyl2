@@ -4,7 +4,7 @@ import { type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime';
 import { getDesires } from '~/models/desires.server';
 import { requireUserId } from '~/models/session.server';
 import DndProjects from '~/components/dnds/projects/DndProjects';
-import { getProjects, updateProjectsOrder } from '~/models/project.server';
+import { getProjects, updateProjectsSortOrder } from '~/models/project.server';
 import DndPlus800OutletFlex from '~/components/baseContainers/DndPlus800OutletFlex';
 
 export const loader = async ({ request }: LoaderArgs) => {
@@ -21,7 +21,7 @@ export const action = async ({ request }: ActionArgs) => {
   const parsedBody = parse(formBody);
   const projects = JSON.parse(parsedBody.projectString as string);
   try {
-    await updateProjectsOrder(projects)
+    await updateProjectsSortOrder(projects)
     return 'Projects order was updated'
   } catch (error) {
     return 'There was an issue updating the sorting order'

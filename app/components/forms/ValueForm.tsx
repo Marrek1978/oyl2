@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Form, Link, useActionData, useLocation, useMatches, useNavigation } from '@remix-run/react'
+import { Form, Link, useActionData, useMatches, useNavigation } from '@remix-run/react'
 
 import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
 import { closeIcon, dbIcon, trashIcon } from '../utilities/icons'
@@ -13,12 +13,13 @@ import BasicFormAreaBG from './BasicFormAreaBG';
 
 interface ValueFormProps {
   value?: Value
+  isNew?: boolean
 }
 
-function ValueForm({ value }: ValueFormProps) {
+function ValueForm({ value, isNew = true }: ValueFormProps) {
 
   const matches = useMatches();
-  const location = useLocation()
+  // const location = useLocation()
   const navigation = useNavigation();
   const validationErrors = useActionData()
 
@@ -27,23 +28,37 @@ function ValueForm({ value }: ValueFormProps) {
   const [sortOrder, setSortOrder] = useState<number>(0) //if adding new value, set to values.length
   const [description, setDescription] = useState<string>('')
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
-  const [isAddNewValueRoute, setIsAddNewValueRoute] = useState(true) //true if /dash/values, false if /dash/values/:valueId
-  const [saveBtnText, setSaveBtnText] = useState<string>('Save Value')
 
   const isSubmitting = navigation.state === 'submitting'
   const isIdle = navigation.state === 'idle'
   const values = matches.find(match => match.id === 'routes/dash.values')?.data
 
+  const saveBtnText =
+    isSubmitting
+      ? 'Saving...'
+      : isNew
+        ? "Save New Value"
+        : "Save Changes to Value"
 
-  useEffect(() => {
-    if (location.pathname === '/dash/values') {
-      setIsAddNewValueRoute(true)
-      setSaveBtnText('Create Value')
-    } else if (location.pathname.startsWith('/dash/values/')) {
-      setIsAddNewValueRoute(false)
-      setSaveBtnText('Save Edits to Value')
-    }
-  }, [location.pathname]);
+  const header = isNew
+    ? 'Create New Value'
+    : (<>
+      <div>
+        <span className='text-sm' >
+          Edit Value:
+        </span>
+      </div>
+      <div>
+        {title}
+      </div>
+    </>)
+
+  const TitleError = validationErrors?.title && (
+    <div className='validation-error'> {validationErrors.title}</div>)
+
+  const DescriptionError = validationErrors?.description && (
+    <div className='validation-error'> {validationErrors.description}</div>)
+
 
   useEffect(() => {
     setTitle(value?.valueTitle || '')
@@ -64,21 +79,7 @@ function ValueForm({ value }: ValueFormProps) {
 
   return (
     <div>
-      <BasicFormAreaBG
-        title={isAddNewValueRoute
-          ? 'Create a New Value'
-          : (<>
-            <div>
-              <span className='text-sm' >
-                Edit Value:
-              </span>
-            </div>
-            <div  >
-              {value?.valueTitle}
-            </div>
-          </>
-          )}
-      >
+      <BasicFormAreaBG title={header}  >
 
         <Form method='post' className='mx-8'>
           <div className="form-control vert-space-between-inputs">
@@ -96,10 +97,9 @@ function ValueForm({ value }: ValueFormProps) {
               className=" input-field-text-title  "
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              // required
             />
-            {validationErrors?.title && (
-              <div className='text-red-700'> {validationErrors.title}</div>
-            )}
+            {TitleError}
 
             <div className='vert-space-between-inputs'>
               <InputLabelWithGuideLineLink
@@ -113,11 +113,10 @@ function ValueForm({ value }: ValueFormProps) {
                 name='description'
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                // required
               >
               </textarea>
-              {validationErrors?.description && (
-                <div className='text-red-700'> {validationErrors.description}</div>
-              )}
+              {DescriptionError}
             </div>
           </div>
 
@@ -130,7 +129,7 @@ function ValueForm({ value }: ValueFormProps) {
               disableBtn={!isSaveable || !isIdle}
             />
 
-            {!isAddNewValueRoute &&
+            {!isNew &&
               (<>
                 <div className='two-button-spacing vert-space-between-inputs mb-8'>
                   <div className='flex-1'>

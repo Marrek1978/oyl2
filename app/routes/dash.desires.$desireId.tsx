@@ -8,6 +8,9 @@ import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
 import AllOutcomesDisplay from '~/components/desires/outcomes/AllOutcomesDisplay';
 
 import type { DesireValues, DesireWithValues } from '~/types/desireTypes';
+import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
+import H2WithLinkAndProsePara from '~/components/text/H2WithLinkAndProsePara';
+import { DesireIdealPlaceholderText } from '~/components/utilities/PlaceHolderTexts';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   const desireId = params.desireId!
@@ -46,33 +49,51 @@ function DesirePage() {
 
       <BreadCrumbs title={title || ''} />
       <Outlet />
-     
-      <div className='flex flex-col max-w-max'>
 
-        <div className='flex-1   w-full'>
-          <DesireDisplay
-            title={title || ''}
-            description={description || ''}
-            current={current || ''}
-            ideal={ideal || ''}
-            desireValues={desireValues}
-            plural={plural}
-          />
-        </div>
+      <BasicTextAreaBG >
+        <div className='flex flex-col max-w-max'>
 
-        <div className='mt-8 max-w-full  '>
-          <div className='flex gap-8 flex-wrap'>
-            <div className='flex-1'>
-              <AllOutcomesDisplay
-                outcomes={outcomes}
-                plural={plural}
+          <section id='desireAndCurrentSituation'>
+            <div className='flex-1 w-full'>
+              <DesireDisplay
                 title={title || ''}
+                description={description || ''}
+                current={current || ''}
+                ideal={ideal || ''}
+                desireValues={desireValues}
+                plural={plural}
               />
             </div>
+          </section>
 
-          </div>
+
+          <section id='IdealAndOutcomes'>
+
+            <div className='flex gap-8 flex-wrap'>
+              <div className='flex-1'>
+                {/* //?  THE IDEAL SITUATION  */}
+                <div className='flex-1 min-w-[400px]'>
+                  <H2WithLinkAndProsePara
+                    title={'The Ideal Scenario'}
+                    linkDestination={'editIdeal'}
+                    linkText={'Edit Ideal Scenario'}
+                    paragraph={ideal?.length ? ideal : DesireIdealPlaceholderText}
+                  />
+                </div>
+              </div>
+              <div className='flex-1'>
+                <AllOutcomesDisplay
+                  outcomes={outcomes}
+                  plural={plural}
+                  title={title || ''}
+                />
+              </div>
+
+            </div>
+          </section>
         </div>
-      </div>
+      </BasicTextAreaBG >
+
     </>
   )
 }

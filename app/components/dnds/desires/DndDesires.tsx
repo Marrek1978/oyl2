@@ -25,10 +25,24 @@ const DndDesires = () => {
 
 
   useEffect(() => {
-    if (loaderData?.desires) {
-      setDesires(transformDesireDates(loaderData?.desires))
-    }
+     if (!loaderData?.desires) return
+
+    const desiresWithProperDates: DesireWithValues[] = transformDesireDates(loaderData?.desires)
+    desiresWithProperDates.sort((a, b) => a.sortOrder - b.sortOrder)
+    const notDesiresWithSequentialSortOrder = desiresWithProperDates.some((desire, index) => {
+      return desire.sortOrder !== index
+    })
+    setDesires(notDesiresWithSequentialSortOrder
+      ? resetDesiresSortOrder(desiresWithProperDates)
+      : desiresWithProperDates
+    )
+
   }, [loaderData])
+
+
+  useEffect(() => {
+    console.log(desires)
+  }, [desires])
 
 
   useEffect(() => {

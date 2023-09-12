@@ -22,9 +22,21 @@ const DndValues = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
 
+  
 
   useEffect(() => {
-    if (valuesData) { setValues(transformValueDates(valuesData)) }
+    if (!valuesData) return
+
+    const valuesWithProperDates: Value[] =transformValueDates(valuesData)
+    valuesWithProperDates.sort((a, b) => a.sortOrder - b.sortOrder)
+    const notValuesWithSequentialSortOrder = valuesWithProperDates.some((value, index) => {
+      return value.sortOrder !== index
+    })
+    setValues(notValuesWithSequentialSortOrder
+      ? resetValuesSortOrder(valuesWithProperDates)
+      : valuesWithProperDates
+    )
+
   }, [valuesData])
 
 
@@ -43,6 +55,7 @@ const DndValues = () => {
         valuesString
       }, {
         method: 'POST',
+        action: '/dash/values',
       })
     } catch (error) { throw error }
     setSaveNewSortOrder(false);

@@ -1,11 +1,11 @@
 import { useLoaderData, useMatches } from '@remix-run/react'
+import { redirect, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
 
 import Modal from '~/components/modals/Modal'
-import ProjectsForm from '~/components/forms/ProjectsForm'
 import { requireUserId } from '~/models/session.server'
-import {  getProjects, updateProjectDetails } from '~/models/project.server'
+import ProjectsForm from '~/components/forms/ProjectsForm'
+import { getProjects, updateProjectDetails } from '~/models/project.server'
 
-import { redirect, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
 import type { ProjectValidationErrorsTypes } from '~/types/projectTypes'
 
 
@@ -25,10 +25,7 @@ export const action = async ({ request }: ActionArgs) => {
 
   let validationErrors: ProjectValidationErrorsTypes = {};
   !projectData.title && (validationErrors.title = 'A title is required')
-  // !projectData.description && (validationErrors.description = 'A description is required')
   if (!projectData.title) return validationErrors
-
-
 
   let desireIds: string[] = []
   for (let key in desireIds) {
@@ -54,11 +51,7 @@ export const action = async ({ request }: ActionArgs) => {
 }
 
 
-
-
-type Props = {}
-
-function EditProjectPage({ }: Props) {
+function EditProjectPage() {
 
   const { projects } = useLoaderData()
   const matches = useMatches()
@@ -72,6 +65,7 @@ function EditProjectPage({ }: Props) {
         allUserDesires={desires}
         allUserProjects={projects}
         project={project}
+        isNew={false}
       />
     </Modal>
   )

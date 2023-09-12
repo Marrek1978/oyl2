@@ -30,7 +30,19 @@ const DndOutcomes: React.FC<DndOutcomesProps> = ({ desireName, description }) =>
 
 
   useEffect(() => {
-    if (outcomesData) { setOutcomes(transformOutcomeDates(outcomesData)) }
+    if(!outcomesData) return
+
+    const outcomesWithProperDates: DesireOutcome[] =transformOutcomeDates(outcomesData)
+    outcomesWithProperDates.sort((a, b) => a.sortOrder - b.sortOrder)
+    const notOutcomesWithSequentialSortOrder = outcomesWithProperDates.some((outcome, index) => {
+      return outcome.sortOrder !== index
+    })
+    setOutcomes(notOutcomesWithSequentialSortOrder
+      ? resetOutcomesSortOrder(outcomesWithProperDates)
+      : outcomesWithProperDates
+    )
+   
+    // setOutcomes(transformOutcomeDates(outcomesData)) 
   }, [outcomesData])
 
 
@@ -49,6 +61,7 @@ const DndOutcomes: React.FC<DndOutcomesProps> = ({ desireName, description }) =>
         outcomesString
       }, {
         method: 'POST',
+        action: '/dash/desires/$desireId_/outcomes',
       })
     } catch (error) { throw error }
     setSaveNewSortOrder(false);

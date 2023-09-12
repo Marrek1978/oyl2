@@ -53,7 +53,7 @@ function EditDesireDetailsPage() {
     <>
       <Outlet />
       <Modal onClose={() => { }} zIndex={10}>
-        <DesiresForm desire={desire} />
+        <DesiresForm desire={desire} isNew={false} />
       </Modal>
     </>
   )

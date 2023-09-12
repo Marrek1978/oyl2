@@ -6,14 +6,23 @@ import Modal from '~/components/modals/Modal'
 import DesiresOutcomesForm from '~/components/forms/DesiresOutcomesForm'
 import { updateDesireOutcome } from '~/models/outcome.server'
 
-import type { DesireWithValues } from '~/types/desireTypes'
+import type { DesireWithValues, validationErrorsTypes } from '~/types/desireTypes'
 import type { Desire, DesireOutcome } from '@prisma/client'
 import type { DesireOutcomeWithStringDates } from '~/types/outcomeTypes'
 
 
 export const action = async ({ request }: ActionArgs) => {
+  console.log('outocmes_outcomeId action')
   const formBody = await request.text();
   const outcomeData = JSON.parse(parse(formBody).outcomeString as string);
+
+  let validationErrors: validationErrorsTypes = {};
+  !outcomeData.title && (validationErrors.title = 'A title is required')
+  !outcomeData.description && (validationErrors.description = 'A description is required')
+  console.log(validationErrors)
+  if (!outcomeData.title || !outcomeData.description) return validationErrors
+
+  
   try {
     await updateDesireOutcome(outcomeData)
     return redirect('..')
@@ -47,6 +56,7 @@ function EditOutcomePage() {
         <DesiresOutcomesForm
           desire={desire}
           outcome={outcome}
+          isNew={false}
         />
       </Modal>
     </>

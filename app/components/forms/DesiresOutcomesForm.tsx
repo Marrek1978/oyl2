@@ -1,6 +1,6 @@
 // import { v4 as uuidOutcomes } from "uuid";
 import { useEffect, useState } from 'react'
-import { Form, useActionData, useFetcher, useNavigation, useLocation, Link } from '@remix-run/react';
+import { Form, useFetcher, useNavigation, Link } from '@remix-run/react';
 
 import Modal from "../modals/Modal";
 import SolidBtn from '../buttons/SolidBtn';
@@ -19,16 +19,13 @@ import type { DesireWithValues } from '~/types/desireTypes'
 interface DesireFormProps {
   desire?: DesireWithValues;
   outcome?: DesireOutcome;
+  isNew?: boolean
 }
 
-function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
+function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps) {
 
   const fetcher = useFetcher();
-  const location = useLocation();
   const navigation = useNavigation();
-  const validationErrors = useActionData()
-
-  //!!  make client side  console.log('validation errors = ', validationErrors)
 
   const [desireId, setDesireId] = useState<string>('')
   const [successMessage, setSuccessMessage] = useState('');
@@ -36,7 +33,6 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
   const [editsMade, setEditsMade] = useState<boolean>(false) //true if outcome is new, false if outcome is existing
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
   const [outcomeTitle, setOutcomeTitle] = useState<string>('')
-  const [isNewOutcome, setIsNewOutcome] = useState<boolean>(true) //true if outcome is new, false if outcome is existing
   const [outcomeDescription, setOutcomeDescription] = useState<string>('')
 
   const isIdle = navigation.state === 'idle'
@@ -46,29 +42,17 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
   const saveBtnText =
     isSubmitting
       ? 'Saving...'
-      : isNewOutcome
+      : isNew
         ? "Save New Outcome"
         : "Save Changes"
 
-  // loading data for editing
+
   useEffect(() => {
     setOutcomeTitle(outcome?.title || '')
     setOutcomeDescription(outcome?.description || '')
   }, [outcome])
 
 
-  // ?switch for edits vs new
-  useEffect(() => {
-    const pathArray = location.pathname.split('/');
-    if (pathArray.length === 5) {
-      setIsNewOutcome(true);
-    } else if (pathArray.length === 6) {
-      setIsNewOutcome(false);
-    }
-  }, [location.pathname]);
-
-
-  //  load desire title, should always be available
   useEffect(() => {
     setDesireTitle(desire?.title || '')
     setDesireId(desire?.id || '')
@@ -78,11 +62,11 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
   //  for turning buttons on/off, switching text
   useEffect(() => {
     const saveable =
-      !isNewOutcome
+      !isNew
         ? editsMade
-        : outcomeTitle ? true : false
+        : outcomeTitle && outcomeDescription ? true : false
     setIsSaveable(saveable)
-  }, [outcomeTitle, isNewOutcome, editsMade]);
+  }, [outcomeTitle, isNew, editsMade, outcomeDescription]);
 
 
   useEffect(() => {
@@ -115,6 +99,7 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
         outcomeString
       }, {
         method: 'POST',
+
       })
     } catch (error) { throw error }
   }
@@ -137,6 +122,30 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
     } catch (error) { throw error }
   }
 
+  const header = isNew
+    ? (<>
+      <div >
+        <span className='text-sm' >
+          Create a New Outcome for:
+        </span>
+      </div>
+      <div>
+        {desireTitle}
+      </div>
+    </>
+    ) : (
+      <>
+        <div >
+          <span className='text-sm' >
+            Edit Outcome:
+          </span>
+        </div>
+        <div>
+          {outcomeTitle}
+        </div>
+      </>
+    )
+
 
   return (
     <>
@@ -150,29 +159,7 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
 
       <BasicFormAreaBG
         maxWidth="1200"
-        title={isNewOutcome
-          ? (<>
-            <div >
-              <span className='text-sm' >
-                Create a New Outcome for:
-              </span>
-            </div>
-            <div>
-              {desireTitle}
-            </div>
-          </>
-          ) : (
-            <>
-              <div >
-                <span className='text-sm' >
-                  Edit Outcome:
-                </span>
-              </div>
-              <div>
-                {outcomeTitle}
-              </div>
-            </>
-          )}
+        title={header}
       >
 
         <Form method='post' className='mx-8 '>
@@ -191,10 +178,8 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
                   value={outcomeTitle}
                   onChange={(e) => setOutcomeTitle(e.target.value)}
                   className=" input-field-text-title "
+                  required
                 />
-                {validationErrors?.title && (
-                  <div className='validation-error'> {validationErrors.title}</div>
-                )}
               </div>
 
               <div className='  '>
@@ -208,11 +193,9 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
                   name='outcomeDescription'
                   value={outcomeDescription}
                   onChange={(e) => setOutcomeDescription(e.target.value)}
+                  required
                 >
                 </textarea>
-                {validationErrors?.description && (
-                  <div className='validation-error'> {validationErrors.description}</div>
-                )}
               </div>
             </div>
 
@@ -221,14 +204,14 @@ function DesiresOutcomesForm({ desire, outcome }: DesireFormProps) {
               <div className="flex flex-col gap-4">
                 <div className='mt-0 mb-0'>
                   <SolidBtn text={saveBtnText}
-                    onClickFunction={isNewOutcome ? handleSave : handleEdit}
+                    onClickFunction={isNew ? handleSave : handleEdit}
                     icon={dbIcon}
                     disableBtn={!isIdle || !isSaveable}
                     type='button'
                   />
                 </div>
 
-                {!isNewOutcome && (
+                {!isNew && (
                   <>
                     <Link to='..' >
                       <SolidBtnGreyBlue

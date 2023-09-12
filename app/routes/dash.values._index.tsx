@@ -43,7 +43,9 @@ export const action = async ({ request }: ActionArgs) => {
 function AddNewValuePage() {
   return (
     <>
-      <ValueForm />
+      <ValueForm
+      isNew={true}
+       />
     </>
   )
 }

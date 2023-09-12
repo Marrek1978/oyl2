@@ -37,12 +37,12 @@ function DndSortableProject({ id, project }: DndSortableProjectProps) {
     associatedDesire = allUserDesires.filter(desire => desire.id === associatedDesireId)[0]?.title
   }
 
-  useEffect(() => {
-    console.log('highlightedProjectId', highlightedProjectId)
-  }, [highlightedProjectId])
+  // useEffect(() => {
+  //   console.log('highlightedProjectId', highlightedProjectId)
+  // }, [highlightedProjectId])
 
   const linkColor = GetSpecialLinkColor();
-  console.log('linkColor', linkColor)
+  // console.log('linkColor', linkColor)
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} className=" mt-5">

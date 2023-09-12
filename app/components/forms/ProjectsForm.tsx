@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Form, Link, useActionData, useLocation, useNavigation } from '@remix-run/react'
+import { Form, Link, useActionData, useNavigation } from '@remix-run/react'
 
 import ListLabel from './ListLabel';
 import SolidBtn from '../buttons/SolidBtn';
@@ -17,11 +17,11 @@ interface ProjectFormProps {
   desire?: Desire;
   allUserDesires: Desire[];
   allUserProjects: Project[];
+  isNew?: boolean;
 }
 
-export default function ProjectsForm({ project, desire, allUserDesires, allUserProjects }: ProjectFormProps) {
+export default function ProjectsForm({ project, desire, allUserDesires, allUserProjects, isNew = true }: ProjectFormProps) {
 
-  const location = useLocation()
   const navigation = useNavigation();
   const validationErrors = useActionData()
 
@@ -31,22 +31,33 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
   const [description, setDescription] = useState<string>('')
   const [isSaveable, setIsSaveable] = useState<boolean>(false)
   const [selectedDesireId, setSelectedDesireId] = useState<string>('')
-  const [saveBtnText, setSaveBtnText] = useState<string>('Save Project')
-  const [isNew, setIsNew] = useState<boolean>(true) //true if /dash/desires, false if /dash/desires/:desireId
 
   let listOfUsedDesireIds = useRef(allUserProjects?.map((project) => project.desireId))
-
   const isSubmitting = navigation.state === 'submitting'
 
-  useEffect(() => {
-    if (location.pathname === '/dash/projects') {
-      setIsNew(true)
-      setSaveBtnText('Create Project')
-    } else if (location.pathname.startsWith('/dash/projects/')) {
-      setIsNew(false)
-      setSaveBtnText('Save Edits to Project')
-    }
-  }, [location.pathname]);
+
+  const saveBtnText =
+    isSubmitting
+      ? 'Saving...'
+      : isNew
+        ? "Save New Project"
+        : "Save Changes to Project"
+
+  const header = isNew
+    ? 'Create New Project'
+    : (<>
+      <div>
+        <span className='text-sm' >
+          Edit Project:
+        </span>
+      </div>
+      <div>
+        {title}
+      </div>
+    </>)
+
+  const TitleError = validationErrors?.title && (
+    <div className='validation-error'> {validationErrors.title}</div>)
 
 
   //loading data from passedProject or nothing
@@ -61,7 +72,7 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
 
 
   useEffect(() => {
-    const isInputEmpty = !title
+    const isInputEmpty = !title || !selectedDesireId
     const isInputDifferent =
       title !== project?.title
       || !!(project?.desireId && selectedDesireId !== project?.desireId)   //original desire is changed
@@ -83,23 +94,7 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
 
   return (
     <>
-      <BasicFormAreaBG
-        title={isNew
-          ? 'Create New Project'
-          : (
-            <>
-              <div >
-                <span className='text-sm' >
-                  Edit Project:
-                </span>
-              </div>
-              <div>
-                {title}
-              </div>
-            </>
-          )
-        }
-      >
+      <BasicFormAreaBG title={header}   >
 
         <Form method='post' className='mx-8'>
           <div className="form-control mt-6">
@@ -119,12 +114,7 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
               onChange={(e) => setTitle(e.target.value)}
               required
             />
-            {validationErrors?.title && (
-              <div className='text-red-700'> {validationErrors.title}</div>
-            )}
-            {validationErrors?.description && (
-              <div className='text-red-700'> {validationErrors.description}</div>
-            )}
+            {TitleError}
           </div>
 
 
@@ -139,14 +129,15 @@ export default function ProjectsForm({ project, desire, allUserDesires, allUserP
 
             <div className="list-grid ">
               {allUserDesires?.map((desire: Desire) => {
-                let isNotAvailabeForAssociation = listOfUsedDesireIds.current?.includes(desire.id)
+                let alreadyUsed = listOfUsedDesireIds.current?.includes(desire.id)
+
                 return (
                   <React.Fragment key={desire.id}>
-                    <div className={` ${isNotAvailabeForAssociation && 'line-through'}`} >
+                    <div className={` ${alreadyUsed && 'line-through'}`} >
                       <ListLabel text={desire.title} />
                     </div>
                     <div className='label'>
-                      {!isNotAvailabeForAssociation && (
+                      {!alreadyUsed && (
                         <input
                           type="radio"
                           className="checkbox checkbox-secondary self-center "

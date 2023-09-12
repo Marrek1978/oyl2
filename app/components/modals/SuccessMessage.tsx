@@ -1,10 +1,10 @@
 import React from 'react'
 
 interface SuccessMessageProps {
-  text:string;
+  text: string;
 }
 
-function SuccessMessage({text} : SuccessMessageProps) {
+function SuccessMessage({ text }: SuccessMessageProps) {
   return (
     <>
       <div className="alert alert-success -translate-y-1/2">

@@ -18,7 +18,7 @@ function AllOutcomesDisplay({ outcomes, plural, title }: SpecificOutcomeDisplayP
     <>
       <div className=''>
 
-        <BasicTextAreaBG >
+        {/* <BasicTextAreaBG > */}
           <div className='text-success mb-2'>
             <SubHeading16px text='Outcomes of Reaching the Ideal Situation' />
           </div>
@@ -45,7 +45,7 @@ function AllOutcomesDisplay({ outcomes, plural, title }: SpecificOutcomeDisplayP
             })}
           </div >
 
-        </BasicTextAreaBG >
+        {/* </BasicTextAreaBG > */}
       </div>
     </>
   )

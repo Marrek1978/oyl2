@@ -7,18 +7,14 @@ import DesiresOutcomesForm from '~/components/forms/DesiresOutcomesForm'
 
 import type { Desire } from '@prisma/client';
 import type { ActionArgs } from '@remix-run/server-runtime';
-import type { DesireWithValues, validationErrorsTypes } from '~/types/desireTypes';
+import type { DesireWithValues } from '~/types/desireTypes';
 
 
 export const action = async ({ request }: ActionArgs) => {
+  console.log('outocmes_index action')
   const userId = await requireUserId(request)
   const formBody = await request.text();
   const outcomeData = JSON.parse(parse(formBody).outcomeString as string);
-
-  let validationErrors: validationErrorsTypes = {};
-  !outcomeData.title && (validationErrors.title = 'A title is required')
-  if (!outcomeData.title) return validationErrors
-
 
   let outcome = {
     userId,
@@ -42,6 +38,7 @@ function DesireOutcomesIndexPage() {
   const matches = useMatches();
   const desires: DesireWithValues[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
   const desire: DesireWithValues | undefined = desires?.find((desire: Desire) => desire.id === params.desireId)
+
 
   return (
     <>
