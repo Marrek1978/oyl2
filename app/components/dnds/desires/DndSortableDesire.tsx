@@ -55,8 +55,9 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
           />
 
           {hasValues && (
+
             <div className="flex flex-wrap gap-2 items-center mt-1 font-bold ">
-              <div className=' text-base-content/70 font-semibold'>
+              <div className='text-secondary/70'>
                 <SubHeading12px text={'Serves Values:'} />
               </div>
               {desireValues?.map((value) => {
@@ -65,20 +66,23 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
                 return (
                   <div key={id}
                     className={`
-                      font-bold
-                      text-secondary
-                  `} >
-                    <SubHeading12px text={`${title}, `} />
+                font-bold
+                text-secondary
+                `} >
+                    <SubHeading12px
+                      text={`${title}, `}
+                    />
                   </div>
                 )
-              })}
+              })
+              }
             </div>
           )}
 
           {hasOutcomes && (
             <div className="flex flex-wrap gap-2 items-center mt-1 font-bold ">
-              <div className='text-base-content/70 font-semibold'>
-                <SubHeading12px text={'With Outomes:'} />
+              <div className='text-base-content/70 '>
+                <SubHeading12px text={'Withs Outomes:'} />
               </div>
               {desireOutcomes?.map((outcome) => {
                 const title = outcome.title
@@ -87,12 +91,15 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
                   <div key={id}
                     className={`
                     font-bold
-                    text-success
+                    text-base-content
                   `} >
-                    <SubHeading12px text={`${title}, `} />
+                    <SubHeading12px
+                      text={`${title}, `}
+                    />
                   </div>
                 )
-              })}
+              })
+              }
             </div>
           )}
 
