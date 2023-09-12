@@ -57,50 +57,56 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
 
           {hasValues && (
 
-            <div className="flex flex-wrap gap-2 items-center mt-1 font-bold ">
-              <div className='text-secondary/70'>
+            // <div className="flex flex-wrap gap-2 items-center mt-1 font-bold ">
+            <div className="grid grid-cols-[120px_1fr] gap-2 items-start mt-1 font-bold  ">
+              <div className='text-secondary/70  '>
                 <SubHeading12px text={'Serves Values:'} />
               </div>
-              {desireValues?.map((value) => {
-                const title = value.value.valueTitle
-                let id = uuidv4();
-                return (
-                  <div key={id}
-                    className={`
-                font-bold
-                text-secondary
-                `} >
-                    <SubHeading12px
-                      text={`${title}, `}
-                    />
-                  </div>
-                )
-              })
-              }
+              <div className='flex gap-2 flex-wrap'>
+                {desireValues?.map((value) => {
+                  const title = value.value.valueTitle
+                  let id = uuidv4();
+                  return (
+                    <div key={id}
+                      className={`
+                      font-bold
+                      text-secondary
+                    `} >
+                      <SubHeading12px text={`${title}, `} />
+                    </div>
+                  )
+                })
+                }
+
+              </div>
             </div>
           )}
 
           {hasOutcomes && (
-            <div className="flex flex-wrap gap-2 items-center mt-1 font-bold ">
+            <div className="grid grid-cols-[120px_1fr] gap-2  mt-1 font-bold items-start ">
+              {/* <div className="flex flex-wrap gap-2 items-center mt-1 font-bold "> */}
               <div className='text-base-content/70 '>
                 <SubHeading12px text={'Withs Outomes:'} />
               </div>
-              {desireOutcomes?.map((outcome) => {
-                const title = outcome.title
-                let id = uuidv4();
-                return (
-                  <div key={id}
-                    className={`
-                    font-bold
-                    text-base-content
-                  `} >
-                    <SubHeading12px
-                      text={`${title}, `}
-                    />
-                  </div>
-                )
-              })
-              }
+              <div className='flex gap-2 flex-wrap'>
+
+                {desireOutcomes?.map((outcome) => {
+                  const title = outcome.title
+                  let id = uuidv4();
+                  return (
+                    <div key={id}
+                      className={`
+                        font-bold
+                        text-base-content
+                      `} >
+                      <SubHeading12px
+                        text={`${title}, `}
+                      />
+                    </div>
+                  )
+                })
+                }
+              </div>
             </div>
           )}
 
