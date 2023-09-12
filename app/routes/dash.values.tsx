@@ -1,15 +1,18 @@
 import { parse } from 'querystring';
-import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
 
 import { requireUserId } from '~/models/session.server';
 import DndValues from '~/components/dnds/values/DndValues';
 import { getValues, updateValuesOrder } from '~/models/values.server';
 import DndPlus800OutletFlex from '~/components/baseContainers/DndPlus800OutletFlex';
 
+import type { Value } from '@prisma/client';
+import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
+
+
 export const loader = async ({ request }: LoaderArgs) => {
   let userId = await requireUserId(request);
   try {
-    let values = await getValues(userId);
+    let values:Value[] = await getValues(userId);
     return values
   } catch (error) { throw error }
 };

@@ -58,6 +58,11 @@ export async function updateDesireOutcome(
   }
 }
 
+
+
+
+
+
 export async function getOutcomesByDesireId(desireId: Desire["id"]) {
   try {
     const outcomes = await prisma.desireOutcome.findMany({

@@ -8,8 +8,8 @@ import { ListProvider } from '~/components/list/ListContext';
 
 export const loader = async ({ request }: LoaderArgs) => {
   try {
-    const userId = await requireUserId(request);
-    return userId;
+     await requireUserId(request);
+    return null;
   } catch (error) { throw error }
 
 };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import TextBtnGuideLine from '../buttons/TextBtnGuideLine';
 import BasicToolTipArea from '../baseContainers/BasicToolTipArea';
+import { InfoIcon } from '../utilities/icons';
 
 interface WithGuidelineLinkProps {
   children: React.ReactNode;
@@ -28,9 +29,11 @@ function WithGuidelineLink({ text, guideline, title, children }: WithGuidelineLi
         {guideline && (
           <div className='relative '>
             <TextBtnGuideLine
-              text={"GUIDELINES"}
+              text={" "}
+              // text={"GUIDELINES"}
               type='button'
               onClickFunction={() => setShowGuideLine(true)}
+              icon={InfoIcon}
             />
             {showGuideLine && (
               <BasicToolTipArea

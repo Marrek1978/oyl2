@@ -27,7 +27,7 @@ function DesirePage() {
   const matches = useMatches();
   const { desireOutcomes } = useLoaderData()
 
-  const desires: DesireWithValues[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
+  const desires: DesireWithValues[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desiresWithValues
   const desire: DesireWithValues | undefined = desires.find((desire: Desire) => desire.id === params.desireId)
 
   const desireValues: DesireValues['desireValues'] = desire?.desireValues || []

@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Form, Link, useActionData, useMatches, useNavigation } from '@remix-run/react';
 
-import ListLabel from './ListLabel';
 import SolidBtn from '../buttons/SolidBtn';
 import BasicFormAreaBG from './BasicFormAreaBG';
 import OutlinedBtn from '../buttons/OutlinedBtn';
+import CheckboxWithLabel from './CheckboxWithLabel';
 import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
 import { closeIcon, dbIcon, trashIcon } from '../utilities/icons';
-
-import type { Desire, Value } from '@prisma/client'
-import type { DesireWithValues } from '~/types/desireTypes';
-import { DesireDescription, DesireTitle, DesireValuesServed } from '../utilities/Guidelines';
 import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
+import { DesireDescription, DesireTitle, DesireValuesServed } from '../utilities/Guidelines';
 
+import type { DesireWithValues, DesireWithValuesWithStringDates } from '~/types/desireTypes';
+import type { ValueWithStringDates } from '~/types/valueTypes';
 
 interface DesireFormProps {
   desire?: DesireWithValues
@@ -30,14 +29,19 @@ function DesiresForm({ desire, isNew = true }: DesireFormProps) {
   const [sortOrder, setSortOrder] = useState<number>(0) //if adding new desire, set to desires.length
   const [description, setDescription] = useState<string>('')
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
-  const [loadedValues, setLoadedValues] = useState<Value[]>([])
+  const [loadedValues, setLoadedValues] = useState<ValueWithStringDates[]>([])
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
 
   const isSubmitting = navigation.state === 'submitting'
   const isIdle = navigation.state === 'idle'
-  const desires: Desire[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
-  const allUserValues: Value[] = matches.find(match => match.id === 'routes/dash.desires')?.data.allUserValues
+  const desires: DesireWithValuesWithStringDates[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
+  const allUserValues: ValueWithStringDates[] = matches.find(match => match.id === 'routes/dash.desires')?.data.allUserValues
+  // const desiresWithValuesAndOutcomes: DesireWithValuesAndOutcomesWithStringDates[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desiresValuesWithOutcomes
 
+  // console.log('desiresWithValuesAndOutcomes is ', desiresWithValuesAndOutcomes)
+
+  // console.log('allUserValues is ', allUserValues)
+  // console.log('desires is ', desires)
 
   const saveBtnText =
     isSubmitting
@@ -64,6 +68,7 @@ function DesiresForm({ desire, isNew = true }: DesireFormProps) {
 
   const DescriptionError = validationErrors?.description && (
     <div className='validation-error'> {validationErrors.description}</div>)
+
 
   useEffect(() => {
     setTitle(desire?.title || '')
@@ -162,24 +167,15 @@ function DesiresForm({ desire, isNew = true }: DesireFormProps) {
               guideline={DesireValuesServed}
               title='Values Served'
             />
-            <div className="list-grid">
-              {allUserValues?.map((value: Value) => (
-                <React.Fragment key={value.id}>
-                  <div className="" >
-                    <ListLabel text={value.valueTitle} />
-                  </div>
-                  <div className='label'>
-                    <input
-                      type="checkbox"
-                      className="checkbox checkbox-secondary self-center "
-                      name={`value-${value.id}`}
-                      checked={checkedValues.includes(value.valueTitle)}
-                      onChange={() => handleCheckboxChange(value.valueTitle)}
-                    />
-                  </div>
-                </React.Fragment>
-              ))}
-            </div>
+            {allUserValues?.map((value: ValueWithStringDates) => (
+              <CheckboxWithLabel
+                key={value.id}
+                id={value.id}
+                label={value.valueTitle}
+                checkedValues={checkedValues}
+                handleCheckboxChange={handleCheckboxChange}
+              />
+            ))}
           </div>
 
           {/* //**************BUTTONS ***************  */}

@@ -6,17 +6,17 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-ki
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
 
 import Modal from '~/components/modals/Modal';
+import DndSortableValue from './DndSortableValue';
 import SuccessMessage from '~/components/modals/SuccessMessage';
 import SubHeading16px from '~/components/titles/SubHeading16px';
-import DndSortableGeneric from '~/components/dnds/DndSortableGeneric';
 
 import type { Value } from '@prisma/client'
-import type { ValuesWithStringDates } from '~/types/valueTypes'
+import type { ValueWithStringDates } from '~/types/valueTypes'
 
 const DndValues = () => {
 
   const fetcher = useFetcher();
-  const valuesData = useLoaderData<ValuesWithStringDates[]>();
+  const valuesData = useLoaderData<ValueWithStringDates[]>();
 
   const [values, setValues] = useState<Value[]>([]);
   const [successMessage, setSuccessMessage] = useState('');
@@ -129,15 +129,13 @@ const DndValues = () => {
             items={values?.map(value => value.id)}
             strategy={verticalListSortingStrategy}
           >
-
             {values?.map((value) => (
-              <DndSortableGeneric
+              <DndSortableValue
                 key={value.id}
                 id={value.id}
                 description={value.valueDescription}
                 title={value.valueTitle}
-              >
-              </DndSortableGeneric>
+              />
             ))}
 
           </SortableContext>

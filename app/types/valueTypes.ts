@@ -1,9 +1,9 @@
 import type { Value } from "@prisma/client";
 
-export type ValuesWithStringDates = Value & { createdAt: String, updatedAt: String }
+
+export type ValueWithStringDates = Omit<Value, "createdAt" | "updatedAt"> & {
+  createdAt: string;
+  updatedAt: string;
+};
 
 
-export interface validationErrorsTypes {
-  title?: Value['valueTitle']
-  description?: Value['valueDescription']
-}

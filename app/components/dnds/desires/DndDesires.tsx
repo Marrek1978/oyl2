@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import type { DragEndEvent } from "@dnd-kit/core";
 import { useCallback, useEffect, useState } from 'react'
 import { useFetcher, useRouteLoaderData } from '@remix-run/react';
@@ -6,12 +5,11 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-ki
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
 
 import Modal from '~/components/modals/Modal';
+import DndSortableDesire from './DndSortableDesire';
 import SuccessMessage from '~/components/modals/SuccessMessage';
-import SubHeading12px from '~/components/titles/SubHeading12px';
 import SubHeading16px from '~/components/titles/SubHeading16px';
-import DndSortableGeneric from '~/components/dnds/DndSortableGeneric';
 
-import type { DesireWithStringDates, DesireWithValues } from '~/types/desireTypes'
+import type { DesireWithValuesAndOutcomes, DesireWithValuesAndOutcomesWithStringDates } from '~/types/desireTypes'
 
 
 const DndDesires = () => {
@@ -19,22 +17,42 @@ const DndDesires = () => {
   const fetcher = useFetcher();
   const loaderData = useRouteLoaderData('routes/dash.desires');
 
-  const [desires, setDesires] = useState<DesireWithValues[]>([]);
+  console.log('loader data is ', loaderData)
+  const [desires, setDesires] = useState<DesireWithValuesAndOutcomes[]>([]);
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
 
 
   useEffect(() => {
-     if (!loaderData?.desires) return
 
-    const desiresWithProperDates: DesireWithValues[] = transformDesireDates(loaderData?.desires)
-    desiresWithProperDates.sort((a, b) => a.sortOrder - b.sortOrder)
-    const notDesiresWithSequentialSortOrder = desiresWithProperDates.some((desire, index) => {
+    if (!loaderData?.desiresWithValuesOutcomes) return
+
+    // const desiresWithProperDates: DesireWithValues[] = transformDesireDates(loaderData?.desiresWithValues)
+
+    // console.log('desiresWithProperDates data ', desiresWithProperDates)
+    const desiresWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates[] = loaderData?.desiresWithValuesOutcomes
+    console.log('desiresWithValuesOutcomesStrDates data ', desiresWithValuesOutcomesStrDates)
+
+    const desiresWithValuesOutcomesProperDates: DesireWithValuesAndOutcomes[] = transformDesireValueOutcomeDates(desiresWithValuesOutcomesStrDates)
+
+    // desiresWithProperDates.sort((a, b) => a.sortOrder - b.sortOrder)
+    // const notDesiresWithSequentialSortOrder = desiresWithProperDates.some((desire, index) => {
+    //   return desire.sortOrder !== index
+    // })
+
+    desiresWithValuesOutcomesProperDates.sort((a, b) => a.sortOrder - b.sortOrder)
+    const notDesiresWithSequentialSortOrder = desiresWithValuesOutcomesProperDates.some((desire, index) => {
       return desire.sortOrder !== index
     })
+
+    // setDesires(notDesiresWithSequentialSortOrder
+    //   ? resetDesiresSortOrder(desiresWithProperDates)
+    //   : desiresWithProperDates
+    // )
+
     setDesires(notDesiresWithSequentialSortOrder
-      ? resetDesiresSortOrder(desiresWithProperDates)
-      : desiresWithProperDates
+      ? resetDesiresSortOrder(desiresWithValuesOutcomesProperDates)
+      : desiresWithValuesOutcomesProperDates
     )
 
   }, [loaderData])
@@ -74,7 +92,7 @@ const DndDesires = () => {
   }, [saveNewSortOrder, handleEditSortOrder])
 
 
-  const resetDesiresSortOrder = (desires: DesireWithValues[]) => {
+  const resetDesiresSortOrder = (desires: DesireWithValuesAndOutcomes[]) => {
     const reOrdered = desires?.map((desire, index) => {
       return {
         ...desire,
@@ -89,7 +107,7 @@ const DndDesires = () => {
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      setDesires((prevDesires: DesireWithValues[]) => {
+      setDesires((prevDesires: DesireWithValuesAndOutcomes[]) => {
         const oldIndex = prevDesires.findIndex(desire => desire.id === active.id);
         const newIndex = prevDesires.findIndex(desire => desire.id === over?.id);
         const newDesires = arrayMove(prevDesires, oldIndex, newIndex);
@@ -130,40 +148,24 @@ const DndDesires = () => {
         >
 
           {desires?.sort((a, b) => a.sortOrder - b.sortOrder).map((desire) => {
+
             const desireValues = desire.desireValues
             desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
+            // console.log('desireValues is ', desireValues)
+
+            const desireOutcomes = desire.desireOutcomes
+            desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
+            console.log('desireOutcomes is ', desireOutcomes)
 
             return (
-              <DndSortableGeneric
+              <DndSortableDesire
                 key={desire.id}
                 id={desire.id}
                 title={desire.title}
-                description={desire.description}
                 linkTitle='Go to desire'
-              >
-
-                <div className="flex flex-wrap gap-2 items-center mt-1 font-bold ">
-                  <div className='text-base-content/80'>
-                    <SubHeading12px text={'Serves Values:'} />
-                  </div>
-                  {desireValues.map((value) => {
-                    const title = value.value.valueTitle
-                    let id = uuidv4();
-                    return (
-                      <div key={id}
-                        className={`
-                        font-bold
-                        text-secondary/70
-                      `} >
-                        <SubHeading12px
-                          text={`${title}, `}
-                        />
-                      </div>
-                    )
-                  })
-                  }
-                </div>
-              </DndSortableGeneric>
+                desireValues={desireValues}
+                desireOutcomes={desireOutcomes}
+              />
             )
           })}
 
@@ -175,10 +177,51 @@ const DndDesires = () => {
 
 export default DndDesires
 
-function transformDesireDates(desires: DesireWithStringDates[]) {
-  return desires.map((desire: any) => ({
-    ...desire,
-    createdAt: new Date(desire.createdAt!),
-    updatedAt: new Date(desire.updatedAt!),
-  }));
+// function transformDesireDates(desires: DesireWithStringDates[]) {
+//   return desires.map((desire: any) => ({
+//     ...desire,
+//     createdAt: new Date(desire.createdAt!),
+//     updatedAt: new Date(desire.updatedAt!),
+//   }));
+// }
+
+function transformDesireValueOutcomeDates(desiresWithValuesOutcomes: DesireWithValuesAndOutcomesWithStringDates[]): DesireWithValuesAndOutcomes[] {
+
+  const desires = desiresWithValuesOutcomes.map((desire: DesireWithValuesAndOutcomesWithStringDates) => {
+
+
+    console.log('desire is ', desire.desireOutcomes)
+    const outcomes = desire.desireOutcomes
+    const values = desire.desireValues
+    let outcomesWithProperDates = []
+    let valuesWithProperDates = []
+
+    if (outcomes.length > 0) {
+      outcomesWithProperDates = outcomes.map((outcome: any) => ({
+        ...outcome,
+        createdAt: new Date(outcome.createdAt!),
+        updatedAt: new Date(outcome.updatedAt!),
+      }))
+    }
+
+    if (values.length > 0) {
+      valuesWithProperDates = values.map((value: any) => ({
+        ...value,
+        createdAt: new Date(value.createdAt!),
+        updatedAt: new Date(value.updatedAt!),
+      }))
+    }
+
+    return ({
+
+      ...desire,
+      createdAt: new Date(desire.createdAt!),
+      updatedAt: new Date(desire.updatedAt!),
+      desireOutcomes: outcomesWithProperDates,
+      desireValues: valuesWithProperDates
+    })
+  })
+
+  return desires
+
 }

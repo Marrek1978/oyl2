@@ -1,25 +1,24 @@
-import { redirect, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
+import { redirect, type ActionArgs } from '@remix-run/server-runtime'
 
 import { createValue } from '~/models/values.server'
-import { requireUserId } from '~/models/session.server'
 import ValueForm from '~/components/forms/ValueForm'
+import { requireUserId } from '~/models/session.server'
 
-import type { validationErrorsTypes } from '~/types/valueTypes'
+import type { validationErrorsTypes } from '~/types/validationTypes'
 
-export const loader = async ({ request }: LoaderArgs) => {
-  let userId;
-  try {
-    userId = await requireUserId(request);
-    return userId
-  } catch (error) { throw error }
-}
+
+// export const loader = async ({ request }: LoaderArgs) => {
+  // try {
+  //   const userId = await requireUserId(request);
+  //   return userId
+  // } catch (error) { throw error }
+// }
 
 export const action = async ({ request }: ActionArgs) => {
 
   const userId = await requireUserId(request)
   const formData = await request.formData()
   const valueData = Object.fromEntries(formData);
-
 
   //! do clentside validation to stop rerenders
   let validationErrors: validationErrorsTypes = {};

@@ -207,7 +207,6 @@ model Desire {
 
   ideal String?
   current String?
-  desireOutcomes DesireOutcome[]
   achieved Boolean @default(false)
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -216,6 +215,7 @@ model Desire {
   project Project? 
 
   desireValues DesireValue[]
+  desireOutcomes DesireOutcome[]
 }
 
 model DesireOutcome {
