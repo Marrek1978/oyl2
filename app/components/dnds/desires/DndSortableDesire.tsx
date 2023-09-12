@@ -38,7 +38,7 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
       <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mt-0">
         <div key={id} id={id} className='
             px-3 py-4 
-            mt-2
+            mt-4
             font-poppins
             cursor-pointer 
             text-left text-base-content
@@ -51,14 +51,12 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
           <H2WithLink
             title={title}
             linkDestination={id}
-            // linkColor={}
             linkText={linkTitle}
           />
 
           {hasValues && (
-
             <div className="flex flex-wrap gap-2 items-center mt-1 font-bold ">
-              <div className='text-secondary/70'>
+              <div className=' text-base-content/70 font-semibold'>
                 <SubHeading12px text={'Serves Values:'} />
               </div>
               {desireValues?.map((value) => {
@@ -67,23 +65,20 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
                 return (
                   <div key={id}
                     className={`
-                font-bold
-                text-secondary
-                `} >
-                    <SubHeading12px
-                      text={`${title}, `}
-                    />
+                      font-bold
+                      text-secondary
+                  `} >
+                    <SubHeading12px text={`${title}, `} />
                   </div>
                 )
-              })
-              }
+              })}
             </div>
           )}
 
           {hasOutcomes && (
             <div className="flex flex-wrap gap-2 items-center mt-1 font-bold ">
-              <div className='text-base-content/70 '>
-                <SubHeading12px text={'Withs Outomes:'} />
+              <div className='text-base-content/70 font-semibold'>
+                <SubHeading12px text={'With Outomes:'} />
               </div>
               {desireOutcomes?.map((outcome) => {
                 const title = outcome.title
@@ -92,15 +87,12 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
                   <div key={id}
                     className={`
                     font-bold
-                    text-base-content
+                    text-success
                   `} >
-                    <SubHeading12px
-                      text={`${title}, `}
-                    />
+                    <SubHeading12px text={`${title}, `} />
                   </div>
                 )
-              })
-              }
+              })}
             </div>
           )}
 

@@ -1,5 +1,5 @@
 import { parse } from 'querystring';
-import { Outlet} from '@remix-run/react';
+import { Outlet } from '@remix-run/react';
 import type { LoaderArgs } from '@remix-run/server-runtime';
 
 import { getValues } from '~/models/values.server';
@@ -39,9 +39,9 @@ function DesiresPage() {
 
   return (
     <>
-    <div className='flex-1'>
-      <Outlet />
-    </div>
+      <div className='flex-1'>
+        <Outlet />
+      </div>
     </>
   )
 }

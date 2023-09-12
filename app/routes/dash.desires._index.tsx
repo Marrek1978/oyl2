@@ -1,13 +1,15 @@
 import { redirect, type ActionArgs } from '@remix-run/server-runtime'
 
-import DesiresForm from '~/components/forms/DesiresForm'
-import { requireUserId } from '~/models/session.server'
 import { createDesire } from '~/models/desires.server'
+import { requireUserId } from '~/models/session.server'
+import DesiresForm from '~/components/forms/DesiresForm'
 
 import DndDesires from '~/components/dnds/desires/DndDesires'
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
 
-import type { validationErrorsTypes } from '~/types/valueTypes'
+import type { validationErrorTypes } from '~/types/validationTypes'
+
+
 
 
 export const action = async ({ request }: ActionArgs) => {
@@ -15,7 +17,7 @@ export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData()
   const desireData = Object.fromEntries(formData);
 
-  let validationErrors: validationErrorsTypes = {};
+  let validationErrors: validationErrorTypes = {};
   !desireData.title && (validationErrors.title = 'A title is required')
   !desireData.description && (validationErrors.description = 'A description is required')
   if (!desireData.title || !desireData.description) return validationErrors

@@ -17,38 +17,22 @@ const DndDesires = () => {
   const fetcher = useFetcher();
   const loaderData = useRouteLoaderData('routes/dash.desires');
 
-  console.log('loader data is ', loaderData)
-  const [desires, setDesires] = useState<DesireWithValuesAndOutcomes[]>([]);
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
+  const [desires, setDesires] = useState<DesireWithValuesAndOutcomes[]>([]);
 
 
   useEffect(() => {
 
     if (!loaderData?.desiresWithValuesOutcomes) return
 
-    // const desiresWithProperDates: DesireWithValues[] = transformDesireDates(loaderData?.desiresWithValues)
-
-    // console.log('desiresWithProperDates data ', desiresWithProperDates)
     const desiresWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates[] = loaderData?.desiresWithValuesOutcomes
-    console.log('desiresWithValuesOutcomesStrDates data ', desiresWithValuesOutcomesStrDates)
-
     const desiresWithValuesOutcomesProperDates: DesireWithValuesAndOutcomes[] = transformDesireValueOutcomeDates(desiresWithValuesOutcomesStrDates)
-
-    // desiresWithProperDates.sort((a, b) => a.sortOrder - b.sortOrder)
-    // const notDesiresWithSequentialSortOrder = desiresWithProperDates.some((desire, index) => {
-    //   return desire.sortOrder !== index
-    // })
 
     desiresWithValuesOutcomesProperDates.sort((a, b) => a.sortOrder - b.sortOrder)
     const notDesiresWithSequentialSortOrder = desiresWithValuesOutcomesProperDates.some((desire, index) => {
       return desire.sortOrder !== index
     })
-
-    // setDesires(notDesiresWithSequentialSortOrder
-    //   ? resetDesiresSortOrder(desiresWithProperDates)
-    //   : desiresWithProperDates
-    // )
 
     setDesires(notDesiresWithSequentialSortOrder
       ? resetDesiresSortOrder(desiresWithValuesOutcomesProperDates)
@@ -58,9 +42,9 @@ const DndDesires = () => {
   }, [loaderData])
 
 
-  useEffect(() => {
-    console.log(desires)
-  }, [desires])
+  // useEffect(() => {
+  //   console.log(desires)
+  // }, [desires])
 
 
   useEffect(() => {
@@ -151,11 +135,9 @@ const DndDesires = () => {
 
             const desireValues = desire.desireValues
             desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
-            // console.log('desireValues is ', desireValues)
 
             const desireOutcomes = desire.desireOutcomes
             desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
-            console.log('desireOutcomes is ', desireOutcomes)
 
             return (
               <DndSortableDesire
@@ -190,7 +172,7 @@ function transformDesireValueOutcomeDates(desiresWithValuesOutcomes: DesireWithV
   const desires = desiresWithValuesOutcomes.map((desire: DesireWithValuesAndOutcomesWithStringDates) => {
 
 
-    console.log('desire is ', desire.desireOutcomes)
+    // console.log('desire is ', desire.desireOutcomes)
     const outcomes = desire.desireOutcomes
     const values = desire.desireValues
     let outcomesWithProperDates = []
