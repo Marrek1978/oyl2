@@ -23,28 +23,17 @@ const DndDesires = () => {
 
 
   useEffect(() => {
-
     if (!loaderData?.desiresWithValuesOutcomes) return
 
     const desiresWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates[] = loaderData?.desiresWithValuesOutcomes
     const desiresWithValuesOutcomesProperDates: DesireWithValuesAndOutcomes[] = transformDesireValueOutcomeDates(desiresWithValuesOutcomesStrDates)
+    const isSequentialOrder:boolean = isDesireInSequentialOrder(desiresWithValuesOutcomesProperDates)
 
-    desiresWithValuesOutcomesProperDates.sort((a, b) => a.sortOrder - b.sortOrder)
-    const notDesiresWithSequentialSortOrder = desiresWithValuesOutcomesProperDates.some((desire, index) => {
-      return desire.sortOrder !== index
-    })
-
-    setDesires(notDesiresWithSequentialSortOrder
-      ? resetDesiresSortOrder(desiresWithValuesOutcomesProperDates)
-      : desiresWithValuesOutcomesProperDates
+    setDesires(isSequentialOrder
+      ? desiresWithValuesOutcomesProperDates
+      : resetDesiresSortOrder(desiresWithValuesOutcomesProperDates)
     )
-
   }, [loaderData])
-
-
-  // useEffect(() => {
-  //   console.log(desires)
-  // }, [desires])
 
 
   useEffect(() => {
@@ -159,20 +148,9 @@ const DndDesires = () => {
 
 export default DndDesires
 
-// function transformDesireDates(desires: DesireWithStringDates[]) {
-//   return desires.map((desire: any) => ({
-//     ...desire,
-//     createdAt: new Date(desire.createdAt!),
-//     updatedAt: new Date(desire.updatedAt!),
-//   }));
-// }
-
-function transformDesireValueOutcomeDates(desiresWithValuesOutcomes: DesireWithValuesAndOutcomesWithStringDates[]): DesireWithValuesAndOutcomes[] {
+export function transformDesireValueOutcomeDates(desiresWithValuesOutcomes: DesireWithValuesAndOutcomesWithStringDates[]): DesireWithValuesAndOutcomes[] {
 
   const desires = desiresWithValuesOutcomes.map((desire: DesireWithValuesAndOutcomesWithStringDates) => {
-
-
-    // console.log('desire is ', desire.desireOutcomes)
     const outcomes = desire.desireOutcomes
     const values = desire.desireValues
     let outcomesWithProperDates = []
@@ -195,7 +173,6 @@ function transformDesireValueOutcomeDates(desiresWithValuesOutcomes: DesireWithV
     }
 
     return ({
-
       ...desire,
       createdAt: new Date(desire.createdAt!),
       updatedAt: new Date(desire.updatedAt!),
@@ -205,5 +182,14 @@ function transformDesireValueOutcomeDates(desiresWithValuesOutcomes: DesireWithV
   })
 
   return desires
-
 }
+
+export function isDesireInSequentialOrder(desiresValuesOutcomesWithProperDates: DesireWithValuesAndOutcomes[]) : boolean {
+
+  desiresValuesOutcomesWithProperDates.sort((a, b) => a.sortOrder - b.sortOrder)
+  const isNOTSequentialOrder = desiresValuesOutcomesWithProperDates.some((desire, index) => {
+    return desire.sortOrder !== index
+  })
+  return !isNOTSequentialOrder
+}
+

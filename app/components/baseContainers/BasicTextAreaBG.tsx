@@ -6,7 +6,7 @@ interface basicTextAreaBGProps {
 
 function BasicTextAreaBG({ children }: basicTextAreaBGProps) {
   return (
-    <div className='bg-base-100 p-8 shadow-lg w-full'>
+    <div className='bg-base-100 p-8  w-full'>
       <div style={{ whiteSpace: 'pre-line' }}>
         {children}
       </div>

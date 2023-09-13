@@ -32,10 +32,13 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
     transition,
   };
 
+  const { plural: valueS, length: valuesLength } = varsForPluralText(desireValues);
+  const { plural: outcomeS, length: outcomesLength } = varsForPluralText(desireOutcomes);
+
 
   return (
     <>
-      <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mt-0">
+      <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mt-4">
         <div key={id} id={id} className='
             px-3 py-4 
             mt-4
@@ -54,21 +57,22 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
           />
 
           {hasValues && (
-            <div className="grid grid-cols-[130px_1fr] gap-2 items-start mt-1 font-bold ">
-              <div className='text-secondary/70'>
-                <SubHeading12px text={'Serves Values:'} />
+            <div className="grid grid-cols-[120px_1fr] gap-x-2 gap-y-0 mt-1 items-start ">
+              <div className='text-base-content/70 font-medium'>
+                <SubHeading12px text={`Serves Value${valueS}:`} />
               </div>
-              <div className='flex flex-wrap gap-2'>
-                {desireValues?.map((value) => {
+              <div className='flex flex-wrap gap-x-2 font-semibold'>
+                {desireValues?.map((value, index) => {
                   const title = value.value.valueTitle
                   let id = uuidv4();
+                  let placeComma = index < valuesLength - 1 ? ',' : ''
                   return (
                     <div key={id}
                       className={`
                         font-bold
-                        text-secondary
+                        text-base-content/70
                     `} >
-                      <SubHeading12px text={`${title}, `} />
+                      <SubHeading12px text={`${title}${placeComma} `} />
                     </div>
                   )
                 })}
@@ -77,21 +81,22 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
           )}
 
           {hasOutcomes && (
-            <div className="grid grid-cols-[130px_1fr] gap-2 items-start mt-1 font-bold ">
-              <div className='text-base-content/70 '>
-                <SubHeading12px text={'Withs Outomes:'} />
+            <div className="grid grid-cols-[120px_1fr] gap-x-2 items-start mt-1 ">
+              <div className='text-base-content/70 font-medium '>
+                <SubHeading12px text={`Has Outome${outcomeS}:`} />
               </div>
-              <div className='flex flex-wrap gap-2'>
-                {desireOutcomes?.map((outcome) => {
+              <div className='flex flex-wrap gap-x-2 font-semibold'>
+                {desireOutcomes?.map((outcome, index) => {
                   const title = outcome.title
                   let id = uuidv4();
+                  let placeComma = index < outcomesLength - 1 ? ',' : ''
                   return (
                     <div key={id}
                       className={`
                       font-bold
-                      text-success
+                      text-base-content/70
                     `} >
-                      <SubHeading12px text={`${title}, `} />
+                      <SubHeading12px text={`${title}${placeComma} `} />
                     </div>
                   )
                 })}
@@ -106,3 +111,9 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
 }
 
 export default DndSortableDesire
+
+export function varsForPluralText(array: any[]): { plural: string, length: number } {
+  const plural = array && array.length > 1 ? 's' : '';
+  const length = array.length
+  return { plural, length }
+}
