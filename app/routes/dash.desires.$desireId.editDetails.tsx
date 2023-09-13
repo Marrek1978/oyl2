@@ -1,12 +1,14 @@
-import { Outlet, useMatches, useParams } from '@remix-run/react';
+import { useEffect, useState } from 'react';
 import { redirect, type ActionArgs } from '@remix-run/server-runtime';
+import { Outlet, useNavigate, useParams, useRouteLoaderData } from '@remix-run/react';
 
 import Modal from '~/components/modals/Modal';
-import DesiresForm from '~/components/forms/DesiresForm';
 import { updateDesire } from '~/models/desires.server';
 import { requireUserId } from '~/models/session.server';
+import DesiresForm from '~/components/forms/DesiresForm';
+import { transformDesireValueOutcomeDates } from '~/components/dnds/desires/DndDesires';
 
-import type { DesireWithValues, validationErrorsTypes, } from '~/types/desireTypes';
+import type { DesireWithValuesAndOutcomes, DesireWithValuesAndOutcomesWithStringDates, validationErrorsTypes, } from '~/types/desireTypes';
 
 
 export const action = async ({ request }: ActionArgs) => {
@@ -43,13 +45,24 @@ export const action = async ({ request }: ActionArgs) => {
 
 function EditDesireDetailsPage() {
 
-  const matches = useMatches();
   const params = useParams();
-  const desires = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
-  const desire = desires?.find((desire: DesireWithValues) => desire.id === params.desireId)
+  const navigate = useNavigate();
+  const loaderData = useRouteLoaderData('routes/dash.desires');
+
+  const [desire, setDesire] = useState<DesireWithValuesAndOutcomes>();
+
+  useEffect(() => {
+    if (!loaderData.desiresWithValuesOutcomes) redirect('/dash/desires')
+
+    const desiresWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates[] = loaderData?.desiresWithValuesOutcomes
+    const desiresWithValuesOutcomesProperDates: DesireWithValuesAndOutcomes[] = transformDesireValueOutcomeDates(desiresWithValuesOutcomesStrDates)
+    const currentDesire: DesireWithValuesAndOutcomes | undefined = desiresWithValuesOutcomesProperDates?.find((desire: DesireWithValuesAndOutcomes) => desire.id === params.desireId)
+    if (!currentDesire) return navigate("/dash/desires");
+
+    setDesire(currentDesire)
+  }, [loaderData, params, navigate])
 
   return (
-
     <>
       <Outlet />
       <Modal onClose={() => { }} zIndex={10}>

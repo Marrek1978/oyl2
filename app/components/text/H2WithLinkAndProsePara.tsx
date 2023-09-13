@@ -13,14 +13,14 @@ interface H2WithLinkAndProseParaProps {
 function H2WithLinkAndProsePara({ title, linkDestination, linkText, paragraph, isTextBtn=true }: H2WithLinkAndProseParaProps) {
   return (
     <>
-      <div className=' max-w-max'>
+      <div className='  '>
         <H2WithLink
           title={title}
           linkDestination={linkDestination}
           linkText={linkText}
           isTextBtn={isTextBtn}
         />
-        <div className='mt-2 mr-12 para-color'>
+        <div className='mt-2 mr-8 para-color  '>
           <TextProseWidth
             text={paragraph || ''}
           />

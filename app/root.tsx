@@ -77,8 +77,8 @@ function AppContent() {
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
         <Links />
       </head>
-      <body className="min-h-screen min-w-xs bg-base-200">
-        <main className=" min-h-screen min-w-xs m-auto ">
+      <body className="min-h-screen bg-base-200">
+        <main className=" h-full min-h-screen m-auto ">
           <Navbar />
           <Outlet />
         </main>

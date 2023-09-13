@@ -184,6 +184,41 @@ export function transformDesireValueOutcomeDates(desiresWithValuesOutcomes: Desi
   return desires
 }
 
+export function transformCurrentDesireValueOutcomeDates(desiresWithValuesOutcomes: DesireWithValuesAndOutcomesWithStringDates): DesireWithValuesAndOutcomes {
+
+    const desire = desiresWithValuesOutcomes
+    const outcomes = desire.desireOutcomes
+    const values = desire.desireValues
+    let outcomesWithProperDates = []
+    let valuesWithProperDates = []
+
+    if (outcomes.length > 0) {
+      outcomesWithProperDates = outcomes.map((outcome: any) => ({
+        ...outcome,
+        createdAt: new Date(outcome.createdAt!),
+        updatedAt: new Date(outcome.updatedAt!),
+      }))
+    }
+
+    if (values.length > 0) {
+      valuesWithProperDates = values.map((value: any) => ({
+        ...value,
+        createdAt: new Date(value.createdAt!),
+        updatedAt: new Date(value.updatedAt!),
+      }))
+    }
+
+    const transformedDesire:DesireWithValuesAndOutcomes = ({
+      ...desire,
+      createdAt: new Date(desire.createdAt!),
+      updatedAt: new Date(desire.updatedAt!),
+      desireOutcomes: outcomesWithProperDates,
+      desireValues: valuesWithProperDates
+    })
+
+  return transformedDesire
+}
+
 export function isDesireInSequentialOrder(desiresValuesOutcomesWithProperDates: DesireWithValuesAndOutcomes[]) : boolean {
 
   desiresValuesOutcomesWithProperDates.sort((a, b) => a.sortOrder - b.sortOrder)

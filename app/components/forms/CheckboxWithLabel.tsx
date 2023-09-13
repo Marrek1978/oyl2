@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import ListLabel from './ListLabel';
 
 type Props = {
@@ -11,14 +10,11 @@ type Props = {
 
 function CheckboxWithLabel({ id, label, checkedValues, handleCheckboxChange }: Props) {
 
-  const [isChecked, setIsChecked] = useState(false)
-
   const toggleCheckbox = () => {
-    setIsChecked(!isChecked)
     handleCheckboxChange(label)
   }
 
-  let borderColor = isChecked ? 'border-secondary' : 'border-base-300'
+  let borderColor = checkedValues.includes(label) ? 'border-secondary' : 'border-base-300'
 
   return (
     <>
@@ -31,8 +27,8 @@ function CheckboxWithLabel({ id, label, checkedValues, handleCheckboxChange }: P
           hover:cursor-pointer
           `}
         onClick={toggleCheckbox}
-          >
-        <div className='label  '>
+      >
+        <div className='label ' onClick={toggleCheckbox}>
           <input
             type="checkbox"
             className="checkbox checkbox-secondary self-center "

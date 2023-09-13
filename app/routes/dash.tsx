@@ -22,7 +22,7 @@ function Dash() {
       <main className="
         w-full
         max-w-full
-        my-12 px-8 
+        mt-12 pb-12 px-8 
         min-h-screen 
         flex gap-6 flex-wrap
         lg:flex-nowrap
