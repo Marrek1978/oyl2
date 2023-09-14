@@ -1,5 +1,5 @@
 import { parse } from 'querystring';
-import { Outlet } from '@remix-run/react';
+import { Outlet, useNavigate, useParams, useRouteLoaderData } from '@remix-run/react';
 import type { LoaderArgs } from '@remix-run/server-runtime';
 
 import { getValues } from '~/models/values.server';
@@ -7,7 +7,9 @@ import { requireUserId } from '~/models/session.server';
 import { getDesires, getDesiresWithValuesAndOutcomes, updateDesiresOrder } from '~/models/desires.server';
 
 import type { Value } from '@prisma/client';
-import type { DesireWithValues } from '~/types/desireTypes';
+import type { DesireWithValues, DesireWithValuesAndOutcomes, DesireWithValuesAndOutcomesWithStringDates } from '~/types/desireTypes';
+import { useEffect, useState } from 'react';
+import { transformCurrentDesireValueOutcomeDates } from '~/components/dnds/desires/DndDesires';
 
 export const loader = async ({ request }: LoaderArgs) => {
   let userId = await requireUserId(request);
@@ -47,3 +49,30 @@ function DesiresPage() {
 }
 
 export default DesiresPage
+
+
+type UseDesireWithValuesAndOutcomesProps = {
+  route: string;
+};
+
+export const useDesireWithValuesAndOutcomes = ({ route }: UseDesireWithValuesAndOutcomesProps) => {
+  const params = useParams();
+  const navigate = useNavigate();
+  const loaderData = useRouteLoaderData(route);
+  const [desire, setDesire] = useState<DesireWithValuesAndOutcomes>();
+
+  useEffect(() => {
+    const desiresWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates[] = loaderData?.desiresWithValuesOutcomes;
+    const currentDesireWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates | undefined = desiresWithValuesOutcomesStrDates.find((desire: DesireWithValuesAndOutcomesWithStringDates) => desire.id === params.desireId);
+
+    if (currentDesireWithValuesOutcomesStrDates !== undefined) {
+      const currentDesire: DesireWithValuesAndOutcomes = transformCurrentDesireValueOutcomeDates(currentDesireWithValuesOutcomesStrDates);
+      setDesire(currentDesire);
+    } else {
+      navigate('/dash/desires');
+      return
+    }
+  }, [loaderData, params.desireId, navigate]);
+
+  return desire;
+};

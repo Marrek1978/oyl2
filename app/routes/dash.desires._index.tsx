@@ -50,7 +50,7 @@ function AddNewDesirePage() {
     <>
       <section className='flex gap-8 flex-wrap mb-12'>
         <div className=' flex-1 min-w-[400px] max-w-max  '>
-          <BasicTextAreaBG >
+          <BasicTextAreaBG pageTitle='Desires'>
             <DndDesires />
           </BasicTextAreaBG >
         </div>

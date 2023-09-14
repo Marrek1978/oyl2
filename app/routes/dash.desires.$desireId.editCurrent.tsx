@@ -1,12 +1,11 @@
-import { useMatches, useParams } from '@remix-run/react';
+import { redirect, type ActionArgs } from '@remix-run/server-runtime';
 
+import Modal from '~/components/modals/Modal';
+import { useDesireWithValuesAndOutcomes } from './dash.desires';
 import DesiresCurrentForm from '~/components/forms/DesiresCurrentForm'
 import { updateDesireCurrentSituation } from '~/models/desires.server';
 
-import type { Desire } from '@prisma/client';
-import type { DesireWithValues } from '~/types/desireTypes';
-import { redirect, type ActionArgs } from '@remix-run/server-runtime';
-import Modal from '~/components/modals/Modal';
+
 
 export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData()
@@ -21,14 +20,7 @@ export const action = async ({ request }: ActionArgs) => {
 
 function EditDesireCurrentSituationPage() {
 
-  const params = useParams();
-  const matches = useMatches();
-  const desires: DesireWithValues[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
-  const desire: DesireWithValues | undefined = desires?.find((desire: Desire) => desire.id === params.desireId)
-
-  if (!desire) {
-    return null;
-  }
+  const desire = useDesireWithValuesAndOutcomes({ route: 'routes/dash.desires' });
 
   return (
     <>

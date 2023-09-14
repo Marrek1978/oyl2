@@ -7,7 +7,6 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from 
 import Modal from '~/components/modals/Modal';
 import DndSortableDesire from './DndSortableDesire';
 import SuccessMessage from '~/components/modals/SuccessMessage';
-import SubHeading16px from '~/components/titles/SubHeading16px';
 
 import type { DesireWithValuesAndOutcomes, DesireWithValuesAndOutcomesWithStringDates } from '~/types/desireTypes'
 
@@ -107,9 +106,7 @@ const DndDesires = () => {
           />
         </Modal>
       )}
-      <div className='text-success mb-2'>
-        <SubHeading16px text='Your Desires' />
-      </div>
+     
       <DndContext
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}

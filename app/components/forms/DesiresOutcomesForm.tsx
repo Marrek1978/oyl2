@@ -10,7 +10,7 @@ import SuccessMessage from "../modals/SuccessMessage";
 import SolidBtnGreyBlue from "../buttons/SolidBtnGreyBlue";
 import { dbIcon } from '../utilities/icons';
 import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
-import { DesireCurrentSituation } from '~/components/utilities/PlaceHolderTexts';
+import { DesireOutcomesDefaultText } from '~/components/utilities/PlaceHolderTexts';
 import { DesireOutcomeGuideline, ProperDesireOutcomes } from "../utilities/Guidelines";
 
 import type { DesireOutcome } from '@prisma/client';
@@ -189,7 +189,7 @@ function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps)
                   guideline={ProperDesireOutcomes} />
                 <textarea
                   className='input-field-text-para '
-                  placeholder={DesireCurrentSituation}
+                  placeholder={DesireOutcomesDefaultText}
                   name='outcomeDescription'
                   value={outcomeDescription}
                   onChange={(e) => setOutcomeDescription(e.target.value)}

@@ -44,10 +44,11 @@ function DesireSpecificOutcomesPage() {
 
   const desireName = desire?.title
   const DesireDescription = desire?.description
+  console.log('desireName is ', desireName)
 
   return (
     <>
-      <BreadCrumbs title={desireName || ''} />
+      <BreadCrumbs secondCrumb={'Desire'} />
       <DndPlus800OutletFlex >
         <DndOutcomes
           desireName={desireName}

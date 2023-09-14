@@ -1,93 +1,64 @@
 import { v4 as uuidv4 } from 'uuid';
 import { useEffect, useState } from 'react';
 import { redirect } from '@remix-run/server-runtime';
-import { Outlet, useNavigate, useParams, useRouteLoaderData } from '@remix-run/react';
-
+import { Outlet, useRouteLoaderData } from '@remix-run/react';
 
 import HeadingH1 from '~/components/titles/HeadingH1';
+import { useDesireWithValuesAndOutcomes } from './dash.desires';
 import SubHeading14px from '~/components/titles/SubHeading14px';
-import SubHeading16px from '~/components/titles/SubHeading16px';
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 import H2WithLinkAndProsePara from '~/components/text/H2WithLinkAndProsePara';
 import { varsForPluralText } from '~/components/dnds/desires/DndSortableDesire';
 import AllOutcomesDisplay from '~/components/desires/outcomes/AllOutcomesDisplay';
-import { transformCurrentDesireValueOutcomeDates } from '~/components/dnds/desires/DndDesires';
 import { DesireCurrentDefaultText, DesireIdealPlaceholderText } from '~/components/utilities/PlaceHolderTexts';
 
 import type { DesireOutcome, Value } from '@prisma/client';
-import type { DesireWithValuesAndOutcomes, DesireWithValuesAndOutcomesWithStringDates } from '~/types/desireTypes';
-// export const loader = async ({ request, params }: LoaderArgs) => {
-//   const desireId = params.desireId!
-//   try {
-//     const desireOutcomes = await getOutcomesByDesireId(desireId)
-//     return { desireOutcomes };
-//   } catch (error) { throw error }
-// }
+import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
 
 
 function DesirePage() {
 
-  const params = useParams();
-  const navigate = useNavigate();
-  // const matches = useMatches();
   const loaderData = useRouteLoaderData('routes/dash.desires');
   if (!loaderData.desiresWithValuesOutcomes) redirect('/dash/desires')
-  // const { desireOutcomes } = useLoaderData()
-  const [desire, setDesire] = useState<DesireWithValuesAndOutcomes>();
   const [values, setValues] = useState<Value[]>([]);
   const [outcomes, setOutcomes] = useState<DesireOutcome[]>([]);
 
-
-  // const desires: DesireWithValuesAndOutcomesWithStringDates[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desiresWithValuesOutcomes
+  const desire:DesireWithValuesAndOutcomes| undefined = useDesireWithValuesAndOutcomes({ route: 'routes/dash.desires' });
 
   useEffect(() => {
-    const desiresWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates[] = loaderData?.desiresWithValuesOutcomes
-    const currentDesireWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates | undefined = desiresWithValuesOutcomesStrDates.find((desire: DesireWithValuesAndOutcomesWithStringDates) => desire.id === params.desireId)
-
-    if (currentDesireWithValuesOutcomesStrDates !== undefined) {
-      const currentDesire: DesireWithValuesAndOutcomes = transformCurrentDesireValueOutcomeDates(currentDesireWithValuesOutcomesStrDates)
-      setDesire(currentDesire)
-      const transformedDesireValues = currentDesire?.desireValues?.map(item => item.value) || [];
-      setValues(transformedDesireValues);
-      const transformedDesireOutcomes = currentDesire?.desireOutcomes || [];
-      setOutcomes(transformedDesireOutcomes);
-    } else {
-      navigate("/dash/desires");
-      return;
-    }
-  }, [loaderData, params, navigate])
+    const transformedDesireValues = desire?.desireValues?.map(value => value.value) || [];
+    setValues(transformedDesireValues);
+    const transformedDesireOutcomes = desire?.desireOutcomes || [];
+    setOutcomes(transformedDesireOutcomes);
+  }, [desire])
 
   const { title, description, current, ideal } = desire || {};
   values?.sort((a, b) => a.sortOrder - b.sortOrder)
   const { plural: valueS, length: valuesLength } = varsForPluralText(values);
-  const { plural: outcomeS } = varsForPluralText(outcomes);
   const hasValues = values?.length > 0;
+  const { plural: outcomeS } = varsForPluralText(outcomes);
 
   return (
     <>
 
-      <BreadCrumbs title={title || ''} />
+      <BreadCrumbs secondCrumb={'Desire'} />
       <Outlet />
 
-      <BasicTextAreaBG >
-        <div className='text-success '>
-          <SubHeading16px text='Desire' />
-        </div>
+      <BasicTextAreaBG pageTitle='Desire'>
 
         <article>
-
           {/* //?  THE TITLE SECTION  */}
           <div className='mt-4'>
             <HeadingH1 text={title || ''} />
           </div>
 
-          <div className="flex flex-wrap gap-2 mt-2 max-w-prose text-secondary/70">
+          <div className="flex flex-wrap gap-2 mt-2  text-base-content/50">
             <SubHeading14px
               text={`Serves the Value${valueS} of : `}
             />
             {hasValues && (
-              <div className='flex flex-wrap gap-x-2 font-semibold'>
+              <div className='flex flex-wrap gap-x-2 font-semibold text-secondary/70'>
                 {values?.map((value, index) => {
                   const title = value.valueTitle
                   let id = uuidv4();

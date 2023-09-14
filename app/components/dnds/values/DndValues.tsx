@@ -8,10 +8,10 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from 
 import Modal from '~/components/modals/Modal';
 import DndSortableValue from './DndSortableValue';
 import SuccessMessage from '~/components/modals/SuccessMessage';
-import SubHeading16px from '~/components/titles/SubHeading16px';
 
 import type { Value } from '@prisma/client'
 import type { ValueWithStringDates } from '~/types/valueTypes'
+import PageTitle from '~/components/titles/PageTitle';
 
 const DndValues = () => {
 
@@ -22,12 +22,12 @@ const DndValues = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
 
-  
+
 
   useEffect(() => {
     if (!valuesData) return
 
-    const valuesWithProperDates: Value[] =transformValueDates(valuesData)
+    const valuesWithProperDates: Value[] = transformValueDates(valuesData)
     valuesWithProperDates.sort((a, b) => a.sortOrder - b.sortOrder)
     const notValuesWithSequentialSortOrder = valuesWithProperDates.some((value, index) => {
       return value.sortOrder !== index
@@ -112,35 +112,27 @@ const DndValues = () => {
         </Modal>)
       }
 
-      <div className='flex justify-between items-baseline'>
-        <div className='text-success mb-2'>
-          <SubHeading16px text='Your Values' />
-        </div>
-      </div>
-
-      <div className=''>
-
-        <DndContext
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-          sensors={sensors}
+      <PageTitle text='Values' />
+      <DndContext
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+        sensors={sensors}
+      >
+        <SortableContext
+          items={values?.map(value => value.id)}
+          strategy={verticalListSortingStrategy}
         >
-          <SortableContext
-            items={values?.map(value => value.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            {values?.map((value) => (
-              <DndSortableValue
-                key={value.id}
-                id={value.id}
-                description={value.valueDescription}
-                title={value.valueTitle}
-              />
-            ))}
+          {values?.map((value) => (
+            <DndSortableValue
+              key={value.id}
+              id={value.id}
+              description={value.valueDescription}
+              title={value.valueTitle}
+            />
+          ))}
 
-          </SortableContext>
-        </DndContext >
-      </div>
+        </SortableContext>
+      </DndContext >
     </>
   )
 }

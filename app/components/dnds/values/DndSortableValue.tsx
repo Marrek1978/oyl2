@@ -25,7 +25,7 @@ function DndSortableValue({ id, title, description, linkTitle = 'Edit' }: Sortab
       <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mt-0">
         <div key={id} id={id} className='
           px-3 py-4 
-          mt-2
+          mt-4
           font-poppins
           cursor-pointer 
           text-left text-base-content
@@ -46,7 +46,7 @@ function DndSortableValue({ id, title, description, linkTitle = 'Edit' }: Sortab
           <div className='
             text-base-content/70
             text-sm 
-            mt-2      
+            mt-2
             max-w-prose w-prose
           '>
             {description}

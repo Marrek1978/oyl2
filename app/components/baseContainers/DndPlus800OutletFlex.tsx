@@ -11,7 +11,7 @@ function DndPlus800OutletFlex({children} : DndPlusOutletFlexProps) {
     <>
     <section className='flex gap-8 flex-wrap '>
       <div className='flex-1 w-full max-w-max min-w-[400px] '>
-        <BasicTextAreaBG >
+        <BasicTextAreaBG  >
         {children}
         </BasicTextAreaBG>
       </div>

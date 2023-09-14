@@ -23,7 +23,7 @@ function BasicFormAreaBG({ children, title, maxWidth = '800', linkDestination, l
       grid grid-cols-[minmax(300px,${maxWidth}px)]
       grid-rows-[min-content_1fr_min-content]
       cursor-defaultshadow-lg
-      w-full max-w-max
+      w-full
       max-h-full
       overflow-auto
     `}>

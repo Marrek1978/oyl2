@@ -4,16 +4,8 @@ import { createValue } from '~/models/values.server'
 import ValueForm from '~/components/forms/ValueForm'
 import { requireUserId } from '~/models/session.server'
 
-import type { validationErrorsTypes } from '~/types/validationTypes'
-
-
-// export const loader = async ({ request }: LoaderArgs) => {
-  // try {
-  //   const userId = await requireUserId(request);
-  //   return userId
-  // } catch (error) { throw error }
-// }
-
+import type { validationErrorTypes} from '~/types/validationTypes'
+ 
 export const action = async ({ request }: ActionArgs) => {
 
   const userId = await requireUserId(request)
@@ -21,7 +13,7 @@ export const action = async ({ request }: ActionArgs) => {
   const valueData = Object.fromEntries(formData);
 
   //! do clentside validation to stop rerenders
-  let validationErrors: validationErrorsTypes = {};
+  let validationErrors: validationErrorTypes = {};
   !valueData.title && (validationErrors.title = 'A title is required')
   !valueData.description && (validationErrors.description = 'A description is required')
   if (!valueData.title || !valueData.description) return validationErrors

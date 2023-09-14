@@ -57,7 +57,7 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
           />
 
           {hasValues && (
-            <div className="grid grid-cols-[120px_1fr] gap-x-2 gap-y-0 mt-1 items-start ">
+            <div className="grid grid-cols-[120px_1fr] gap-x-2 gap-y-0 mt-2 items-start ">
               <div className='text-base-content/70 font-medium'>
                 <SubHeading12px text={`Serves Value${valueS}:`} />
               </div>
@@ -81,7 +81,7 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
           )}
 
           {hasOutcomes && (
-            <div className="grid grid-cols-[120px_1fr] gap-x-2 items-start mt-1 ">
+            <div className="grid grid-cols-[120px_1fr] gap-x-2 items-start mt-2 ">
               <div className='text-base-content/70 font-medium '>
                 <SubHeading12px text={`Has Outome${outcomeS}:`} />
               </div>

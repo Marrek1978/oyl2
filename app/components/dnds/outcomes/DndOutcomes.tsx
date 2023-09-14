@@ -6,33 +6,41 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-ki
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
 
 import Modal from '~/components/modals/Modal';
-import HeadingH2 from '~/components/titles/HeadingH2';
 import DndOutcomesSortable from './DndOutcomesSortable';
-import SubHeading16px from '~/components/titles/SubHeading16px';
 import SuccessMessage from '~/components/modals/SuccessMessage';
 
 import type { DesireOutcome } from '@prisma/client';
+import PageTitle from '~/components/titles/PageTitle';
+import { useDesireWithValuesAndOutcomes } from '~/routes/dash.desires';
+import SubHeading14px from '~/components/titles/SubHeading14px';
+import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
 
 
-interface DndOutcomesProps {
-  desireName?: string;
-  description?: string;
-}
 
-const DndOutcomes: React.FC<DndOutcomesProps> = ({ desireName, description }) => {
+
+const DndOutcomes: React.FC = () => {
 
   const fetcher = useFetcher();
   const outcomesData = useLoaderData<DesireOutcome[]>();
 
+  const [desireName, setDesireName] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState('');
   const [outcomes, setOutcomes] = useState<DesireOutcome[]>([]);
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
 
+  const desire: DesireWithValuesAndOutcomes | undefined = useDesireWithValuesAndOutcomes({ route: 'routes/dash.desires' });
+
 
   useEffect(() => {
-    if(!outcomesData) return
+    if (!desire) return
+    setDesireName(desire.title)
+  }, [desire])
 
-    const outcomesWithProperDates: DesireOutcome[] =transformOutcomeDates(outcomesData)
+
+  useEffect(() => {
+    if (!outcomesData) return
+
+    const outcomesWithProperDates: DesireOutcome[] = transformOutcomeDates(outcomesData)
     outcomesWithProperDates.sort((a, b) => a.sortOrder - b.sortOrder)
     const notOutcomesWithSequentialSortOrder = outcomesWithProperDates.some((outcome, index) => {
       return outcome.sortOrder !== index
@@ -41,8 +49,6 @@ const DndOutcomes: React.FC<DndOutcomesProps> = ({ desireName, description }) =>
       ? resetOutcomesSortOrder(outcomesWithProperDates)
       : outcomesWithProperDates
     )
-   
-    // setOutcomes(transformOutcomeDates(outcomesData)) 
   }, [outcomesData])
 
 
@@ -113,24 +119,23 @@ const DndOutcomes: React.FC<DndOutcomesProps> = ({ desireName, description }) =>
     <>
       {successMessage && (
         <Modal onClose={() => { }} zIndex={20}>
-         
           <SuccessMessage
             text={successMessage}
           />
         </Modal>)
       }
-      <div className='text-success mb-2'>
-        <SubHeading16px text={`Measurable Outcomes for the Desire: `} />
+
+      <PageTitle text='Outcomes' />
+
+      <div className="flex flex-wrap gap-x-2 mt-2  text-base-content/50">
+        <SubHeading14px
+          text={`For the Desire: `}
+        />
+        <div className='font-semibold text-secondary/70 whitespace-normal'>
+          <SubHeading14px text={desireName || ''} />
+        </ div>
       </div>
-      <div className=' max-w-prose'>
-        <HeadingH2 text={desireName || ''} />
-      </div>
-      
-      {description && (
-        <div className='mt-2 max-w-prose text-base-content/70'>
-          {description}
-        </div>
-      )}
+
       <DndContext
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}

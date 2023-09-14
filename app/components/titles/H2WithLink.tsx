@@ -28,7 +28,7 @@ function H2WithLink({ title, linkDestination, linkColor = 'text-primary', linkTe
 
   return (
     <>
-      <div className="flex flex-wrap justify-between items-baseline gap-x-4    ">
+      <div className="flex flex-wrap justify-between items-baseline gap-x-4 w-full   ">
 
         <div
           className='flex-1 flex gap-2 items-baseline flex-wrap '>
