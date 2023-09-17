@@ -1,10 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
+import { Outlet } from '@remix-run/react';
 import { useEffect, useState } from 'react';
-import { redirect } from '@remix-run/server-runtime';
-import { Outlet, useRouteLoaderData } from '@remix-run/react';
 
 import HeadingH1 from '~/components/titles/HeadingH1';
-import { useDesireWithValuesAndOutcomes } from './dash.desires';
+import { useGetDesireWithValuesAndOutcomes } from './dash.desires';
 import SubHeading14px from '~/components/titles/SubHeading14px';
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
@@ -19,12 +18,10 @@ import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
 
 function DesirePage() {
 
-  const loaderData = useRouteLoaderData('routes/dash.desires');
-  if (!loaderData.desiresWithValuesOutcomes) redirect('/dash/desires')
   const [values, setValues] = useState<Value[]>([]);
   const [outcomes, setOutcomes] = useState<DesireOutcome[]>([]);
 
-  const desire:DesireWithValuesAndOutcomes| undefined = useDesireWithValuesAndOutcomes({ route: 'routes/dash.desires' });
+  const desire: DesireWithValuesAndOutcomes | undefined = useGetDesireWithValuesAndOutcomes( );
 
   useEffect(() => {
     const transformedDesireValues = desire?.desireValues?.map(value => value.value) || [];
@@ -46,7 +43,6 @@ function DesirePage() {
       <Outlet />
 
       <BasicTextAreaBG pageTitle='Desire'>
-
         <article>
           {/* //?  THE TITLE SECTION  */}
           <div className='mt-4'>

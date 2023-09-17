@@ -1,13 +1,12 @@
 import { parse } from 'querystring';
-import { useMatches, useParams } from '@remix-run/react';
 
 import { requireUserId } from '~/models/session.server';
 import { createDesireOutcome } from '~/models/outcome.server';
+import { useGetDesireWithValuesAndOutcomes } from './dash.desires';
 import DesiresOutcomesForm from '~/components/forms/DesiresOutcomesForm'
 
-import type { Desire } from '@prisma/client';
 import type { ActionArgs } from '@remix-run/server-runtime';
-import type { DesireWithValues } from '~/types/desireTypes';
+import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
 
 
 export const action = async ({ request }: ActionArgs) => {
@@ -26,6 +25,7 @@ export const action = async ({ request }: ActionArgs) => {
     desireId: outcomeData.desireId as string,
   }
 
+  console.log('in index action and outcome is ', outcome)
   try {
     await createDesireOutcome(outcome)
     return null
@@ -34,11 +34,7 @@ export const action = async ({ request }: ActionArgs) => {
 
 
 function DesireOutcomesIndexPage() {
-  const params = useParams();
-  const matches = useMatches();
-  const desires: DesireWithValues[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
-  const desire: DesireWithValues | undefined = desires?.find((desire: Desire) => desire.id === params.desireId)
-
+  const desire: DesireWithValuesAndOutcomes | undefined = useGetDesireWithValuesAndOutcomes();
 
   return (
     <>

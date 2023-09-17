@@ -1,22 +1,11 @@
 import { parse } from 'querystring';
-import { useMatches, useParams } from '@remix-run/react';
-import { type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime';
+import { type ActionArgs } from '@remix-run/server-runtime';
 
+import { updateOutcomesOrder } from '~/models/outcome.server';
 import DndOutcomes from '~/components/dnds/outcomes/DndOutcomes';
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
-import { getOutcomesByDesireId, updateOutcomesOrder } from '~/models/outcome.server';
 
-import type { Desire, DesireOutcome } from '@prisma/client';
-import type { DesireWithValues } from '~/types/desireTypes';
 import DndPlus800OutletFlex from '~/components/baseContainers/DndPlus800OutletFlex';
-
-export const loader = async ({ request, params }: LoaderArgs) => {
-  const desireId = params.desireId!
-  try {
-    const desireOutcomes: DesireOutcome[] = await getOutcomesByDesireId(desireId)
-    return desireOutcomes
-  } catch (error) { throw error }
-}
 
 
 export const action = async ({ request }: ActionArgs) => {
@@ -35,25 +24,11 @@ export const action = async ({ request }: ActionArgs) => {
 
 function DesireSpecificOutcomesPage() {
 
-  // const desireOutcomes = useLoaderData()
-
-  const params = useParams();
-  const matches = useMatches();
-  const desires: DesireWithValues[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
-  const desire: DesireWithValues | undefined = desires?.find((desire: Desire) => desire.id === params.desireId)
-
-  const desireName = desire?.title
-  const DesireDescription = desire?.description
-  console.log('desireName is ', desireName)
-
   return (
     <>
       <BreadCrumbs secondCrumb={'Desire'} />
       <DndPlus800OutletFlex >
-        <DndOutcomes
-          desireName={desireName}
-          description={DesireDescription}
-        />
+        <DndOutcomes />
       </DndPlus800OutletFlex>
     </>
   )

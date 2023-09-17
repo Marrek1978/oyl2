@@ -28,7 +28,7 @@ function Dash() {
         lg:flex-nowrap
           ">
         <aside className='w-56' >
-          <SideNav />
+          <SideNav /> 
         </aside>
         <article className=" flex-1 min-h-[90vh]  ">
           <ListProvider>

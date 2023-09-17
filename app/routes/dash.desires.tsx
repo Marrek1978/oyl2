@@ -9,7 +9,7 @@ import { getDesires, getDesiresWithValuesAndOutcomes, updateDesiresOrder } from 
 import type { Value } from '@prisma/client';
 import type { DesireWithValues, DesireWithValuesAndOutcomes, DesireWithValuesAndOutcomesWithStringDates } from '~/types/desireTypes';
 import { useEffect, useState } from 'react';
-import { transformCurrentDesireValueOutcomeDates } from '~/components/dnds/desires/DndDesires';
+// import { transformCurrentDesireValueOutcomeDates, transformDesiresValueOutcomeDates } from '~/components/dnds/desires/DndDesires';
 
 export const loader = async ({ request }: LoaderArgs) => {
   let userId = await requireUserId(request);
@@ -36,8 +36,6 @@ export const action = async ({ request }: LoaderArgs) => {
 
 
 function DesiresPage() {
-  // const {loaderData} = useLoaderData()
-  // console.log('dash.desires adn loader data is ', loaderData)
 
   return (
     <>
@@ -51,14 +49,15 @@ function DesiresPage() {
 export default DesiresPage
 
 
-type UseDesireWithValuesAndOutcomesProps = {
-  route: string;
-};
+// type UseDesireWithValuesAndOutcomesProps = {
+//   route: string;
+// };
 
-export const useDesireWithValuesAndOutcomes = ({ route }: UseDesireWithValuesAndOutcomesProps) => {
+export const useGetDesireWithValuesAndOutcomes = () => {
   const params = useParams();
+  const path =  'routes/dash.desires'  
   const navigate = useNavigate();
-  const loaderData = useRouteLoaderData(route);
+  const loaderData = useRouteLoaderData(path);
   const [desire, setDesire] = useState<DesireWithValuesAndOutcomes>();
 
   useEffect(() => {
@@ -76,3 +75,96 @@ export const useDesireWithValuesAndOutcomes = ({ route }: UseDesireWithValuesAnd
 
   return desire;
 };
+
+export const useGetAllDesiresWithValuesAndOutcomes = ():DesireWithValuesAndOutcomes[]|undefined => {
+  const navigate = useNavigate();
+  const path =  'routes/dash.desires'  
+  const loaderData = useRouteLoaderData(path);
+  const [desires, setDesires] = useState<DesireWithValuesAndOutcomes[]>();
+
+
+  useEffect(() => {
+    const desiresWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates[] = loaderData?.desiresWithValuesOutcomes;
+
+    if (desiresWithValuesOutcomesStrDates !== undefined) {
+      const currentDesires: DesireWithValuesAndOutcomes[] = transformDesiresValueOutcomeDates(desiresWithValuesOutcomesStrDates);
+      setDesires(currentDesires);
+    } else {
+      navigate('/dash/desires');
+      return
+    }
+  }, [loaderData, navigate]);
+
+  return desires;
+};
+
+
+export function transformDesiresValueOutcomeDates(desiresWithValuesOutcomes: DesireWithValuesAndOutcomesWithStringDates[]): DesireWithValuesAndOutcomes[] {
+  const desires = desiresWithValuesOutcomes.map((desire: DesireWithValuesAndOutcomesWithStringDates) => {
+    const outcomes = desire.desireOutcomes.sort((a, b) => a.sortOrder - b.sortOrder)
+    const values = desire.desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
+    let outcomesWithProperDates = []
+    let valuesWithProperDates = []
+
+    if (outcomes.length > 0) {
+      outcomesWithProperDates = outcomes.map((outcome: any) => ({
+        ...outcome,
+        createdAt: new Date(outcome.createdAt!),
+        updatedAt: new Date(outcome.updatedAt!),
+      }))
+    }
+
+    if (values.length > 0) {
+      valuesWithProperDates = values.map((value: any) => ({
+        ...value,
+        createdAt: new Date(value.createdAt!),
+        updatedAt: new Date(value.updatedAt!),
+      }))
+    }
+
+    return ({
+      ...desire,
+      createdAt: new Date(desire.createdAt!),
+      updatedAt: new Date(desire.updatedAt!),
+      desireOutcomes: outcomesWithProperDates,
+      desireValues: valuesWithProperDates
+    })
+  })
+
+  return desires
+}
+
+
+export function transformCurrentDesireValueOutcomeDates(desiresWithValuesOutcomes: DesireWithValuesAndOutcomesWithStringDates): DesireWithValuesAndOutcomes {
+    const desire = desiresWithValuesOutcomes
+    const outcomes = desire.desireOutcomes.sort((a, b) => a.sortOrder - b.sortOrder)
+    const values = desire.desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
+    let outcomesWithProperDates = []
+    let valuesWithProperDates = []
+
+    if (outcomes.length > 0) {
+      outcomesWithProperDates = outcomes.map((outcome: any) => ({
+        ...outcome,
+        createdAt: new Date(outcome.createdAt!),
+        updatedAt: new Date(outcome.updatedAt!),
+      }))
+    }
+
+    if (values.length > 0) {
+      valuesWithProperDates = values.map((value: any) => ({
+        ...value,
+        createdAt: new Date(value.createdAt!),
+        updatedAt: new Date(value.updatedAt!),
+      }))
+    }
+
+    const transformedDesire:DesireWithValuesAndOutcomes = ({
+      ...desire,
+      createdAt: new Date(desire.createdAt!),
+      updatedAt: new Date(desire.updatedAt!),
+      desireOutcomes: outcomesWithProperDates,
+      desireValues: valuesWithProperDates
+    })
+
+  return transformedDesire
+}

@@ -1,18 +1,19 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useFetcher, useLoaderData } from '@remix-run/react';
+import { useFetcher } from '@remix-run/react';
 
-import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
 
 import Modal from '~/components/modals/Modal';
-import DndOutcomesSortable from './DndOutcomesSortable';
-import SuccessMessage from '~/components/modals/SuccessMessage';
-
-import type { DesireOutcome } from '@prisma/client';
 import PageTitle from '~/components/titles/PageTitle';
-import { useDesireWithValuesAndOutcomes } from '~/routes/dash.desires';
+import DndOutcomesSortable from './DndOutcomesSortable';
 import SubHeading14px from '~/components/titles/SubHeading14px';
+import SuccessMessage from '~/components/modals/SuccessMessage';
+import { useGetDesireWithValuesAndOutcomes } from '~/routes/dash.desires';
+
+
+import type { DragEndEvent } from "@dnd-kit/core";
+import type { DesireOutcome } from '@prisma/client';
 import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
 
 
@@ -21,14 +22,13 @@ import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
 const DndOutcomes: React.FC = () => {
 
   const fetcher = useFetcher();
-  const outcomesData = useLoaderData<DesireOutcome[]>();
-
   const [desireName, setDesireName] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState('');
   const [outcomes, setOutcomes] = useState<DesireOutcome[]>([]);
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
 
-  const desire: DesireWithValuesAndOutcomes | undefined = useDesireWithValuesAndOutcomes({ route: 'routes/dash.desires' });
+  const desire: DesireWithValuesAndOutcomes | undefined = useGetDesireWithValuesAndOutcomes( );
+  const loadedOutcomes = desire?.desireOutcomes
 
 
   useEffect(() => {
@@ -38,18 +38,19 @@ const DndOutcomes: React.FC = () => {
 
 
   useEffect(() => {
-    if (!outcomesData) return
 
-    const outcomesWithProperDates: DesireOutcome[] = transformOutcomeDates(outcomesData)
-    outcomesWithProperDates.sort((a, b) => a.sortOrder - b.sortOrder)
-    const notOutcomesWithSequentialSortOrder = outcomesWithProperDates.some((outcome, index) => {
-      return outcome.sortOrder !== index
-    })
-    setOutcomes(notOutcomesWithSequentialSortOrder
-      ? resetOutcomesSortOrder(outcomesWithProperDates)
-      : outcomesWithProperDates
+    if (!loadedOutcomes) return
+
+    const sortedOutcomes = loadedOutcomes.sort((a, b) => a.sortOrder - b.sortOrder)
+
+
+    const isSequentialOrder = areOutcomesInSequentialOrder(sortedOutcomes)
+
+    setOutcomes(isSequentialOrder
+      ? sortedOutcomes
+      : resetOutcomesSortOrder(sortedOutcomes)
     )
-  }, [outcomesData])
+  }, [loadedOutcomes])
 
 
   useEffect(() => {
@@ -125,13 +126,13 @@ const DndOutcomes: React.FC = () => {
         </Modal>)
       }
 
-      <PageTitle text='Outcomes' />
+      <PageTitle text='Desired Outcomes' />
 
-      <div className="flex flex-wrap gap-x-2 mt-2  text-base-content/50">
+      <div className="flex flex-wrap gap-x-2 mt-0  text-base-content/50">
         <SubHeading14px
           text={`For the Desire: `}
         />
-        <div className='font-semibold text-secondary/70 whitespace-normal'>
+        <div className='font-semibold text-secondary/60 whitespace-normal'>
           <SubHeading14px text={desireName || ''} />
         </ div>
       </div>
@@ -167,11 +168,11 @@ const DndOutcomes: React.FC = () => {
 
 export default DndOutcomes
 
-function transformOutcomeDates(values: any) {
-  return values.map((value: any) => ({
-    ...value,
-    createdAt: new Date(value.createdAt!),
-    updatedAt: new Date(value.updatedAt!),
-    dueDate: value.dueDate ? new Date(value.dueDate) : null,
-  }));
+ 
+export function areOutcomesInSequentialOrder(outcomes: DesireOutcome[]): boolean {
+  outcomes.sort((a, b) => a.sortOrder - b.sortOrder)
+  const isNOTSequentialOrder = outcomes.some((outcome, index) => {
+    return outcome.sortOrder !== index
+  })
+  return !isNOTSequentialOrder
 }

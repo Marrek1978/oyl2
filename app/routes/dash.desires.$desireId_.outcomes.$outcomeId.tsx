@@ -1,18 +1,18 @@
 import { parse } from 'querystring'
-import { useMatches, useParams, Outlet } from '@remix-run/react'
+import { useEffect, useState } from 'react'
+import { useParams, Outlet, useNavigate } from '@remix-run/react'
 import { redirect, type ActionArgs } from '@remix-run/server-runtime'
 
 import Modal from '~/components/modals/Modal'
-import DesiresOutcomesForm from '~/components/forms/DesiresOutcomesForm'
 import { updateDesireOutcome } from '~/models/outcome.server'
+import { useGetDesireWithValuesAndOutcomes } from './dash.desires'
+import DesiresOutcomesForm from '~/components/forms/DesiresOutcomesForm'
 
-import type { DesireWithValues, validationErrorsTypes } from '~/types/desireTypes'
-import type { Desire, DesireOutcome } from '@prisma/client'
-import type { DesireOutcomeWithStringDates } from '~/types/outcomeTypes'
+import type { DesireOutcome } from '@prisma/client'
+import type { DesireWithValuesAndOutcomes, validationErrorsTypes } from '~/types/desireTypes'
 
 
 export const action = async ({ request }: ActionArgs) => {
-  console.log('outocmes_outcomeId action')
   const formBody = await request.text();
   const outcomeData = JSON.parse(parse(formBody).outcomeString as string);
 
@@ -22,7 +22,6 @@ export const action = async ({ request }: ActionArgs) => {
   console.log(validationErrors)
   if (!outcomeData.title || !outcomeData.description) return validationErrors
 
-  
   try {
     await updateDesireOutcome(outcomeData)
     return redirect('..')
@@ -32,21 +31,8 @@ export const action = async ({ request }: ActionArgs) => {
 
 function EditOutcomePage() {
 
-  const params = useParams();
-  const matches = useMatches();
-  const desires: DesireWithValues[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
-  const desire: DesireWithValues | undefined = desires?.find((desire: Desire) => desire.id === params.desireId)
-
-  const outcomesWithStringDates: DesireOutcomeWithStringDates[] = matches.find(match => match.id === 'routes/dash.desires.$desireId_.outcomes')!.data
-  if (!outcomesWithStringDates) throw new Error('outcomes not found')
-  const outcomeWithStringDates: DesireOutcomeWithStringDates = outcomesWithStringDates.find((outcome: DesireOutcomeWithStringDates) => outcome.id === params.outcomeId)!
-
-
-  const outcome: DesireOutcome = {
-    ...outcomeWithStringDates,
-    createdAt: new Date(outcomeWithStringDates.createdAt),
-    updatedAt: new Date(outcomeWithStringDates.updatedAt),
-  }
+  const desire: DesireWithValuesAndOutcomes | undefined = useGetDesireWithValuesAndOutcomes();
+  let outcome: DesireOutcome | undefined = useGetOutcome(desire)
 
 
   return (
@@ -64,3 +50,27 @@ function EditOutcomePage() {
 }
 
 export default EditOutcomePage
+
+export const useGetOutcome = (desire: DesireWithValuesAndOutcomes | undefined): DesireOutcome | undefined => {
+
+  const params = useParams();
+  const navigate = useNavigate();
+  const [outcome, setOutcome] = useState<DesireOutcome | undefined>(undefined)
+
+  useEffect(() => {
+    console.log(' in useGetOutcome useEffect')
+    const loadedOutcome: DesireOutcome | undefined= desire?.desireOutcomes.find((outcome: DesireOutcome) => outcome.id === params.outcomeId)
+    
+    // console.log(' loadedOutcome is', loadedOutcome)
+    // if (!loadedOutcome) {
+    //   // navigate('/dash/desires');
+    //   return
+    // }
+    
+    console.log('setting outcome')
+    setOutcome(loadedOutcome)
+  }, [ desire, params.outcomeId, navigate])
+
+  console.log('returning outocme', outcome)
+  return outcome
+}

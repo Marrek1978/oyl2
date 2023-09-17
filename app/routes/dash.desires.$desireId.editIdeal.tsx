@@ -1,7 +1,7 @@
 import { type ActionArgs, redirect } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal';
-import { useDesireWithValuesAndOutcomes } from './dash.desires';
+import { useGetDesireWithValuesAndOutcomes } from './dash.desires';
 import DesiresIdealForm from '~/components/forms/DesiresIdealForm';
 import { updateDesireIdealScenario } from '~/models/desires.server';
 
@@ -21,7 +21,7 @@ export const action = async ({ request }: ActionArgs) => {
 
 
 function EditDesireIdealScenarioPage() {
-  const desire = useDesireWithValuesAndOutcomes({ route: 'routes/dash.desires' });
+  const desire = useGetDesireWithValuesAndOutcomes();
 
   return (
     <>

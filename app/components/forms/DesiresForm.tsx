@@ -10,8 +10,9 @@ import { closeIcon, dbIcon, trashIcon } from '../utilities/icons';
 import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
 import { DesireDescription, DesireTitle, DesireValuesServed } from '../utilities/Guidelines';
 
-import type { DesireWithValues, DesireWithValuesWithStringDates } from '~/types/desireTypes';
+import type { DesireWithValues, DesireWithValuesAndOutcomes } from '~/types/desireTypes';
 import type { ValueWithStringDates } from '~/types/valueTypes';
+import { useGetAllDesiresWithValuesAndOutcomes } from '~/routes/dash.desires';
 
 interface DesireFormProps {
   desire?: DesireWithValues
@@ -34,14 +35,12 @@ function DesiresForm({ desire, isNew = true }: DesireFormProps) {
 
   const isSubmitting = navigation.state === 'submitting'
   const isIdle = navigation.state === 'idle'
-  const desires: DesireWithValuesWithStringDates[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
+  // const desires: DesireWithValuesWithStringDates[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
   const allUserValues: ValueWithStringDates[] = matches.find(match => match.id === 'routes/dash.desires')?.data.allUserValues
-  // const desiresWithValuesAndOutcomes: DesireWithValuesAndOutcomesWithStringDates[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desiresValuesWithOutcomes
+  const desires: DesireWithValuesAndOutcomes[] | undefined = useGetAllDesiresWithValuesAndOutcomes();
 
-  // console.log('desiresWithValuesAndOutcomes is ', desiresWithValuesAndOutcomes)
-
-  // console.log('allUserValues is ', allUserValues)
-  // console.log('desires is ', desires)
+  const maxDesiresSortOrder = Math.max(...desires?.map(desire => desire.sortOrder) || [0]);
+  const nextSortOrder = isNew ? maxDesiresSortOrder + 1 : sortOrder;
 
   const saveBtnText =
     isSubmitting
@@ -73,12 +72,12 @@ function DesiresForm({ desire, isNew = true }: DesireFormProps) {
   useEffect(() => {
     setTitle(desire?.title || '')
     setDescription(desire?.description || '')
-    setSortOrder(desire?.sortOrder || desires?.length || 0)
+    setSortOrder(nextSortOrder || 0)
     setDesireId(desire?.id || '')
     const LoadedDesireValues = desire?.desireValues.map((dv: any) => dv.value.valueTitle)
     setLoadedValues(LoadedDesireValues || [])
     LoadedDesireValues && setCheckedValues(LoadedDesireValues?.map(dv => dv));
-  }, [desires, desire])
+  }, [desire, nextSortOrder])
 
 
   useEffect(() => {

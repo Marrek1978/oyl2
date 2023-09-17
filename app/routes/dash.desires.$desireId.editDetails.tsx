@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
 import { redirect, type ActionArgs } from '@remix-run/server-runtime';
-import { Outlet, useNavigate, useParams, useRouteLoaderData } from '@remix-run/react';
+import { Outlet, useRouteLoaderData } from '@remix-run/react';
 
 import Modal from '~/components/modals/Modal';
 import { updateDesire } from '~/models/desires.server';
 import { requireUserId } from '~/models/session.server';
 import DesiresForm from '~/components/forms/DesiresForm';
-import { transformDesireValueOutcomeDates } from '~/components/dnds/desires/DndDesires';
 
-import type { DesireWithValuesAndOutcomes, DesireWithValuesAndOutcomesWithStringDates, validationErrorsTypes, } from '~/types/desireTypes';
+
+import type { validationErrorsTypes, } from '~/types/desireTypes';
+import { useGetDesireWithValuesAndOutcomes } from '~/routes/dash.desires';
 
 
 export const action = async ({ request }: ActionArgs) => {
@@ -45,22 +45,9 @@ export const action = async ({ request }: ActionArgs) => {
 
 function EditDesireDetailsPage() {
 
-  const params = useParams();
-  const navigate = useNavigate();
-  const loaderData = useRouteLoaderData('routes/dash.desires');
+  useRouteLoaderData('routes/dash.desires');
 
-  const [desire, setDesire] = useState<DesireWithValuesAndOutcomes>();
-
-  useEffect(() => {
-    if (!loaderData.desiresWithValuesOutcomes) redirect('/dash/desires')
-
-    const desiresWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates[] = loaderData?.desiresWithValuesOutcomes
-    const desiresWithValuesOutcomesProperDates: DesireWithValuesAndOutcomes[] = transformDesireValueOutcomeDates(desiresWithValuesOutcomesStrDates)
-    const currentDesire: DesireWithValuesAndOutcomes | undefined = desiresWithValuesOutcomesProperDates?.find((desire: DesireWithValuesAndOutcomes) => desire.id === params.desireId)
-    if (!currentDesire) return navigate("/dash/desires");
-
-    setDesire(currentDesire)
-  }, [loaderData, params, navigate])
+  const desire = useGetDesireWithValuesAndOutcomes();
 
   return (
     <>

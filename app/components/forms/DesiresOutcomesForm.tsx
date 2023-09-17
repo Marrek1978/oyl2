@@ -14,26 +14,32 @@ import { DesireOutcomesDefaultText } from '~/components/utilities/PlaceHolderTex
 import { DesireOutcomeGuideline, ProperDesireOutcomes } from "../utilities/Guidelines";
 
 import type { DesireOutcome } from '@prisma/client';
-import type { DesireWithValues } from '~/types/desireTypes'
+import type {  DesireWithValuesAndOutcomes } from '~/types/desireTypes'
 
 interface DesireFormProps {
-  desire?: DesireWithValues;
+  desire?: DesireWithValuesAndOutcomes;
   outcome?: DesireOutcome;
   isNew?: boolean
 }
 
 function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps) {
 
+  console.log('loading form')
   const fetcher = useFetcher();
   const navigation = useNavigation();
 
   const [desireId, setDesireId] = useState<string>('')
   const [successMessage, setSuccessMessage] = useState('');
   const [desireTitle, setDesireTitle] = useState<string>('')
-  const [editsMade, setEditsMade] = useState<boolean>(false) //true if outcome is new, false if outcome is existing
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
   const [outcomeTitle, setOutcomeTitle] = useState<string>('')
   const [outcomeDescription, setOutcomeDescription] = useState<string>('')
+  const [outcomeSortOrder, setOutcomeSortOrder] = useState<number>(0) //if adding new desire, set to desires.length
+
+  const loadedOutcomes = desire?.desireOutcomes
+
+  const maxOutcomesSortOrder = Math.max(...loadedOutcomes?.map(outcome => outcome.sortOrder) || [0]);
+  const nextSortOrder = isNew ? maxOutcomesSortOrder + 1 : desire?.sortOrder;
 
   const isIdle = navigation.state === 'idle'
   const isSubmitting = navigation.state === 'submitting'
@@ -44,13 +50,27 @@ function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps)
       ? 'Saving...'
       : isNew
         ? "Save New Outcome"
-        : "Save Changes"
+        : "Save Change to Outcome"
+
+  const header = isNew
+    ? 'Create New Outcome'
+    : (<>
+      <div>
+        <span className='text-sm' >
+          Edit Outcome:
+        </span>
+      </div>
+      <div>
+        {outcomeTitle}
+      </div>
+    </>)
 
 
   useEffect(() => {
     setOutcomeTitle(outcome?.title || '')
     setOutcomeDescription(outcome?.description || '')
-  }, [outcome])
+    setOutcomeSortOrder(nextSortOrder || 0)
+  }, [outcome, nextSortOrder])
 
 
   useEffect(() => {
@@ -61,19 +81,15 @@ function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps)
 
   //  for turning buttons on/off, switching text
   useEffect(() => {
-    const saveable =
-      !isNew
-        ? editsMade
-        : outcomeTitle && outcomeDescription ? true : false
-    setIsSaveable(saveable)
-  }, [outcomeTitle, isNew, editsMade, outcomeDescription]);
 
+    const isInputEmpty = !outcomeTitle || !outcomeDescription
+    const isInputDifferent =
+      outcomeTitle !== desire?.title
+      || outcomeDescription !== desire?.description
+    setIsSaveable(!isInputEmpty && (isInputDifferent))
 
-  useEffect(() => {
-    if (outcomeTitle !== outcome?.title) return setEditsMade(true)
-    if (outcomeDescription !== outcome?.description) return setEditsMade(true)
-    setEditsMade(false)
-  }, [outcomeTitle, outcomeDescription]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [outcomeTitle, isNew, desire, outcomeDescription]);
+
 
 
   // clearing form after submit
@@ -88,10 +104,12 @@ function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps)
 
 
   const handleSave = () => {
+
     const outcomeObj = {
       title: outcomeTitle,
       description: outcomeDescription,
       desireId: desireId,
+      sortOrder: outcomeSortOrder,
     }
     const outcomeString = JSON.stringify(outcomeObj);
     try {
@@ -106,6 +124,7 @@ function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps)
 
 
   const handleEdit = () => {
+
     const outcomeObj = {
       id: outcome?.id,
       title: outcomeTitle,
@@ -122,29 +141,7 @@ function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps)
     } catch (error) { throw error }
   }
 
-  const header = isNew
-    ? (<>
-      <div >
-        <span className='text-sm' >
-          Create a New Outcome for:
-        </span>
-      </div>
-      <div>
-        {desireTitle}
-      </div>
-    </>
-    ) : (
-      <>
-        <div >
-          <span className='text-sm' >
-            Edit Outcome:
-          </span>
-        </div>
-        <div>
-          {outcomeTitle}
-        </div>
-      </>
-    )
+
 
 
   return (
@@ -165,6 +162,7 @@ function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps)
         <Form method='post' className='mx-8 '>
           <div className='vert-space-between-inputs   '>
             <input type="string" name='desireId' value={desireId} hidden readOnly />
+            <input type="string" name='desireTitle' value={desireTitle} hidden readOnly />
 
             <div className="form-control gap-6">
               <div>

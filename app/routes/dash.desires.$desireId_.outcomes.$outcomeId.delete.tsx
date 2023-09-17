@@ -1,10 +1,13 @@
-import { useMatches, useParams } from '@remix-run/react';
-import { ActionArgs, redirect } from '@remix-run/server-runtime';
-import React from 'react'
-import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal'
+import { type ActionArgs, redirect } from '@remix-run/server-runtime';
+
 import Modal from '~/components/modals/Modal'
 import { deleteOutcomeById } from '~/models/outcome.server';
-import { OutcomeWithProgressList } from '~/types/outcomeTypes';
+import { useGetDesireWithValuesAndOutcomes } from './dash.desires';
+import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal'
+import { useGetOutcome } from './dash.desires.$desireId_.outcomes.$outcomeId';
+
+import type { DesireOutcome } from '@prisma/client';
+import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
 
 
 export const action = async ({ request }: ActionArgs) => {
@@ -20,13 +23,11 @@ export const action = async ({ request }: ActionArgs) => {
 
 function DeleteOutcomePage() {
 
-  const params = useParams();
-  const matches = useMatches();
-  const outcomes: OutcomeWithProgressList[] = matches.find(match => match.id === 'routes/dash.desires.$desireId_.outcomes')!.data
-  if (!outcomes) throw new Error('Outcome not found')
-  const outcome: OutcomeWithProgressList = outcomes.find((outcome: OutcomeWithProgressList) => outcome.id === params.outcomeId)!
-  const outcomeTitle = outcome.title
-  const outcomeId = outcome.id
+  const desire: DesireWithValuesAndOutcomes | undefined = useGetDesireWithValuesAndOutcomes();
+  let outcome: DesireOutcome | undefined = useGetOutcome(desire)
+
+  const outcomeTitle = outcome?.title
+  const outcomeId = outcome?.id
 
 
   return (
@@ -34,8 +35,8 @@ function DeleteOutcomePage() {
       <Modal onClose={() => { }} zIndex={30}>
         <AreYouSureDeleteModal
           item={'Outcome'}
-          title={outcomeTitle}
-          id={outcomeId}
+          title={outcomeTitle || ''}
+          id={outcomeId || ''}
         />
       </Modal>
     </>

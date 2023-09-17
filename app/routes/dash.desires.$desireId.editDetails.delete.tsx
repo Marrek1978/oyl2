@@ -1,12 +1,12 @@
 import { redirect } from '@remix-run/server-runtime';
-import { useMatches, useParams } from '@remix-run/react';
 import type { ActionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
-import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal'
 import { deleteDesire } from '~/models/desires.server';
+import { useGetDesireWithValuesAndOutcomes } from './dash.desires';
+import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal'
 
-import type { DesireWithValues } from '~/types/desireTypes';
+import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
 
 export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData()
@@ -21,12 +21,10 @@ export const action = async ({ request }: ActionArgs) => {
 
 function DeleteDesirePage() {
 
-  const params = useParams();
-  const desireId = params.desireId as string
-  const matches = useMatches();
-  const desires = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
-  const desire = desires?.find((desire: DesireWithValues) => desire.id === desireId)
-  const title = desire?.title
+  const desire: DesireWithValuesAndOutcomes | undefined = useGetDesireWithValuesAndOutcomes({ route: 'routes/dash.desires' });
+  const title = desire?.title || ''
+  const desireId = desire?.id || ''
+
 
   return (
     <>
