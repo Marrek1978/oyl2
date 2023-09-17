@@ -39,7 +39,7 @@ function AllOutcomesDisplay({ outcomes, plural, title }: SpecificOutcomeDisplayP
       </div>
 
       {/* //? DESCRIPTION AND LIST OF MILESTOONES */}
-      <div className='flex flex-wrap gap-x-6 gap-y-4 mt-8'>
+      <div className='  mt-6'>
         {outcomes?.map((outcome: DesireOutcome) => {
           return (
             <OutcomeDisplay

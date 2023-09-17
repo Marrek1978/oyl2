@@ -31,7 +31,7 @@ export default function ProjectByIdPage() {
 
   return (
     <>
-      <BreadCrumbs title={project.title || ''} />
+      <BreadCrumbs secondCrumb={project.title || ''} />
       <Outlet />
       <div className='flex-1 w-full'>
         <ProjectDisplay

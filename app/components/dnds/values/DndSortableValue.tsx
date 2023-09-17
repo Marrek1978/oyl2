@@ -2,6 +2,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from '@dnd-kit/sortable';
 
 import H2WithLink from "~/components/titles/H2WithLink";
+import TextProseWidth from "~/components/text/TextProseWidth";
 
 interface SortableGenericProps {
   title: string;
@@ -42,15 +43,12 @@ function DndSortableValue({ id, title, description, linkTitle = 'Edit' }: Sortab
             linkText={linkTitle}
           />
 
-
-          <div className='
-            text-base-content/70
-            text-sm 
-            mt-2
-            max-w-prose w-prose
-          '>
-            {description}
+          <div className="mt-2">
+            <TextProseWidth
+              text={description}
+            />
           </div>
+
         </div>
       </div>
     </>

@@ -19,11 +19,11 @@ const DndDesires = () => {
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
   const [desires, setDesires] = useState<DesireWithValuesAndOutcomes[]>([]);
 
-  const loadedDesires: DesireWithValuesAndOutcomes[] | undefined = useGetAllDesiresWithValuesAndOutcomes({ route: 'routes/dash.desires' });
+  const loadedDesires: DesireWithValuesAndOutcomes[] | undefined = useGetAllDesiresWithValuesAndOutcomes();
 
   useEffect(() => {
     if (!loadedDesires) return
-    const isSequentialOrder:boolean = areDesiresInSequentialOrder(loadedDesires)
+    const isSequentialOrder: boolean = areDesiresInSequentialOrder(loadedDesires)
 
     setDesires(isSequentialOrder
       ? loadedDesires
@@ -103,7 +103,7 @@ const DndDesires = () => {
           />
         </Modal>
       )}
-     
+
       <DndContext
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
@@ -143,7 +143,7 @@ const DndDesires = () => {
 export default DndDesires
 
 
-export function areDesiresInSequentialOrder(desires: DesireWithValuesAndOutcomes[]) : boolean {
+export function areDesiresInSequentialOrder(desires: DesireWithValuesAndOutcomes[]): boolean {
 
   desires.sort((a, b) => a.sortOrder - b.sortOrder)
   const isNOTSequentialOrder = desires.some((desire, index) => {

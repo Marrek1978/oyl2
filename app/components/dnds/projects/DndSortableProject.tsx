@@ -1,15 +1,15 @@
-import { Link, useMatches, useParams } from "@remix-run/react";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from '@dnd-kit/sortable';
+import { Link, useMatches, useParams } from "@remix-run/react";
 
+import { EditIcon } from "../../utilities/icons";
 import TextBtn from '~/components/buttons/TextBtn';
 import SubHeading12px from '~/components/titles/SubHeading12px';
 import SubHeading14px from '~/components/titles/SubHeading14px';
-import { EditIcon } from "../../utilities/icons";
 
 import type { Desire, Project } from '@prisma/client';
-import { GetSpecialLinkColor} from "~/components/forms/GetHeaderBgColor";
-import { useEffect } from "react";
+import { GetSpecialLinkColor } from "~/components/forms/GetHeaderBgColor";
+import HeadingH2 from "~/components/titles/HeadingH2";
 interface DndSortableProjectProps {
   id: string;
   project: Project
@@ -37,12 +37,8 @@ function DndSortableProject({ id, project }: DndSortableProjectProps) {
     associatedDesire = allUserDesires.filter(desire => desire.id === associatedDesireId)[0]?.title
   }
 
-  // useEffect(() => {
-  //   console.log('highlightedProjectId', highlightedProjectId)
-  // }, [highlightedProjectId])
 
   const linkColor = GetSpecialLinkColor();
-  // console.log('linkColor', linkColor)
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} className=" mt-5">
@@ -68,25 +64,21 @@ function DndSortableProject({ id, project }: DndSortableProjectProps) {
           </div>
         )}
 
-        <div className="flex items-baseline justify-between gap-4">
-          <div className={`
-              text-xl font-medium 
+        <div className="flex items-baseline justify-between gap-4 w-prose max-w-prose">
+          <div className={`flex-1
               ${highlightedProjectId !== project.id && project.sortOrder !== 0 && 'text-base-content'}
               ${project.sortOrder === 0 && ' text-success-content'}
-             
             `} >
-            {project.title}
+            <HeadingH2 text={project.title} />
           </div>
 
-          <div className=''>
+          <div className=' '>
             <Link to={project.id} >
               <TextBtn
                 text='Go To Project'
                 onClickFunction={() => { }}
-                color={`
-                    ${project.sortOrder !== 0 && 'text-primary/70'}
-                    ${project.sortOrder === 0 && linkColor}
-                  `}
+                color={` ${project.sortOrder !== 0 && 'text-primary/70'}
+                    ${project.sortOrder === 0 && linkColor} `}
                 icon={EditIcon}
               />
             </Link>
@@ -94,17 +86,15 @@ function DndSortableProject({ id, project }: DndSortableProjectProps) {
         </div>
 
         {associatedDesire && (
-          <div className={`
-                font-medium 
-                ${project.sortOrder === 0 && 'text-success-content'}
-              `} >
-            <SubHeading12px
-              text={associatedDesire}
-            />
+          <div className="grid grid-cols-[90px_1fr] gap-x-2 gap-y-0 mt-2 items-start w-prose max-w-prose ">
+            <div className='text-base-content/70 font-medium'>
+              <SubHeading12px text={`For Desire:`} />
+            </div>
+            <div className=' font-semibold'>
+              <SubHeading12px text={associatedDesire} />
+            </div>
           </div>
         )}
-
-
       </div>
     </div>
   );
