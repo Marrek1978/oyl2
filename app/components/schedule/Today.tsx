@@ -1,12 +1,13 @@
 import moment from 'moment'
-import { v4 as uuidv4 } from 'uuid';
+import { format } from 'date-fns';
+// import { v4 as uuidv4 } from 'uuid';
 import React, { useCallback, useMemo, useState } from 'react'
 
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 
-import Modal from '~/components/modals/Modal'
-import SuccessMessage from '~/components/modals/SuccessMessage'
-import DeleteEventModal from '~/components/modals/DeleteEventModal'
+// import Modal from '~/components/modals/Modal'
+// import SuccessMessage from '~/components/modals/SuccessMessage'
+// import DeleteEventModal from '~/components/modals/DeleteEventModal'
 import { Calendar, momentLocalizer, Views, } from 'react-big-calendar'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 
@@ -21,8 +22,8 @@ const localizer = momentLocalizer(moment)
 const DragAndDropCalendar = withDragAndDrop(Calendar)
 
 interface SchedulerProps {
-  scheduledLists: ScheduledList[] | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[];
-  setScheduledLists: React.Dispatch<React.SetStateAction<ScheduledList[] | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[]>>;
+  scheduledLists: ScheduledList[];
+  setScheduledLists: React.Dispatch<React.SetStateAction<ScheduledList[]>>;
   draggedList: ListAndToDos | RoutineAndToDos | ProjectWithListsAndRoutines | undefined;
   setDraggedList: React.Dispatch<React.SetStateAction<ListAndToDos | RoutineAndToDos | ProjectWithListsAndRoutines | undefined>>;
   setSaveScheduledLists: React.Dispatch<React.SetStateAction<boolean>>;
@@ -44,75 +45,75 @@ function Scheduler({
   loadedRoutines,
 }: SchedulerProps) {
 
-  const defaultDate = useMemo(() => new Date(), [])
-  const [deleteEventBool, setDeleteEventBool] = useState<boolean>(false)
-  const [successMessage, setSuccessMessage] = useState('');
-  const [eventToDelete, setEventToDelete] = useState<ScheduledList | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>>()
+  const defaultDate = useMemo(() => format(new Date(), 'yyyy-MM-dd'), [])
+  // const [deleteEventBool, setDeleteEventBool] = useState<boolean>(false)
+  // const [successMessage, setSuccessMessage] = useState('');
+  // const [eventToDelete, setEventToDelete] = useState<ScheduledList | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>>()
 
-  const dragFromOutsideItem = useCallback(() => {
-    return (event: object) => {
-      if (draggedList !== undefined) return new Date();
-      return new Date(0)
-    }
-  }, [draggedList])
-
-
-  const customOnDragOver = useCallback(
-    (dragEvent: React.DragEvent<Element>) => {
-      dragEvent.preventDefault()
-    }, [])
+  // const dragFromOutsideItem = useCallback(() => {
+  //   return (event: object) => {
+  //     if (draggedList !== undefined) return new Date();
+  //     return new Date(0)
+  //   }
+  // }, [draggedList])
 
 
-  const addListToScheduledList = useCallback((list: Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>): void => {
-    setSaveScheduledLists(true)
-    setScheduledLists((prev) => {
-      return [...prev, { ...list }]
-    })
-  }, [setScheduledLists, setSaveScheduledLists])
+  // const customOnDragOver = useCallback(
+  //   (dragEvent: React.DragEvent<Element>) => {
+  //     dragEvent.preventDefault()
+  //   }, [])
 
 
-  const onDrdopFromOutside = useCallback(({ start: startDate, end: endDate }: DragFromOutsideItemArgs) => {
-
-    if (draggedList === undefined) return
-
-    const start = typeof startDate === 'string' ? new Date(startDate) : startDate;
-    const end = typeof endDate === 'string' ? new Date(endDate) : endDate;
-    let description = {};
-
-    'todos' in draggedList && (description = { todos: draggedList.id })
-    'routineToDos' in draggedList && (description = { routineToDos: draggedList.id })
-    'lists' in draggedList && (description = { projectLists: draggedList.lists })
-
-    type DescriptionType = { lists: ListAndToDos[] } | { todos: string } | { routineToDos: string };
-    const list: Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId' | 'description' & { description: DescriptionType }> = {
-      id: uuidv4(),
-      listId: draggedList.id,
-      title: draggedList.title,
-      isDraggable: true,
-      start,
-      end,
-      description: description,
-    }
-
-    setDraggedList(undefined)
-    addListToScheduledList(list)
-
-  }, [draggedList, setDraggedList, addListToScheduledList])
+  // const addListToScheduledList = useCallback((list: Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>): void => {
+  //   setSaveScheduledLists(true)
+  //   setScheduledLists((prev) => {
+  //     return [...prev, { ...list }]
+  //   })
+  // }, [setScheduledLists, setSaveScheduledLists])
 
 
-  const moveEvent = useCallback(({ event, start, end, isAllDay: droppedOnAllDaySlot = false }: EventInteractionArgs<any>): void => {
-    // console.log('in move event and event is ', event)
-    const { allDay } = event
-    if (!allDay && droppedOnAllDaySlot) event.allDay = true
+  // const onDrdopFromOutside = useCallback(({ start: startDate, end: endDate }: DragFromOutsideItemArgs) => {
 
-    setScheduledLists((prev) => {
-      const existing = prev.find((ev) => ev.id === event.id)!
-      const filtered = prev.filter((ev) => ev.id !== event.id)
-      const newStart = typeof start === 'string' ? new Date(start) : start;
-      const newEnd = typeof end === 'string' ? new Date(end) : end;
-      return [...filtered, { ...existing, start: newStart, end: newEnd, allDay, id: existing.id, title: existing.title }]
-    })
-  }, [setScheduledLists])
+  //   if (draggedList === undefined) return
+
+  //   const start = typeof startDate === 'string' ? new Date(startDate) : startDate;
+  //   const end = typeof endDate === 'string' ? new Date(endDate) : endDate;
+  //   let description = {};
+
+  //   'todos' in draggedList && (description = { todos: draggedList.id })
+  //   'routineToDos' in draggedList && (description = { routineToDos: draggedList.id })
+  //   'lists' in draggedList && (description = { projectLists: draggedList.lists })
+
+  //   type DescriptionType = { lists: ListAndToDos[] } | { todos: string } | { routineToDos: string };
+  //   const list: Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId' | 'description' & { description: DescriptionType }> = {
+  //     id: uuidv4(),
+  //     listId: draggedList.id,
+  //     title: draggedList.title,
+  //     isDraggable: true,
+  //     start,
+  //     end,
+  //     description: description,
+  //   }
+
+  //   setDraggedList(undefined)
+  //   addListToScheduledList(list)
+
+  // }, [draggedList, setDraggedList, addListToScheduledList])
+
+
+  // const moveEvent = useCallback(({ event, start, end, isAllDay: droppedOnAllDaySlot = false }: EventInteractionArgs<any>): void => {
+  //   // console.log('in move event and event is ', event)
+  //   const { allDay } = event
+  //   if (!allDay && droppedOnAllDaySlot) event.allDay = true
+
+  //   setScheduledLists((prev) => {
+  //     const existing = prev.find((ev) => ev.id === event.id)!
+  //     const filtered = prev.filter((ev) => ev.id !== event.id)
+  //     const newStart = typeof start === 'string' ? new Date(start) : start;
+  //     const newEnd = typeof end === 'string' ? new Date(end) : end;
+  //     return [...filtered, { ...existing, start: newStart, end: newEnd, allDay, id: existing.id, title: existing.title }]
+  //   })
+  // }, [setScheduledLists])
 
 
   const resizeEvent = useCallback((
@@ -138,7 +139,7 @@ function Scheduler({
       date.getFullYear() === today.getFullYear()
     ) {
       return {
-        className: 'bg-primary/50'
+        className: 'bg-primary/20'
       };
     }
     return {};
@@ -178,13 +179,13 @@ function Scheduler({
   // }
 
 
-  function handleDoubleClickEvent(
-    event: any,
-    e: React.SyntheticEvent<HTMLElement, Event>
-  ) {
-    setDeleteEventBool(true)
-    setEventToDelete(event as ScheduledList | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>)
-  }
+  // function handleDoubleClickEvent(
+  //   event: any,
+  //   e: React.SyntheticEvent<HTMLElement, Event>
+  // ) {
+  //   setDeleteEventBool(true)
+  //   setEventToDelete(event as ScheduledList | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>)
+  // }
 
 
   function handleToolTipAccessor(event: any) {
@@ -218,16 +219,16 @@ function Scheduler({
 
   return (
     <>
-      {successMessage && (
+      {/* {successMessage && (
         <Modal onClose={() => { }} zIndex={30}>
           {successMessage}Yolo
           <SuccessMessage
             text='List was removed from Schedule'
           />
         </Modal>)
-      }
+      } */}
 
-      {deleteEventBool && eventToDelete && (
+      {/* {deleteEventBool && eventToDelete && (
         <Modal onClose={() => { }} zIndex={20}>
           <DeleteEventModal
             event={eventToDelete}
@@ -236,18 +237,18 @@ function Scheduler({
             setSuccessMessage={setSuccessMessage}
           />
         </Modal>
-      )}
+      )} */}
 
       <div className="h-[600px]">
         <DragAndDropCalendar
           defaultDate={defaultDate}
-          defaultView={Views.WEEK}
-          dragFromOutsideItem={dragFromOutsideItem}
+          defaultView={Views.DAY}
+          // dragFromOutsideItem={dragFromOutsideItem}
           events={scheduledLists}
           localizer={localizer}
-          onDropFromOutside={onDrdopFromOutside}
-          onDragOver={customOnDragOver}
-          onEventDrop={moveEvent}
+          // onDropFromOutside={onDrdopFromOutside}
+          // onDragOver={customOnDragOver}
+          // onEventDrop={moveEvent}
           onEventResize={resizeEvent}
           resizable
           selectable
@@ -262,7 +263,7 @@ function Scheduler({
           timeslots={4}
           onDrillDown={() => { }}
           // onSelectEvent={handleOnSelectEvent}
-          onDoubleClickEvent={handleDoubleClickEvent}
+          // onDoubleClickEvent={handleDoubleClickEvent}
           tooltipAccessor={handleToolTipAccessor}
 
         />

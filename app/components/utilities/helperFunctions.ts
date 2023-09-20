@@ -3,6 +3,10 @@ import type { CreationRoutineToDo } from "~/types/routineTypes";
 
 import type { Project } from "@prisma/client";
 import type { ProjectFromDBWithStringDates } from "~/types/projectTypes";
+import {
+  DesireWithOutcomes,
+  DesireWithOutcomesWithStringDates,
+} from "~/types/desireTypes";
 
 export function transformToDoDataDates(data: any) {
   return data.map((item: any) => ({
@@ -31,23 +35,30 @@ export function transformRoutineDataDates(routines: any) {
   }));
 }
 
-// export function transformOutcomesWithProgressDates(outcomes: any) {
-//   return outcomes.map((outcome: any) => ({
-//     ...outcome,
-//     createdAt: new Date(outcome.createdAt!),
-//     updatedAt: new Date(outcome.updatedAt!),
-//     dueDate and 
-//     dueDate: new Date(outcome.dueDate!),
+export function transformDesireWithOutcomesDataDates(
+  desires: DesireWithOutcomesWithStringDates[]
+): DesireWithOutcomes[] {
+  return desires.map((desire: DesireWithOutcomesWithStringDates) => ({
+    ...desire,
+    createdAt: new Date(desire.createdAt!),
+    updatedAt: new Date(desire.updatedAt!),
+    desireOutcomes: desire.desireOutcomes.map((outcome) => ({
+      ...outcome,
+      createdAt: new Date(outcome.createdAt!),
+      updatedAt: new Date(outcome.updatedAt!),
+    })),
+  }));
+}
 
-
-export function transformProjectDataDates(projects: ProjectFromDBWithStringDates[]) : Project[] {
+export function transformProjectDataDates(
+  projects: ProjectFromDBWithStringDates[]
+): Project[] {
   return projects.map((project: ProjectFromDBWithStringDates) => ({
     ...project,
     createdAt: new Date(project.createdAt!),
     updatedAt: new Date(project.updatedAt!),
   }));
 }
-
 
 export function transformScheduledListsDataDates(lists: any) {
   return lists.map((list: any) => ({

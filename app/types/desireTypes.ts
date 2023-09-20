@@ -4,6 +4,8 @@ import type { DesireOutcomeWithStringDates } from "./outcomeTypes";
 
 export type DesireValues = { desireValues: { value: Value }[] };
 export type DesireWithValues = Desire & { desireValues: { value: Value }[] };
+export type DesireWithOutcomes = Desire & { desireOutcomes: DesireOutcome[] };
+
 export type DesireWithValuesAndOutcomes = Desire & {
   desireValues: { value: Value }[];
 } & { desireOutcomes: DesireOutcome[] };
@@ -13,6 +15,11 @@ export type DesireWithValuesAndOutcomes = Desire & {
 export type DesireWithStringDates = Omit<Desire, "createdAt" | "updatedAt"> & {
   createdAt: string;
   updatedAt: string;
+};
+
+
+export type DesireWithOutcomesWithStringDates = DesireWithStringDates & {
+  desireOutcomes: DesireOutcomeWithStringDates[];
 };
 
 export type DesireValuesObjWithStringDates = {

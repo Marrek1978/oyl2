@@ -4,28 +4,28 @@ import { useCallback, useEffect, useState, useMemo } from 'react'
 import type { LinksFunction } from '@remix-run/react/dist/routeModules'
 import { json, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
 
-import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 import styleSheet from "~/styles/SchedulerCss.css";
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 
+import SolidBtn from '~/components/buttons/SolidBtn'
 import { getProjects } from '~/models/project.server'
-import { getAllRoutines } from '~/models/routines.server'
+import HeadingH2 from '~/components/titles/HeadingH2'
 import { requireUserId } from '~/models/session.server'
 import Scheduler from '~/components/schedule/Scheduler'
+import { getAllRoutines } from '~/models/routines.server'
 import { getAllListAndTodos } from '~/models/list.server'
-// import ListsAsDraggableItems from '~/components/schedule/ListsAsDraggableItems'
+import SubHeading16px from '~/components/titles/SubHeading16px'
+import MiscellaneousLists from '~/components/schedule/MiscellaneousLists'
+import ProjectsListAndDraggables from '~/components/schedule/ProjectsListAndDraggables'
 import { deleteScheduledList, getScheduledLists, saveScheduledLists } from '~/models/scheduler.server'
 import { transformRoutineDataDates, transformToDoDataDates, transformScheduledListsDataDates, transformProjectDataDates } from '~/components/utilities/helperFunctions'
+// import ListsAsDraggableItems from '~/components/schedule/ListsAsDraggableItems'
+// import SpecialLists from '~/components/schedule/SpecialLists'
 
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndToDos } from '~/types/routineTypes'
 import type { Project, ScheduledList } from '@prisma/client'
 import type { ProjectWithListsAndRoutines } from '~/types/projectTypes'
-import SolidBtn from '~/components/buttons/SolidBtn'
-import HeadingH2 from '~/components/titles/HeadingH2'
-import ProjectsListAndDraggables from '~/components/schedule/ProjectsListAndDraggables'
-import SubHeading16px from '~/components/titles/SubHeading16px'
-// import SpecialLists from '~/components/schedule/SpecialLists'
-import MiscellaneousLists from '~/components/schedule/MiscellaneousLists'
 
 
 //example from https://github.com/jquense/react-big-calendar/blob/master/stories/demos/exampleCode/dndOutsideSource.js

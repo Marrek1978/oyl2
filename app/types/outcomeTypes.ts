@@ -10,8 +10,7 @@ export type NewlyCreatedOutcome = Omit<
 // };
 
 //String dates
-export type DesireOutcomeWithStringDates = Omit<DesireOutcome, "dueDate" | 'createdAt' | 'updatedAt'> & {
-  dueDate: string;
+export type DesireOutcomeWithStringDates = Omit<DesireOutcome,  | 'createdAt' | 'updatedAt'> & {
   createdAt: string;
   updatedAt: string;
 };

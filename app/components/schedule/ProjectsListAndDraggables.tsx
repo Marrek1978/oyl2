@@ -38,12 +38,12 @@ function ProjectsListAndDraggables({ projectsWithListsAndRoutines, handleDragSta
 
   useEffect(() => {
     // console.log('specificProject is ', selectedProject)
-    console.log('ismainfoucs ', isMainFocus)
+    // console.log('ismainfoucs ', isMainFocus)
   }, [selectedProject, isMainFocus])
 
 
   const handleProjectSelectionClick = (id: string) => {
-    console.log('id is ', id)
+    // console.log('id is ', id)
     // setSelectedProjectId(id)
     const project = projects.find((project: ProjectWithListsAndRoutines) => project.id === id)
     if (project) {
