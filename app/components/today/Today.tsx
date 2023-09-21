@@ -23,10 +23,10 @@ const DragAndDropCalendar = withDragAndDrop(Calendar)
 
 interface SchedulerProps {
   scheduledLists: ScheduledList[];
-  setScheduledLists: React.Dispatch<React.SetStateAction<ScheduledList[]>>;
-  draggedList: ListAndToDos | RoutineAndToDos | ProjectWithListsAndRoutines | undefined;
-  setDraggedList: React.Dispatch<React.SetStateAction<ListAndToDos | RoutineAndToDos | ProjectWithListsAndRoutines | undefined>>;
-  setSaveScheduledLists: React.Dispatch<React.SetStateAction<boolean>>;
+  // setScheduledLists: React.Dispatch<React.SetStateAction<ScheduledList[]>>;
+  // draggedList: ListAndToDos | RoutineAndToDos | ProjectWithListsAndRoutines | undefined;
+  // setDraggedList: React.Dispatch<React.SetStateAction<ListAndToDos | RoutineAndToDos | ProjectWithListsAndRoutines | undefined>>;
+  // setSaveScheduledLists: React.Dispatch<React.SetStateAction<boolean>>;
   // saveScheduledLists: boolean;
   loadedToDos: ListAndToDos[];
   loadedRoutines: RoutineAndToDos[];
@@ -36,10 +36,10 @@ interface SchedulerProps {
 
 function Scheduler({
   scheduledLists,
-  setScheduledLists,
-  draggedList,
-  setDraggedList,
-  setSaveScheduledLists,
+  // setScheduledLists,
+  // draggedList,
+  // setDraggedList,
+  // setSaveScheduledLists,
   // saveScheduledLists, 
   loadedToDos,
   loadedRoutines,
@@ -116,18 +116,18 @@ function Scheduler({
   // }, [setScheduledLists])
 
 
-  const resizeEvent = useCallback((
-    { event, start, end }: EventInteractionArgs<any>
-  ): void => {
-    setSaveScheduledLists(true)
-    setScheduledLists((prev) => {
-      const existing = prev.find((ev) => ev.id === event.id)!
-      const filtered = prev.filter((ev) => ev.id !== event.id)
-      const newStart = typeof start === 'string' ? new Date(start) : start;
-      const newEnd = typeof end === 'string' ? new Date(end) : end;
-      return [...filtered, { ...existing, start: newStart, end: newEnd }]
-    })
-  }, [setScheduledLists, setSaveScheduledLists])
+  // const resizeEvent = useCallback((
+  //   { event, start, end }: EventInteractionArgs<any>
+  // ): void => {
+  //   setSaveScheduledLists(true)
+  //   setScheduledLists((prev) => {
+  //     const existing = prev.find((ev) => ev.id === event.id)!
+  //     const filtered = prev.filter((ev) => ev.id !== event.id)
+  //     const newStart = typeof start === 'string' ? new Date(start) : start;
+  //     const newEnd = typeof end === 'string' ? new Date(end) : end;
+  //     return [...filtered, { ...existing, start: newStart, end: newEnd }]
+  //   })
+  // }, [setScheduledLists, setSaveScheduledLists])
 
 
   //? ***********   CUSTOM PROPS   ***************** */
@@ -249,8 +249,8 @@ function Scheduler({
           // onDropFromOutside={onDrdopFromOutside}
           // onDragOver={customOnDragOver}
           // onEventDrop={moveEvent}
-          onEventResize={resizeEvent}
-          resizable
+          // onEventResize={resizeEvent}
+          // resizable
           selectable
           toolbar={false}
           scrollToTime={new Date()}

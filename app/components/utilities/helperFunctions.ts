@@ -3,7 +3,7 @@ import type { CreationRoutineToDo } from "~/types/routineTypes";
 
 import type { Project } from "@prisma/client";
 import type { ProjectFromDBWithStringDates } from "~/types/projectTypes";
-import {
+import type {
   DesireWithOutcomes,
   DesireWithOutcomesWithStringDates,
 } from "~/types/desireTypes";

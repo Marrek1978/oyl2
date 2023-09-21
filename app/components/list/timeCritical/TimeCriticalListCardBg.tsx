@@ -1,19 +1,21 @@
 import React from 'react'
-import {GetHeaderBgColor} from '../forms/GetHeaderBgColor';
-import Heading14pxWithLink from '../titles/Heading14pxWithLink';
+import { GetHeaderBgColor } from '../../forms/GetHeaderBgColor';
+import Heading14pxWithLink from '../../titles/Heading14pxWithLink';
 
 type Props = {
   children: React.ReactNode;
   title: string | React.ReactNode;
   maxWidthTailWindSize?: string;
   linkUrl: string;
+  daisyUIBackgroundColor?: string;
+  daisyUITextColor?: string;
+
 }
 
-function ListCardBg({ children, title, maxWidthTailWindSize = 'md', linkUrl }: Props) {
+function TimeCriticalTodoListCardBg({ children, title, maxWidthTailWindSize = 'md', linkUrl, daisyUIBackgroundColor, daisyUITextColor='text-base-300' }: Props) {
 
-
-
-  const backgroundColor = GetHeaderBgColor()
+  let backgroundColor;
+  !daisyUIBackgroundColor ? backgroundColor = GetHeaderBgColor() : backgroundColor = daisyUIBackgroundColor
 
   return (
     <div className={`
@@ -27,7 +29,7 @@ function ListCardBg({ children, title, maxWidthTailWindSize = 'md', linkUrl }: P
         ${backgroundColor}
         flex items-center
         text-sm font-mont uppercase font-normal tracking-widest 
-        text-slate-300
+        ${daisyUITextColor}
       `}>
         <Heading14pxWithLink
           title={title?.toLocaleString() || ''}
@@ -41,4 +43,4 @@ function ListCardBg({ children, title, maxWidthTailWindSize = 'md', linkUrl }: P
   )
 }
 
-export default ListCardBg
+export default TimeCriticalTodoListCardBg

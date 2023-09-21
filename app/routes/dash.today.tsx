@@ -1,42 +1,38 @@
-import { parse } from 'querystring'
+// import { parse } from 'querystring'
 import { format } from 'date-fns'
-import { useFetcher, useLoaderData } from '@remix-run/react'
-import { useCallback, useEffect, useState, useMemo } from 'react'
+import { useLoaderData } from '@remix-run/react'
+import { useEffect, useState, useMemo } from 'react'
 import type { LinksFunction } from '@remix-run/react/dist/routeModules'
 import { json, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
 
 import styleSheet from "~/styles/SchedulerCss.css";
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 
-import SolidBtn from '~/components/buttons/SolidBtn'
 import { getProjects } from '~/models/project.server'
 import HeadingH2 from '~/components/titles/HeadingH2'
 import { requireUserId } from '~/models/session.server'
 // import Scheduler from '~/components/schedule/Scheduler'
 import { getAllRoutines } from '~/models/routines.server'
 import { getAllListAndTodos } from '~/models/list.server'
-import SubHeading16px from '~/components/titles/SubHeading16px'
-import MiscellaneousLists from '~/components/schedule/MiscellaneousLists'
-import ProjectsListAndDraggables from '~/components/schedule/ProjectsListAndDraggables'
-import { deleteScheduledList, getScheduledLists, saveScheduledLists } from '~/models/scheduler.server'
+import { getScheduledLists } from '~/models/scheduler.server'
 import { transformRoutineDataDates, transformToDoDataDates, transformScheduledListsDataDates, transformProjectDataDates, transformDesireWithOutcomesDataDates } from '~/components/utilities/helperFunctions'
 // import ListsAsDraggableItems from '~/components/schedule/ListsAsDraggableItems'
 // import SpecialLists from '~/components/schedule/SpecialLists'
 
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndToDos } from '~/types/routineTypes'
-import type { Desire, Project, ScheduledList } from '@prisma/client'
+import type { Project, ScheduledList } from '@prisma/client'
 import type { ProjectWithListsAndRoutines } from '~/types/projectTypes'
-import Today from '~/components/schedule/Today'
-import { getDesires, getDesiresAndOutcomes, getDesiresByUserId } from '~/models/desires.server'
-import { DesireWithOutcomes, DesireWithOutcomesWithStringDates } from '~/types/desireTypes'
+import Today from '~/components/today/Today'
+import { getDesiresAndOutcomes } from '~/models/desires.server'
+import { DesireWithOutcomes } from '~/types/desireTypes'
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
 import SubHeading14px from '~/components/titles/SubHeading14px'
 import HeadingH1 from '~/components/titles/HeadingH1'
 import HeadingH3 from '~/components/titles/HeadingH3'
-import HeadingH4 from '~/components/titles/HeadingH4'
 import HeadingH5 from '~/components/titles/HeadingH5'
-import DisplayCurrentEvent from '~/components/schedule/DisplayCurrentEvent'
+import DisplayCurrentEvent from '~/components/today/DisplayCurrentEvent'
+import DisplayImportantLists from '~/components/today/DisplayImportantLists'
 
 
 //example from https://github.com/jquense/react-big-calendar/blob/master/stories/demos/exampleCode/dndOutsideSource.js
@@ -94,7 +90,7 @@ function Schedule() {
 
   // const fetcher = useFetcher();
   const [saveScheduledLists, setSaveScheduledLists] = useState<boolean>(false)   //  SaveButton
-  const [draggedList, setDraggedList] = useState<ListAndToDos | RoutineAndToDos | ProjectWithListsAndRoutines>()
+  // const [draggedList, setDraggedList] = useState<ListAndToDos | RoutineAndToDos | ProjectWithListsAndRoutines>()
   const [scheduledLists, setScheduledLists] = useState<ScheduledList[]>([])
   const [todaysEvents, setTodaysEvents] = useState<ScheduledList[]>([])
   const [currentEvent, setCurrentEvent] = useState<ScheduledList | null>(null)
@@ -137,6 +133,9 @@ function Schedule() {
     }
   })
 
+
+
+
   const projectZero = projectsWithListsAndRoutines[0]
   // console.log('projectZero is ', projectZero)
   const projectZeroDesireId = projectZero?.desireId
@@ -161,8 +160,8 @@ function Schedule() {
 
   useEffect(() => {
     setCurrentEvent(getCurrentEvent(todaysEvents))
-    console.log('todaysEvents is ', todaysEvents)
-    console.log('currentEvent is ', getCurrentEvent(todaysEvents))
+    // console.log('todaysEvents is ', todaysEvents)
+    // console.log('currentEvent is ', getCurrentEvent(todaysEvents))
   }, [todaysEvents])
 
 
@@ -271,39 +270,39 @@ function Schedule() {
             </div>
 
 
-            <div className='flex flex-wrap mt-8'>
+            <div className='w-full'>
+              <DisplayImportantLists
+                loadedToDos={loadedToDos}
+              />
+            </div>
+
+
+            <div className='flex flex-wrap gap-8 mt-8'>
               <div className='w-[400px]  ' >
                 <HeadingH2 text={`Today: ${currentDate}`} />
                 <Today
                   scheduledLists={scheduledLists}
-                  setScheduledLists={setScheduledLists}
-                  draggedList={draggedList}
-                  setDraggedList={setDraggedList}
-                  // saveScheduledLists={saveScheduledLists}
-                  setSaveScheduledLists={setSaveScheduledLists}
                   loadedToDos={loadedToDos}
                   loadedRoutines={loadedRoutines}
-                /></div>
-
+                />
+              </div>
 
               <div className='w-[400px] h-[400px] border-2 border-red-600'>
-                <div>
-
+              <HeadingH2 text={`Currently working on`} />
+               <div>
                   today: {currentDate} <br />
                   now: {currentTime}
-
                 </div>
                 <div>
                   {currentEvent?.title}
                   {currentEvent && (
                     <DisplayCurrentEvent event={currentEvent} />
                   )}
-
                 </div>
               </div>
-
-              <div className='w-[400px] h-[400px] border-2 border-yellow-600'>Appts, Due, Past Due, Urgent, Important, upcoming </div>
-
+              <div>
+              <HeadingH2 text={`appointments`} />
+              </div>
             </div>
           </div>
 
