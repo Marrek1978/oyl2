@@ -21,8 +21,7 @@ function WithGuidelineLink({ text, guideline, title, children }: WithGuidelineLi
 
   return (
     <>
-      <div className="w-full flex justify-between items-baseline
-      ">
+      <div className="w-full flex justify-between items-center mb-1">
         {children && (
           <div>{children}</div>
         )}

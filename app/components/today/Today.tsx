@@ -1,21 +1,16 @@
 import moment from 'moment'
 import { format } from 'date-fns';
 // import { v4 as uuidv4 } from 'uuid';
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
-
-// import Modal from '~/components/modals/Modal'
-// import SuccessMessage from '~/components/modals/SuccessMessage'
-// import DeleteEventModal from '~/components/modals/DeleteEventModal'
+ 
 import { Calendar, momentLocalizer, Views, } from 'react-big-calendar'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndToDos } from '~/types/routineTypes'
-import type { ProjectWithListsAndRoutines } from '~/types/projectTypes';
 import type { ListToDo, RoutineToDo, ScheduledList } from '@prisma/client'
-import type { EventInteractionArgs, DragFromOutsideItemArgs } from 'react-big-calendar/lib/addons/dragAndDrop'
 
 
 const localizer = momentLocalizer(moment)
@@ -23,111 +18,18 @@ const DragAndDropCalendar = withDragAndDrop(Calendar)
 
 interface SchedulerProps {
   scheduledLists: ScheduledList[];
-  // setScheduledLists: React.Dispatch<React.SetStateAction<ScheduledList[]>>;
-  // draggedList: ListAndToDos | RoutineAndToDos | ProjectWithListsAndRoutines | undefined;
-  // setDraggedList: React.Dispatch<React.SetStateAction<ListAndToDos | RoutineAndToDos | ProjectWithListsAndRoutines | undefined>>;
-  // setSaveScheduledLists: React.Dispatch<React.SetStateAction<boolean>>;
-  // saveScheduledLists: boolean;
-  loadedToDos: ListAndToDos[];
+  loadedLists: ListAndToDos[];
   loadedRoutines: RoutineAndToDos[];
 }
 
 
-
 function Scheduler({
   scheduledLists,
-  // setScheduledLists,
-  // draggedList,
-  // setDraggedList,
-  // setSaveScheduledLists,
-  // saveScheduledLists, 
-  loadedToDos,
+  loadedLists,
   loadedRoutines,
 }: SchedulerProps) {
 
   const defaultDate = useMemo(() => format(new Date(), 'yyyy-MM-dd'), [])
-  // const [deleteEventBool, setDeleteEventBool] = useState<boolean>(false)
-  // const [successMessage, setSuccessMessage] = useState('');
-  // const [eventToDelete, setEventToDelete] = useState<ScheduledList | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>>()
-
-  // const dragFromOutsideItem = useCallback(() => {
-  //   return (event: object) => {
-  //     if (draggedList !== undefined) return new Date();
-  //     return new Date(0)
-  //   }
-  // }, [draggedList])
-
-
-  // const customOnDragOver = useCallback(
-  //   (dragEvent: React.DragEvent<Element>) => {
-  //     dragEvent.preventDefault()
-  //   }, [])
-
-
-  // const addListToScheduledList = useCallback((list: Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>): void => {
-  //   setSaveScheduledLists(true)
-  //   setScheduledLists((prev) => {
-  //     return [...prev, { ...list }]
-  //   })
-  // }, [setScheduledLists, setSaveScheduledLists])
-
-
-  // const onDrdopFromOutside = useCallback(({ start: startDate, end: endDate }: DragFromOutsideItemArgs) => {
-
-  //   if (draggedList === undefined) return
-
-  //   const start = typeof startDate === 'string' ? new Date(startDate) : startDate;
-  //   const end = typeof endDate === 'string' ? new Date(endDate) : endDate;
-  //   let description = {};
-
-  //   'todos' in draggedList && (description = { todos: draggedList.id })
-  //   'routineToDos' in draggedList && (description = { routineToDos: draggedList.id })
-  //   'lists' in draggedList && (description = { projectLists: draggedList.lists })
-
-  //   type DescriptionType = { lists: ListAndToDos[] } | { todos: string } | { routineToDos: string };
-  //   const list: Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId' | 'description' & { description: DescriptionType }> = {
-  //     id: uuidv4(),
-  //     listId: draggedList.id,
-  //     title: draggedList.title,
-  //     isDraggable: true,
-  //     start,
-  //     end,
-  //     description: description,
-  //   }
-
-  //   setDraggedList(undefined)
-  //   addListToScheduledList(list)
-
-  // }, [draggedList, setDraggedList, addListToScheduledList])
-
-
-  // const moveEvent = useCallback(({ event, start, end, isAllDay: droppedOnAllDaySlot = false }: EventInteractionArgs<any>): void => {
-  //   // console.log('in move event and event is ', event)
-  //   const { allDay } = event
-  //   if (!allDay && droppedOnAllDaySlot) event.allDay = true
-
-  //   setScheduledLists((prev) => {
-  //     const existing = prev.find((ev) => ev.id === event.id)!
-  //     const filtered = prev.filter((ev) => ev.id !== event.id)
-  //     const newStart = typeof start === 'string' ? new Date(start) : start;
-  //     const newEnd = typeof end === 'string' ? new Date(end) : end;
-  //     return [...filtered, { ...existing, start: newStart, end: newEnd, allDay, id: existing.id, title: existing.title }]
-  //   })
-  // }, [setScheduledLists])
-
-
-  // const resizeEvent = useCallback((
-  //   { event, start, end }: EventInteractionArgs<any>
-  // ): void => {
-  //   setSaveScheduledLists(true)
-  //   setScheduledLists((prev) => {
-  //     const existing = prev.find((ev) => ev.id === event.id)!
-  //     const filtered = prev.filter((ev) => ev.id !== event.id)
-  //     const newStart = typeof start === 'string' ? new Date(start) : start;
-  //     const newEnd = typeof end === 'string' ? new Date(end) : end;
-  //     return [...filtered, { ...existing, start: newStart, end: newEnd }]
-  //   })
-  // }, [setScheduledLists, setSaveScheduledLists])
 
 
   //? ***********   CUSTOM PROPS   ***************** */
@@ -162,7 +64,6 @@ function Scheduler({
       </>
     );
 
-    // list todos??
   }
 
 
@@ -196,8 +97,7 @@ function Scheduler({
     let currentToDos: ListToDo[] | RoutineToDo[] | undefined;
 
     if (type === 'todos') {
-      loadedList = loadedToDos
-      currentList = loadedList?.filter((list: ListAndToDos) => list.id === listId);
+      currentList = loadedLists?.filter((list: ListAndToDos) => list.id === listId);
       currentList && (currentToDos = currentList[0]?.[type])
     }
 

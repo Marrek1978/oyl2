@@ -10,11 +10,11 @@ import SuccessMessage from "../modals/SuccessMessage";
 import SolidBtnGreyBlue from "../buttons/SolidBtnGreyBlue";
 import { dbIcon } from '../utilities/icons';
 import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
-import { DesireOutcomesDefaultText } from '~/components/utilities/PlaceHolderTexts';
-import { DesireOutcomeGuideline, ProperDesireOutcomes } from "../utilities/Guidelines";
+import { DesireOutcomeVisionDefaultText, DesireOutcomesDefaultText } from '~/components/utilities/PlaceHolderTexts';
+import { DesireOutcomeGuideline, ProperDesireOutcomeVision, ProperDesireOutcomes } from "../utilities/Guidelines";
 
 import type { DesireOutcome } from '@prisma/client';
-import type {  DesireWithValuesAndOutcomes } from '~/types/desireTypes'
+import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes'
 
 interface DesireFormProps {
   desire?: DesireWithValuesAndOutcomes;
@@ -33,8 +33,9 @@ function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps)
   const [desireTitle, setDesireTitle] = useState<string>('')
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
   const [outcomeTitle, setOutcomeTitle] = useState<string>('')
-  const [outcomeDescription, setOutcomeDescription] = useState<string>('')
+  const [outcomeVision, setOutcomeVision] = useState<string>('')
   const [outcomeSortOrder, setOutcomeSortOrder] = useState<number>(0) //if adding new desire, set to desires.length
+  const [outcomeDescription, setOutcomeDescription] = useState<string>('')
 
   const loadedOutcomes = desire?.desireOutcomes
 
@@ -68,6 +69,7 @@ function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps)
 
   useEffect(() => {
     setOutcomeTitle(outcome?.title || '')
+    setOutcomeVision(outcome?.vision || '')
     setOutcomeDescription(outcome?.description || '')
     setOutcomeSortOrder(nextSortOrder || 0)
   }, [outcome, nextSortOrder])
@@ -96,6 +98,7 @@ function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps)
   useEffect(() => {
     if (fetcher.state === 'loading') {
       setOutcomeTitle('')
+      setOutcomeVision('')
       setOutcomeDescription('')
       setSuccessMessage(fetcher.data);
       setTimeout(() => setSuccessMessage(''), 1000);
@@ -108,6 +111,7 @@ function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps)
     const outcomeObj = {
       title: outcomeTitle,
       description: outcomeDescription,
+      vision: outcomeVision,
       desireId: desireId,
       sortOrder: outcomeSortOrder,
     }
@@ -128,6 +132,7 @@ function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps)
     const outcomeObj = {
       id: outcome?.id,
       title: outcomeTitle,
+      vision: outcomeVision,
       description: outcomeDescription,
       desireId: desireId,
     }
@@ -169,7 +174,8 @@ function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps)
                 <InputLabelWithGuideLineLink
                   text='Outcome'
                   title='Outcomes'
-                  guideline={DesireOutcomeGuideline} />
+                  guideline={DesireOutcomeGuideline}
+                />
                 <input type="text"
                   placeholder="Enter a List Title"
                   name='title'
@@ -195,6 +201,23 @@ function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps)
                 >
                 </textarea>
               </div>
+
+              <div className='  '>
+                <InputLabelWithGuideLineLink
+                  text='Outcome Vision'
+                  title='Defining Proper Outcomes'
+                  guideline={ProperDesireOutcomeVision} />
+                <textarea
+                  className='input-field-text-para '
+                  placeholder={DesireOutcomeVisionDefaultText}
+                  name='outcomeVision'
+                  value={outcomeVision}
+                  onChange={(e) => setOutcomeVision(e.target.value)}
+                  required
+                >
+                </textarea>
+              </div>
+
             </div>
 
             {/* //**************BUTTONS ***************  */}

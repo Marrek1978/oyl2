@@ -19,6 +19,7 @@ export const action = async ({ request }: ActionArgs) => {
     userId,
     title: outcomeData.title as string,
     description: outcomeData.description as string,
+    vision: outcomeData.vision as string,
     sortOrder: outcomeData.sortOrder ? parseInt(outcomeData.sortOrder as string) : 0,
     dueDate: outcomeData.dueDate ? new Date(outcomeData.dueDate as string) : null,
     complete: false,

@@ -130,6 +130,15 @@ The characteristics of a well-constructed outcome to your achieved desire includ
 
 `
 
+export const ProperDesireOutcomeVision = `
+A Vision of your achieved desire should be: 
+
+<b>1.</b> Clear and speciiic. 
+<b>2.</b> It describes an event or situation that will happen as a result of achieving the outcome.  
+<b>3. </b>It should be full of emotion and feeling.
+
+`
+
 
 export const DueDates = `
 Due dates are important for motivation, accountability, planning, and scheduling.

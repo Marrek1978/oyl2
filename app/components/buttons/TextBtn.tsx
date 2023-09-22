@@ -1,13 +1,13 @@
-import React from 'react'
+import { type MouseEventHandler, type ReactNode } from 'react'
 
 interface TextBtnProps {
   text: string;
-  onClickFunction: () => void;
-  icon?: React.ReactNode;
+  onClickFunction:  MouseEventHandler<HTMLButtonElement>;
+  icon?: ReactNode;
   color?: string;
   type?: 'button' | 'submit' | 'reset' | undefined;
-  onMouseOver?: React.MouseEventHandler<HTMLButtonElement>;
-  onMouseOut?: React.MouseEventHandler<HTMLButtonElement>;
+  onMouseOver?: MouseEventHandler<HTMLButtonElement>;
+  onMouseOut?: MouseEventHandler<HTMLButtonElement>;
 }
 
 

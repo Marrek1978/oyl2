@@ -49,6 +49,7 @@ const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem, setIsDisableAllBt
         completeString
       }, {
         method: 'POST',
+        action: '/dash/lists/$listId',
       })
     } catch (error) { throw error }
   };

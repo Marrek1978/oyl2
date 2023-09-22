@@ -47,6 +47,7 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
         todos: completedToDosAtBottomString,
       }, {
         method: 'PUT',
+      
       })
     } catch (error) { throw error }
   };

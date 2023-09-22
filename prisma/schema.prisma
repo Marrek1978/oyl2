@@ -1,7 +1,7 @@
 datasource db {
   provider = "postgresql"
   //  url = env("DATABASE_URL") // uses connection pooling
-   url = env("DATABASE_PRISMA_URL") // uses connection pooling
+  url = env("DATABASE_PRISMA_URL") // uses connection pooling
   directUrl = env("DATABASE_URL_NON_POOLING") // uses a direct connection
 }
 
@@ -225,6 +225,7 @@ model DesireOutcome {
 
   title String
   description String?
+  vision String?
   sortOrder Int @default(0)
   complete Boolean @default(false)
   

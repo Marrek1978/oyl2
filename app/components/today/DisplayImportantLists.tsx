@@ -7,7 +7,7 @@ import TimeCriticalTodoListCard from '../list/timeCritical/TimeCriticalTodoListC
 import type { List, ListToDo } from '@prisma/client'
 
 type Props = {
-  loadedToDos: ListAndToDos[]
+  loadedLists: ListAndToDos[]
 }
 
 export type ToDosWithListInfo = {
@@ -18,7 +18,7 @@ export type ToDosWithListInfo = {
   todos: ListToDo[];
 }
 
-function DisplayImportantLists({ loadedToDos }: Props) {
+function DisplayImportantLists({ loadedLists }: Props) {
 
   const [urgentToDosWithListInfo, setUrgentToDosWithListInfo] = useState<ToDosWithListInfo[]>()
   const [pastDueToDosWithListInfo, setPastDueToDosWithListInfo] = useState<ToDosWithListInfo[]>()
@@ -27,13 +27,13 @@ function DisplayImportantLists({ loadedToDos }: Props) {
   const [importantToDosWithListInfo, setImportantToDosWithListInfo] = useState<ToDosWithListInfo[]>()
 
   useEffect(() => {
-    if (!loadedToDos) return
-    setDueTodayToDosWithListInfo(getTimeCriticalTodosWithListInfoObj({ listsWithToDos: loadedToDos }))
-    setPastDueToDosWithListInfo(getTimeCriticalTodosWithListInfoObj({ listsWithToDos: loadedToDos, operator: '<' }))
-    setUpcomingToDosWithListInfo(getTimeCriticalTodosWithListInfoObj({ listsWithToDos: loadedToDos, operator: '>' }))
-    setImportantToDosWithListInfo(getTimeCriticalTodosWithListInfoObj({ listsWithToDos: loadedToDos, importance: 'important' }))
-    setUrgentToDosWithListInfo(getTimeCriticalTodosWithListInfoObj({ listsWithToDos: loadedToDos, importance: 'urgent' }))
-  }, [loadedToDos])
+    if (!loadedLists) return
+    setDueTodayToDosWithListInfo(getTimeCriticalTodosWithListInfoObj({ listsWithToDos: loadedLists }))
+    setPastDueToDosWithListInfo(getTimeCriticalTodosWithListInfoObj({ listsWithToDos: loadedLists, operator: '<' }))
+    setUpcomingToDosWithListInfo(getTimeCriticalTodosWithListInfoObj({ listsWithToDos: loadedLists, operator: '>' }))
+    setImportantToDosWithListInfo(getTimeCriticalTodosWithListInfoObj({ listsWithToDos: loadedLists, importance: 'important' }))
+    setUrgentToDosWithListInfo(getTimeCriticalTodosWithListInfoObj({ listsWithToDos: loadedLists, importance: 'urgent' }))
+  }, [loadedLists])
 
 
 
@@ -101,9 +101,7 @@ function DisplayImportantLists({ loadedToDos }: Props) {
         )}
 
 
-
-        <div> Appts,</div>
-
+ 
       </div>
     </>
   )

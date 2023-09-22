@@ -44,6 +44,7 @@ const RoutineToDoWithCompletedBox: React.FC<RoutineToDoWithCompletedBoxProps> = 
         completeString
       }, {
         method: 'POST',
+        action: '/dash/routines/%24routineId',
       })
     } catch (error) { throw error }
   };

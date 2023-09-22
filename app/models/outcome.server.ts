@@ -8,23 +8,26 @@ import type {
   User,
 } from "@prisma/client";
 
-type CreateOutcome = {
-  userId: User["id"];
-  title: DesireOutcome["title"];
-  description: DesireOutcome["description"];
-  sortOrder: DesireOutcome["sortOrder"];
-  complete: DesireOutcome["complete"];
-  desireId: DesireOutcome["desireId"];
-};
+// Omit<Project, 'description' | 'desireid'> & { description: string | null,  desireId: string | null}
 
-export async function createDesireOutcome(
-  outcome: CreateOutcome
-) {
+type CreateOutcome = Omit<DesireOutcome, "id" | "createdAt" | "updatedAt"> & {
+  userId: User["id"];
+};
+// title: DesireOutcome["title"];
+// description: DesireOutcome["description"];
+// sortOrder: DesireOutcome["sortOrder"];
+// complete: DesireOutcome["complete"];
+// desireId: DesireOutcome["desireId"];
+// & Omit<DesireOutcome, "id" | "createdAt" | "updatedAt">
+// };
+
+export async function createDesireOutcome(outcome: CreateOutcome) {
   try {
     const createOutcome = await prisma.desireOutcome.create({
       data: {
         title: outcome.title,
         description: outcome.description,
+        vision: outcome.vision,
         sortOrder: outcome.sortOrder,
         complete: outcome.complete,
         desireId: outcome.desireId,
@@ -37,9 +40,7 @@ export async function createDesireOutcome(
   }
 }
 
-export async function updateDesireOutcome(
-  outcome: DesireOutcome
-) {
+export async function updateDesireOutcome(outcome: DesireOutcome) {
   try {
     const updatedOutcome = await prisma.desireOutcome.update({
       where: { id: outcome.id },
@@ -58,11 +59,6 @@ export async function updateDesireOutcome(
   }
 }
 
-
-
-
-
-
 export async function getOutcomesByDesireId(desireId: Desire["id"]) {
   try {
     const outcomes = await prisma.desireOutcome.findMany({
@@ -76,15 +72,14 @@ export async function getOutcomesByDesireId(desireId: Desire["id"]) {
 }
 
 export async function getOutcomeByOutcomeId(outcomeId: DesireOutcome["id"]) {
-  try{
+  try {
     const outcome = await prisma.desireOutcome.findFirst({
       where: { id: outcomeId },
-    })
-    return outcome
-  }catch(error){throw error}
-
-
-
+    });
+    return outcome;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function updateOutcomesOrder(outcomes: DesireOutcome[]) {
