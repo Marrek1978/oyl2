@@ -14,20 +14,18 @@ import AllRoutines from '../routines/AllRoutines'
 import type { ListAndToDos } from "~/types/listTypes";
 import type { RoutineAndToDos } from '~/types/routineTypes'
 import type { DesireWithStringDates } from '~/types/desireTypes'
-import type { ProjectWithStringDates } from '~/types/projectTypes'
 import type { DesireOutcomeWithStringDates } from '~/types/outcomeTypes'
 
 
 
 type Props = {
-  project: ProjectWithStringDates
   desire: DesireWithStringDates
   outcome: DesireOutcomeWithStringDates
   outcomeLists: ListAndToDos[]
   outcomeRoutines: RoutineAndToDos[]
 }
 
-function ProjectTasksForOutcome({ project, desire, outcome, outcomeLists, outcomeRoutines }: Props) {
+function ProjectTasksForOutcome({ desire, outcome, outcomeLists, outcomeRoutines }: Props) {
   return (
     <>
       <BasicTextAreaBG >

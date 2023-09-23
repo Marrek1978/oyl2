@@ -2,10 +2,10 @@ import { prisma } from "~/db.server";
 import type { RoutineToDo, Routine, User } from "@prisma/client";
 import type { CreationRoutineToDo } from "~/types/routineTypes";
 
-export function getRoutines(  userId: User["id"] ) {
+export function getRoutines(userId: User["id"]) {
   try {
     const result = prisma.routine.findMany({
-      where: { userId, projectId: null, outcomeId: null },
+      where: { userId, outcomeId: null },
       include: {
         routineToDos: {
           orderBy: { sortOrder: "asc" },
@@ -19,7 +19,7 @@ export function getRoutines(  userId: User["id"] ) {
   }
 }
 
-export function getAllRoutines(  userId: User["id"] ) {
+export function getAllRoutines(userId: User["id"]) {
   try {
     const result = prisma.routine.findMany({
       where: { userId },
@@ -40,19 +40,16 @@ export function createRoutineAndToDos({
   userId,
   title,
   routineToDos,
-  projectId,
   outcomeId,
 }: Pick<Routine, "title"> & { userId: User["id"] } & {
   routineToDos: CreationRoutineToDo[];
-} & { projectId?: Routine["projectId"] } & {
-  outcomeId?: Routine["outcomeId"];
+} & {  outcomeId?: Routine["outcomeId"];
 }) {
   try {
     const result = prisma.routine.create({
       data: {
         title,
         userId,
-        projectId,
         outcomeId,
         routineToDos: {
           createMany: {
@@ -163,12 +160,11 @@ export async function updateRoutineAndTodos({
 
 export async function getProjectDesiredOutcomeRoutinesWithToDos(
   userId: User["id"],
-  projectId: Routine["projectId"],
   outcomeId: Routine["outcomeId"]
 ) {
   try {
     const result = await prisma.routine.findMany({
-      where: { userId, projectId, outcomeId },
+      where: { userId, outcomeId },
       include: {
         routineToDos: {
           orderBy: { sortOrder: "asc" },

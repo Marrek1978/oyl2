@@ -14,9 +14,8 @@ export const action = async ({ request }: ActionArgs) => {
     const parsedBody = parse(formBody);
     const routineTitle = parsedBody.routineTitle as string;
     const routineToDos = JSON.parse(parsedBody.routineToDosString as string);
-    const projectId = parsedBody.projectIdNum as string;
     const outcomeId = parsedBody.outcomeIdNum as string;
-    await createRoutineAndToDos({ userId, title: routineTitle, routineToDos, projectId, outcomeId })
+    await createRoutineAndToDos({ userId, title: routineTitle, routineToDos, outcomeId })
     return ('Routine was created.')
   } catch (error) { throw error }
 

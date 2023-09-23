@@ -41,7 +41,7 @@ export function getListItems(userId: User["id"] ) {
 export function getListAndTodos( userId: User["id"]  ) {
   try {
     return prisma.list.findMany({
-      where: { userId, projectId: null, outcomeId: null },
+      where: { userId, outcomeId: null },
       include: {
         todos: {
           orderBy: { sortOrder: "asc" },
@@ -110,17 +110,13 @@ export async function createListAndTodos({
   title,
   userId,
   todos,
-  projectId,
   outcomeId,
-}: Pick<List, "title"> & { userId: User["id"] } & { todos: CreateTodo[] } & {
-  projectId?: List["projectId"];
-} & { outcomeId?: List["outcomeId"] }) {
+}: Pick<List, "title"> & { userId: User["id"] } & { todos: CreateTodo[] } &   { outcomeId?: List["outcomeId"] }) {
   try {
     return await prisma.list.create({
       data: {
         title,
         userId,
-        projectId,
         outcomeId,
         todos: {
           createMany: {
@@ -308,12 +304,11 @@ export async function deleteCompletedToDosFromPriorityList(
 
 export async function getProjectDesiredOutcomeListsAndToDos(
   userId: User["id"],
-  projectId: List["projectId"],
   outcomeId: List["outcomeId"]
 ) {
   try {
     return prisma.list.findMany({
-      where: { userId, projectId, outcomeId },
+      where: { userId,  outcomeId },
       include: {
         todos: {
           orderBy: { sortOrder: "asc" },

@@ -1,8 +1,8 @@
 datasource db {
   provider = "postgresql"
-  //  url = env("DATABASE_URL") // uses connection pooling
-  url = env("DATABASE_PRISMA_URL") // uses connection pooling
-  directUrl = env("DATABASE_URL_NON_POOLING") // uses a direct connection
+   url = env("DATABASE_URL") // uses connection pooling
+  // url = env("DATABASE_PRISMA_URL") // uses connection pooling
+  // directUrl = env("DATABASE_URL_NON_POOLING") // uses a direct connection
 }
 
 generator client {
@@ -54,8 +54,8 @@ model Project {
   desire Desire? @relation(fields: [desireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   notes    Note[]
-  lists    List[]
-  routines Routine[]
+  // lists    List[]
+  // routines Routine[]
   requiredSavings RequiredSavings[]
   routineTrackers RoutineTracker[]
 }
@@ -120,11 +120,9 @@ model List {
   updatedAt DateTime @updatedAt
 
   title String
-
+  
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
-  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  projectId String?
   desireOutcome DesireOutcome? @relation(fields: [outcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   outcomeId String?
 
@@ -156,8 +154,8 @@ model Routine {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
-  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  projectId String?
+  // project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  // projectId String?
   desireOutcome DesireOutcome? @relation(fields: [outcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   outcomeId String?
   
@@ -234,39 +232,10 @@ model DesireOutcome {
 
   lists  List[]
   routines Routine[]
-
-}
-
-model DesireOutcomeProgress {
-  id   String @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  title String
-  description String?
-  sortOrder Int @default(0)
-  dueDate DateTime?
-  complete Boolean @default(false)
-
-  desireOutcomeId String
-  // desireOutcome DesireOutcome @relation(fields: [desireOutcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  milestones Milestone[]
 
 }
  
- //! to upload images to GCS, check out 
- //! https://github.com/leerob/nextjs-gcp-storage
-// model DesireImages{
-
-//   id   String @id @default(cuid())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   imageFile 
-
-//   desireId String
-//   desire Desire @relation(fields: [desireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-//   @@unique([url, desireId])
-// }
  model DesireValue {
   id         String  @id @default(cuid())
   createdAt  DateTime @default(now())
@@ -323,3 +292,33 @@ model ScheduledList {
 
 
 
+model Milestone {
+  id    String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title String
+  
+  desireOutcome DesireOutcome? @relation(fields: [outcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  outcomeId String?
+
+  milestones MilestoneItem[]
+}
+
+model MilestoneItem {
+  id    String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title String
+  description String?
+  complete Boolean @default(false)
+  dueDate DateTime?
+  sortOrder Int @default(0)
+  completedAt DateTime?
+  
+  milestone Milestone? @relation(fields: [milestoneId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  milestoneId String?
+ 
+
+}

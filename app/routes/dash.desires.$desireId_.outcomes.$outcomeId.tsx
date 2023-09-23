@@ -31,20 +31,21 @@ export const action = async ({ request }: ActionArgs) => {
 
 function EditOutcomePage() {
 
-  const desire: DesireWithValuesAndOutcomes | undefined = useGetDesireWithValuesAndOutcomes();
-  let outcome: DesireOutcome | undefined = useGetOutcome(desire)
+  // const desire: DesireWithValuesAndOutcomes | undefined = useGetDesireWithValuesAndOutcomes();
+  // let outcome: DesireOutcome | undefined = useGetOutcome(desire)
 
 
   return (
     <>
-      <Outlet />
-      <Modal onClose={() => { }} zIndex={10}>
+      {/* <Outlet /> */}
+      Outcome Id
+      {/* <Modal onClose={() => { }} zIndex={10}>
         <DesiresOutcomesForm
           desire={desire}
           outcome={outcome}
           isNew={false}
         />
-      </Modal>
+      </Modal> */}
     </>
   )
 }

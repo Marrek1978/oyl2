@@ -6,6 +6,7 @@ import DndOutcomes from '~/components/dnds/outcomes/DndOutcomes';
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
 
 import DndPlus800OutletFlex from '~/components/baseContainers/DndPlus800OutletFlex';
+import { Link, Outlet } from '@remix-run/react';
 
 
 export const action = async ({ request }: ActionArgs) => {
@@ -27,6 +28,7 @@ function DesireSpecificOutcomesPage() {
   return (
     <>
       <BreadCrumbs secondCrumb={'Desire'} />
+      <Link to={'clkzqfo4b0005eqycyx54z3uj/milestones'}>Milestones</Link>
       <DndPlus800OutletFlex >
         <DndOutcomes />
       </DndPlus800OutletFlex>
