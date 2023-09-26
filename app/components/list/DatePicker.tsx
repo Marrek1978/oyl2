@@ -25,7 +25,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, 
     <>
       <div className="w-full ">
         <InputLabelWithGuideLineLink
-          text='Due On or Before'
+          text={labelText}
           title='Due Dates'
           guideline={DueDates}
         />
@@ -38,6 +38,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, 
             font-poppins font-normal tracking-wide
             bg-base-200
             text-blue placeholder:text-neutral-400
+            
             '
           selected={startDate}
           onChange={handleSelectedDateChange}

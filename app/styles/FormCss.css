@@ -6,7 +6,7 @@
   @apply input
   input-secondary w-full 
   rounded-none 
-  border-none bg-base-200
+  border-2 border-base-300 bg-base-200
   font-poppins font-normal tracking-wide;
 }
 
@@ -15,7 +15,7 @@
   textarea-bordered textarea-secondary h-24 
   w-full 
   rounded-none
-  border-none bg-base-200 py-2 
+  border-2 border-base-300 bg-base-200 py-2 
   font-poppins text-base font-normal
   leading-snug
   tracking-wide !important;

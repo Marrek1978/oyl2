@@ -289,13 +289,13 @@ model Milestone {
 
   title String
   description String?
-  complete Boolean @default(false)
+  isComplete Boolean @default(false)
   dueDate DateTime?
   sortOrder Int @default(0)
   completedAt DateTime?
   
-  milestoneGroup MilestoneGroup @relation(fields: [milestoneId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  milestoneId String
+  milestoneGroup MilestoneGroup @relation(fields: [milestoneGroupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  milestoneGroupId String
  
 
 }

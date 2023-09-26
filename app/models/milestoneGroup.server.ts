@@ -7,22 +7,7 @@ type CreateMilestoneGroup = Omit<
   "id" | "createdAt" | "updatedAt"
 >;
 
-export const getMilestoneGroupsByOutcomeId = async (outcomeId: string) => {
-  try {
-    const milestoneGroups = await prisma.milestoneGroup.findMany({
-      where: {
-        outcomeId: outcomeId,
-      },
-      include: {
-        milestones: true,
-      },
-    });
 
-    return milestoneGroups;
-  } catch (error) {
-    throw error;
-  }
-};
 
 export const createMilestoneGroup = async (
   milestoneGroup: CreateMilestoneGroup
@@ -42,6 +27,44 @@ export const createMilestoneGroup = async (
   }
 };
 
+
+export const getMilestoneGroupsByOutcomeId = async (outcomeId: string) => {
+  try {
+    const milestoneGroups = await prisma.milestoneGroup.findMany({
+      where: {
+        outcomeId: outcomeId,
+      },
+      include: {
+        milestones: true,
+      },
+    });
+
+    return milestoneGroups;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+
+export const getMilestoneGroupById = async (id: string) => {
+  try {
+    const milestoneGroup = await prisma.milestoneGroup.findUnique({
+      where: {
+        id: id,
+      },
+     
+    });
+
+    return milestoneGroup;
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+
+
 export const updateGroupsOrder = async (groups: MilestoneGroup[]) => {
   try {
     const updatedGroups = groups.map((group) => {
@@ -57,3 +80,4 @@ export const updateGroupsOrder = async (groups: MilestoneGroup[]) => {
     throw error;
   }
 };
+

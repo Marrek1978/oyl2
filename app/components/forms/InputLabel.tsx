@@ -1,13 +1,13 @@
 
 interface InputLabelProps {
   text: string;
+  width?: string;
 }
 
-function InputLabel({ text }: InputLabelProps) {
+function InputLabel({ text, width = 'w-full' }: InputLabelProps) {
   return (
     <>
-      <div className="w-full">
-      {/* <div className="w-full flex justify-between  "> */}
+      <div className={`${width}   `}>
         <label className="label p-0">
           <span className="label-text text-base font-mont font-semibold">{text}</span>
         </label>

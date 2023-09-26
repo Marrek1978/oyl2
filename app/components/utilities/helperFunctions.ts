@@ -60,6 +60,27 @@ export function transformScheduledListsDataDates(lists: any) {
   }));
 }
 
+interface ArrayObjectsWithStrDates {
+  items: any[];
+  dateKeys: string[];
+}
+
+
+export function ArrayOfObjectsStrToDates({ items, dateKeys }: ArrayObjectsWithStrDates) {
+
+  return items?.map((item: any) => {
+    const transformedItem = { ...item };
+    dateKeys.forEach((key) => {
+      if (item[key]) {
+        transformedItem[key] = new Date(item[key]);
+      }
+    });
+    return transformedItem;
+  });
+}
+
+
+
 export function sortTodos(todos: Todo[]): Todo[] {
   const todosCopy = [...todos];
 

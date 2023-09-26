@@ -15,7 +15,7 @@ type Props = {
 function FormButtons({saveBtnTxt, isSaveable, isNew=true}: Props) {
   return (
    <>
-    <div className='vert-space-between-inputs mb-8 w-full'>
+    <div className='vert-space-between-inputs my-8 w-full'>
             <SolidBtn text={saveBtnTxt}
               onClickFunction={() => { }}
               icon={dbIcon}

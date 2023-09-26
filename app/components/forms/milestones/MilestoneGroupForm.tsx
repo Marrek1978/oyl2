@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, } from 'react';
-import { Form,  useActionData, useParams, useNavigation, useLoaderData } from '@remix-run/react'
+import { Form,  useActionData, useParams, useNavigation } from '@remix-run/react'
 
 import FormButtons from '../FormButtons';
 import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
@@ -9,6 +9,7 @@ import { CoreValue, CoreValueStatement } from '~/components/utilities/Guidelines
 
 import type { MilestoneGroup } from '@prisma/client';
 import { MilestoneGroupDefaultText } from '~/components/utilities/PlaceHolderTexts';
+import { useGetAllMilestoneGroupsForOutcome } from '~/routes/dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups';
 
 
 type Props = {
@@ -19,7 +20,8 @@ type Props = {
 function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
 
   const params = useParams();
-  const loaderData = useLoaderData();
+  // const loaderData = useLoaderData();
+  const loaderData = useGetAllMilestoneGroupsForOutcome()
   const navigation = useNavigation();
   const validationErrors = useActionData()
   
@@ -48,7 +50,7 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
 
 
   useEffect(() => {
-    const loadedGroups = loaderData.allMilestoneGroupsByOutcome
+    const loadedGroups = loaderData || []
     setTitle(milestoneGroup?.title || '')
     setDescription(milestoneGroup?.description || '')
     setSortOrder(milestoneGroup?.sortOrder || loadedGroups.length || 0)

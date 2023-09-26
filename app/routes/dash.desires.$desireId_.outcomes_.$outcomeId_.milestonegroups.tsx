@@ -1,7 +1,7 @@
 import { parse } from "querystring";
 import { redirect } from "@remix-run/node";
 import { useEffect, useState } from "react";
-import { useLoaderData, useNavigate } from "@remix-run/react";
+import { Outlet, useLoaderData, useNavigate } from "@remix-run/react";
 
 import { requireUserId } from '~/models/session.server';
 import { getOutcomeByOutcomeId } from '~/models/outcome.server';
@@ -44,12 +44,12 @@ export const action = async ({ request, params }: ActionArgs) => {
   }
 
   const formData = await request.formData()
-  const groupData = Object.fromEntries(formData);
+  const groupsData = Object.fromEntries(formData);
 
   let group = {
-    title: groupData.title as string,
-    description: groupData.description as string,
-    sortOrder: groupData.sortOrder ? parseInt(groupData.sortOrder as string) : 0,
+    title: groupsData.title as string,
+    description: groupsData.description as string,
+    sortOrder: groupsData.sortOrder ? parseInt(groupsData.sortOrder as string) : 0,
     outcomeId: params.outcomeId as string,
   }
 
@@ -78,6 +78,7 @@ function MilestoneGroupsPage() {
 
   return (
     <>
+      <Outlet />
       <article className="flex gap-12 flex-wrap ">
 
         <section className='flex-1 max-w-max  '>
@@ -105,6 +106,8 @@ export default MilestoneGroupsPage
 
 export const useGetAllMilestoneGroupsForOutcome = (): MilestoneGroup[] | undefined => {
 
+
+  // get groups from loaderData, transform dates, and set to state
   const navigate = useNavigate();
   const loaderData = useLoaderData();
   const [groups, setGroups] = useState<MilestoneGroup[]>();

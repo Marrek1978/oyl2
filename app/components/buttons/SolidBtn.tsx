@@ -2,14 +2,14 @@ import React from 'react'
 
 interface SolidBtnProps {
   text: string;
-  onClickFunction: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClickFunction?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   icon?: React.ReactNode;
   daisyUIBtnColor?: string;
   disableBtn?: boolean;
   type?: 'button' | 'submit' | 'reset' | undefined;
 }
 
-function SolidBtn({ text, onClickFunction, icon, daisyUIBtnColor='primary', disableBtn=false, type='submit' }: SolidBtnProps) {
+function SolidBtn({ text, onClickFunction=()=>{}, icon, daisyUIBtnColor='primary', disableBtn=false, type='submit' }: SolidBtnProps) {
   return (
     <>
       <button
