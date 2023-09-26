@@ -1,6 +1,6 @@
 import { parse } from 'querystring'
 import { useFetcher, useLoaderData } from '@remix-run/react'
-import { useCallback, useEffect, useState, useMemo } from 'react'
+import {  useEffect, useState, useMemo } from 'react'
 import type { LinksFunction } from '@remix-run/react/dist/routeModules'
 import { json, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
 
@@ -15,16 +15,16 @@ import Scheduler from '~/components/schedule/Scheduler'
 import { getAllRoutines } from '~/models/routines.server'
 import { getAllListAndTodos } from '~/models/list.server'
 import SubHeading16px from '~/components/titles/SubHeading16px'
-import MiscellaneousLists from '~/components/schedule/MiscellaneousLists'
-import ProjectsListAndDraggables from '~/components/schedule/ProjectsListAndDraggables'
+// import MiscellaneousLists from '~/components/schedule/MiscellaneousLists'
+// import ProjectsListAndDraggables from '~/components/schedule/ProjectsListAndDraggables'
 import { deleteScheduledList, getScheduledLists, saveScheduledLists } from '~/models/scheduler.server'
-import { transformRoutineDataDates, transformToDoDataDates, transformScheduledListsDataDates, transformProjectDataDates } from '~/components/utilities/helperFunctions'
+import { transformRoutineDataDates, transformToDoDataDates, transformScheduledListsDataDates,  } from '~/components/utilities/helperFunctions'
 // import ListsAsDraggableItems from '~/components/schedule/ListsAsDraggableItems'
 // import SpecialLists from '~/components/schedule/SpecialLists'
 
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndToDos } from '~/types/routineTypes'
-import type { Project, ScheduledList } from '@prisma/client'
+import type { ScheduledList } from '@prisma/client'
 import type { ProjectWithListsAndRoutines } from '~/types/projectTypes'
 
 
@@ -101,20 +101,20 @@ function Schedule() {
   const loadedScheduledLists: ScheduledList[] = useMemo(() => transformScheduledListsDataDates(initialListsData.scheduledLists), [initialListsData.scheduledLists])
   const thisWeeksScheduledLists = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledLists), [loadedScheduledLists])
   const loadedToDos: ListAndToDos[] = useMemo(() => transformToDoDataDates(initialListsData.loadedToDos), [initialListsData.loadedToDos]) //initialListsData.loadedToDos as ListAndToDos[
-  const loadedProjects: Project[] = useMemo(() => transformProjectDataDates(initialListsData.loadedProjects), [initialListsData.loadedProjects]) //initialListsData.loadedProjects as Project[]
+  // const loadedProjects: Project[] = useMemo(() => transformProjectDataDates(initialListsData.loadedProjects), [initialListsData.loadedProjects]) //initialListsData.loadedProjects as Project[]
   const loadedRoutines: RoutineAndToDos[] = useMemo(() => transformRoutineDataDates(initialListsData.loadedRoutines), [initialListsData.loadedRoutines]) //initialListsData.loadedRoutines as RoutineAndToDos[]
 
-  const miscellaneousLists = loadedToDos.filter(list => (list.projectId === null && list.outcomeId === null))
-  const miscellaneousRoutines = loadedRoutines.filter(routine => (routine.projectId === null && routine.outcomeId === null))
-  const projectsWithListsAndRoutines: ProjectWithListsAndRoutines[] = loadedProjects.map(project => {
-    const projectLists = loadedToDos.filter(list => list.projectId === project.id)
-    const projectRoutines = loadedRoutines.filter(routine => routine.projectId === project.id)
-    return {
-      ...project,
-      lists: projectLists,
-      routines: projectRoutines
-    }
-  })
+  // const miscellaneousLists = loadedToDos.filter(list => (list.projectId === null && list.outcomeId === null))
+  // const miscellaneousRoutines = loadedRoutines.filter(routine => (routine.projectId === null && routine.outcomeId === null))
+  // const projectsWithListsAndRoutines: ProjectWithListsAndRoutines[] = loadedProjects.map(project => {
+  //   const projectLists = loadedToDos.filter(list => list.projectId === project.id)
+  //   const projectRoutines = loadedRoutines.filter(routine => routine.projectId === project.id)
+  //   return {
+  //     ...project,
+  //     lists: projectLists,
+  //     routines: projectRoutines
+  //   }
+  // })
 
 
   useEffect(() => {
@@ -122,10 +122,10 @@ function Schedule() {
   }, [thisWeeksScheduledLists])
 
 
-  const handleDragStart = useCallback((draggedItem: ListAndToDos | RoutineAndToDos) => {
-    setDraggedList(draggedItem)
-    console.log('draggedItem is ', draggedItem)
-  }, [])
+  // const handleDragStart = useCallback((draggedItem: ListAndToDos | RoutineAndToDos) => {
+  //   setDraggedList(draggedItem)
+  //   console.log('draggedItem is ', draggedItem)
+  // }, [])
 
 
   useEffect(() => {
@@ -184,10 +184,10 @@ function Schedule() {
             <div>
               <HeadingH2 text='Projects' />
               <div className='mt-4'>
-                <ProjectsListAndDraggables
+                {/* <ProjectsListAndDraggables
                   projectsWithListsAndRoutines={projectsWithListsAndRoutines}
                   handleDragStart={handleDragStart}
-                />
+                /> */}
               </div>
             </div>
           </>
@@ -213,11 +213,11 @@ function Schedule() {
             <div>
               <HeadingH2 text='Miscellaneous Lists' />
               <div className='mt-4'>
-                <MiscellaneousLists
+                {/* <MiscellaneousLists
                   handleDragStart={handleDragStart}
                   miscellaneousLists={miscellaneousLists}
                   miscellaneousRoutines={miscellaneousRoutines}
-                />
+                /> */}
               </div>
             </div>
           </>

@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE "List" ADD COLUMN     "sortOrder" INTEGER NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "Note" ADD COLUMN     "sortOrder" INTEGER NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "Routine" ADD COLUMN     "sortOrder" INTEGER NOT NULL DEFAULT 0;

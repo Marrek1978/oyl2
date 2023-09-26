@@ -49,13 +49,9 @@ function DesiresPage() {
 export default DesiresPage
 
 
-// type UseDesireWithValuesAndOutcomesProps = {
-//   route: string;
-// };
-
 export const useGetDesireWithValuesAndOutcomes = () => {
   const params = useParams();
-  const path =  'routes/dash.desires'  
+  const path = 'routes/dash.desires'
   const navigate = useNavigate();
   const loaderData = useRouteLoaderData(path);
   const [desire, setDesire] = useState<DesireWithValuesAndOutcomes>();
@@ -76,9 +72,9 @@ export const useGetDesireWithValuesAndOutcomes = () => {
   return desire;
 };
 
-export const useGetAllDesiresWithValuesAndOutcomes = ():DesireWithValuesAndOutcomes[]|undefined => {
+export const useGetAllDesiresWithValuesAndOutcomes = (): DesireWithValuesAndOutcomes[] | undefined => {
   const navigate = useNavigate();
-  const path =  'routes/dash.desires'  
+  const path = 'routes/dash.desires'
   const loaderData = useRouteLoaderData(path);
   const [desires, setDesires] = useState<DesireWithValuesAndOutcomes[]>();
 
@@ -101,7 +97,7 @@ export const useGetAllDesiresWithValuesAndOutcomes = ():DesireWithValuesAndOutco
 
 export function transformDesiresValueOutcomeDates(desiresWithValuesOutcomes: DesireWithValuesAndOutcomesWithStringDates[]): DesireWithValuesAndOutcomes[] {
   const desires = desiresWithValuesOutcomes.map((desire: DesireWithValuesAndOutcomesWithStringDates) => {
-    const outcomes = desire.desireOutcomes.sort((a, b) => a.sortOrder - b.sortOrder)
+    const outcomes = desire.outcomes.sort((a, b) => a.sortOrder - b.sortOrder)
     const values = desire.desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
     let outcomesWithProperDates = []
     let valuesWithProperDates = []
@@ -126,7 +122,7 @@ export function transformDesiresValueOutcomeDates(desiresWithValuesOutcomes: Des
       ...desire,
       createdAt: new Date(desire.createdAt!),
       updatedAt: new Date(desire.updatedAt!),
-      desireOutcomes: outcomesWithProperDates,
+      outcomes: outcomesWithProperDates,
       desireValues: valuesWithProperDates
     })
   })
@@ -136,35 +132,35 @@ export function transformDesiresValueOutcomeDates(desiresWithValuesOutcomes: Des
 
 
 export function transformCurrentDesireValueOutcomeDates(desiresWithValuesOutcomes: DesireWithValuesAndOutcomesWithStringDates): DesireWithValuesAndOutcomes {
-    const desire = desiresWithValuesOutcomes
-    const outcomes = desire.desireOutcomes.sort((a, b) => a.sortOrder - b.sortOrder)
-    const values = desire.desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
-    let outcomesWithProperDates = []
-    let valuesWithProperDates = []
+  const desire = desiresWithValuesOutcomes
+  const outcomes = desire.outcomes.sort((a, b) => a.sortOrder - b.sortOrder)
+  const values = desire.desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
+  let outcomesWithProperDates = []
+  let valuesWithProperDates = []
 
-    if (outcomes.length > 0) {
-      outcomesWithProperDates = outcomes.map((outcome: any) => ({
-        ...outcome,
-        createdAt: new Date(outcome.createdAt!),
-        updatedAt: new Date(outcome.updatedAt!),
-      }))
-    }
+  if (outcomes.length > 0) {
+    outcomesWithProperDates = outcomes.map((outcome: any) => ({
+      ...outcome,
+      createdAt: new Date(outcome.createdAt!),
+      updatedAt: new Date(outcome.updatedAt!),
+    }))
+  }
 
-    if (values.length > 0) {
-      valuesWithProperDates = values.map((value: any) => ({
-        ...value,
-        createdAt: new Date(value.createdAt!),
-        updatedAt: new Date(value.updatedAt!),
-      }))
-    }
+  if (values.length > 0) {
+    valuesWithProperDates = values.map((value: any) => ({
+      ...value,
+      createdAt: new Date(value.createdAt!),
+      updatedAt: new Date(value.updatedAt!),
+    }))
+  }
 
-    const transformedDesire:DesireWithValuesAndOutcomes = ({
-      ...desire,
-      createdAt: new Date(desire.createdAt!),
-      updatedAt: new Date(desire.updatedAt!),
-      desireOutcomes: outcomesWithProperDates,
-      desireValues: valuesWithProperDates
-    })
+  const transformedDesire: DesireWithValuesAndOutcomes = ({
+    ...desire,
+    createdAt: new Date(desire.createdAt!),
+    updatedAt: new Date(desire.updatedAt!),
+    outcomes: outcomesWithProperDates,
+    desireValues: valuesWithProperDates
+  })
 
   return transformedDesire
 }

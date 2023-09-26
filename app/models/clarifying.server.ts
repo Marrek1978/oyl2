@@ -1,11 +1,10 @@
 import { prisma } from "~/db.server";
-import type { User, DesiresClarifyingQuestions as DCQ } from "@prisma/client";
+import type { User, ClarifyingQuestions as CQ } from "@prisma/client";
 
-interface ClarifyQuestionsInput
-  extends Omit<DCQ, "id" | "createdAt" | "updatedAt" | "userId"> {}
+interface ClarifyQuestionsInput extends Omit<CQ, "id" | "createdAt" | "updatedAt" | "userId"> {}
 
 interface ClarifyQuestionsInputOptionals {
-     birthDate?: Date | null,
+    birthDate?: Date | null,
     twentyFourHours?: string,
     twentyFourHoursRegrets?: string,
     oneWeek?: string,
@@ -24,7 +23,7 @@ export const createClarifyingQuestions = async (
   clarifyingQuestions: ClarifyQuestionsInput,
   userId: User["id"]
 ) => {
-  const result = await prisma.desiresClarifyingQuestions.create({
+  const result = await prisma.clarifyingQuestions.create({
     data: {
       ...clarifyingQuestions,
       userId,
@@ -36,9 +35,10 @@ export const createClarifyingQuestions = async (
 
 export const upsertClarifyingQuestions = async (
   clarifyingQuestions: ClarifyQuestionsInputOptionals ,
+  // clarifyingQuestions: ClarifyQuestionsInputOptionals ,
   userId: User["id"]
 ) => {
-  const result = await prisma.desiresClarifyingQuestions.upsert({
+  const result = await prisma.clarifyingQuestions.upsert({
     where: { userId },
     create: {
       ...clarifyingQuestions,
@@ -53,15 +53,15 @@ export const upsertClarifyingQuestions = async (
 };
 
 export const getClarifyingQuestions = async (userId: User["id"]) => {
-  const result = await prisma.desiresClarifyingQuestions.findMany({
+  const result = await prisma.clarifyingQuestions.findMany({
     where: { userId },
   });
 
   return result;
 };
 
-export const upsertMaxAge = async (maxAge:DCQ['maxAge'], userId:User['id'] ) => {
-  const result = await prisma.desiresClarifyingQuestions.upsert({
+export const upsertMaxAge = async (maxAge:CQ['maxAge'], userId:User['id'] ) => {
+  const result = await prisma.clarifyingQuestions.upsert({
     where: {userId}, 
     create:{
       userId, 

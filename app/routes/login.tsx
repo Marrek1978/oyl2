@@ -26,7 +26,6 @@ export const action = async ({ request }: ActionArgs) => {
   // const redirectTo = safeRedirect(formData.get("redirectTo"), "/dashboard");
   const remember = formData.get("remember");
 
-  let user = null
   // let validated = null
 
   try {

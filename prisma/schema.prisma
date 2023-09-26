@@ -18,17 +18,12 @@ model User {
   name String? @default("User")
 
   password Password?
-
-  projects Project[]
-  notes    Note[]
-  lists    List[]
-  routines Routine[]
-  requiredSavings RequiredSavings[]
-  routineTrackers RoutineTracker[]
-  scheduledLists ScheduledList[]
+  notes  Note[]
   values  Value[]
   desires  Desire[]
-  desiresClarifyingQuestions DesiresClarifyingQuestions[]
+  scheduledLists ScheduledList[]
+  clarifyingQuestions ClarifyingQuestions[]
+ 
 }
 
 model Password {
@@ -38,67 +33,125 @@ model Password {
   userId String @unique
 }
 
-model Project {
-  id String @id @default(cuid())
+
+
+
+model Value {
+  id   String @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-    
-  title String
-  description String?
+  
+  valueTitle String
+  valueDescription String
   sortOrder Int @default(0)
-
+  
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
 
-  desireId String? @unique
-  desire Desire? @relation(fields: [desireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  notes    Note[]
-  // lists    List[]
-  // routines Routine[]
-  requiredSavings RequiredSavings[]
-  routineTrackers RoutineTracker[]
+  valueDesire DesireValue[]
 }
 
-model RequiredSavings {
-  id String @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+ model DesireValue {
+  id         String  @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  title String
-  description String?
-  sortOrder Int @default(0)
+  desireId   String
+  valueId    String
 
-  requiredAmount Int
-  savedAmount Int @default(0)
+  value      Value   @relation(fields: [valueId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  desire     Desire  @relation(fields: [desireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
-  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  projectId String?
-
+  @@unique([valueId, desireId])
 }
 
-model RoutineTracker {
-  id String @id @default(cuid())
+model Desire {
+  id   String @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   title String
-  description String?
+  description String
   sortOrder Int @default(0)
-
-  date DateTime
-  success Boolean @default(false)
+  ideal String?
+  current String?
+  achieved Boolean @default(false)
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
-  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  projectId String?
-  routine Routine? @relation(fields: [routineId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  routineId String?
+  
+  outcomes Outcome[]
+  desireValues DesireValue[]
+  notes  Note[]
+}
+
+model Outcome {
+  id   String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title String
+  description String?
+  vision String?
+  sortOrder Int @default(0)
+  complete Boolean @default(false)
+  
+  desireId String
+  desire Desire @relation(fields: [desireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  lists  List[]
+  notes  Note[]
+  routines Routine[]
+  milestoneGroup MilestoneGroup[]
+  savingsTrackers SavingsTracker[]
+  habitTrackers HabitTracker[]
 
 }
+ 
+
+
+
+model ClarifyingQuestions {
+  id         String  @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  birthDate  DateTime?
+  twentyFourHours String? @default("")
+  twentyFourHoursRegrets String? @default("")
+  oneWeek String? @default("")
+  oneWeekRegrets String? @default("")
+  oneMonth String? @default("")
+  oneMonthRegrets String? @default("")
+  oneYear String? @default("")
+  oneYearRegrets String? @default("")
+  fiveYears String? @default("")
+  twentyYears String? @default("")
+  fiftyYears String? @default("")
+  maxAge Int? @default(85)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique
+}
+
+
+model ScheduledList {
+  id    String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  listId String
+  title String
+  isDraggable Boolean @default(true)
+  start   DateTime
+  end   DateTime
+  description Json
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+}
+
+ 
 
 model Note {
   id    String @id @default(cuid())
@@ -107,11 +160,16 @@ model Note {
   
   title String
   body  String
+  sortOrder Int @default(0)
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
-  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  projectId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+
+  Outcome Outcome? @relation(fields: [outcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  outcomeId String?
+
+  desire Desire? @relation(fields: [desireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  desireId String?
 }
 
 model List {
@@ -120,11 +178,10 @@ model List {
   updatedAt DateTime @updatedAt
 
   title String
-  
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
-  desireOutcome DesireOutcome? @relation(fields: [outcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  outcomeId String?
+  sortOrder Int @default(0)
+
+  Outcome Outcome @relation(fields: [outcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  outcomeId String
 
   todos ListToDo[]
 }
@@ -151,16 +208,12 @@ model Routine {
   updatedAt DateTime @updatedAt
 
   title String
+  sortOrder Int @default(0)
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
-  // project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  // projectId String?
-  desireOutcome DesireOutcome? @relation(fields: [outcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  outcomeId String?
+  outcome Outcome @relation(fields: [outcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  outcomeId String
   
   routineToDos RoutineToDo[]
-  routineTracker RoutineTracker[]
 }
 
 model RoutineToDo {
@@ -178,134 +231,58 @@ model RoutineToDo {
 
 
 
-model Value {
-  id   String @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  valueTitle String
-  valueDescription String
-  sortOrder Int @default(0)
-  
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
-
-  valueDesire DesireValue[]
-}
-
-
-model Desire {
-  id   String @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  title String
-  description String
-  sortOrder Int @default(0)
-
-  ideal String?
-  current String?
-  achieved Boolean @default(false)
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
-  projectId String? @unique
-  project Project? 
-
-  desireValues DesireValue[]
-  desireOutcomes DesireOutcome[]
-}
-
-model DesireOutcome {
-  id   String @id @default(cuid())
+model SavingsTracker {
+  id String @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   title String
   description String?
-  vision String?
   sortOrder Int @default(0)
-  complete Boolean @default(false)
-  
-  desireId String
-  desire Desire @relation(fields: [desireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  lists  List[]
-  routines Routine[]
-  milestones Milestone[]
+  requiredAmount Int
+  savedAmount Int @default(0)
 
-}
- 
- model DesireValue {
-  id         String  @id @default(cuid())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  Outcome Outcome @relation(fields: [outcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  outcomeId String
 
-  desireId   String
-  valueId    String
+ }
 
-  value      Value   @relation(fields: [valueId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  desire     Desire  @relation(fields: [desireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+model HabitTracker {
+  id String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@unique([valueId, desireId])
-}
+  title String
+  description String?
+  sortOrder Int @default(0)
 
-//seed db with some data ehre
-model DesiresClarifyingQuestions {
-  id         String  @id @default(cuid())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  date DateTime
+  success Boolean @default(false)
 
-  birthDate  DateTime?
-  twentyFourHours String? @default("")
-  twentyFourHoursRegrets String? @default("")
-  oneWeek String? @default("")
-  oneWeekRegrets String? @default("")
-  oneMonth String? @default("")
-  oneMonthRegrets String? @default("")
-  oneYear String? @default("")
-  oneYearRegrets String? @default("")
-  fiveYears String? @default("")
-  twentyYears String? @default("")
-  fiftyYears String? @default("")
-  maxAge Int? @default(85)
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String @unique
+  Outcome Outcome @relation(fields: [outcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  outcomeId String
 }
 
-model ScheduledList {
+
+
+
+model MilestoneGroup {
   id    String @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  listId String
+
   title String
-  isDraggable Boolean @default(true)
-  start   DateTime
-  end   DateTime
-  description Json
+  description String?
+  sortOrder Int @default(0)
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
+  Outcome Outcome @relation(fields: [outcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  outcomeId String
+
+  milestones Milestone[]
 }
-
-
 
 model Milestone {
-  id    String @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  title String
-  
-  desireOutcome DesireOutcome? @relation(fields: [outcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  outcomeId String?
-
-  milestones MilestoneItem[]
-}
-
-model MilestoneItem {
   id    String @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -317,8 +294,8 @@ model MilestoneItem {
   sortOrder Int @default(0)
   completedAt DateTime?
   
-  milestone Milestone? @relation(fields: [milestoneId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  milestoneId String?
+  milestoneGroup MilestoneGroup @relation(fields: [milestoneId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  milestoneId String
  
 
 }

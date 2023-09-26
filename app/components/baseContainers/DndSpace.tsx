@@ -7,22 +7,20 @@ type Props = {
   minWidthPx?: string
 }
 
-function DndSpace({children, maxWidthPx='max', minWidthPx='350px'}: Props) {
+function DndSpace({ children, maxWidthPx = 'max', minWidthPx = '350px' }: Props) {
 
   const maxWidth = maxWidthPx === 'max' ? 'max-w-max' : `max-w-[${maxWidthPx}]`
-  const minWidth =  `min-w-[${maxWidthPx}]`
+  const minWidth = `min-w-[${maxWidthPx}]`
 
 
   return (
     <>
-    <section className=''>
-      <div className={`w-full ${maxWidth} ${minWidth}`} >
+      <section className={`w-full ${maxWidth} ${minWidth}`} >
         <BasicTextAreaBG  >
-        {children}
+          {children}
         </BasicTextAreaBG>
-      </div>
-    </section >
-  </>
+      </section >
+    </>
   )
 }
 

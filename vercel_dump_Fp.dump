@@ -1,0 +1,1452 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 15.4
+-- Dumped by pg_dump version 15.1
+
+-- Started on 2023-09-24 12:56:32
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 230 (class 1259 OID 66743)
+-- Name: ClarifyingQuestions; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."ClarifyingQuestions" (
+    id text NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    "birthDate" timestamp(3) without time zone,
+    "twentyFourHours" text DEFAULT ''::text,
+    "twentyFourHoursRegrets" text DEFAULT ''::text,
+    "oneWeek" text DEFAULT ''::text,
+    "oneWeekRegrets" text DEFAULT ''::text,
+    "oneMonth" text DEFAULT ''::text,
+    "oneMonthRegrets" text DEFAULT ''::text,
+    "oneYear" text DEFAULT ''::text,
+    "oneYearRegrets" text DEFAULT ''::text,
+    "fiveYears" text DEFAULT ''::text,
+    "twentyYears" text DEFAULT ''::text,
+    "fiftyYears" text DEFAULT ''::text,
+    "maxAge" integer DEFAULT 85,
+    "userId" text NOT NULL
+);
+
+
+ALTER TABLE public."ClarifyingQuestions" OWNER TO "default";
+
+--
+-- TOC entry 224 (class 1259 OID 25318)
+-- Name: Desire; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."Desire" (
+    id text NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    title text NOT NULL,
+    description text NOT NULL,
+    "sortOrder" integer DEFAULT 0 NOT NULL,
+    "userId" text NOT NULL,
+    "projectId" text,
+    current text,
+    ideal text,
+    achieved boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public."Desire" OWNER TO "default";
+
+--
+-- TOC entry 227 (class 1259 OID 25506)
+-- Name: DesireOutcome; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."DesireOutcome" (
+    id text NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    title text NOT NULL,
+    description text,
+    "sortOrder" integer DEFAULT 0 NOT NULL,
+    complete boolean DEFAULT false NOT NULL,
+    "desireId" text NOT NULL,
+    vision text
+);
+
+
+ALTER TABLE public."DesireOutcome" OWNER TO "default";
+
+--
+-- TOC entry 225 (class 1259 OID 25327)
+-- Name: DesireValue; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."DesireValue" (
+    id text NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    "desireId" text NOT NULL,
+    "valueId" text NOT NULL
+);
+
+
+ALTER TABLE public."DesireValue" OWNER TO "default";
+
+--
+-- TOC entry 219 (class 1259 OID 25265)
+-- Name: List; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."List" (
+    id text NOT NULL,
+    title text NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    "userId" text NOT NULL,
+    "outcomeId" text
+);
+
+
+ALTER TABLE public."List" OWNER TO "default";
+
+--
+-- TOC entry 220 (class 1259 OID 25283)
+-- Name: ListToDo; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."ListToDo" (
+    id text NOT NULL,
+    body text NOT NULL,
+    urgent boolean NOT NULL,
+    important boolean NOT NULL,
+    complete boolean DEFAULT false NOT NULL,
+    "dueDate" timestamp(3) without time zone,
+    "sortOrder" integer NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    "listId" text NOT NULL
+);
+
+
+ALTER TABLE public."ListToDo" OWNER TO "default";
+
+--
+-- TOC entry 228 (class 1259 OID 66680)
+-- Name: Milestone; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."Milestone" (
+    id text NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    title text NOT NULL,
+    "outcomeId" text
+);
+
+
+ALTER TABLE public."Milestone" OWNER TO "default";
+
+--
+-- TOC entry 229 (class 1259 OID 66688)
+-- Name: MilestoneItem; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."MilestoneItem" (
+    id text NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    title text NOT NULL,
+    description text,
+    complete boolean DEFAULT false NOT NULL,
+    "dueDate" timestamp(3) without time zone,
+    "sortOrder" integer DEFAULT 0 NOT NULL,
+    "completedAt" timestamp(3) without time zone,
+    "milestoneId" text
+);
+
+
+ALTER TABLE public."MilestoneItem" OWNER TO "default";
+
+--
+-- TOC entry 217 (class 1259 OID 25069)
+-- Name: Note; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."Note" (
+    id text NOT NULL,
+    title text NOT NULL,
+    body text NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    "userId" text NOT NULL,
+    "projectId" text
+);
+
+
+ALTER TABLE public."Note" OWNER TO "default";
+
+--
+-- TOC entry 216 (class 1259 OID 25064)
+-- Name: Password; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."Password" (
+    hash text NOT NULL,
+    "userId" text NOT NULL
+);
+
+
+ALTER TABLE public."Password" OWNER TO "default";
+
+--
+-- TOC entry 226 (class 1259 OID 25371)
+-- Name: Project; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."Project" (
+    id text NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    title text NOT NULL,
+    description text,
+    "sortOrder" integer DEFAULT 0 NOT NULL,
+    "userId" text NOT NULL,
+    "desireId" text
+);
+
+
+ALTER TABLE public."Project" OWNER TO "default";
+
+--
+-- TOC entry 231 (class 1259 OID 66769)
+-- Name: RequiredSavings; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."RequiredSavings" (
+    id text NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    title text NOT NULL,
+    description text,
+    "sortOrder" integer DEFAULT 0 NOT NULL,
+    "requiredAmount" integer NOT NULL,
+    "savedAmount" integer DEFAULT 0 NOT NULL,
+    "userId" text NOT NULL,
+    "projectId" text
+);
+
+
+ALTER TABLE public."RequiredSavings" OWNER TO "default";
+
+--
+-- TOC entry 221 (class 1259 OID 25292)
+-- Name: Routine; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."Routine" (
+    id text NOT NULL,
+    title text NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    "userId" text NOT NULL,
+    "outcomeId" text
+);
+
+
+ALTER TABLE public."Routine" OWNER TO "default";
+
+--
+-- TOC entry 222 (class 1259 OID 25300)
+-- Name: RoutineToDo; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."RoutineToDo" (
+    id text NOT NULL,
+    body text NOT NULL,
+    complete boolean DEFAULT false NOT NULL,
+    "sortOrder" integer NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    "routineId" text NOT NULL
+);
+
+
+ALTER TABLE public."RoutineToDo" OWNER TO "default";
+
+--
+-- TOC entry 232 (class 1259 OID 66779)
+-- Name: RoutineTracker; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."RoutineTracker" (
+    id text NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    title text NOT NULL,
+    description text,
+    "sortOrder" integer DEFAULT 0 NOT NULL,
+    date timestamp(3) without time zone NOT NULL,
+    success boolean DEFAULT false NOT NULL,
+    "userId" text NOT NULL,
+    "projectId" text,
+    "routineId" text
+);
+
+
+ALTER TABLE public."RoutineTracker" OWNER TO "default";
+
+--
+-- TOC entry 218 (class 1259 OID 25251)
+-- Name: ScheduledList; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."ScheduledList" (
+    id text NOT NULL,
+    title text NOT NULL,
+    "isDraggable" boolean DEFAULT true NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    "userId" text NOT NULL,
+    description jsonb NOT NULL,
+    "end" timestamp(3) without time zone NOT NULL,
+    start timestamp(3) without time zone NOT NULL,
+    "listId" text NOT NULL
+);
+
+
+ALTER TABLE public."ScheduledList" OWNER TO "default";
+
+--
+-- TOC entry 215 (class 1259 OID 25056)
+-- Name: User; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."User" (
+    id text NOT NULL,
+    email text NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    name text DEFAULT 'User'::text
+);
+
+
+ALTER TABLE public."User" OWNER TO "default";
+
+--
+-- TOC entry 223 (class 1259 OID 25309)
+-- Name: Value; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public."Value" (
+    id text NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    "valueTitle" text NOT NULL,
+    "valueDescription" text NOT NULL,
+    "sortOrder" integer DEFAULT 0 NOT NULL,
+    "userId" text NOT NULL
+);
+
+
+ALTER TABLE public."Value" OWNER TO "default";
+
+--
+-- TOC entry 214 (class 1259 OID 25047)
+-- Name: _prisma_migrations; Type: TABLE; Schema: public; Owner: default
+--
+
+CREATE TABLE public._prisma_migrations (
+    id character varying(36) NOT NULL,
+    checksum character varying(64) NOT NULL,
+    finished_at timestamp with time zone,
+    migration_name character varying(255) NOT NULL,
+    logs text,
+    rolled_back_at timestamp with time zone,
+    started_at timestamp with time zone DEFAULT now() NOT NULL,
+    applied_steps_count integer DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE public._prisma_migrations OWNER TO "default";
+
+--
+-- TOC entry 2734 (class 0 OID 66743)
+-- Dependencies: 230
+-- Data for Name: ClarifyingQuestions; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."ClarifyingQuestions" (id, "createdAt", "updatedAt", "birthDate", "twentyFourHours", "twentyFourHoursRegrets", "oneWeek", "oneWeekRegrets", "oneMonth", "oneMonthRegrets", "oneYear", "oneYearRegrets", "fiveYears", "twentyYears", "fiftyYears", "maxAge", "userId") FROM stdin;
+\.
+
+
+--
+-- TOC entry 2728 (class 0 OID 25318)
+-- Dependencies: 224
+-- Data for Name: Desire; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."Desire" (id, "createdAt", "updatedAt", title, description, "sortOrder", "userId", "projectId", current, ideal, achieved) FROM stdin;
+clmdlsfn5001dkz06h9usrgau	2023-09-10 15:21:56.271	2023-09-14 13:35:43.105	Love	I want to feel deeply connected to a beautiful, feminine, attentive woman.  We will work together on our goals to achieve our desires.  She wants to work together to achieve something together, that is more than what can be attained solo. \n\nShe is attentive, caring, and aligned with all my goals; wants to help me achieve them for us.	5	cllgsahu90000eq5ce1454rxh	\N	I am single and have every option available to me.  I am in complete control of this destiny.	I feel deeply connected to a beautiful, fit, caring, attentive woman, who wants to help me achieve my goals.\n\nI wake up in the morning to a beautiful smile, and she is enthusiastic to help me reach our goals.\n\nI am at a dinner at Marg's, and everyone I love is there.  she fits right in, is enthusiastic and charming, everyone loves her too.  	f
+clmdlyd3r0009kz081m71hwf3	2023-09-10 15:26:32.918	2023-09-14 13:35:43.06	Olive Knows she has a great future	Olive needs to believe she has a many options open to her, so that she can have an amazing future, full of adventure and great experiences.	3	cllgsahu90000eq5ce1454rxh	\N	Olive has plans for her future, including traveling after high-school, exploration, etc.  She envisions herself in other places around the world.	Olive has the abilities to reflect on her desires, set big goals for herself, envision herself fulfilling big actions, and take the necessary actions to fulfill those goals.	f
+clmdm7s0h000fkz08leb5rxa0	2023-09-10 15:33:52.143	2023-09-14 13:35:43.117	Abundance of Time, Money, Health	I want to have all the time, money , and health i require to achieve all my other desires.  I want to feel unlimited, like nothing holds me back.  I want to experience some luxuries, and simplify and automate as much of life as possible.	8	cllgsahu90000eq5ce1454rxh	\N	I have some money trickling in, some assets and savings, lots of free time, and my health is improving	I have the time, $, and health to fulfill my desires and still be spontaneous.  I don't have to say no to possible experiences b/c I don't have the time, can't afford it, or worry about what i will eat or how much energy i may have	f
+clmdlikve000bmo08fyes0h0i	2023-09-10 15:14:16.488	2023-09-14 13:35:43.117	Deep Connenction	I want to have relationships  where i feel deeply connected to ppl.   I want to have someone in my life that understands the complexity and nuance i see in at least 1 area.\n\n( am i asking too much of ppl??  Nobody wants to see the complexity in things, or our parts in our bad situations/feelings?\n\nIs there a place to find these ppl? NLP?  Honesty?)	6	cllgsahu90000eq5ce1454rxh	\N	i am learning what it takes it create rapport to move past small talk and create deep connections.	I have a number of great friends who I deeply connect with.   I know how to build rapport and can connect with many ppl, giving me many opportunities for deep connections	f
+clmush95a0001mg087dcd8rky	2023-09-22 16:01:16.926	2023-09-22 16:01:16.926	Retirement Plan	What will I do?  Where will I live?  On how much $$?  	9	cllgsahu90000eq5ce1454rxh	\N	\N	\N	f
+clmavwwk80001jt085ko2oysf	2023-09-08 17:42:02.454	2023-09-14 13:35:43.02	Un-conflicted and Secure 	I want to feel un-conflicted and secure in all situations.  I want to know and serve my highest ideals in every sitation\n	1	cllgsahu90000eq5ce1454rxh	\N	I have some idea of my interests and desires , and some ideas on how to achieve them, however i want more  assurance that I know what I want, and more direction on how to achieve them.	I know exactly what I want for my life, and how I will achieve it.  \nI know \n * how i will allocate the vast sums of money i have coming in\n * what I will do in all situations and scenarios\n * how i will spend my precious time\n * who I will spend my precious time with\n * who i want to come into my life\n * that i am secure and correct in my desires, direction, and focus\n\nI am at a dinner at Marg and Matt's, with everyone i love there.  I am confident in who I am, where I am going, and what i want, so I am able to be fully present and give to everyone there.  I can be fully honest and even vulnerable, which allows for deep connections without need, deflection, or absurdity.	f
+cllgvl64e0007mp07oty0iom5	2023-08-18 17:39:49.687	2023-09-14 13:35:43.021	Masculine Presence	I want to feel more confident, strong, and directed in all aspects of my life.  I want to feel powerful and secure in myself	2	cllgsahu90000eq5ce1454rxh	\N	I am sometimes calm and relaxed, secure and unconflicted.  I am learning and understanding about this.  I can envision at future self that is supremely calm, directed, focused, and unconflicted	I know what i want in all situations and scenarios, leaving me focused and directed.  My confidence leaves me calm and relaxed, while my attention is focused on what matters to me.\n\nI'm at a dinner at Marg's, all my loved ones are there.  I am serene, calm, happy, and fulfilled.  I am confident, open, and vulnerable, I don't need anything, don't resort to being absurd.	f
+clmavxj0x000el408nllucu5p	2023-09-08 17:42:31.567	2023-09-14 13:35:43.117	Experiences	I want to have both 1) more awe-inspiring experiences  and 2) more regular enjoyable experiences, whether classes or scheduled events... in all aspects of my life, from routines, expressing competence,  deep connection, love, and excellence.	7	cllgsahu90000eq5ce1454rxh	\N	I am starting to feel better and expland my explorations in Golden, Calgary, and Okotoks.  My circles are small but I'm ready to expand them more	I regularly explore new areas of life, and regularly return to enjoyable experiences.\n\nAt a dinner @ Margs, my beautiful partner recounts some interesting adventures we've recenlty been on.	f
+clmdlohme0016kz069klrjnc7	2023-09-10 15:18:52.212	2023-09-14 13:35:43.064	Self-Discovery / Self-Understanding	I need to know exactly what it is that I want.  If understand my own desires, and know what i need to accomplish to achieve them, I can then achieve them.\n\nI also want understand my own thought process and motivations	4	cllgsahu90000eq5ce1454rxh	\N	I am starting to understand what it is that i desire and How my values and beliefs and fit into achieving them.\n\nNLP, psychology, and meditation are helping very much.\n\nI need to really get clear and specific on what i want as outcomes to start moving towards them.	I know what i desire, what values that desire serves, what my motivations are, and if my thoughts, beliefs, emotions, and actions serve those desires.\n\nI know which beliefs and internal representations are beneficial to me, and which i need to change ( and how to change them) .\n\nI continually improve my understanding, and update my desires and self accordingly	f
+cllgvki620003mp07oui51u69	2023-08-18 17:39:18.644	2023-09-20 16:40:13.647	An Excess of Health and Energy	I want an excess of Health and Energy throughout the day.  I have tons of energy to work towards my desires and experience more of the lifestyle i desire.\n\nI want to be healthy and experience as much freedom and life as possible.\n	0	cllgsahu90000eq5ce1454rxh	\N	I have had a bone-marrow transplant, am cancer-free, and am healing well.  I am expected to make a full recovery and do well for many years.  I feel as though I will be fine and have a long life.  I am healing and seeing improvements over time.  \n\nI can do yard work, exercise, code,  and be there for Olive.  I have re-connected with Kym, Marg, Matt, and met Rick, Cash, and Carrera.  I am painting and learning and starting to find myself.	I am jacked, masculine, confident, well-put-together, energetic, and have many, regular great experiences and successes.\n\nI routinely complete all my daily task with happiness and enthusiasm.\nI can easily code for 6-8 hours / day,  5 days per week, and  still work on my other scheduled project tasks.\n\nI feel, and am, unlimited.	f
+\.
+
+
+--
+-- TOC entry 2731 (class 0 OID 25506)
+-- Dependencies: 227
+-- Data for Name: DesireOutcome; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."DesireOutcome" (id, "createdAt", "updatedAt", title, description, "sortOrder", complete, "desireId", vision) FROM stdin;
+clmezrkhd0001ms08qetras5q	2023-09-11 14:40:56.688	2023-09-11 14:40:56.688	Olive sets big goals	Olive sets big goals for herself, grandiose at times	0	f	clmdlyd3r0009kz081m71hwf3	\N
+clmayfbld0014l408d4qfbkso	2023-09-08 18:52:20.975	2023-09-20 21:48:58.593	Energy throughout Each Day	I feel energetic from the time I wake up until bedtime.  I have the energy, enthusiasm, and focus to work toward my goals... am free to accomplish/manifest my desires	0	f	cllgvki620003mp07oui51u69	\N
+cllgvuexd0003l708p4t7u711	2023-08-18 17:47:01.005	2023-09-20 21:48:58.593	Very Muscular	I am much more muscular and shapely than I was in 2022.  I have 10 lbs more of muscle AND can see 4 abs.  \nI want to fill out large shirts and have a 32" waist.	2	f	cllgvki620003mp07oui51u69	\N
+clmggkjor0001id07np1erapf	2023-09-12 15:19:08.702	2023-09-21 14:38:19.511	Confidence i can Connect with others	I have confidence that i can build rapport and connect with strangers	1	f	clmdlikve000bmo08fyes0h0i	\N
+clmayw0bs0001l6088g8b0svy	2023-09-08 19:05:19.527	2023-09-20 21:48:58.65	Eat Wide Variety	I can eat a wide variety of foods again and be healthy and comfortable.  I can even eat some 'bad' foods occasionally and feel great.	4	f	cllgvki620003mp07oui51u69	\N
+clmf0k6v30003id08k74sl2rc	2023-09-11 15:03:12.055	2023-09-14 13:36:14.37	No need to Justify	I dont' ever feel the need to justify my words or actions, as everything is congruent with my goals	1	f	clmavwwk80001jt085ko2oysf	\N
+clmf0mg6c0001l707cppiii64	2023-09-11 15:04:57.442	2023-09-14 13:36:14.37	Know my Daily Direction	I know the steps to take each day to achieve my desires	0	f	clmavwwk80001jt085ko2oysf	\N
+clmf171vr0001l5089b6l9e7a	2023-09-11 15:20:58.693	2023-09-11 15:20:58.693	Inner calmness	Calm, relaxed in all social interactions, meeting new ppl, at gatherings etc	0	f	cllgvl64e0007mp07oty0iom5	\N
+clmf17w6a000vm408fo17cey8	2023-09-11 15:21:37.952	2023-09-11 15:21:37.952	Confidence	I have an inner confidence in all social interactions... i never feel the need to justify myself, actions, thoguhts, etc.	0	f	cllgvl64e0007mp07oty0iom5	\N
+clmf18il40003l508q2fjcoff	2023-09-11 15:22:06.999	2023-09-11 15:22:06.999	Focus	I know what to focus on in all social interactions	0	f	cllgvl64e0007mp07oty0iom5	\N
+clmgemejq0001mp08cc7bp2zl	2023-09-12 14:24:36.132	2023-09-12 14:43:53.95	Beautiful, caring, honest, enthusiatic partner	My partner fulfills all of my desires	0	f	clmdlsfn5001dkz06h9usrgau	\N
+clmgee17l0001l608zbwennil	2023-09-12 14:18:05.6	2023-09-12 14:18:16.351	Completely filled out OYL	when i have completely filled out OYL, i will be well on my way to Knowying myself	0	f	clmdlohme0016kz069klrjnc7	\N
+clmdnemst0001mh09om4wlnik	2023-09-10 16:07:11.581	2023-09-12 14:18:16.351	Accurate Desires	My desires will become more clear and specific, easier to envision and feel as fulfilled as they better serve my values\n	1	f	clmdlohme0016kz069klrjnc7	\N
+clmezqxj30001mj0810foi3wp	2023-09-11 14:40:26.941	2023-09-11 14:40:26.941	A plan for after high school	Olive has something she wants to achieve after graduating high-school	0	f	clmdlyd3r0009kz081m71hwf3	\N
+clmggw671000cmf09zex3ircp	2023-09-12 15:28:11.099	2023-09-12 15:28:13.448	Spontaneous Adventures	Occasionally go on spontaneous adventures, whether small trips to Calgary, etc, all-inclusive to Cuba, etc, or a weekend in Vegas.	3	f	clmavxj0x000el408nllucu5p	\N
+clmdnj7mo0001mh0752ol85o0	2023-09-10 16:10:45.214	2023-09-12 14:18:16.383	Serenity	As i understand my self better, i resolve inner conflicts, leading to more serenity	3	f	clmdlohme0016kz069klrjnc7	\N
+clmdnlbi7001wkz069sc12r36	2023-09-10 16:12:23.547	2023-09-12 14:18:16.353	UnConflicted	I will feel less inner conflict, leading to better direction and less stress and anxiety in social, and confrontational, situations.  I will be and feel less reactive.	2	f	clmdlohme0016kz069klrjnc7	\N
+clmdne2sp000ukz08pqcsrirq	2023-09-10 16:06:45.671	2023-09-12 14:18:16.419	Complete Integration of Beliefs, Desires, & Self	As i continually integrate my beliefs, int-reps, desires, ego, shadow, etc, etc, i become more whole, more at peace,  and achieve more of my desires.\n\nMy desires will also change to be more meaningful and complete.  	4	f	clmdlohme0016kz069klrjnc7	\N
+clmggf85s0001lc08qh25nvat	2023-09-12 15:15:00.494	2023-09-21 14:38:19.512	Easily establish Rapport	I can easily establish rapport with most ppl	2	f	clmdlikve000bmo08fyes0h0i	\N
+clmgguyn8000amt08zo4bkle0	2023-09-12 15:27:14.658	2023-09-12 15:28:13.448	Planned Travel	A few times / year I have planned travel to look forward to, Egypt, Jordan, Spain, Thailand, etc	2	f	clmavxj0x000el408nllucu5p	\N
+clmggswg90003id074fdlnbco	2023-09-12 15:25:38.503	2023-09-12 15:28:13.448	Scheduled Events I look forward to	I have regularly scheduled events I look forward to.  	1	f	clmavxj0x000el408nllucu5p	\N
+clmgh2pbw000hmf09gp1qbh69	2023-09-12 15:33:15.83	2023-09-12 15:33:20.707	Spontaneous Experiences	Open to having spontaneous experiences.  I don't have to let things pass me by b/c ' I can't'	2	f	clmdm7s0h000fkz08leb5rxa0	\N
+clmggtupk0008mt08ldi65loj	2023-09-12 15:26:22.902	2023-09-12 15:28:13.447	Regularly occurring Experiences	I have regularly occurring experiences i enjoy, peace, serenity, connection, adventure, exploration, excellence, etc.	0	f	clmavxj0x000el408nllucu5p	\N
+clmgh1qfj0005lc08p51l97x4	2023-09-12 15:32:30.604	2023-09-12 15:33:20.707	New Experiences	Regularly have new experiences	1	f	clmdm7s0h000fkz08leb5rxa0	\N
+clmgh1d36000cmt08cc041t1k	2023-09-12 15:32:13.312	2023-09-12 15:33:20.707	Continually Achieving Desires	I am continually working  thru and achieving my desires.  	0	f	clmdm7s0h000fkz08leb5rxa0	\N
+clmaypz4m0001jp088u27p8kp	2023-09-08 19:00:38.037	2023-09-20 21:48:58.593	Freedom to Travel	I am medically free to Travel anywhere in the world	1	f	cllgvki620003mp07oui51u69	\N
+clmaysapz0003mn08f01j1hoj	2023-09-08 19:02:26.372	2023-09-20 21:48:58.63	Great Fitness	I have the fitness to ski all day long, in any conditions.  I can mtn bike comfortably, or go on multiday hikes if i choose to.	3	f	cllgvki620003mp07oui51u69	\N
+clmta00y00001lf086oplthpv	2023-09-21 14:36:13.881	2023-09-21 14:38:19.512	learn how to game	learn how to talk to women with the proper frame	0	f	clmdlikve000bmo08fyes0h0i	\N
+clmggfxo70001mf09gz6xzx7o	2023-09-12 15:15:33.555	2023-09-21 14:38:19.551	PPL I Deeply Connect with	There are a number of people in my life i can deeply connect with	3	f	clmdlikve000bmo08fyes0h0i	\N
+\.
+
+
+--
+-- TOC entry 2729 (class 0 OID 25327)
+-- Dependencies: 225
+-- Data for Name: DesireValue; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."DesireValue" (id, "createdAt", "updatedAt", "desireId", "valueId") FROM stdin;
+clmdp017s0003jr0651gkuodm	2023-09-10 16:51:49.672	2023-09-10 16:51:49.672	clmavwwk80001jt085ko2oysf	clmawmne8000cme07cw4pcxwo
+clmdp017s0002jr06skhra1vr	2023-09-10 16:51:49.672	2023-09-10 16:51:49.672	clmavwwk80001jt085ko2oysf	clmaw06vb000gl408w9ena20e
+clmdp017s0001jr06839fbg9z	2023-09-10 16:51:49.672	2023-09-10 16:51:49.672	clmavwwk80001jt085ko2oysf	clmaw8jdk0008me076a0tl1k6
+clmdp017s0000jr06lo8p3cxo	2023-09-10 16:51:49.672	2023-09-10 16:51:49.672	clmavwwk80001jt085ko2oysf	cllgucl160001l40869jjvfs2
+clmush95a0002mg08xe8rl1v4	2023-09-22 16:01:16.926	2023-09-22 16:01:16.926	clmush95a0001mg087dcd8rky	clmaw7o5b000il408964u3v58
+clmdljshy0007kz08996pqd7d	2023-09-10 15:15:13.03	2023-09-10 15:15:13.03	cllgvl64e0007mp07oty0iom5	clmawmne8000cme07cw4pcxwo
+clmdljshy0006kz08dsywlxge	2023-09-10 15:15:13.03	2023-09-10 15:15:13.03	cllgvl64e0007mp07oty0iom5	cllgucl160001l40869jjvfs2
+clmdmfet8000nmo08lcrxxn5q	2023-09-10 15:39:48.284	2023-09-10 15:39:48.284	cllgvki620003mp07oui51u69	cllguc76c0001mr08pfy7yvp4
+clmdmfrcz000kkz0856tk3ke0	2023-09-10 15:40:04.548	2023-09-10 15:40:04.548	clmdlyd3r0009kz081m71hwf3	cllgu1kz70003jz08edpv0jz6
+clmdmghzq000rmo08tvgpfxd3	2023-09-10 15:40:39.063	2023-09-10 15:40:39.063	clmdlohme0016kz069klrjnc7	clmawwaxh000kl4086vki0qtm
+clmdmghzq000qmo08wzkdi4dh	2023-09-10 15:40:39.063	2023-09-10 15:40:39.063	clmdlohme0016kz069klrjnc7	clmaw8jdk0008me076a0tl1k6
+clmdmghzq000pmo08rfc4ktox	2023-09-10 15:40:39.063	2023-09-10 15:40:39.063	clmdlohme0016kz069klrjnc7	cllgucl160001l40869jjvfs2
+clmdmghzq000omo08byjfw6df	2023-09-10 15:40:39.063	2023-09-10 15:40:39.063	clmdlohme0016kz069klrjnc7	cllguc76c0001mr08pfy7yvp4
+clmdmkqg3000jmn088pnrtvo9	2023-09-10 15:43:56.644	2023-09-10 15:43:56.644	clmdlsfn5001dkz06h9usrgau	clmaw8jdk0008me076a0tl1k6
+clmdmkqg3000imn08e4j5y8j4	2023-09-10 15:43:56.644	2023-09-10 15:43:56.644	clmdlsfn5001dkz06h9usrgau	cllgucl160001l40869jjvfs2
+clmdmkqg3000hmn08rj8axg8y	2023-09-10 15:43:56.644	2023-09-10 15:43:56.644	clmdlsfn5001dkz06h9usrgau	cllguc76c0001mr08pfy7yvp4
+clmdmn89y000nmn08ll2a975q	2023-09-10 15:45:53.063	2023-09-10 15:45:53.063	clmdlikve000bmo08fyes0h0i	clmawmne8000cme07cw4pcxwo
+clmdmn89y000mmn08n4g0pt6w	2023-09-10 15:45:53.063	2023-09-10 15:45:53.063	clmdlikve000bmo08fyes0h0i	clmaw8jdk0008me076a0tl1k6
+clmdmp1jw000wmo08k5svy6g8	2023-09-10 15:47:17.66	2023-09-10 15:47:17.66	clmavxj0x000el408nllucu5p	clmawwaxh000kl4086vki0qtm
+clmdmq37e000skz08i36d2eb2	2023-09-10 15:48:06.459	2023-09-10 15:48:06.459	clmdm7s0h000fkz08leb5rxa0	clmawwaxh000kl4086vki0qtm
+clmdmq37e000rkz08qm3l2trl	2023-09-10 15:48:06.459	2023-09-10 15:48:06.459	clmdm7s0h000fkz08leb5rxa0	clmaw7o5b000il408964u3v58
+clmdmq37e000qkz080zad2yyr	2023-09-10 15:48:06.459	2023-09-10 15:48:06.459	clmdm7s0h000fkz08leb5rxa0	clmaw06vb000gl408w9ena20e
+clmdmq37e000pkz080dbx3n9k	2023-09-10 15:48:06.459	2023-09-10 15:48:06.459	clmdm7s0h000fkz08leb5rxa0	cllguc76c0001mr08pfy7yvp4
+\.
+
+
+--
+-- TOC entry 2723 (class 0 OID 25265)
+-- Dependencies: 219
+-- Data for Name: List; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."List" (id, title, "createdAt", "updatedAt", "userId", "outcomeId") FROM stdin;
+clmggq714000amf0974tjx07i	Experiences	2023-09-12 15:23:32.246	2023-09-12 15:23:51.794	cllgsahu90000eq5ce1454rxh	\N
+clmgirdjk0001jo083ols8jl5	Dark Mode	2023-09-12 16:20:26.575	2023-09-12 16:20:26.575	cllgsahu90000eq5ce1454rxh	\N
+clmj64e2d0001mn08u0vsx7ly	misc lsits and routines	2023-09-14 12:49:57.299	2023-09-14 12:49:57.299	cllgsahu90000eq5ce1454rxh	\N
+clmkjt3c80001kv08ug9ku1of	Desires DND	2023-09-15 12:00:50.982	2023-09-15 12:00:50.982	cllgsahu90000eq5ce1454rxh	\N
+clmwacjiv0001mj08wwnwr05s	OYL today	2023-09-23 17:09:16.373	2023-09-24 16:08:13.124	cllgsahu90000eq5ce1454rxh	\N
+clmj67h8w0004l407k6llxlkq	Check box	2023-09-14 12:52:21.39	2023-09-14 12:52:21.39	cllgsahu90000eq5ce1454rxh	\N
+clmkjtvi90008jq089iorxx3g	Desires Form	2023-09-15 12:01:27.487	2023-09-15 12:01:27.487	cllgsahu90000eq5ce1454rxh	\N
+clmggjnmg0002mt080x0febwq	Forms 	2023-09-12 15:18:27.158	2023-09-14 12:54:38.72	cllgsahu90000eq5ce1454rxh	\N
+clmdpmzze0002ml07j9q61ws0	x3 vibrating plate?	2023-09-10 17:09:41.16	2023-09-10 17:09:41.16	cllgsahu90000eq5ce1454rxh	\N
+clmj6es4d0006mj08e684abcn	Projects Form	2023-09-14 12:58:02.075	2023-09-14 12:58:02.075	cllgsahu90000eq5ce1454rxh	\N
+clmdpym980008mv08ugy76azu	Get all vaccines	2023-09-10 17:18:42.83	2023-09-10 17:18:42.83	cllgsahu90000eq5ce1454rxh	\N
+clmj7dwbp001rmj08c80g9f34	Remove Coffee	2023-09-14 13:25:20.483	2023-09-14 13:25:20.483	cllgsahu90000eq5ce1454rxh	\N
+clmdq8qzq000cmv089jwfbd58	Eat low Oxalate and low Salicylate	2023-09-10 17:26:35.929	2023-09-10 17:26:35.929	cllgsahu90000eq5ce1454rxh	\N
+clmkjzvyp0001me08jr389hl0	Desire	2023-09-15 12:06:08.015	2023-09-15 12:06:08.015	cllgsahu90000eq5ce1454rxh	\N
+clmf0p01t0005m4087z215opo	Fill out OYL	2023-09-11 15:06:56.507	2023-09-11 15:06:56.507	cllgsahu90000eq5ce1454rxh	\N
+clmdnq4xu000akz07v62t1yxm	Forms	2023-09-10 16:16:08.319	2023-09-15 12:07:24.528	cllgsahu90000eq5ce1454rxh	\N
+clmggl6vl0004mt085fhzvnj6	Outcomes	2023-09-12 15:19:38.767	2023-09-15 15:38:11.713	cllgsahu90000eq5ce1454rxh	\N
+clmj7iru20050mn08qjepwcur	test	2023-09-14 13:29:07.947	2023-09-14 13:29:07.947	cllgsahu90000eq5ce1454rxh	\N
+clmj701sh001nmj08po8iqjd6	Routines	2023-09-14 13:14:34.383	2023-09-14 13:14:34.383	cllgsahu90000eq5ce1454rxh	\N
+clmj6kl48000al407jtnnccih	Schedule	2023-09-14 13:02:32.934	2023-09-14 13:14:53.948	cllgsahu90000eq5ce1454rxh	\N
+clmdlea7k0003kz08r6hmpg5u	new features	2023-09-10 15:10:56.046	2023-09-15 20:05:53.199	cllgsahu90000eq5ce1454rxh	\N
+clml1kszd0001mp08xviixgfb	manifesting	2023-09-15 20:18:17.398	2023-09-15 20:18:17.398	cllgsahu90000eq5ce1454rxh	\N
+clmdqcnel000ajs08ikvzdr57	Lists page	2023-09-10 17:29:37.915	2023-09-10 17:29:37.915	cllgsahu90000eq5ce1454rxh	\N
+clmj7hddo001ul4075ppjb2g2	Project Tasks	2023-09-14 13:28:02.554	2023-09-14 13:28:02.554	cllgsahu90000eq5ce1454rxh	\N
+clmezxmxy0001m408kkzg023c	Today	2023-09-11 14:45:39.811	2023-09-11 14:47:20.098	cllgsahu90000eq5ce1454rxh	\N
+clmf00a8n0005ms08vs2tvywe	Stocks	2023-09-11 14:47:43.307	2023-09-11 14:47:43.307	cllgsahu90000eq5ce1454rxh	\N
+clmauy1rg0001l4087b7pho2p	This app	2023-09-08 17:14:56.235	2023-09-12 13:55:33.369	cllgsahu90000eq5ce1454rxh	\N
+clmdp1e060005jr06x7pss02z	Projects	2023-09-10 16:52:52.902	2023-09-12 13:56:14.338	cllgsahu90000eq5ce1454rxh	\N
+clmdq4oi8000amv083r4wtunb	Project	2023-09-10 17:23:26.094	2023-09-14 13:33:28.693	cllgsahu90000eq5ce1454rxh	\N
+clmgefo7m0001ia08wyd1te3s	Production	2023-09-12 14:19:22.064	2023-09-12 14:43:13.817	cllgsahu90000eq5ce1454rxh	\N
+clmnpoats0001mk08salojc8c	Outcomes Form	2023-09-17 17:08:23.63	2023-09-17 17:08:23.63	cllgsahu90000eq5ce1454rxh	\N
+clmgggacz0003mf09jj3mcc9j	Errors	2023-09-12 15:15:49.969	2023-09-12 15:17:43.652	cllgsahu90000eq5ce1454rxh	\N
+clmj6d19t0006l40757mhtn5j	outcomes dnd	2023-09-14 12:56:40.624	2023-09-17 17:57:23.133	cllgsahu90000eq5ce1454rxh	\N
+clmnrg2wo0001la09ag4ddpb0	todos form	2023-09-17 17:57:59.336	2023-09-17 17:57:59.336	cllgsahu90000eq5ce1454rxh	\N
+clmj9523t0001k308wnn9ox0m	SubConscious	2023-09-14 14:14:27.301	2023-09-14 14:19:51.496	cllgsahu90000eq5ce1454rxh	\N
+clmav1nap0003l4080am626g6	OYL Priorities	2023-09-08 17:17:44.112	2023-09-17 17:59:03.723	cllgsahu90000eq5ce1454rxh	\N
+clmnrq0kr0003lc08bpr4wmhf	DnDs	2023-09-17 18:05:42.89	2023-09-17 18:05:42.89	cllgsahu90000eq5ce1454rxh	\N
+clmj7ci6b001pmj087t9jhjkc	Figure out Best Eating Habits	2023-09-14 13:24:15.488	2023-09-20 16:35:23.046	cllgsahu90000eq5ce1454rxh	clmayfbld0014l408d4qfbkso
+clmta2fcb0005lf088l6lnk6n	Dating Game	2023-09-21 14:38:05.864	2023-09-21 14:38:05.864	cllgsahu90000eq5ce1454rxh	clmta00y00001lf086oplthpv
+clmnpqpg90003mk08yxc15osd	Dersire Form	2023-09-17 17:10:15.896	2023-09-23 10:46:47.227	cllgsahu90000eq5ce1454rxh	\N
+\.
+
+
+--
+-- TOC entry 2724 (class 0 OID 25283)
+-- Dependencies: 220
+-- Data for Name: ListToDo; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."ListToDo" (id, body, urgent, important, complete, "dueDate", "sortOrder", "createdAt", "updatedAt", "listId") FROM stdin;
+clmauzcs40006me076i398kno	current focus page?	f	f	f	\N	6	2023-09-08 17:15:57.075	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmaybnug000ol4085owq9hfm	desire -> outcomes subheading	f	f	f	\N	12	2023-09-08 18:49:30.199	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmay7c4j000bl408vr3edkcn	in forms, description heights	f	f	f	\N	11	2023-09-08 18:46:08.289	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmayd33t0012l4084clcmdiz	Desire outcome Form description placeholder text	f	f	f	\N	13	2023-09-08 18:50:36.623	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmaz8o5b001qjp08v17rkqbk	new Routine button says 'save new List'	f	f	f	\N	16	2023-09-08 19:15:10.19	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmaytuhc000gjp0871wcx401	values and desires sortorder on addition	f	f	f	\N	14	2023-09-08 19:03:38.497	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmdlaso7000hkz06fi9lpt2i	never nester	f	f	f	\N	17	2023-09-10 15:08:13.194	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmauzcqn0002me07yyso2wlu	daily schedule	f	f	f	\N	2	2023-09-08 17:15:56.991	2023-09-12 13:55:33.391	clmauy1rg0001l4087b7pho2p
+clmdlasoa000jkz06ztblw3x3	components -> 1 button using params	f	f	f	\N	19	2023-09-10 15:08:13.194	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmdlc5b40013kz06m7r2w1a1	edting todo- disable save btn on saving	f	f	f	\N	20	2023-09-10 15:09:16.328	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmdlasoa000ikz06cug56mdd	naming conventsions	f	f	f	\N	18	2023-09-10 15:08:13.194	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+b719674e-95c9-42ce-bd99-1dabb20a9469	disable save button on save	f	f	f	\N	0	2023-09-10 16:52:52.902	2023-09-12 13:56:14.354	clmdp1e060005jr06x7pss02z
+clmdpk8fb000ul208plrrrq10	page bottom p vs m	f	f	f	\N	21	2023-09-10 17:07:32.02	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+928b0daa-6216-49d1-b292-d1578d2f5e09	disable save buttons	f	f	f	\N	0	2023-09-10 16:16:08.319	2023-09-15 12:07:24.54	clmdnq4xu000akz07v62t1yxm
+459da5be-f9f1-4c43-b13e-c5ca2c8477c0	keep refiining scheudle as i create 	f	f	f	\N	5	2023-09-08 17:17:44.112	2023-09-17 17:59:03.737	clmav1nap0003l4080am626g6
+e99dee82-bff2-4f95-9dc4-14dac4cc1780	cre4ate projects	f	f	f	\N	8	2023-09-08 17:17:44.112	2023-09-17 17:59:03.738	clmav1nap0003l4080am626g6
+f22dca26-5cbf-496e-8313-57df6c5bae22	make sure values are correct	f	f	f	\N	6	2023-09-08 17:17:44.112	2023-09-17 17:59:03.738	clmav1nap0003l4080am626g6
+8ef27523-595b-43a1-82a6-b8dcbe45e1c9	sort orders are not always correct	f	f	f	\N	1	2023-09-10 16:16:08.319	2023-09-15 12:07:24.54	clmdnq4xu000akz07v62t1yxm
+2fe32510-bb06-42b4-b18a-b3e18351ac87	button alignments	f	f	f	\N	2	2023-09-10 16:16:08.319	2023-09-15 12:07:24.54	clmdnq4xu000akz07v62t1yxm
+clmdp2q1h0001l208zm72t6fz	subheaidngs	f	f	f	\N	1	2023-09-10 16:53:55.154	2023-09-12 13:56:14.354	clmdp1e060005jr06x7pss02z
+33fbf108-a60b-426c-96fc-eac6aee85118	Bucket list -> eventually tie to desires	f	f	f	\N	0	2023-09-10 15:10:56.046	2023-09-15 20:05:53.229	clmdlea7k0003kz08r6hmpg5u
+clmdp5npf0007jr06z4swbiz8	layout... too much focus on the desire, flex outocme items	f	f	f	\N	2	2023-09-10 16:56:11.998	2023-09-12 13:56:14.356	clmdp1e060005jr06x7pss02z
+clmdpgvxd0005l208qi7q1tds	outocme routine -> save btn text	f	f	f	\N	3	2023-09-10 17:04:55.878	2023-09-12 13:56:14.381	clmdp1e060005jr06x7pss02z
+clmdpibrt0003mv08hdl4box2	edite project, outocme, routine name -> untraced errro	f	f	f	\N	4	2023-09-10 17:06:03.04	2023-09-12 13:56:14.399	clmdp1e060005jr06x7pss02z
+clmauzcrn0004me07damth6l7	overview of everytihg	f	f	f	\N	4	2023-09-08 17:15:57.035	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmdmd95y001nkz06gortf5t8	appointments list in special LIsts?	f	f	f	\N	2	2023-09-10 15:38:07.653	2023-09-15 20:05:53.244	clmdlea7k0003kz08r6hmpg5u
+clmdlush50009mn082il2pvd7	vision board, select from other images, create a single vision that encompasses everything i want.  the wish fulfilled	f	f	f	\N	1	2023-09-10 15:23:46.15	2023-09-15 20:05:53.229	clmdlea7k0003kz08r6hmpg5u
+4cfb3ff0-2308-45f6-ba3d-fc2bff86674c	define all desires	f	f	f	\N	7	2023-09-08 17:17:44.112	2023-09-17 17:59:03.738	clmav1nap0003l4080am626g6
+clmavyf87000al507xhbxdxin	clear vlaues in desire form	f	f	f	\N	10	2023-09-08 17:43:13.166	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmayxyn0000mjp08dnp8sles	catch error in values, sorting and editing	f	f	f	\N	9	2023-09-08 19:06:50.636	2023-09-17 17:59:03.738	clmav1nap0003l4080am626g6
+clmav35ym000bl408orm3r8my	misc lists pages, links don't work on summary	f	f	f	\N	7	2023-09-08 17:18:54.84	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmayys3r000imn07ov6ssv58	ourcomes for desire page, add subheading 'outcomes'	f	f	t	\N	11	2023-09-08 19:07:28.823	2023-09-17 17:59:03.738	clmav1nap0003l4080am626g6
+clmauyht30002jy08dgeot8it	Generic to Miscellaneous	f	f	f	\N	1	2023-09-08 17:15:16.926	2023-09-12 13:55:33.391	clmauy1rg0001l4087b7pho2p
+clmav35yn000cl408qtbh0inz	time block text (all lists in this time block)	f	f	f	\N	8	2023-09-08 17:18:54.84	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+020ed80f-4d7b-4d0b-baec-85f2218514c9	cannot create project w/o desire	f	f	f	\N	0	2023-09-08 17:14:56.235	2023-09-12 13:55:33.391	clmauy1rg0001l4087b7pho2p
+clmauzcqc0001me07fg0psu0r	pics to vision	f	f	f	\N	5	2023-09-08 17:15:57.075	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmdng23o0000kz075dl7r33h	better error tracing on re-loads, something is happening	f	f	f	\N	2	2023-09-10 16:08:18.085	2023-09-17 17:59:03.737	clmav1nap0003l4080am626g6
+9c1a9b55-549f-4513-9922-add7c7329b72	schedule using misc	f	f	f	\N	3	2023-09-08 17:17:44.112	2023-09-17 17:59:03.737	clmav1nap0003l4080am626g6
+2986d71d-857e-4acf-8e95-db1d49995d88	investigate the vibrating base for x3	f	f	f	\N	0	2023-09-10 17:09:41.16	2023-09-10 17:09:41.16	clmdpmzze0002ml07j9q61ws0
+d55bf443-0144-4e21-a5cd-6e55f31b3224	Aug Vaccines	f	f	f	\N	0	2023-09-10 17:18:42.83	2023-09-10 17:18:42.83	clmdpym980008mv08ugy76azu
+44cc037f-634b-4146-b6ed-2dfe13d01d68	Sept Vaccines	f	f	f	\N	1	2023-09-10 17:18:42.83	2023-09-10 17:18:42.83	clmdpym980008mv08ugy76azu
+f20a40ac-6c67-44bc-ba6c-9ab293b34abe	Oct vaccines	f	f	f	\N	2	2023-09-10 17:18:42.83	2023-09-10 17:18:42.83	clmdpym980008mv08ugy76azu
+cbbc02a9-d156-4c41-bf58-a287bbff20f9	march 2024 vaccines	f	f	f	\N	3	2023-09-10 17:18:42.83	2023-09-10 17:18:42.83	clmdpym980008mv08ugy76azu
+f7f424c6-bb06-4c3c-bf19-806e7f20020f	July 2024 vaccines	f	f	f	\N	4	2023-09-10 17:18:42.83	2023-09-10 17:18:42.83	clmdpym980008mv08ugy76azu
+0336d0f7-57cb-462b-b059-b32b58dd6c39	April 2025 vaccines	f	f	f	\N	5	2023-09-10 17:18:42.83	2023-09-10 17:18:42.83	clmdpym980008mv08ugy76azu
+6dd0e9e9-bbb8-40e5-a71c-a3adbd3f88b4	desire-> outcomes sort order on dnd	f	f	f	\N	0	2023-09-12 14:19:22.064	2023-09-12 14:19:52.311	clmgefo7m0001ia08wyd1te3s
+clmgegbjs000al808xebz2qor	stack error w/o message... seems like something to do with db connections	f	f	f	\N	1	2023-09-12 14:19:52.311	2023-09-12 14:43:13.864	clmgefo7m0001ia08wyd1te3s
+clmdq58kv0014l20870jpb2xq	Outcome layout flex all 3	f	f	f	\N	4	2023-09-10 17:23:52.109	2023-09-14 13:33:28.782	clmdq4oi8000amv083r4wtunb
+be9b304c-2727-4dd6-98ff-1549148ee0db	Outcomes ( specificied in Desire ) Go to Desire	f	f	f	\N	3	2023-09-10 17:23:26.094	2023-09-14 13:33:28.754	clmdq4oi8000amv083r4wtunb
+clmggxvdw0003lc0875ygb68q	placeholder text vs default text?  	f	f	t	\N	4	2023-09-12 15:29:30.4	2023-09-15 15:38:11.791	clmggl6vl0004mt085fhzvnj6
+358f1e06-c82d-49ba-b0f1-af18c752bd3c	Organzie self to consistently eat this way	f	f	f	\N	0	2023-09-10 17:26:35.929	2023-09-10 17:26:35.929	clmdq8qzq000cmv089jwfbd58
+0fc47054-56dd-4c52-a55f-457fc5516a0d	remove coffee and chocolate from diet	f	f	f	\N	1	2023-09-10 17:26:35.929	2023-09-10 17:26:35.929	clmdq8qzq000cmv089jwfbd58
+165aa97f-5b92-4757-a277-7eee6cee37d9	priority order	f	f	f	\N	0	2023-09-10 17:29:37.915	2023-09-10 17:29:37.915	clmdqcnel000ajs08ikvzdr57
+1a2f8376-af92-48f6-8aca-cf8221d1bf6c	complete box open	f	f	f	\N	1	2023-09-10 17:29:37.915	2023-09-10 17:29:37.915	clmdqcnel000ajs08ikvzdr57
+69114ee7-84dd-47aa-a71a-7dc693126dcf	open edit	f	f	f	\N	2	2023-09-10 17:29:37.915	2023-09-10 17:29:37.915	clmdqcnel000ajs08ikvzdr57
+clmezzsjn0003ms08ajds216x	home hardware veneer brick	f	f	f	\N	0	2023-09-11 14:47:20.109	2023-09-14 13:06:10.644	clmezxmxy0001m408kkzg023c
+6f7d6576-ae7b-415d-a858-b8a055cd96a6	watch hedge eye	f	f	f	\N	0	2023-09-11 14:47:43.307	2023-09-11 14:47:43.307	clmf00a8n0005ms08vs2tvywe
+46f692a6-d7cb-49c9-bb21-9b19559e522b	Define all desires	f	f	f	\N	0	2023-09-11 15:06:56.507	2023-09-11 15:06:56.507	clmf0p01t0005m4087z215opo
+bfad602e-5c5a-4836-b15d-2ccafe74b0ac	Create projects	f	f	f	\N	1	2023-09-11 15:06:56.507	2023-09-11 15:06:56.507	clmf0p01t0005m4087z215opo
+01f9eed1-665d-433d-aa0c-c2c63a8e92af	fill schedule	f	f	f	\N	2	2023-09-11 15:06:56.507	2023-09-11 15:06:56.507	clmf0p01t0005m4087z215opo
+clmauzcry0005me078v2ydpps	today's stuff	f	f	f	\N	3	2023-09-08 17:15:57.018	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmavyf820009l507thgttfvf	don't let a desire be created w/o a value	f	f	f	\N	9	2023-09-08 17:43:13.166	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmayzy2l0011jp08pty71oi1	desire outcomes form, edit, width and height	f	f	f	\N	15	2023-09-08 19:08:23.186	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmgdl1wo000ml4087jtypybs	transparency of modules in browser dark mode 	f	f	f	\N	22	2023-09-12 13:55:33.392	2023-09-12 13:55:33.392	clmauy1rg0001l4087b7pho2p
+clmdq22ak000wl208mg7i6sp2	Outcome subheading	f	f	f	\N	5	2023-09-10 17:21:23.978	2023-09-12 13:56:14.422	clmdp1e060005jr06x7pss02z
+clmf36r9v0006l308x0c6bu0x	reset sort order after delete	f	f	f	\N	7	2023-09-11 16:16:44.105	2023-09-12 13:56:14.436	clmdp1e060005jr06x7pss02z
+clmgdlxli0007l8086qtd8oae	layout and heirarchy makes unclear what is going on	f	f	f	\N	8	2023-09-12 13:56:14.436	2023-09-12 13:56:14.436	clmdp1e060005jr06x7pss02z
+clmgghhja0005mf096e9xrn18	desires.$desireId.outcomes	f	f	f	\N	1	2023-09-12 15:16:45.896	2023-09-12 15:17:43.672	clmgggacz0003mf09jj3mcc9j
+clmggiq2i0007mf09pbtvgj9n	action redirect vs return	f	f	f	\N	2	2023-09-12 15:17:43.672	2023-09-12 15:17:43.672	clmgggacz0003mf09jj3mcc9j
+35c8634c-94bf-467b-b6ca-f806f93a4bc8	Error Message: A server error has occurred FUNCTION_INVOCATION_FAILED  The stack trace is:  Error Stack:  Error Named: Error	f	f	f	\N	0	2023-09-12 15:15:49.969	2023-09-12 15:17:43.673	clmgggacz0003mf09jj3mcc9j
+703979f2-dfd6-4504-a92e-ac9456e7a22d	firearms PAL Invermere this fall	f	f	f	\N	0	2023-09-12 15:23:32.246	2023-09-12 15:23:51.807	clmggq714000amf0974tjx07i
+clmggqm7e0006mt0882zsqhld	any reason to do restricted firearms	f	f	f	\N	1	2023-09-12 15:23:51.807	2023-09-12 15:23:51.807	clmggq714000amf0974tjx07i
+0a0e61db-beaf-41a7-9ed5-26580bdc9290	persistent	f	f	f	\N	0	2023-09-12 16:20:26.575	2023-09-12 16:20:26.575	clmgirdjk0001jo083ols8jl5
+1dbf23d5-a82d-4fe8-bb28-f56d2a46efbe	new outcome loads into middle of DND list	f	f	f	\N	0	2023-09-12 15:19:38.767	2023-09-15 15:38:11.75	clmggl6vl0004mt085fhzvnj6
+clmggycjl000emf0948ezrgop	outcomes form ... save is re-enabled too quicklyu	f	f	f	\N	1	2023-09-12 15:29:52.64	2023-09-15 15:38:11.751	clmggl6vl0004mt085fhzvnj6
+a55df7f9-8b6e-40e8-96a0-b435863564a4	based on browser	f	f	f	\N	1	2023-09-12 16:20:26.575	2023-09-12 16:20:26.575	clmgirdjk0001jo083ols8jl5
+540a8a81-6e80-43ff-bda1-cfc47b791d4c	misc label	f	f	f	\N	0	2023-09-14 12:49:57.299	2023-09-14 12:49:57.299	clmj64e2d0001mn08u0vsx7ly
+0fc9bce1-b706-493a-8ea5-2b572f680c59	make DND'able	f	f	f	\N	1	2023-09-14 12:49:57.299	2023-09-14 12:49:57.299	clmj64e2d0001mn08u0vsx7ly
+c6480356-169b-4ca1-add1-d32c8743d45f	better display	f	f	f	\N	2	2023-09-14 12:49:57.299	2023-09-14 12:49:57.299	clmj64e2d0001mn08u0vsx7ly
+53c46484-3d64-426a-b7b3-4e583d2c2873	enter auto closes	f	f	f	\N	0	2023-09-12 15:18:27.158	2023-09-14 12:54:38.741	clmggjnmg0002mt080x0febwq
+d08132f7-2030-4d58-b49b-f5ae2a78b0c1	md appt self & ollie	f	f	t	\N	1	2023-09-11 14:45:39.811	2023-09-14 13:06:10.645	clmezxmxy0001m408kkzg023c
+c05e43c3-a2be-4eb3-86b7-ef391c4685a1	heading + link	f	f	t	\N	1	2023-09-14 12:52:21.39	2023-09-14 16:51:12.206	clmj67h8w0004l407k6llxlkq
+clmj6p1d4000tl407xmry0wa2	photos into ideals/ visions	f	f	f	\N	3	2023-09-14 13:06:00.614	2023-09-15 20:05:53.257	clmdlea7k0003kz08r6hmpg5u
+2d839619-e96f-4dac-9299-64db6d7c978a	auto move completed to bottom	f	f	f	\N	0	2023-09-14 12:52:21.39	2023-09-14 12:52:21.39	clmj67h8w0004l407k6llxlkq
+clmj68hsn0004mj08znlact83	form with list - > enter closes	f	f	f	\N	1	2023-09-14 12:53:08.635	2023-09-14 12:54:38.741	clmggjnmg0002mt080x0febwq
+clmj68hrw0003mj08smycidd0	are you sure close? with text in 'Add to do'	f	f	f	\N	2	2023-09-14 12:53:08.635	2023-09-14 12:54:38.741	clmggjnmg0002mt080x0febwq
+clmj6af870009mn085j7jjsla	move save button down	f	f	f	\N	3	2023-09-14 12:54:38.742	2023-09-14 12:54:38.742	clmggjnmg0002mt080x0febwq
+clmj6af9d000amn08u8avwtjz	component for all form buttons?	f	f	f	\N	5	2023-09-14 12:54:38.743	2023-09-14 12:54:38.743	clmggjnmg0002mt080x0febwq
+clmj6afbc000bmn08b9yk2lu7	organize buttons better, 	f	f	f	\N	4	2023-09-14 12:54:38.742	2023-09-14 12:54:38.742	clmggjnmg0002mt080x0febwq
+6cbcb991-4eb7-43e5-a562-19f4ff9db6ff	move used desires to bottom	f	f	f	\N	0	2023-09-14 12:58:02.075	2023-09-14 12:58:02.075	clmj6es4d0006mj08e684abcn
+1033db71-c16c-4ad1-8c33-167aa936b1d7	bg for desires like on Desires form	f	f	f	\N	1	2023-09-14 12:58:02.075	2023-09-14 12:58:02.075	clmj6es4d0006mj08e684abcn
+05de6608-f004-4aca-af70-810a6eb09956	better white space	f	f	f	2023-09-26 06:00:00	0	2023-09-14 12:56:40.624	2023-09-17 17:57:23.147	clmj6d19t0006l40757mhtn5j
+clmdqeobc000gjs08j93w3cbe	edit project page button -> delete desire	f	f	t	\N	6	2023-09-10 17:31:12.296	2023-09-14 13:00:03.172	clmdp1e060005jr06x7pss02z
+e16cc33d-7c94-4200-88a2-4c080c0d5a9a	test	f	f	f	\N	0	2023-09-14 13:29:07.947	2023-09-14 13:29:07.947	clmj7iru20050mn08qjepwcur
+clmj7zulm005bmn08c5gb623d	build out daily schedule	f	f	f	\N	4	2023-09-14 13:42:24.486	2023-09-17 17:59:03.737	clmav1nap0003l4080am626g6
+d382cdc2-b1d6-4775-8ae9-6f79ecbacc4c	cron job  to un-complete	f	f	f	\N	0	2023-09-14 13:14:34.383	2023-09-14 13:14:34.383	clmj701sh001nmj08po8iqjd6
+11259d1c-636f-4897-afaf-e6137b88e958	show completed as completed in schedule	f	f	f	\N	1	2023-09-14 13:14:34.383	2023-09-14 13:14:34.383	clmj701sh001nmj08po8iqjd6
+efaf120a-85ba-4bb7-b5a2-c5c145822a00	remove time block when now lists	f	f	f	\N	3	2023-09-14 13:02:32.934	2023-09-14 13:14:53.965	clmj6kl48000al407jtnnccih
+clmj6lvve0008mj080fw2c0l0	hover draggable lists -> show details	f	f	f	\N	5	2023-09-14 13:03:33.499	2023-09-14 13:14:53.965	clmj6kl48000al407jtnnccih
+9457252f-4efd-4b88-9f37-d46aa8866bb5	color code sched blocks	f	f	f	\N	4	2023-09-14 13:02:32.934	2023-09-14 13:14:53.965	clmj6kl48000al407jtnnccih
+cfe2bbb0-363a-4c34-b6e7-ade60b1c32a7	routines/list label when none exist	f	f	f	\N	2	2023-09-14 13:02:32.934	2023-09-14 13:14:53.965	clmj6kl48000al407jtnnccih
+350e05cf-80e8-45f9-a8cf-56ebabfbc8e2	remove time from display block	f	f	f	\N	0	2023-09-14 13:02:32.934	2023-09-14 13:14:53.964	clmj6kl48000al407jtnnccih
+clmj6n77t000dl407fxgdqqg4	loaded time blocks need to update based on id	f	f	f	\N	6	2023-09-14 13:04:34.853	2023-09-14 13:14:53.966	clmj6kl48000al407jtnnccih
+clmj6oehr000pl407ijn6jsy8	all misc. To-dos time block	f	f	f	\N	7	2023-09-14 13:05:30.949	2023-09-14 13:14:53.966	clmj6kl48000al407jtnnccih
+clmj6ueaj001fmj088caji0yj	bigger space - taller?	f	f	f	\N	8	2023-09-14 13:10:10.504	2023-09-14 13:14:53.966	clmj6kl48000al407jtnnccih
+clmj70gwv004pmn08681f7thv	show completed as completed in time blocks	f	f	f	\N	9	2023-09-14 13:14:53.966	2023-09-14 13:14:53.966	clmj6kl48000al407jtnnccih
+efa64032-cd07-4014-a7a4-879cbf6cdbf9	remove borders for dark	f	f	f	\N	1	2023-09-14 13:02:32.934	2023-09-14 13:14:53.966	clmj6kl48000al407jtnnccih
+3c515c75-d6d5-4705-bab2-9dcc2ce3231d	Prioritize Content	f	f	f	\N	0	2023-09-14 13:28:02.554	2023-09-14 13:28:02.554	clmj7hddo001ul4075ppjb2g2
+13d19413-9359-47d0-82ef-bbeb9006296f	subheadings	f	f	f	\N	1	2023-09-14 13:28:02.554	2023-09-14 13:28:02.554	clmj7hddo001ul4075ppjb2g2
+a544a2ba-5d72-4d0f-88fc-375f5f60bad3	push desire to Rigth side? / bottom?	f	f	f	\N	2	2023-09-14 13:28:02.554	2023-09-14 13:28:02.554	clmj7hddo001ul4075ppjb2g2
+77e4373b-3331-47f8-be3e-c71f43aa2429	h2 + link is w-full	f	f	f	\N	3	2023-09-14 13:28:02.554	2023-09-14 13:28:02.554	clmj7hddo001ul4075ppjb2g2
+b3cafe74-e71f-4cd1-bc7b-f1d5546cbef1	need to create milesotnes and tracker	f	f	f	\N	4	2023-09-14 13:28:02.554	2023-09-14 13:28:02.554	clmj7hddo001ul4075ppjb2g2
+09922c32-88b5-4f8e-85fe-7e56bb6f1a1d	sub heading all wrong	f	f	f	\N	0	2023-09-10 17:23:26.094	2023-09-14 13:33:28.713	clmdq4oi8000amv083r4wtunb
+clmj72agq004wmn08ghszxpva	prioritize better	f	f	f	\N	5	2023-09-14 13:16:18.917	2023-09-14 13:33:28.804	clmdq4oi8000amv083r4wtunb
+clmj7od740053mn084pc5i754	Desire : x -> Project : Y  -> Desire Outcome : Z  -> tasks to achieve	f	f	f	\N	6	2023-09-14 13:33:28.804	2023-09-14 13:33:28.804	clmdq4oi8000amv083r4wtunb
+clmdq5kne0002js08g3x8iqj9	load tasks	f	f	f	\N	1	2023-09-10 17:24:07.587	2023-09-14 13:33:28.713	clmdq4oi8000amv083r4wtunb
+379de285-866d-4b28-a2c1-354659cd57ad	push desire to right side, minimize importance	f	f	f	\N	2	2023-09-10 17:23:26.094	2023-09-14 13:33:28.717	clmdq4oi8000amv083r4wtunb
+clmj6v8ax001kmj0829q9u3ul	schedule of today, plus all urgent, upcomping, appts, etcs, and special lists	f	f	f	\N	4	2023-09-14 13:10:49.542	2023-09-15 20:05:53.283	clmdlea7k0003kz08r6hmpg5u
+clmdlbjiu0007mo08hinlhms5	errors on saving / editing/ ordering things, lists, values, desires	f	f	f	\N	10	2023-09-10 15:08:48.039	2023-09-17 17:59:03.738	clmav1nap0003l4080am626g6
+a9204ce9-7069-4bb8-9ef4-77c85ad6cedd	max 1.5 coffee	f	f	t	2023-09-14 06:00:00	3	2023-09-14 13:25:20.483	2023-09-20 16:32:34.751	clmj7dwbp001rmj08c80g9f34
+e119416e-d6bd-460e-8afb-601e612cad89	max 1 coffee	f	f	t	2023-09-18 06:00:00	1	2023-09-14 13:25:20.483	2023-09-20 16:32:34.687	clmj7dwbp001rmj08c80g9f34
+7144889e-5d2d-47d3-94fc-36247deb3203	No Cofee	f	f	f	2023-09-25 06:00:00	0	2023-09-14 13:25:20.483	2023-09-20 16:32:34.685	clmj7dwbp001rmj08c80g9f34
+dd6cd0ce-f17b-4413-a25f-8d57316f51dd	max 0.5 coffee	f	f	t	2023-09-22 06:00:00	2	2023-09-14 13:25:20.483	2023-09-20 16:32:34.69	clmj7dwbp001rmj08c80g9f34
+cfccb751-cdfa-4bea-be79-33b7824a71d4	Test BFast vs no	f	f	f	\N	1	2023-09-14 13:24:15.488	2023-09-20 16:35:23.062	clmj7ci6b001pmj087t9jhjkc
+cc1f9e40-da94-4af2-b8ff-89b035724e66	Test BFAst times	f	f	f	\N	2	2023-09-14 13:24:15.488	2023-09-20 16:35:23.063	clmj7ci6b001pmj087t9jhjkc
+02ffa0b9-90f2-41a6-b6b5-8e75d36beb51	Test Sugar intake	f	f	f	\N	3	2023-09-14 13:24:15.488	2023-09-20 16:35:23.063	clmj7ci6b001pmj087t9jhjkc
+clmj80vci0026l407msrmi89v	There was a probelem with that action... mgs: server error, no stack track, no error stack, no error named	f	f	f	\N	1	2023-09-14 13:43:12.166	2023-09-17 17:59:03.736	clmav1nap0003l4080am626g6
+clmnrex5d0001i708x282mibf	loaded into project xyx	f	f	f	\N	2	2023-09-17 17:57:05.167	2023-09-17 17:57:23.147	clmj6d19t0006l40757mhtn5j
+d670c1ce-3d8d-4445-9215-f1d79d7f9630	Focus on a desire with proper self talk	f	f	f	\N	0	2023-09-14 14:14:27.301	2023-09-14 14:19:51.519	clmj9523t0001k308wnn9ox0m
+clmj98bug0001jp08osz13cw5	I am happy, feel wonderful, and have real abundance.  I have all I desire	f	f	f	\N	1	2023-09-14 14:16:59.738	2023-09-14 14:19:51.519	clmj9523t0001k308wnn9ox0m
+clmj9c0dn0002lb08678jiuk0	every word holds significance and finds expression in some form	f	f	f	\N	2	2023-09-14 14:19:51.52	2023-09-14 14:19:51.52	clmj9523t0001k308wnn9ox0m
+clmj9c0dm0001lb08gjhz04ci	infuse life and possibility into your words & subconscious	f	f	f	\N	5	2023-09-14 14:19:51.601	2023-09-14 14:19:51.601	clmj9523t0001k308wnn9ox0m
+clmj9c0e80003lb08vh0v10nx	"i trust that I will...."	f	f	f	\N	4	2023-09-14 14:19:51.558	2023-09-14 14:19:51.558	clmj9523t0001k308wnn9ox0m
+clmj9c0f10005lb08vcxmjypl	understanding and love increase happiness	f	f	f	\N	3	2023-09-14 14:19:51.558	2023-09-14 14:19:51.558	clmj9523t0001k308wnn9ox0m
+26b470d5-2ab2-42b3-bfda-45eec38b1b0e	delete icon in dnd not deleteing	f	f	f	\N	0	2023-09-17 17:57:59.336	2023-09-17 17:57:59.336	clmnrg2wo0001la09ag4ddpb0
+fde06ee0-e651-440c-9ae6-bb408dbedfc4	Prioritize outcomes, values - outcomes first, smaller values	f	f	f	\N	0	2023-09-15 12:00:50.982	2023-09-15 12:00:50.982	clmkjt3c80001kv08ug9ku1of
+38541c82-ccf0-49b6-9d61-48d64b3eaf66	Highlight any value not yet served - no desire serves this value	f	f	f	\N	0	2023-09-15 12:01:27.487	2023-09-15 12:01:27.487	clmkjtvi90008jq089iorxx3g
+31083c68-31c0-4dba-a440-d7a51322b84c	create money trackers	f	f	f	\N	2	2023-09-23 17:09:16.373	2023-09-24 16:08:13.156	clmwacjiv0001mj08wwnwr05s
+clmnrh7pg0002i708x0pqr3g8	layout info , prioritize, navigate, understand	t	f	f	\N	0	2023-09-17 17:58:52.229	2023-09-17 17:59:03.736	clmav1nap0003l4080am626g6
+clmj7zufw0058mn08aot44tt6	cannot edit desire outcomes	f	f	t	2023-09-15 06:00:00	12	2023-09-14 13:42:24.476	2023-09-17 17:59:03.738	clmav1nap0003l4080am626g6
+d78d06b4-1449-4133-88d7-085028ee4bae	add numbers?	f	f	f	\N	0	2023-09-17 18:05:42.89	2023-09-17 18:05:42.89	clmnrq0kr0003lc08bpr4wmhf
+241a8350-016d-41eb-bc6e-36313edbf638	Subheading pb	f	f	f	\N	0	2023-09-15 12:06:08.015	2023-09-15 12:06:08.015	clmkjzvyp0001me08jr389hl0
+clmkjqma00002jq085oxcp2f5	lable to input padding	f	f	f	\N	5	2023-09-15 11:58:55.522	2023-09-15 12:07:24.61	clmdnq4xu000akz07v62t1yxm
+clmj83sdy002al407nmi4i2hv	todo forms, disable add to list if nothing in input	f	f	f	\N	3	2023-09-14 13:45:28.436	2023-09-15 12:07:24.552	clmdnq4xu000akz07v62t1yxm
+clmj98u8m0004ky08o749osvz	with list, list width is wrong	f	f	f	\N	4	2023-09-14 14:17:23.6	2023-09-15 12:07:24.573	clmdnq4xu000akz07v62t1yxm
+clmkjqma10003jq08bfccscqv	list -> prioritize urgent, important, due	f	f	f	\N	6	2023-09-15 11:58:55.522	2023-09-15 12:07:24.61	clmdnq4xu000akz07v62t1yxm
+clmkjx3rb0007kv08qckhgoqc	Outcome Form descp input max-w-prose, limit rest of form w	f	f	f	\N	7	2023-09-15 12:03:58.036	2023-09-15 12:07:24.61	clmdnq4xu000akz07v62t1yxm
+clmkk1j5p000ame08d5uob16x	desc inptu height	f	f	f	\N	8	2023-09-15 12:07:24.61	2023-09-15 12:07:24.61	clmdnq4xu000akz07v62t1yxm
+clmkrklqt0002mw085jpsk5rw	outcomes form title 	f	f	f	\N	3	2023-09-15 15:38:11.752	2023-09-15 15:38:11.752	clmggl6vl0004mt085fhzvnj6
+clmkk18e9000ajq08enu5b4lj	heading / Subheading  padding	f	f	f	\N	2	2023-09-15 12:07:10.633	2023-09-15 15:38:11.751	clmggl6vl0004mt085fhzvnj6
+clmryqc560003mo07evkrkl1w	Anti-histamine diet	f	f	f	\N	0	2023-09-20 16:32:59.793	2023-09-20 16:35:23.062	clmj7ci6b001pmj087t9jhjkc
+clmkrrf77000bmw08ds74x12n	notes attached to desire, outcomes, or project, or task list?	f	f	f	\N	6	2023-09-15 15:43:29.877	2023-09-15 20:05:53.336	clmdlea7k0003kz08r6hmpg5u
+clmkjy8hu000dkv0807snex5w	Overview Page?  	f	f	f	\N	5	2023-09-15 12:04:50.944	2023-09-15 20:05:53.336	clmdlea7k0003kz08r6hmpg5u
+clml14uxh0006ma08la16t3b2	visualization of each outcome?	f	f	f	\N	7	2023-09-15 20:05:53.336	2023-09-15 20:05:53.336	clmdlea7k0003kz08r6hmpg5u
+32a932e3-a932-4f68-a8f9-42b4473a9998	2-5 mins in the AM focusing on desire	f	f	f	\N	0	2023-09-15 20:18:17.398	2023-09-15 20:18:17.398	clml1kszd0001mp08xviixgfb
+e419863d-e62d-4206-b7fc-e6007b471f76	Width is too large	f	f	f	\N	0	2023-09-17 17:08:23.63	2023-09-17 17:08:23.63	clmnpoats0001mk08salojc8c
+9d68d54c-4d7b-4c34-bf94-962a00bc02fa	Direct open - frame man to woman	f	f	f	\N	0	2023-09-21 14:38:05.864	2023-09-21 14:38:05.864	clmta2fcb0005lf088l6lnk6n
+6175296e-3ab1-410d-afc8-4887cbfe1759	Create milestones	f	f	f	\N	0	2023-09-23 17:09:16.373	2023-09-24 16:08:13.156	clmwacjiv0001mj08wwnwr05s
+4da1341b-6c78-4b6c-84fa-729e29559f85	shit tests	f	f	f	\N	1	2023-09-21 14:38:05.864	2023-09-21 14:38:05.864	clmta2fcb0005lf088l6lnk6n
+fe942dfe-8e72-47d5-b34f-8e7cdd308ff9	retrys	f	f	f	\N	2	2023-09-21 14:38:05.864	2023-09-21 14:38:05.864	clmta2fcb0005lf088l6lnk6n
+a581fca8-10d7-4564-b70f-6517e6a8bfd6	qualifying	f	f	f	\N	3	2023-09-21 14:38:05.864	2023-09-21 14:38:05.864	clmta2fcb0005lf088l6lnk6n
+1c1ec5f0-0464-4b11-a598-e1cec2f2cfff	escalating	f	f	f	\N	4	2023-09-21 14:38:05.864	2023-09-21 14:38:05.864	clmta2fcb0005lf088l6lnk6n
+ec907c1a-f80d-45d0-b5bc-61982b2ec6c1	emo spikes	f	f	f	\N	5	2023-09-21 14:38:05.864	2023-09-21 14:38:05.864	clmta2fcb0005lf088l6lnk6n
+5cfa3120-f38a-4974-86e9-a2a4086c1b8d	frame at every point	f	f	f	\N	6	2023-09-21 14:38:05.864	2023-09-21 14:38:05.864	clmta2fcb0005lf088l6lnk6n
+1be32cfb-0a92-40b6-af3d-dc8f492101cb	too large	f	f	f	\N	0	2023-09-17 17:10:15.896	2023-09-23 10:46:47.352	clmnpqpg90003mk08yxc15osd
+clmvwoo030001l109tgz6z26z	Add Desire, not Create new desire	f	f	t	\N	1	2023-09-23 10:46:47.352	2023-09-23 12:34:28.068	clmnpqpg90003mk08yxc15osd
+a8e87380-f4d1-4373-bf50-5106cc0508ab	re-create components, types, for desire outcomes -> desire = Project	f	f	f	\N	4	2023-09-23 17:09:16.373	2023-09-24 16:08:13.2	clmwacjiv0001mj08wwnwr05s
+clmxnlvpo0001lc05l4mzci8m	consider why server error on intial entry to prod enviro	f	f	f	\N	5	2023-09-24 16:08:13.22	2023-09-24 16:08:13.22	clmwacjiv0001mj08wwnwr05s
+ea379265-9e19-4e79-ac48-3f4bb9c70c50	Create habits	f	f	f	\N	1	2023-09-23 17:09:16.373	2023-09-24 16:08:13.156	clmwacjiv0001mj08wwnwr05s
+63fb243e-66e0-47f7-b7bd-147372bd4ddf	re-create project pages in desires	f	f	f	\N	3	2023-09-23 17:09:16.373	2023-09-24 16:08:13.18	clmwacjiv0001mj08wwnwr05s
+\.
+
+
+--
+-- TOC entry 2732 (class 0 OID 66680)
+-- Dependencies: 228
+-- Data for Name: Milestone; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."Milestone" (id, "createdAt", "updatedAt", title, "outcomeId") FROM stdin;
+\.
+
+
+--
+-- TOC entry 2733 (class 0 OID 66688)
+-- Dependencies: 229
+-- Data for Name: MilestoneItem; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."MilestoneItem" (id, "createdAt", "updatedAt", title, description, complete, "dueDate", "sortOrder", "completedAt", "milestoneId") FROM stdin;
+\.
+
+
+--
+-- TOC entry 2721 (class 0 OID 25069)
+-- Dependencies: 217
+-- Data for Name: Note; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."Note" (id, title, body, "createdAt", "updatedAt", "userId", "projectId") FROM stdin;
+clmj9egm60000mj08vv6u54a8	Subconscious 	Align your inner conversation with the frequency of love\n\nFocus on a desire with proper self talk\nI am happy, feel wonderful, and have real abundance. I have all I desire\nunderstanding and love increase happiness\n"i trust that I will...."\ninfuse life and possibility into your words & subconscious\n	2023-09-14 14:21:45.925	2023-09-14 14:21:45.925	cllgsahu90000eq5ce1454rxh	\N
+clmjarr0z0000ld08z4bexz07	human form - fulfillment 	juxtaposition of physical and non-physical elements\nwhere does fulfillment come from ?    seductive-materialism   or   mundane-divinity\nCentral = life force - phi => molds physical, constantly refines\nenergy => thoughts, emotions, beliefs,    body =  a construct \nmatter = vehicle for manifestation of soul -> on this plane of existence\nsoul = vehicle for spirit -> on higher plane\nenergy seeks -> functions and elevates body, to resonate with soul, = growth, evolution\ninner = purity and genuine intention   vs external  = family, society, materialistic    => equals destiny\n  ->  collective unconscious\nsuccess as material, power, or external validation  ->  leads to dissonance -> restlessness, dissatisfaction, crisis\n   disconnection from ones true self\ndesires vs expectations, internal desires vs external pressures\nharmonize internal compass with external options\nLife = both, a reflection of the dominant\nachievement/success   vs    divine energy   =>   discerning is the problem of life\neverything can become spiritual and divine\nmundane can be divine\nmaterialism is seductive, != fulfillment tho\nsuccess = transient and superficial, external validation  =>  enslaves\ndepth and fulfillment from soul, meaning, passions\n"not human beings having a spiritual experience; we are spiritual beings having a human experience"\n	2023-09-14 15:00:05.651	2023-09-14 15:00:05.651	cllgsahu90000eq5ce1454rxh	\N
+clmjarr3o0001ld086xd3v0c8	human form - fulfillment 	juxtaposition of physical and non-physical elements\nwhere does fulfillment come from ?    seductive-materialism   or   mundane-divinity\nCentral = life force - phi => molds physical, constantly refines\nenergy => thoughts, emotions, beliefs,    body =  a construct \nmatter = vehicle for manifestation of soul -> on this plane of existence\nsoul = vehicle for spirit -> on higher plane\nenergy seeks -> functions and elevates body, to resonate with soul, = growth, evolution\ninner = purity and genuine intention   vs external  = family, society, materialistic    => equals destiny\n  ->  collective unconscious\nsuccess as material, power, or external validation  ->  leads to dissonance -> restlessness, dissatisfaction, crisis\n   disconnection from ones true self\ndesires vs expectations, internal desires vs external pressures\nharmonize internal compass with external options\nLife = both, a reflection of the dominant\nachievement/success   vs    divine energy   =>   discerning is the problem of life\neverything can become spiritual and divine\nmundane can be divine\nmaterialism is seductive, != fulfillment tho\nsuccess = transient and superficial, external validation  =>  enslaves\ndepth and fulfillment from soul, meaning, passions\n"not human beings having a spiritual experience; we are spiritual beings having a human experience"\n	2023-09-14 15:00:05.748	2023-09-14 15:00:05.748	cllgsahu90000eq5ce1454rxh	\N
+clmkn2bw30000mp08cfyekk45	Ego, God	My ego is mine, not me\nI have a divine purpose.  \nA poorly trained ego will try to identify with things\na well trained ego will create what it seeks\ngod is unfathomable\none must experience god, it cannot be understood by observation\nunderstanding comes from becoming one with the essence of what you seek\nVisual and Feel.... feel it's presence  ( God, etc)\nImpress the idea of God's presence onto your subconscoius mind for it to manifest in your reality\n\nThe journey of seeking God is personally fulfilling\nEmbracing concept of Ego, is a  choice rooted in pleasure\n\ncompleteness and wholeness already exist.  Seek for enjoyment\n\nThe profound truth :  "I am"	2023-09-15 13:32:00.205	2023-09-15 13:32:00.205	cllgsahu90000eq5ce1454rxh	\N
+clmkn2e910000jm08d8okga7d	Ego, God	My ego is mine, not me\nI have a divine purpose.  \nA poorly trained ego will try to identify with things\na well trained ego will create what it seeks\ngod is unfathomable\none must experience god, it cannot be understood by observation\nunderstanding comes from becoming one with the essence of what you seek\nVisual and Feel.... feel it's presence  ( God, etc)\nImpress the idea of God's presence onto your subconscoius mind for it to manifest in your reality\n\nThe journey of seeking God is personally fulfilling\nEmbracing concept of Ego, is a  choice rooted in pleasure\n\ncompleteness and wholeness already exist.  Seek for enjoyment\n\nThe profound truth :  "I am"	2023-09-15 13:32:03.878	2023-09-15 13:32:03.878	cllgsahu90000eq5ce1454rxh	\N
+clmksglau0000jg08ziauxmg2	Rosicrucian tech	Foundations: Self-observation and stability\nrelentless introspective - thoughts, feelings, actions\n   as an objective observer of self\nStability -  force to underpin practice\nthinking, feeling, and willing \n  master the cognitive process \n   emo - tame desires of the heart\nheightens self-awareness.... leads towards self mastery\nbecomes conscious of un-conscious reactivity\n\nPositivity, Openness, Equanimity \nresonant alignment with spiritual realms\nPositivity - view the world thru lens of optimism , deep energetic implications\n  + thoughts  align with higher frequencies\nOpenness, multi-facetted view points, diverse perspectives\n  become more receptive, see numerous angles\nEquanimity - equilibrium to consciousness\n   calm-confidence, composed, non-reactive\nvibrational elevation, resonate with higher dimensions, become conscious participant in universe\n\nBackward Review\nat end of day, retrace steps in reverse order, each moment\nenhance self - awareness and understand spiritual forces\nbecome aware of subtle currents in experiences\nencounters, surprises, and synchronicities can be reconized.\nprofound spiritual significance >  Teleological Destination - individs move towards predestined destination -> shaped by interplay of past, present, and future\nretracing starts to see hidden threads = deep connection to universe\ninterplay free will & spiritual guidance\n\nDissolving and Michaelic Yoga (advanced)\ntransmute spiritual text into inner exp + cosmic energies for spiritual ascent\ndissolving - dissolve text into conscious exp. , a spiritual encounter.  transcends confines of language\nyoga - dynamic interaction with cosmic forces via conscious breath and intention\n   harness cosmic energies via perception and intention\n    inhale external perceptions & exhale conceptual insights - merge sensory exp with insights\n   \n\n\n\n\n 	2023-09-15 16:03:04.277	2023-09-15 16:03:04.277	cllgsahu90000eq5ce1454rxh	\N
+clml1tt0c0002mp08job3uysh	Envision	Summon the audacity to assert your entitlement to prosperity, thereby evoking the respect of your sub-conscious mind\n\nChallenges = subconscious has uncertainties about your perpetual access to your desires.\n  ->  First, cultivate a core belief in your deservingness of boundless abundance	2023-09-15 20:25:17.326	2023-09-15 20:25:17.326	cllgsahu90000eq5ce1454rxh	\N
+clmm4mxdu0000kv08h45xvyoq	Programming	I deserve to be healthy now.  My consciousness guarantees my right to abundance of health, time, and money.\n\nI am healthy.  Improving in fitness and gain muscle, everyday.	2023-09-16 14:31:41.439	2023-09-16 14:31:41.439	cllgsahu90000eq5ce1454rxh	\N
+\.
+
+
+--
+-- TOC entry 2720 (class 0 OID 25064)
+-- Dependencies: 216
+-- Data for Name: Password; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."Password" (hash, "userId") FROM stdin;
+$2a$10$wjXXok1ns.9xrHD7uHobCug9k5R1jxyKLBMoyk/rneQVz439Z8.8i	cllgsahu90000eq5ce1454rxh
+\.
+
+
+--
+-- TOC entry 2730 (class 0 OID 25371)
+-- Dependencies: 226
+-- Data for Name: Project; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."Project" (id, "createdAt", "updatedAt", title, description, "sortOrder", "userId", "desireId") FROM stdin;
+cllin7ywp0001m708u71viy7c	2023-08-19 23:21:09.241	2023-09-17 12:53:11.429	Health and Energy	 	0	cllgsahu90000eq5ce1454rxh	cllgvki620003mp07oui51u69
+cllin8qjk0003m708ed43nmi8	2023-08-19 23:21:45.057	2023-09-17 12:53:11.429	Masculine Presence	 	2	cllgsahu90000eq5ce1454rxh	cllgvl64e0007mp07oty0iom5
+clmf2hlip0001kq08mil1j8h7	2023-09-11 15:57:10.305	2023-09-17 12:53:11.484	Olive can Achieve her Desires	 	3	cllgsahu90000eq5ce1454rxh	clmdlyd3r0009kz081m71hwf3
+clmf4uqj30001mt08uf702dwe	2023-09-11 17:03:22.574	2023-09-17 12:53:11.484	Amazing Experiences	 	4	cllgsahu90000eq5ce1454rxh	clmavxj0x000el408nllucu5p
+clmf04atz0003m408zpevje8g	2023-09-11 14:50:50.711	2023-09-17 12:53:11.429	Make OYL Amazing	 	1	cllgsahu90000eq5ce1454rxh	clmavwwk80001jt085ko2oysf
+clmta0p6l0003lf08vgvg5cul	2023-09-21 14:36:45.306	2023-09-21 14:36:45.306	Find Deep Connections		5	cllgsahu90000eq5ce1454rxh	clmdlikve000bmo08fyes0h0i
+\.
+
+
+--
+-- TOC entry 2735 (class 0 OID 66769)
+-- Dependencies: 231
+-- Data for Name: RequiredSavings; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."RequiredSavings" (id, "createdAt", "updatedAt", title, description, "sortOrder", "requiredAmount", "savedAmount", "userId", "projectId") FROM stdin;
+\.
+
+
+--
+-- TOC entry 2725 (class 0 OID 25292)
+-- Dependencies: 221
+-- Data for Name: Routine; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."Routine" (id, title, "createdAt", "updatedAt", "userId", "outcomeId") FROM stdin;
+clmaz7suc0019jp08tyoff52o	Coding Courses	2023-09-08 19:14:29.698	2023-09-08 19:14:29.698	cllgsahu90000eq5ce1454rxh	\N
+clmaz860r0009mn08s79b7c8g	OYL	2023-09-08 19:14:46.777	2023-09-08 19:14:46.777	cllgsahu90000eq5ce1454rxh	\N
+clmazbse0000rmn072e614v8k	Meal	2023-09-08 19:17:35.736	2023-09-08 19:17:35.736	cllgsahu90000eq5ce1454rxh	\N
+clmazbxir000fmn08wsfe8ce7	break	2023-09-08 19:17:42.387	2023-09-08 19:17:42.387	cllgsahu90000eq5ce1454rxh	\N
+clmazwckb000xmn08o5lbyx7d	PM Routine	2023-09-08 19:33:35.002	2023-09-08 19:33:35.002	cllgsahu90000eq5ce1454rxh	\N
+clmazxwo00026jp081uxje6w0	Paint	2023-09-08 19:34:47.712	2023-09-08 19:34:47.712	cllgsahu90000eq5ce1454rxh	\N
+clmazy57e000hl708vkl7ddg5	Yard Work	2023-09-08 19:34:58.778	2023-09-08 19:34:58.778	cllgsahu90000eq5ce1454rxh	\N
+clmazyfy1000jl708plxhl4j4	House Reno	2023-09-08 19:35:12.695	2023-09-08 19:35:12.695	cllgsahu90000eq5ce1454rxh	\N
+clmaz469a0005mn08b5wprgh8	Wake Routine	2023-09-08 19:11:40.457	2023-09-11 15:08:02.047	cllgsahu90000eq5ce1454rxh	\N
+clmaz6mhd0007mn08y686j7f6	Olive to School & BFast	2023-09-08 19:13:34.8	2023-09-14 13:14:02.156	cllgsahu90000eq5ce1454rxh	\N
+clmdpgyuq0007l208ai4e247n	Exercise	2023-09-10 17:04:59.762	2023-09-10 17:07:05.073	cllgsahu90000eq5ce1454rxh	\N
+clmdpl9oy0006mv081rz0ozfi	Fast till noon	2023-09-10 17:08:20.432	2023-09-10 17:08:20.432	cllgsahu90000eq5ce1454rxh	\N
+clmj7ac6k004ymn082x0sfnmi	PM Routine	2023-09-14 13:22:34.41	2023-09-14 13:22:34.41	cllgsahu90000eq5ce1454rxh	\N
+clmrys1s80001mr07od803hdm	Fitness - through out the day	2023-09-20 16:34:19.782	2023-09-20 16:36:34.108	cllgsahu90000eq5ce1454rxh	\N
+clmdq72kd0006js083walx5t0	Cardio	2023-09-10 17:25:17.627	2023-09-10 17:25:17.627	cllgsahu90000eq5ce1454rxh	\N
+clmf19eif0001mc0832rwbdzb	Meditation - Gateway Exp.	2023-09-11 15:22:48.373	2023-09-11 15:22:48.373	cllgsahu90000eq5ce1454rxh	\N
+\.
+
+
+--
+-- TOC entry 2726 (class 0 OID 25300)
+-- Dependencies: 222
+-- Data for Name: RoutineToDo; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."RoutineToDo" (id, body, complete, "sortOrder", "createdAt", "updatedAt", "routineId") FROM stdin;
+b74a3e83-5c21-42cd-850e-389ce4933f6c	Walk	f	0	2023-09-20 16:34:19.782	2023-09-20 16:36:34.125	clmrys1s80001mr07od803hdm
+clmryt1j80003mr072mtwrddx	Cardio	f	2	2023-09-20 16:35:06.115	2023-09-20 16:36:34.127	clmrys1s80001mr07od803hdm
+clmryt1j80004mr07uasea8x4	X3	f	1	2023-09-20 16:35:06.114	2023-09-20 16:36:34.127	clmrys1s80001mr07od803hdm
+clmryt1j60002mr07m3yrjh0h	AM walk	f	1	2023-09-20 16:35:06.114	2023-09-20 16:36:34.126	clmrys1s80001mr07od803hdm
+db8036b2-87ab-449e-9b57-3064f2e64e1a	CodeCademy Project	f	1	2023-09-08 19:14:29.698	2023-09-08 19:14:29.698	clmaz7suc0019jp08tyoff52o
+13b86cfe-109a-45e9-8bf6-95f2f6fcdfd5	CodeCademy Data Analyst	f	2	2023-09-08 19:14:29.698	2023-09-08 19:14:29.698	clmaz7suc0019jp08tyoff52o
+41e3cb32-2d3a-425a-b0a7-ba0ae46ffd6b	Work on OYL	f	0	2023-09-08 19:14:46.777	2023-09-08 19:14:46.777	clmaz860r0009mn08s79b7c8g
+6ea54a3f-7a94-421e-acc7-aba222b79530	Meal	f	0	2023-09-08 19:17:35.736	2023-09-08 19:17:35.736	clmazbse0000rmn072e614v8k
+722e2590-5dec-40ed-b6a4-ff9bd52426c0	Break	f	0	2023-09-08 19:17:42.387	2023-09-08 19:17:42.387	clmazbxir000fmn08wsfe8ce7
+clmryuxgq0008mo07w7eoacaz	Medititation	f	5	2023-09-20 16:36:34.133	2023-09-20 16:36:34.133	clmrys1s80001mr07od803hdm
+clmryu4wi001gl808vbskwkxp	Retention	f	4	2023-09-20 16:35:57.136	2023-09-20 16:36:34.128	clmrys1s80001mr07od803hdm
+15ab7e26-5bc0-4057-87b6-9a2e2ce8aee4	shower, meditate, read	f	0	2023-09-08 19:33:35.002	2023-09-08 19:33:35.002	clmazwckb000xmn08o5lbyx7d
+75584cb2-9c6c-42ef-8eb8-f3f0ac804438	paint	f	0	2023-09-08 19:34:47.712	2023-09-08 19:34:47.712	clmazxwo00026jp081uxje6w0
+848ee2b8-a408-4fd4-81cc-c685a11d887b	yardWork	f	0	2023-09-08 19:34:58.778	2023-09-08 19:34:58.778	clmazy57e000hl708vkl7ddg5
+2ff35be0-7c79-49c3-8066-8874bb991448	reno	f	0	2023-09-08 19:35:12.695	2023-09-08 19:35:12.695	clmazyfy1000jl708plxhl4j4
+c784ff47-1eab-4b34-be2d-8d0d7093f355	X3	f	0	2023-09-10 17:04:59.762	2023-09-10 17:07:05.084	clmdpgyuq0007l208ai4e247n
+51ca931f-f123-420f-96be-95ada073d923	Fast	f	0	2023-09-10 17:08:20.432	2023-09-10 17:08:20.432	clmdpl9oy0006mv081rz0ozfi
+0e9ed5e5-39c6-4fe8-a22a-0eaa96f6e244	Power Walk 5 min / day, increase as comfort and recover improve	f	0	2023-09-10 17:25:17.627	2023-09-10 17:25:17.627	clmdq72kd0006js083walx5t0
+6e4c1e14-2af3-40ed-88c2-8f24928f3f52	1-hour - generic schedule	t	1	2023-09-08 19:11:40.457	2023-09-11 15:07:45.047	clmaz469a0005mn08b5wprgh8
+c0d3425b-fba2-4b99-a38d-d36999dfca32	... 1 hour - desires / projects	t	2	2023-09-08 19:11:40.457	2023-09-11 15:07:46.246	clmaz469a0005mn08b5wprgh8
+952c5195-a514-4a7c-b222-820461edd58b	.... 1 hour - work on project items -> NLP, learning, dating,  etc	t	3	2023-09-08 19:11:40.457	2023-09-11 15:07:47.108	clmaz469a0005mn08b5wprgh8
+clmaz5e1t0015jp08zccyk675	45 min - meditation	t	4	2023-09-08 19:12:37.217	2023-09-11 15:07:47.811	clmaz469a0005mn08b5wprgh8
+04bc787a-0ab1-40b2-b5c0-68f5cb2763bc	30 mins - Coffee & write	f	0	2023-09-08 19:11:40.457	2023-09-11 15:08:02.071	clmaz469a0005mn08b5wprgh8
+74a5c98c-cef1-412f-9cba-458fa0eb3921	meditate	f	0	2023-09-11 15:22:48.373	2023-09-11 15:22:48.373	clmf19eif0001mc0832rwbdzb
+12cbbb04-12fa-4dea-be71-7c9f683f2d64	drive olive to school	f	0	2023-09-08 19:13:34.8	2023-09-14 13:14:02.179	clmaz6mhd0007mn08y686j7f6
+b225f869-53cf-485d-9e35-d4592157b4cc	Read	f	0	2023-09-14 13:22:34.41	2023-09-14 13:22:34.41	clmj7ac6k004ymn082x0sfnmi
+5a716528-5a4b-45d9-aa33-e3afa3cdafa5	shower	f	1	2023-09-14 13:22:34.41	2023-09-14 13:22:34.41	clmj7ac6k004ymn082x0sfnmi
+8820367f-25a2-4e01-b438-6888c4390f95	Meditate	f	2	2023-09-14 13:22:34.41	2023-09-14 13:22:34.41	clmj7ac6k004ymn082x0sfnmi
+ce4fd4bb-4fb0-47a2-8ac3-4b814cb2683a	Focus on Desires	f	3	2023-09-14 13:22:34.41	2023-09-14 13:22:34.41	clmj7ac6k004ymn082x0sfnmi
+\.
+
+
+--
+-- TOC entry 2736 (class 0 OID 66779)
+-- Dependencies: 232
+-- Data for Name: RoutineTracker; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."RoutineTracker" (id, "createdAt", "updatedAt", title, description, "sortOrder", date, success, "userId", "projectId", "routineId") FROM stdin;
+\.
+
+
+--
+-- TOC entry 2722 (class 0 OID 25251)
+-- Dependencies: 218
+-- Data for Name: ScheduledList; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."ScheduledList" (id, title, "isDraggable", "createdAt", "updatedAt", "userId", description, "end", start, "listId") FROM stdin;
+clmazzyzz002njp082egaqgzp	Meal	t	2023-09-08 19:36:23.994	2023-09-20 16:31:12.396	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmazbse0000rmn072e614v8k"}	2023-09-18 00:00:00	2023-09-17 23:00:00	clmazbse0000rmn072e614v8k
+clmazft08000imn08ituvrk4i	Meal	t	2023-09-08 19:20:43.158	2023-09-20 16:31:12.396	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmazbse0000rmn072e614v8k"}	2023-09-17 18:15:00	2023-09-17 18:00:00	clmazbse0000rmn072e614v8k
+clmazwtd5000el708ecefn0ls	PM Routine	t	2023-09-08 19:33:56.64	2023-09-20 16:31:12.396	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmazwckb000xmn08o5lbyx7d"}	2023-09-19 03:30:00	2023-09-19 02:00:00	clmazwckb000xmn08o5lbyx7d
+clmazbgte000mmn0761sh39ej	Wake-up	t	2023-09-08 19:17:20.642	2023-09-20 16:31:12.396	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz469a0005mn08b5wprgh8"}	2023-09-18 12:15:00	2023-09-18 12:00:00	clmaz469a0005mn08b5wprgh8
+clmf0zrzi000tm4081n2kp4lz	Fill out OYL	t	2023-09-11 15:15:19.075	2023-09-20 16:31:12.396	cllgsahu90000eq5ce1454rxh	{"todos": "clmf0p01t0005m4087z215opo"}	2023-09-18 13:30:00	2023-09-18 12:30:00	clmf0p01t0005m4087z215opo
+clmazwtd9000fl708ju4z3kuy	PM Routine	t	2023-09-08 19:33:56.642	2023-09-20 16:31:12.31	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmazwckb000xmn08o5lbyx7d"}	2023-09-18 03:30:00	2023-09-18 02:00:00	clmazwckb000xmn08o5lbyx7d
+clmazft1m000mmn08hd9yenkp	break	t	2023-09-08 19:20:43.158	2023-09-20 16:31:12.396	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmazbxir000fmn08wsfe8ce7"}	2023-09-20 04:45:00	2023-09-20 04:45:00	clmazbxir000fmn08wsfe8ce7
+clmf1at2f000sl707n2027gfg	Meditation - Gateway Exp.	t	2023-09-11 15:23:53.709	2023-09-20 16:31:12.396	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmf19eif0001mc0832rwbdzb"}	2023-09-17 14:15:00	2023-09-17 13:30:00	clmf19eif0001mc0832rwbdzb
+clmb01341003ajp085sog9ml8	Yard Work	t	2023-09-08 19:37:15.965	2023-09-20 16:31:12.397	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmazy57e000hl708vkl7ddg5"}	2023-09-18 23:00:00	2023-09-18 21:30:00	clmazy57e000hl708vkl7ddg5
+clmf1at2h000tl70769iqckt2	Meditation - Gateway Exp.	t	2023-09-11 15:23:53.709	2023-09-20 16:31:12.397	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmf19eif0001mc0832rwbdzb"}	2023-09-18 14:15:00	2023-09-18 13:30:00	clmf19eif0001mc0832rwbdzb
+clmf0zrzg000sm408hl0hf084	Fill out OYL	t	2023-09-11 15:15:19.075	2023-09-20 16:31:12.397	cllgsahu90000eq5ce1454rxh	{"todos": "clmf0p01t0005m4087z215opo"}	2023-09-17 13:30:00	2023-09-17 12:30:00	clmf0p01t0005m4087z215opo
+clmazzz0g002pjp08nufrbums	Paint	t	2023-09-08 19:36:23.994	2023-09-20 16:31:12.397	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmazxwo00026jp081uxje6w0"}	2023-09-18 02:00:00	2023-09-18 00:00:00	clmazxwo00026jp081uxje6w0
+clmb01343003bjp084gldit8x	House Reno	t	2023-09-08 19:37:15.965	2023-09-20 16:31:12.397	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmazyfy1000jl708plxhl4j4"}	2023-09-19 02:00:00	2023-09-19 00:00:00	clmazyfy1000jl708plxhl4j4
+clmazzz0c002ojp08z5o9bnbn	Meal	t	2023-09-08 19:36:23.994	2023-09-20 16:31:12.397	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmazbse0000rmn072e614v8k"}	2023-09-19 00:00:00	2023-09-18 23:00:00	clmazbse0000rmn072e614v8k
+clmazvsfq0023jp081leibiqj	Olive to School	t	2023-09-08 19:33:08.777	2023-09-20 16:31:12.397	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz6mhd0007mn08y686j7f6"}	2023-09-18 21:30:00	2023-09-18 21:00:00	clmaz6mhd0007mn08y686j7f6
+clmazbgtx000pmn0798f629yl	OYL	t	2023-09-08 19:17:20.6	2023-09-20 16:31:12.31	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz860r0009mn08s79b7c8g"}	2023-09-17 18:00:00	2023-09-17 15:00:00	clmaz860r0009mn08s79b7c8g
+clmazg3uw0013mn07s9eyvhnf	OYL	t	2023-09-08 19:20:57.192	2023-09-20 16:31:12.395	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz860r0009mn08s79b7c8g"}	2023-09-17 21:00:00	2023-09-17 18:30:00	clmaz860r0009mn08s79b7c8g
+clmaz9m9u000bmn08wiu60mue	Olive to School	t	2023-09-08 19:15:54.382	2023-09-20 16:31:12.31	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz6mhd0007mn08y686j7f6"}	2023-09-17 15:00:00	2023-09-17 14:15:00	clmaz6mhd0007mn08y686j7f6
+clmazvsfu0024jp08nekkdy6h	Olive to School	t	2023-09-08 19:33:08.777	2023-09-20 16:31:12.358	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz6mhd0007mn08y686j7f6"}	2023-09-17 21:15:00	2023-09-17 21:00:00	clmaz6mhd0007mn08y686j7f6
+clmaz9m9w000cmn082vruft4s	Wake-up	t	2023-09-08 19:15:54.352	2023-09-20 16:31:12.357	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz469a0005mn08b5wprgh8"}	2023-09-17 12:15:00	2023-09-17 12:00:00	clmaz469a0005mn08b5wprgh8
+clmazbgtn000nmn07uvh8p3a0	Olive to School	t	2023-09-08 19:17:20.643	2023-09-20 16:31:12.396	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz6mhd0007mn08y686j7f6"}	2023-09-18 15:00:00	2023-09-18 14:15:00	clmaz6mhd0007mn08y686j7f6
+clmb013400039jp084n0ozntg	Coding Courses	t	2023-09-08 19:37:15.965	2023-09-20 16:31:12.396	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz7suc0019jp08tyoff52o"}	2023-09-19 20:30:00	2023-09-19 18:30:00	clmaz7suc0019jp08tyoff52o
+clmazft1n000nmn08sm0p4vhe	Meal	t	2023-09-08 19:20:43.158	2023-09-20 16:31:12.396	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmazbse0000rmn072e614v8k"}	2023-09-18 18:15:00	2023-09-18 18:00:00	clmazbse0000rmn072e614v8k
+clmazg3ux0014mn07mfyrfjk3	OYL	t	2023-09-08 19:20:57.192	2023-09-20 16:31:12.396	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz860r0009mn08s79b7c8g"}	2023-09-17 23:00:00	2023-09-17 21:30:00	clmaz860r0009mn08s79b7c8g
+clmf1emsb001ml707eujurx2p	Exercise	t	2023-09-11 15:26:52.27	2023-09-20 16:31:12.397	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmdpgyuq0007l208ai4e247n"}	2023-09-18 20:45:00	2023-09-18 20:30:00	clmdpgyuq0007l208ai4e247n
+clmf1ei23001om408md9pzaix	Make OYL Amazing	t	2023-09-11 15:26:46.038	2023-09-20 16:31:12.398	cllgsahu90000eq5ce1454rxh	{"projectLists": [{"id": "clmf0p01t0005m4087z215opo", "title": "Fill out OYL", "todos": [{"id": "46f692a6-d7cb-49c9-bb21-9b19559e522b", "body": "Define all desires", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 0, "updatedAt": "2023-09-11T15:06:56.507Z"}, {"id": "bfad602e-5c5a-4836-b15d-2ccafe74b0ac", "body": "Create projects", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 1, "updatedAt": "2023-09-11T15:06:56.507Z"}, {"id": "01f9eed1-665d-433d-aa0c-c2c63a8e92af", "body": "fill schedule", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 2, "updatedAt": "2023-09-11T15:06:56.507Z"}], "userId": "cllgsahu90000eq5ce1454rxh", "createdAt": "2023-09-11T15:06:56.507Z", "outcomeId": "clmf0mg6c0001l707cppiii64", "projectId": "clmf04atz0003m408zpevje8g", "updatedAt": "2023-09-11T15:06:56.507Z"}]}	2023-09-18 20:30:00	2023-09-18 18:30:00	clmf04atz0003m408zpevje8g
+clmj6mfd40017mj083uydn7gh	Wake Routine	t	2023-09-14 13:03:58.581	2023-09-20 16:31:12.398	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz469a0005mn08b5wprgh8"}	2023-09-19 12:15:00	2023-09-19 12:00:00	clmaz469a0005mn08b5wprgh8
+clmryo1fm0018l808ewdxmjtt	Health and Energy	t	2023-09-20 16:31:12.411	2023-09-20 16:31:12.411	cllgsahu90000eq5ce1454rxh	{"projectLists": [{"id": "clmj7iru20050mn08qjepwcur", "title": "test", "todos": [{"id": "e16cc33d-7c94-4200-88a2-4c080c0d5a9a", "body": "test", "listId": "clmj7iru20050mn08qjepwcur", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-14T13:29:07.947Z", "important": false, "sortOrder": 0, "updatedAt": "2023-09-14T13:29:07.947Z"}], "userId": "cllgsahu90000eq5ce1454rxh", "createdAt": "2023-09-14T13:29:07.947Z", "outcomeId": "clmayfbld0014l408d4qfbkso", "projectId": "cllin7ywp0001m708u71viy7c", "updatedAt": "2023-09-14T13:29:07.947Z"}, {"id": "clmj7dwbp001rmj08c80g9f34", "title": "Remove Coffee", "todos": [{"id": "e119416e-d6bd-460e-8afb-601e612cad89", "body": "max 1 coffee", "listId": "clmj7dwbp001rmj08c80g9f34", "urgent": false, "dueDate": "2023-09-18T06:00:00.000Z", "complete": false, "createdAt": "2023-09-14T13:25:20.483Z", "important": false, "sortOrder": 0, "updatedAt": "2023-09-17T12:53:42.952Z"}, {"id": "dd6cd0ce-f17b-4413-a25f-8d57316f51dd", "body": "max 0.5 coffee", "listId": "clmj7dwbp001rmj08c80g9f34", "urgent": false, "dueDate": "2023-09-22T06:00:00.000Z", "complete": false, "createdAt": "2023-09-14T13:25:20.483Z", "important": false, "sortOrder": 1, "updatedAt": "2023-09-17T12:53:42.953Z"}, {"id": "7144889e-5d2d-47d3-94fc-36247deb3203", "body": "No Cofee", "listId": "clmj7dwbp001rmj08c80g9f34", "urgent": false, "dueDate": "2023-09-25T06:00:00.000Z", "complete": false, "createdAt": "2023-09-14T13:25:20.483Z", "important": false, "sortOrder": 2, "updatedAt": "2023-09-17T12:53:42.955Z"}, {"id": "a9204ce9-7069-4bb8-9ef4-77c85ad6cedd", "body": "max 1.5 coffee", "listId": "clmj7dwbp001rmj08c80g9f34", "urgent": false, "dueDate": "2023-09-14T06:00:00.000Z", "complete": true, "createdAt": "2023-09-14T13:25:20.483Z", "important": false, "sortOrder": 3, "updatedAt": "2023-09-17T12:53:42.976Z"}], "userId": "cllgsahu90000eq5ce1454rxh", "createdAt": "2023-09-14T13:25:20.483Z", "outcomeId": "clmayfbld0014l408d4qfbkso", "projectId": "cllin7ywp0001m708u71viy7c", "updatedAt": "2023-09-14T13:25:20.483Z"}, {"id": "clmj7ci6b001pmj087t9jhjkc", "title": "Figure out Best Eating Habits", "todos": [{"id": "cfccb751-cdfa-4bea-be79-33b7824a71d4", "body": "Test BFast vs no", "listId": "clmj7ci6b001pmj087t9jhjkc", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-14T13:24:15.488Z", "important": false, "sortOrder": 0, "updatedAt": "2023-09-14T13:24:15.488Z"}, {"id": "cc1f9e40-da94-4af2-b8ff-89b035724e66", "body": "Test BFAst times", "listId": "clmj7ci6b001pmj087t9jhjkc", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-14T13:24:15.488Z", "important": false, "sortOrder": 1, "updatedAt": "2023-09-14T13:24:15.488Z"}, {"id": "02ffa0b9-90f2-41a6-b6b5-8e75d36beb51", "body": "Test Sugar intake", "listId": "clmj7ci6b001pmj087t9jhjkc", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-14T13:24:15.488Z", "important": false, "sortOrder": 2, "updatedAt": "2023-09-14T13:24:15.488Z"}], "userId": "cllgsahu90000eq5ce1454rxh", "createdAt": "2023-09-14T13:24:15.488Z", "outcomeId": "clmayfbld0014l408d4qfbkso", "projectId": "cllin7ywp0001m708u71viy7c", "updatedAt": "2023-09-14T13:24:15.488Z"}, {"id": "clmdq8qzq000cmv089jwfbd58", "title": "Eat low Oxalate and low Salicylate", "todos": [{"id": "358f1e06-c82d-49ba-b0f1-af18c752bd3c", "body": "Organzie self to consistently eat this way", "listId": "clmdq8qzq000cmv089jwfbd58", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-10T17:26:35.929Z", "important": false, "sortOrder": 0, "updatedAt": "2023-09-10T17:26:35.929Z"}, {"id": "0fc47054-56dd-4c52-a55f-457fc5516a0d", "body": "remove coffee and chocolate from diet", "listId": "clmdq8qzq000cmv089jwfbd58", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-10T17:26:35.929Z", "important": false, "sortOrder": 1, "updatedAt": "2023-09-10T17:26:35.929Z"}], "userId": "cllgsahu90000eq5ce1454rxh", "createdAt": "2023-09-10T17:26:35.929Z", "outcomeId": "clmayw0bs0001l6088g8b0svy", "projectId": "cllin7ywp0001m708u71viy7c", "updatedAt": "2023-09-10T17:26:35.929Z"}, {"id": "clmdpym980008mv08ugy76azu", "title": "Get all vaccines", "todos": [{"id": "d55bf443-0144-4e21-a5cd-6e55f31b3224", "body": "Aug Vaccines", "listId": "clmdpym980008mv08ugy76azu", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-10T17:18:42.830Z", "important": false, "sortOrder": 0, "updatedAt": "2023-09-10T17:18:42.830Z"}, {"id": "44cc037f-634b-4146-b6ed-2dfe13d01d68", "body": "Sept Vaccines", "listId": "clmdpym980008mv08ugy76azu", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-10T17:18:42.830Z", "important": false, "sortOrder": 1, "updatedAt": "2023-09-10T17:18:42.830Z"}, {"id": "f20a40ac-6c67-44bc-ba6c-9ab293b34abe", "body": "Oct vaccines", "listId": "clmdpym980008mv08ugy76azu", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-10T17:18:42.830Z", "important": false, "sortOrder": 2, "updatedAt": "2023-09-10T17:18:42.830Z"}, {"id": "cbbc02a9-d156-4c41-bf58-a287bbff20f9", "body": "march 2024 vaccines", "listId": "clmdpym980008mv08ugy76azu", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-10T17:18:42.830Z", "important": false, "sortOrder": 3, "updatedAt": "2023-09-10T17:18:42.830Z"}, {"id": "f7f424c6-bb06-4c3c-bf19-806e7f20020f", "body": "July 2024 vaccines", "listId": "clmdpym980008mv08ugy76azu", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-10T17:18:42.830Z", "important": false, "sortOrder": 4, "updatedAt": "2023-09-10T17:18:42.830Z"}, {"id": "0336d0f7-57cb-462b-b059-b32b58dd6c39", "body": "April 2025 vaccines", "listId": "clmdpym980008mv08ugy76azu", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-10T17:18:42.830Z", "important": false, "sortOrder": 5, "updatedAt": "2023-09-10T17:18:42.830Z"}], "userId": "cllgsahu90000eq5ce1454rxh", "createdAt": "2023-09-10T17:18:42.830Z", "outcomeId": "clmaypz4m0001jp088u27p8kp", "projectId": "cllin7ywp0001m708u71viy7c", "updatedAt": "2023-09-10T17:18:42.830Z"}, {"id": "clmdpmzze0002ml07j9q61ws0", "title": "x3 vibrating plate?", "todos": [{"id": "2986d71d-857e-4acf-8e95-db1d49995d88", "body": "investigate the vibrating base for x3", "listId": "clmdpmzze0002ml07j9q61ws0", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-10T17:09:41.160Z", "important": false, "sortOrder": 0, "updatedAt": "2023-09-10T17:09:41.160Z"}], "userId": "cllgsahu90000eq5ce1454rxh", "createdAt": "2023-09-10T17:09:41.160Z", "outcomeId": "cllgvuexd0003l708p4t7u711", "projectId": "cllin7ywp0001m708u71viy7c", "updatedAt": "2023-09-10T17:09:41.160Z"}]}	2023-09-23 17:15:00	2023-09-23 13:15:00	cllin7ywp0001m708u71viy7c
+clmf1duqu000tmc08xym192tp	Make OYL Amazing	t	2023-09-11 15:26:15.8	2023-09-20 16:31:12.398	cllgsahu90000eq5ce1454rxh	{"projectLists": [{"id": "clmf0p01t0005m4087z215opo", "title": "Fill out OYL", "todos": [{"id": "46f692a6-d7cb-49c9-bb21-9b19559e522b", "body": "Define all desires", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 0, "updatedAt": "2023-09-11T15:06:56.507Z"}, {"id": "bfad602e-5c5a-4836-b15d-2ccafe74b0ac", "body": "Create projects", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 1, "updatedAt": "2023-09-11T15:06:56.507Z"}, {"id": "01f9eed1-665d-433d-aa0c-c2c63a8e92af", "body": "fill schedule", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 2, "updatedAt": "2023-09-11T15:06:56.507Z"}], "userId": "cllgsahu90000eq5ce1454rxh", "createdAt": "2023-09-11T15:06:56.507Z", "outcomeId": "clmf0mg6c0001l707cppiii64", "projectId": "clmf04atz0003m408zpevje8g", "updatedAt": "2023-09-11T15:06:56.507Z"}]}	2023-09-18 18:00:00	2023-09-18 15:00:00	clmf04atz0003m408zpevje8g
+clmf1duqs000smc08pxthbdkt	Make OYL Amazing	t	2023-09-11 15:26:15.799	2023-09-20 16:31:12.398	cllgsahu90000eq5ce1454rxh	{"projectLists": [{"id": "clmf0p01t0005m4087z215opo", "title": "Fill out OYL", "todos": [{"id": "46f692a6-d7cb-49c9-bb21-9b19559e522b", "body": "Define all desires", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 0, "updatedAt": "2023-09-11T15:06:56.507Z"}, {"id": "bfad602e-5c5a-4836-b15d-2ccafe74b0ac", "body": "Create projects", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 1, "updatedAt": "2023-09-11T15:06:56.507Z"}, {"id": "01f9eed1-665d-433d-aa0c-c2c63a8e92af", "body": "fill schedule", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 2, "updatedAt": "2023-09-11T15:06:56.507Z"}], "userId": "cllgsahu90000eq5ce1454rxh", "createdAt": "2023-09-11T15:06:56.507Z", "outcomeId": "clmf0mg6c0001l707cppiii64", "projectId": "clmf04atz0003m408zpevje8g", "updatedAt": "2023-09-11T15:06:56.507Z"}]}	2023-09-18 15:15:00	2023-09-19 05:45:00	clmf04atz0003m408zpevje8g
+clmj6rne8001ql407q3q8wp8s	Meditation - Gateway Exp.	t	2023-09-14 13:08:02.314	2023-09-20 16:31:12.399	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmf19eif0001mc0832rwbdzb"}	2023-09-19 14:15:00	2023-09-19 13:30:00	clmf19eif0001mc0832rwbdzb
+clmj6yry80049mn08qatbch66	Make OYL Amazing	t	2023-09-14 13:13:34.798	2023-09-20 16:31:12.399	cllgsahu90000eq5ce1454rxh	{"projectLists": [{"id": "clmf0p01t0005m4087z215opo", "title": "Fill out OYL", "todos": [{"id": "46f692a6-d7cb-49c9-bb21-9b19559e522b", "body": "Define all desires", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 0, "updatedAt": "2023-09-11T15:06:56.507Z"}, {"id": "bfad602e-5c5a-4836-b15d-2ccafe74b0ac", "body": "Create projects", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 1, "updatedAt": "2023-09-11T15:06:56.507Z"}, {"id": "01f9eed1-665d-433d-aa0c-c2c63a8e92af", "body": "fill schedule", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 2, "updatedAt": "2023-09-11T15:06:56.507Z"}], "userId": "cllgsahu90000eq5ce1454rxh", "createdAt": "2023-09-11T15:06:56.507Z", "outcomeId": "clmf0mg6c0001l707cppiii64", "projectId": "clmf04atz0003m408zpevje8g", "updatedAt": "2023-09-11T15:06:56.507Z"}]}	2023-09-21 13:30:00	2023-09-21 12:30:00	clmf04atz0003m408zpevje8g
+clmj6r1n60029mn08cd9m788m	Make OYL Amazing	t	2023-09-14 13:07:34.133	2023-09-20 16:31:12.399	cllgsahu90000eq5ce1454rxh	{"projectLists": [{"id": "clmf0p01t0005m4087z215opo", "title": "Fill out OYL", "todos": [{"id": "46f692a6-d7cb-49c9-bb21-9b19559e522b", "body": "Define all desires", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 0, "updatedAt": "2023-09-11T15:06:56.507Z"}, {"id": "bfad602e-5c5a-4836-b15d-2ccafe74b0ac", "body": "Create projects", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 1, "updatedAt": "2023-09-11T15:06:56.507Z"}, {"id": "01f9eed1-665d-433d-aa0c-c2c63a8e92af", "body": "fill schedule", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 2, "updatedAt": "2023-09-11T15:06:56.507Z"}], "userId": "cllgsahu90000eq5ce1454rxh", "createdAt": "2023-09-11T15:06:56.507Z", "outcomeId": "clmf0mg6c0001l707cppiii64", "projectId": "clmf04atz0003m408zpevje8g", "updatedAt": "2023-09-11T15:06:56.507Z"}]}	2023-09-19 13:30:00	2023-09-19 12:30:00	clmf04atz0003m408zpevje8g
+clmj6yrys004cmn08ku2ib4cv	Coding Courses	t	2023-09-14 13:13:34.81	2023-09-20 16:31:12.399	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz7suc0019jp08tyoff52o"}	2023-09-21 21:00:00	2023-09-21 18:30:00	clmaz7suc0019jp08tyoff52o
+clmj6yrxy0046mn08poav6aeb	Wake Routine	t	2023-09-14 13:13:34.797	2023-09-20 16:31:12.4	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz469a0005mn08b5wprgh8"}	2023-09-21 12:15:00	2023-09-21 12:00:00	clmaz469a0005mn08b5wprgh8
+clmj6w2380032mn08d5hiv5t3	Make OYL Amazing	t	2023-09-14 13:11:28.051	2023-09-20 16:31:12.4	cllgsahu90000eq5ce1454rxh	{"projectLists": [{"id": "clmf0p01t0005m4087z215opo", "title": "Fill out OYL", "todos": [{"id": "46f692a6-d7cb-49c9-bb21-9b19559e522b", "body": "Define all desires", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 0, "updatedAt": "2023-09-11T15:06:56.507Z"}, {"id": "bfad602e-5c5a-4836-b15d-2ccafe74b0ac", "body": "Create projects", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 1, "updatedAt": "2023-09-11T15:06:56.507Z"}, {"id": "01f9eed1-665d-433d-aa0c-c2c63a8e92af", "body": "fill schedule", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 2, "updatedAt": "2023-09-11T15:06:56.507Z"}], "userId": "cllgsahu90000eq5ce1454rxh", "createdAt": "2023-09-11T15:06:56.507Z", "outcomeId": "clmf0mg6c0001l707cppiii64", "projectId": "clmf04atz0003m408zpevje8g", "updatedAt": "2023-09-11T15:06:56.507Z"}]}	2023-09-19 18:00:00	2023-09-19 15:00:00	clmf04atz0003m408zpevje8g
+clmj6yryf004bmn08rc6ck008	Meal	t	2023-09-14 13:13:34.81	2023-09-20 16:31:12.4	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmazbse0000rmn072e614v8k"}	2023-09-21 18:15:00	2023-09-21 18:00:00	clmazbse0000rmn072e614v8k
+clmj6yryx004fmn08h2ip2zfs	Meal	t	2023-09-14 13:13:34.811	2023-09-20 16:31:12.4	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmazbse0000rmn072e614v8k"}	2023-09-22 00:00:00	2023-09-21 23:00:00	clmazbse0000rmn072e614v8k
+clmj6yrya004amn08z8412h2j	Make OYL Amazing	t	2023-09-14 13:13:34.81	2023-09-20 16:31:12.4	cllgsahu90000eq5ce1454rxh	{"projectLists": [{"id": "clmf0p01t0005m4087z215opo", "title": "Fill out OYL", "todos": [{"id": "46f692a6-d7cb-49c9-bb21-9b19559e522b", "body": "Define all desires", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 0, "updatedAt": "2023-09-11T15:06:56.507Z"}, {"id": "bfad602e-5c5a-4836-b15d-2ccafe74b0ac", "body": "Create projects", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 1, "updatedAt": "2023-09-11T15:06:56.507Z"}, {"id": "01f9eed1-665d-433d-aa0c-c2c63a8e92af", "body": "fill schedule", "listId": "clmf0p01t0005m4087z215opo", "urgent": false, "dueDate": null, "complete": false, "createdAt": "2023-09-11T15:06:56.507Z", "important": false, "sortOrder": 2, "updatedAt": "2023-09-11T15:06:56.507Z"}], "userId": "cllgsahu90000eq5ce1454rxh", "createdAt": "2023-09-11T15:06:56.507Z", "outcomeId": "clmf0mg6c0001l707cppiii64", "projectId": "clmf04atz0003m408zpevje8g", "updatedAt": "2023-09-11T15:06:56.507Z"}]}	2023-09-21 18:00:00	2023-09-21 15:00:00	clmf04atz0003m408zpevje8g
+clmj6yryw004emn083c0zxxzr	Coding Courses	t	2023-09-14 13:13:34.811	2023-09-20 16:31:12.4	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz7suc0019jp08tyoff52o"}	2023-09-21 23:00:00	2023-09-21 21:30:00	clmaz7suc0019jp08tyoff52o
+clmj6w2390033mn08cx58gzuf	Olive to School	t	2023-09-14 13:11:28.051	2023-09-20 16:31:12.4	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz6mhd0007mn08y686j7f6"}	2023-09-19 15:00:00	2023-09-19 14:15:00	clmaz6mhd0007mn08y686j7f6
+clmj6w23j0035mn08sa34p5qo	Meal	t	2023-09-14 13:11:28.051	2023-09-20 16:31:12.401	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmazbse0000rmn072e614v8k"}	2023-09-19 18:15:00	2023-09-19 18:00:00	clmazbse0000rmn072e614v8k
+clmj6yry20047mn080a0ngx38	Olive to School	t	2023-09-14 13:13:34.797	2023-09-20 16:31:12.401	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz6mhd0007mn08y686j7f6"}	2023-09-21 15:00:00	2023-09-21 14:15:00	clmaz6mhd0007mn08y686j7f6
+clmj6yryu004dmn08ld2yv93k	Olive to School	t	2023-09-14 13:13:34.81	2023-09-20 16:31:12.401	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmaz6mhd0007mn08y686j7f6"}	2023-09-21 21:30:00	2023-09-21 21:00:00	clmaz6mhd0007mn08y686j7f6
+clmj6yry70048mn08cpw1rde1	Meditation - Gateway Exp.	t	2023-09-14 13:13:34.797	2023-09-20 16:31:12.401	cllgsahu90000eq5ce1454rxh	{"routineToDos": "clmf19eif0001mc0832rwbdzb"}	2023-09-21 14:15:00	2023-09-21 13:30:00	clmf19eif0001mc0832rwbdzb
+\.
+
+
+--
+-- TOC entry 2719 (class 0 OID 25056)
+-- Dependencies: 215
+-- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."User" (id, email, "createdAt", "updatedAt", name) FROM stdin;
+cllgsahu90000eq5ce1454rxh	marrek1978@gmail.com	2023-08-18 16:07:32.818	2023-08-18 16:07:32.818	User
+\.
+
+
+--
+-- TOC entry 2727 (class 0 OID 25309)
+-- Dependencies: 223
+-- Data for Name: Value; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public."Value" (id, "createdAt", "updatedAt", "valueTitle", "valueDescription", "sortOrder", "userId") FROM stdin;
+clmaw06vb000gl408w9ena20e	2023-09-08 17:44:35.781	2023-09-15 13:34:57.366	Personal Growth	I like learning about how why i think and act the way i do, and how i can change to improve those things, leading to better states of existence for myself and others	5	cllgsahu90000eq5ce1454rxh
+cllgu1kz70003jz08edpv0jz6	2023-08-18 16:56:36.211	2023-09-15 13:34:57.268	Olive’s Physical and Mental Health	Olive's health and outlook on life are of primary importance to me.  Her ability to make her own way in the world and to deal with the suffering of life are self-evidently the most important thing to me.\n	0	cllgsahu90000eq5ce1454rxh
+clmaw8jdk0008me076a0tl1k6	2023-09-08 17:51:05.237	2023-09-15 13:34:57.326	Authenticity	I value being true to myself, expressing my genuine feelings and beliefs even when it's challenging or unpopular.  	3	cllgsahu90000eq5ce1454rxh
+clmawmne8000cme07cw4pcxwo	2023-09-08 18:02:03.629	2023-09-15 13:34:57.366	Courage (to Be Authentic)	I value ( and feel proud of) the experiences that require courage to speak the truth, to disappoint or offend others, to stand up for what I believe is right, or to take uncomfortable or scary actions that fulfill my desires.	6	cllgsahu90000eq5ce1454rxh
+clmaw7o5b000il408964u3v58	2023-09-08 17:50:24.046	2023-09-15 13:34:57.367	Freedom of Choice	I always choose my path, regardless of other's wants	7	cllgsahu90000eq5ce1454rxh
+clmkn5uls0001mo08rasqfte4	2023-09-15 13:34:45.025	2023-09-15 13:34:57.326	Purify my Energy	I believe in the inherent goodness of purifying and understanding my energy.  It provides serenity and peace, and I become a more authentic version of my self.  My Ego develops in alignment with my SELF.	4	cllgsahu90000eq5ce1454rxh
+cllguc76c0001mr08pfy7yvp4	2023-08-18 17:04:51.54	2023-09-15 13:34:57.269	My Health	I believe that maintaining a healthy body and mind is key to maximizing my ability to achieving my desires.\n	1	cllgsahu90000eq5ce1454rxh
+clmawwaxh000kl4086vki0qtm	2023-09-08 18:09:33.266	2023-09-15 13:34:57.367	Discovery	I value discovering experiences and connections. \n\nI like discovering experiences, states, and emotions, and discovering new connections b/w theories, systems, or aspects of existence, life, or humanity	8	cllgsahu90000eq5ce1454rxh
+cllgucl160001l40869jjvfs2	2023-08-18 17:05:09.486	2023-09-15 13:34:57.306	Self-Respect 	I uphold my self-worth by setting clear boundaries, honoring my commitments to myself and others, and being authentic to my values and desires.	2	cllgsahu90000eq5ce1454rxh
+cllgvjlnr0001mp07kl2mjpt4	2023-08-18 17:38:36.52	2023-09-15 13:34:57.367	Service	I want to be of service to my family and close friends ( and possibly strangers ) to help them achieve their desires.  \n	9	cllgsahu90000eq5ce1454rxh
+\.
+
+
+--
+-- TOC entry 2718 (class 0 OID 25047)
+-- Dependencies: 214
+-- Data for Name: _prisma_migrations; Type: TABLE DATA; Schema: public; Owner: default
+--
+
+COPY public._prisma_migrations (id, checksum, finished_at, migration_name, logs, rolled_back_at, started_at, applied_steps_count) FROM stdin;
+2b44729b-2d06-454a-8b85-b5e53ecbb401	9a8ce2a548e30641421cbce52d053f17145dba15ad16cb53b551f44000e9b588	2023-08-18 16:06:12.792403+00	20230806173507_removed_unique_for_desire_outcome	\N	\N	2023-08-18 16:06:12.290069+00	1
+00414f07-def9-4566-8f03-ae4e9b8bb02b	eab90abe0e84d305fc02ac064217c321637526968782b2027ecca39bc8902543	2023-08-18 16:05:51.213211+00	20220224172159_init	\N	\N	2023-08-18 16:05:50.708173+00	1
+90b6d0f6-729d-4ff5-93a4-cbbceb5485d8	9fdcf1395e456008431903102f193e9d2950004855966a6bac718b9887fba51e	2023-08-18 16:06:00.936549+00	20230628193555_added	\N	\N	2023-08-18 16:06:00.446055+00	1
+65d1d895-f212-4022-a2b9-269761c6719b	bb27a0c24acd8fada00f83eabaa48ebab39b002fade460b7281580ae02285c7e	2023-08-18 16:05:51.918989+00	20230602200142_todos_schema	\N	\N	2023-08-18 16:05:51.410581+00	1
+d9abd738-ab7f-42d9-8c7d-be224ec8160c	7e997b971393d8b55ce4692b128f218fdf0b95094535448b877609b8c7fae6f1	2023-08-18 16:05:52.61055+00	20230619193608_removed_isrecurring	\N	\N	2023-08-18 16:05:52.117197+00	1
+3c9c559a-cdae-48d2-bfc2-2dc682f2f83f	1c17e38d89347fbceb4719fae26838c0716b3680559bdec8273cc9a605248e9b	2023-08-18 16:06:07.207734+00	20230726150652_added_projects_table	\N	\N	2023-08-18 16:06:06.710001+00	1
+064c2c43-a583-4031-9d2f-23bf181cb61f	5f09abb9f6d23c54726915f9d75eb5924a06ea7b285270cdd0b2cdf0ce3c44cd	2023-08-18 16:05:53.304036+00	20230621211954_added_values	\N	\N	2023-08-18 16:05:52.807651+00	1
+a7664a16-4ed0-4e6d-a67f-3757f48a9f71	59bb38769800dd564c25fc676679b0b8b25a4bc07c5faaea25ccd2c07d6bbcb1	2023-08-18 16:06:01.645776+00	20230630142549_added	\N	\N	2023-08-18 16:06:01.131755+00	1
+6717d678-6441-4edd-87b0-e4bb9bbda3db	926bcc9abd50a16253ea904aa5b008ee479d931f9d8518fd4d85ea73ad263514	2023-08-18 16:05:53.991732+00	20230621213640_values_sort_order	\N	\N	2023-08-18 16:05:53.498967+00	1
+19cacf6a-8fe7-4a1b-895c-d530daf92836	fecc8dac862fff959c98defb494a48119454871d5dd0b9e7aba7b064717643d1	2023-08-18 16:05:54.698378+00	20230624175726_removed	\N	\N	2023-08-18 16:05:54.191387+00	1
+c0bb08e5-11f2-4f31-861a-632e6056c5a3	edb3ebef9ac1a017e58646d9b8b8cada0a29a09d543e57768a844df759fb4758	2023-08-18 16:05:55.418503+00	20230625165053_added	\N	\N	2023-08-18 16:05:54.903351+00	1
+dd9b0114-6487-45cf-accc-f3e190892455	8a18be18be5e82436c31b33139abdfda617de552039b35140053141e92d48bda	2023-08-18 16:06:02.344755+00	20230630142641_changed	\N	\N	2023-08-18 16:06:01.846776+00	1
+109c7884-58f7-4d70-a566-0715277a05ce	04c059cb39658bae6548e08837e478a94743c1916f492b63d8eb01e67de370e8	2023-08-18 16:05:56.102517+00	20230625173245_changed	\N	\N	2023-08-18 16:05:55.614194+00	1
+a2a01db4-18ba-4ab1-b953-513074a5a770	42debc1c59b712a1357a53978ee44a82414065983ad990d8876a2bf365a06664	2023-08-18 16:05:56.785639+00	20230627163507_added	\N	\N	2023-08-18 16:05:56.299289+00	1
+f1d21f29-2053-4a24-a1a8-c00e1b5b263b	f097f79d399277c8b3c1404c2ea3e70cb0c8ec984b830ea66cd0a258427e1b94	2023-08-18 16:06:10.712863+00	20230801223855_added_desireoutcomes	\N	\N	2023-08-18 16:06:10.197828+00	1
+108589b2-95dd-48f4-933b-b255ed284b7e	97c38d0a1ce99d820dad3c90790d078d44f2aeda5e12b6d49c20d94656913234	2023-08-18 16:05:57.462046+00	20230627163936_added	\N	\N	2023-08-18 16:05:56.978251+00	1
+034a5ab0-e13f-4611-806c-9b4fd30b4f36	b93085912b4914e383321a897edecbb99a13bcd55647e6e01c8cd7ea19ed727f	2023-08-18 16:06:03.033442+00	20230630143054_todos	\N	\N	2023-08-18 16:06:02.537024+00	1
+537a7ce6-7b41-4d50-a898-7f6f817e12a0	8fea6b4035c527bd4073286141bfac8ccd4f8173ec965a84866914f545817644	2023-08-18 16:05:58.153515+00	20230627164714_added	\N	\N	2023-08-18 16:05:57.658424+00	1
+8e6dca99-2b15-4098-8f0d-1a838c597f93	950a2dd6527baedac64e5884837d5cb6dbbf88cfe3ca070b168e6f676950b09f	2023-08-18 16:05:58.83742+00	20230627175945_added	\N	\N	2023-08-18 16:05:58.348614+00	1
+494a591b-c4f4-4909-a48c-3978a4f3fd06	d863b07ac03f3351995391190683782bbb89518c610c24140873ccf29cdc159e	2023-08-18 16:06:07.906191+00	20230726153028_projects_and_associations	\N	\N	2023-08-18 16:06:07.409517+00	1
+22226add-a1a5-4936-a9d0-ec096bd96ae9	4fe9064ea8a1565d8d59de0ea49a00dae39dca27c43316040230ae416a7c2d26	2023-08-18 16:05:59.542503+00	20230628161904_made	\N	\N	2023-08-18 16:05:59.035834+00	1
+60a675a7-601b-49c1-996b-e6dfc4c8f7ef	ba09498bdc95d63ecb6b6b749652e7fdc41ca920a99c1ebf27d1f73b54288948	2023-08-18 16:06:03.72709+00	20230721181654_added	\N	\N	2023-08-18 16:06:03.22956+00	1
+f6f96026-3351-4d23-aeb1-06a788b72f59	2e83fb7cb4df152d8b74d3b6127e211ae265afbe3d267dc89020c95a186b860b	2023-08-18 16:06:00.247602+00	20230628163239_made	\N	\N	2023-08-18 16:05:59.750399+00	1
+cffdcb1f-f48b-493c-bb93-59bd8dd430b6	8694e55a14a3c5a583a38c8593620177e3aa93c80e38106456c65d895e31733a	2023-08-18 16:06:04.415163+00	20230721190005_add_fields_to_scheduled_list	\N	\N	2023-08-18 16:06:03.924358+00	1
+b1bd3a6d-b7b7-420c-ad49-6b311582f620	76e01c944a847a4db80c830c88eb0e7ee105ce08679c28f20ce4644a6ebc2de0	2023-08-18 16:06:05.114233+00	20230721190113_add_list_id_field_to_scheduled_list	\N	\N	2023-08-18 16:06:04.610278+00	1
+f2a2fbeb-c5b5-49b6-a3e3-e9adceae1b5d	56c4a5201b1b3b11aee287ca07917bef62c67078808a6269331799426cc76448	2023-08-18 16:06:08.603948+00	20230726185945_project_desire_relations	\N	\N	2023-08-18 16:06:08.100947+00	1
+f6d73327-8e9a-44a4-9419-2fa7d5b52eef	732b2b45c74baebf44702f7fd806d424e0b6ba03db24a5cb36166c9ffe23e20b	2023-08-18 16:06:05.812857+00	20230723165257_	\N	\N	2023-08-18 16:06:05.315237+00	1
+cf1fa324-999f-4d06-9fca-852ebed689dc	67188e6601b7e7a79fff8a8df4dfa345d95aea8dc0416b9947d864b23285757a	2023-08-18 16:06:06.517969+00	20230723165755_proper_singular_plural	\N	\N	2023-08-18 16:06:06.009588+00	1
+c1be229b-b963-4cfe-a8fd-a320c9e897a9	4edbdbdac7d976fa8f58d41e87addad556bb86cb62fd2a544b73e42ea55cb80a	2023-08-18 16:06:09.295059+00	20230731204558_current_and_delta_to_desire	\N	\N	2023-08-18 16:06:08.803844+00	1
+a521ce97-53d3-4aa2-bf3b-efdd35d629dd	93c2b8dcbd90938c9b66e3239d54f1565829358f2981d6b66226a159fef55a6b	2023-08-18 16:06:11.41409+00	20230802191632_edit_desire_outcome_progress	\N	\N	2023-08-18 16:06:10.906483+00	1
+9b5aeed8-c14e-47ce-9628-cee30e4e130b	d012152f8d3c397ee9956c6f8bebcc72c56c9d2594ae109f87e07c9be177d0a0	2023-08-18 16:06:09.995366+00	20230801193500_edit_desire_table	\N	\N	2023-08-18 16:06:09.498538+00	1
+dc36dd3f-3509-458a-b582-cc0f5111464f	45918708e8fb953e2fe648a6acd5d10cf8389eb856c89db71057b3f27257e221	2023-09-08 17:05:16.590095+00	20230821172458_remove_progress_from_desire	\N	\N	2023-09-08 17:05:16.015985+00	1
+23489f59-77f4-446e-b0be-9c0999fd6da6	37f84bdefe0c0a504755f852000a3a93de420477fe7ca002e2dc4f672e08b8a8	2023-08-18 16:06:12.095585+00	20230802214902_added_due_dates_to_desires	\N	\N	2023-08-18 16:06:11.604445+00	1
+1502326c-4ba4-4596-9083-26020a020ad1	b2c6ba0c5d85d650c59b09f9e933f8f6fd0d813390eb2953a40dff49d869ada1	2023-08-18 16:06:13.487493+00	20230807180654_removed_unique_constraint	\N	\N	2023-08-18 16:06:12.986625+00	1
+f0d2d76f-11cb-40bd-864b-856548a97d8d	3d122c58cf3d0caabd15ff2caf0c9b873d9d5116276995a9ac975f05f46d359a	2023-09-08 17:05:18.195859+00	20230829154602_outcome_id_for_routines	\N	\N	2023-09-08 17:05:17.624036+00	1
+086651f4-4479-4a7f-8746-a233273fde92	b9e5ef1917c1aab7ed4727edc73b1755e168337ac50b6570c97cb13df8f4cfab	2023-09-08 17:05:17.4001+00	20230827153513_added_outcome_id_to_list	\N	\N	2023-09-08 17:05:16.81818+00	1
+6f964b43-21f4-46e1-a44c-a86633e3563b	902794198fcbdcb92fa2d857a2e95cc6a66886c4f4d4bd317f20f611e2c007b5	2023-09-08 17:05:18.981729+00	20230829170119_cancel_outcome_id_on_routine	\N	\N	2023-09-08 17:05:18.418971+00	1
+04c1afb3-8271-4d6b-9403-582c242845e4	3d122c58cf3d0caabd15ff2caf0c9b873d9d5116276995a9ac975f05f46d359a	2023-09-08 17:05:19.777984+00	20230829170801_added_outcome_id_back_to_routines	\N	\N	2023-09-08 17:05:19.208087+00	1
+2ab3215a-c25a-4e8a-ad57-86e040b07a50	1f19f7a026331d733dce39a2b5924c0fbfea03a6e4e6928c20b1471a856287d5	2023-09-24 16:50:40.350738+00	20230922170013_added_vision_to_outcome	\N	\N	2023-09-24 16:50:39.854229+00	1
+7a08e70c-8eb8-4c4c-9b0d-1f38c096c9d3	295d3984c141f04d4f568ec12fbecf11abe778e9e1483bf8e67bb30a6095ab8d	2023-09-24 16:50:41.043878+00	20230923171046_kill_desire_outcome_progress_table	\N	\N	2023-09-24 16:50:40.54357+00	1
+8a59bbe4-820c-4e0d-b9a6-bb9e73f64a2a	47d291a2666675b77d0b929c8c92b967d67ee8741582a48495b9d57dcdb09bbc	2023-09-24 16:50:41.732913+00	20230923171310_removed_project_id_from_lists_routines	\N	\N	2023-09-24 16:50:41.240322+00	1
+d55a9e0d-0a81-4d45-9f95-c84caf29a56b	a74fdaf03e3b54a3c31cbd9e1270241d59a57cdb9301d7203521bdb455a08433	2023-09-24 16:50:42.441469+00	20230923181817_added_milestones	\N	\N	2023-09-24 16:50:41.932507+00	1
+00778aae-1cc2-448e-a78e-0b860d4f56ef	85d91288fd3328dd64257820a44dfb07726e26203d9107bd70c09e6bd9a2711f	2023-09-24 16:50:43.136546+00	20230924152202_normalizing	\N	\N	2023-09-24 16:50:42.644944+00	1
+08be76f8-973a-45b8-a28b-43af5ee6923a	e3690638107eaa7d6eb8cacb6a513fd9dfd71881cbde51fcd7d77bebb170cc83	2023-09-24 16:50:43.821475+00	20230924152456_changed_desires_clarifying_questions_to_clarifying_q_uesitons	\N	\N	2023-09-24 16:50:43.330238+00	1
+788cfc38-b575-4c36-ad57-695897a1098c	b35cbb8f2a34aea172e8cf8be7863972ef5be17282db6dae9cc0e63a736a0aa1	2023-09-24 16:50:44.511108+00	20230924164527_revertting	\N	\N	2023-09-24 16:50:44.015242+00	1
+552453de-bd0d-4b9f-a4bd-ce7bd56b7b5a	ff40dae686a9c4347ce4ffb0f29a3246009917f6f46578f9122b71af7f2a8a9a	\N	20230924164835_desire_outcome_to_outcome	A migration failed to apply. New migrations cannot be applied before the error is recovered from. Read more about how to resolve migration issues in a production database: https://pris.ly/d/migrate-resolve\n\nMigration name: 20230924164835_desire_outcome_to_outcome\n\nDatabase error code: 23503\n\nDatabase error:\nERROR: insert or update on table "List" violates foreign key constraint "List_outcomeId_fkey"\nDETAIL: Key (outcomeId)=(cllgvuexd0003l708p4t7u711) is not present in table "Outcome".\n\nDbError { severity: "ERROR", parsed_severity: Some(Error), code: SqlState(E23503), message: "insert or update on table \\"List\\" violates foreign key constraint \\"List_outcomeId_fkey\\"", detail: Some("Key (outcomeId)=(cllgvuexd0003l708p4t7u711) is not present in table \\"Outcome\\"."), hint: None, position: None, where_: None, schema: Some("public"), table: Some("List"), column: None, datatype: None, constraint: Some("List_outcomeId_fkey"), file: Some("ri_triggers.c"), line: Some(2596), routine: Some("ri_ReportViolation") }\n\n   0: sql_schema_connector::apply_migration::apply_script\n           with migration_name="20230924164835_desire_outcome_to_outcome"\n             at schema-engine\\connectors\\sql-schema-connector\\src\\apply_migration.rs:106\n   1: schema_core::commands::apply_migrations::Applying migration\n           with migration_name="20230924164835_desire_outcome_to_outcome"\n             at schema-engine\\core\\src\\commands\\apply_migrations.rs:91\n   2: schema_core::state::ApplyMigrations\n             at schema-engine\\core\\src\\state.rs:201	\N	2023-09-24 16:50:44.701989+00	0
+\.
+
+
+--
+-- TOC entry 2545 (class 2606 OID 66762)
+-- Name: ClarifyingQuestions ClarifyingQuestions_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."ClarifyingQuestions"
+    ADD CONSTRAINT "ClarifyingQuestions_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2539 (class 2606 OID 25515)
+-- Name: DesireOutcome DesireOutcome_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."DesireOutcome"
+    ADD CONSTRAINT "DesireOutcome_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2533 (class 2606 OID 25334)
+-- Name: DesireValue DesireValue_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."DesireValue"
+    ADD CONSTRAINT "DesireValue_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2530 (class 2606 OID 25326)
+-- Name: Desire Desire_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."Desire"
+    ADD CONSTRAINT "Desire_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2522 (class 2606 OID 25291)
+-- Name: ListToDo ListToDo_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."ListToDo"
+    ADD CONSTRAINT "ListToDo_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2520 (class 2606 OID 25272)
+-- Name: List List_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."List"
+    ADD CONSTRAINT "List_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2543 (class 2606 OID 66697)
+-- Name: MilestoneItem MilestoneItem_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."MilestoneItem"
+    ADD CONSTRAINT "MilestoneItem_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2541 (class 2606 OID 66687)
+-- Name: Milestone Milestone_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."Milestone"
+    ADD CONSTRAINT "Milestone_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2516 (class 2606 OID 25076)
+-- Name: Note Note_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."Note"
+    ADD CONSTRAINT "Note_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2537 (class 2606 OID 25379)
+-- Name: Project Project_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."Project"
+    ADD CONSTRAINT "Project_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2548 (class 2606 OID 66778)
+-- Name: RequiredSavings RequiredSavings_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."RequiredSavings"
+    ADD CONSTRAINT "RequiredSavings_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2526 (class 2606 OID 25308)
+-- Name: RoutineToDo RoutineToDo_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."RoutineToDo"
+    ADD CONSTRAINT "RoutineToDo_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2550 (class 2606 OID 66788)
+-- Name: RoutineTracker RoutineTracker_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."RoutineTracker"
+    ADD CONSTRAINT "RoutineTracker_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2524 (class 2606 OID 25299)
+-- Name: Routine Routine_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."Routine"
+    ADD CONSTRAINT "Routine_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2518 (class 2606 OID 25259)
+-- Name: ScheduledList ScheduledList_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."ScheduledList"
+    ADD CONSTRAINT "ScheduledList_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2513 (class 2606 OID 25063)
+-- Name: User User_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."User"
+    ADD CONSTRAINT "User_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2528 (class 2606 OID 25317)
+-- Name: Value Value_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."Value"
+    ADD CONSTRAINT "Value_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2510 (class 2606 OID 25055)
+-- Name: _prisma_migrations _prisma_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public._prisma_migrations
+    ADD CONSTRAINT _prisma_migrations_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2546 (class 1259 OID 66763)
+-- Name: ClarifyingQuestions_userId_key; Type: INDEX; Schema: public; Owner: default
+--
+
+CREATE UNIQUE INDEX "ClarifyingQuestions_userId_key" ON public."ClarifyingQuestions" USING btree ("userId");
+
+
+--
+-- TOC entry 2534 (class 1259 OID 25335)
+-- Name: DesireValue_valueId_desireId_key; Type: INDEX; Schema: public; Owner: default
+--
+
+CREATE UNIQUE INDEX "DesireValue_valueId_desireId_key" ON public."DesireValue" USING btree ("valueId", "desireId");
+
+
+--
+-- TOC entry 2531 (class 1259 OID 25450)
+-- Name: Desire_projectId_key; Type: INDEX; Schema: public; Owner: default
+--
+
+CREATE UNIQUE INDEX "Desire_projectId_key" ON public."Desire" USING btree ("projectId");
+
+
+--
+-- TOC entry 2514 (class 1259 OID 25078)
+-- Name: Password_userId_key; Type: INDEX; Schema: public; Owner: default
+--
+
+CREATE UNIQUE INDEX "Password_userId_key" ON public."Password" USING btree ("userId");
+
+
+--
+-- TOC entry 2535 (class 1259 OID 25451)
+-- Name: Project_desireId_key; Type: INDEX; Schema: public; Owner: default
+--
+
+CREATE UNIQUE INDEX "Project_desireId_key" ON public."Project" USING btree ("desireId");
+
+
+--
+-- TOC entry 2511 (class 1259 OID 25077)
+-- Name: User_email_key; Type: INDEX; Schema: public; Owner: default
+--
+
+CREATE UNIQUE INDEX "User_email_key" ON public."User" USING btree (email);
+
+
+--
+-- TOC entry 2570 (class 2606 OID 66764)
+-- Name: ClarifyingQuestions ClarifyingQuestions_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."ClarifyingQuestions"
+    ADD CONSTRAINT "ClarifyingQuestions_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2567 (class 2606 OID 25517)
+-- Name: DesireOutcome DesireOutcome_desireId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."DesireOutcome"
+    ADD CONSTRAINT "DesireOutcome_desireId_fkey" FOREIGN KEY ("desireId") REFERENCES public."Desire"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2563 (class 2606 OID 25366)
+-- Name: DesireValue DesireValue_desireId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."DesireValue"
+    ADD CONSTRAINT "DesireValue_desireId_fkey" FOREIGN KEY ("desireId") REFERENCES public."Desire"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2564 (class 2606 OID 25361)
+-- Name: DesireValue DesireValue_valueId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."DesireValue"
+    ADD CONSTRAINT "DesireValue_valueId_fkey" FOREIGN KEY ("valueId") REFERENCES public."Value"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2562 (class 2606 OID 25356)
+-- Name: Desire Desire_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."Desire"
+    ADD CONSTRAINT "Desire_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2557 (class 2606 OID 25336)
+-- Name: ListToDo ListToDo_listId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."ListToDo"
+    ADD CONSTRAINT "ListToDo_listId_fkey" FOREIGN KEY ("listId") REFERENCES public."List"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2555 (class 2606 OID 41925)
+-- Name: List List_outcomeId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."List"
+    ADD CONSTRAINT "List_outcomeId_fkey" FOREIGN KEY ("outcomeId") REFERENCES public."DesireOutcome"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2556 (class 2606 OID 25273)
+-- Name: List List_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."List"
+    ADD CONSTRAINT "List_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2569 (class 2606 OID 66703)
+-- Name: MilestoneItem MilestoneItem_milestoneId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."MilestoneItem"
+    ADD CONSTRAINT "MilestoneItem_milestoneId_fkey" FOREIGN KEY ("milestoneId") REFERENCES public."Milestone"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2568 (class 2606 OID 66698)
+-- Name: Milestone Milestone_outcomeId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."Milestone"
+    ADD CONSTRAINT "Milestone_outcomeId_fkey" FOREIGN KEY ("outcomeId") REFERENCES public."DesireOutcome"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2552 (class 2606 OID 25385)
+-- Name: Note Note_projectId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."Note"
+    ADD CONSTRAINT "Note_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES public."Project"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2553 (class 2606 OID 25084)
+-- Name: Note Note_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."Note"
+    ADD CONSTRAINT "Note_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2551 (class 2606 OID 25079)
+-- Name: Password Password_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."Password"
+    ADD CONSTRAINT "Password_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2565 (class 2606 OID 41920)
+-- Name: Project Project_desireId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."Project"
+    ADD CONSTRAINT "Project_desireId_fkey" FOREIGN KEY ("desireId") REFERENCES public."Desire"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2566 (class 2606 OID 25380)
+-- Name: Project Project_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."Project"
+    ADD CONSTRAINT "Project_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2571 (class 2606 OID 66794)
+-- Name: RequiredSavings RequiredSavings_projectId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."RequiredSavings"
+    ADD CONSTRAINT "RequiredSavings_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES public."Project"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2572 (class 2606 OID 66789)
+-- Name: RequiredSavings RequiredSavings_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."RequiredSavings"
+    ADD CONSTRAINT "RequiredSavings_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2560 (class 2606 OID 25346)
+-- Name: RoutineToDo RoutineToDo_routineId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."RoutineToDo"
+    ADD CONSTRAINT "RoutineToDo_routineId_fkey" FOREIGN KEY ("routineId") REFERENCES public."Routine"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2573 (class 2606 OID 66804)
+-- Name: RoutineTracker RoutineTracker_projectId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."RoutineTracker"
+    ADD CONSTRAINT "RoutineTracker_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES public."Project"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2574 (class 2606 OID 66809)
+-- Name: RoutineTracker RoutineTracker_routineId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."RoutineTracker"
+    ADD CONSTRAINT "RoutineTracker_routineId_fkey" FOREIGN KEY ("routineId") REFERENCES public."Routine"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2575 (class 2606 OID 66799)
+-- Name: RoutineTracker RoutineTracker_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."RoutineTracker"
+    ADD CONSTRAINT "RoutineTracker_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2558 (class 2606 OID 41935)
+-- Name: Routine Routine_outcomeId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."Routine"
+    ADD CONSTRAINT "Routine_outcomeId_fkey" FOREIGN KEY ("outcomeId") REFERENCES public."DesireOutcome"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2559 (class 2606 OID 25341)
+-- Name: Routine Routine_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."Routine"
+    ADD CONSTRAINT "Routine_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2554 (class 2606 OID 25260)
+-- Name: ScheduledList ScheduledList_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."ScheduledList"
+    ADD CONSTRAINT "ScheduledList_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2561 (class 2606 OID 25351)
+-- Name: Value Value_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: default
+--
+
+ALTER TABLE ONLY public."Value"
+    ADD CONSTRAINT "Value_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+-- Completed on 2023-09-24 12:57:04
+
+--
+-- PostgreSQL database dump complete
+--
+

@@ -51,7 +51,7 @@ export const getDesiresWithValuesAndOutcomes = async (userId: User["id"]) => {
             value: true,
           },
         },
-        desireOutcomes: true,
+        outcomes: true,
       },
       orderBy: { sortOrder: "asc" },
     });
@@ -67,7 +67,7 @@ export const getDesiresAndOutcomes = async (userId: User["id"]) => {
     const result = await prisma.desire.findMany({
       where: { userId },
       include: {
-        desireOutcomes: true,
+        outcomes: true,
       },
       orderBy: { sortOrder: "asc" },
     });
@@ -210,9 +210,7 @@ export const updateDesiresOrder = async (desires: DesireWithValues[]) => {
     const updateSortOrder = desires.map((desire) => {
       return prisma.desire.update({
         where: { id: desire.id },
-        data: {
-          sortOrder: desire.sortOrder,
-        },
+        data: {  sortOrder: desire.sortOrder },
       });
     });
 

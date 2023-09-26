@@ -6,17 +6,17 @@ import { updateValue } from '~/models/values.server'
 import ValueForm from '~/components/forms/ValueForm'
 
 import type { Value } from '@prisma/client';
-import type { validationErrorsTypes } from '~/types/valueTypes'
+// import type { validationErrorsTypes } from '~/types/valueTypes'
 
 
 export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData()
   const valueData = Object.fromEntries(formData);
 
-  let validationErrors: validationErrorsTypes = {};
-  !valueData.title && (validationErrors.title = 'A title is required')
-  !valueData.description && (validationErrors.description = 'A description is required')
-  if (!valueData.title || !valueData.description) return validationErrors
+  // let validationErrors: validationErrorsTypes = {};
+  // !valueData.title && (validationErrors.title = 'A title is required')
+  // !valueData.description && (validationErrors.description = 'A description is required')
+  // if (!valueData.title || !valueData.description) return validationErrors
 
   let value = {
     valueId: valueData.valueId as string,

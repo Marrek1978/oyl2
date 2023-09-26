@@ -19,8 +19,10 @@ const DndDesires = () => {
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
   const [desires, setDesires] = useState<DesireWithValuesAndOutcomes[]>([]);
 
+  //get loader data from loader route
   const loadedDesires: DesireWithValuesAndOutcomes[] | undefined = useGetAllDesiresWithValuesAndOutcomes();
 
+  //check sort order of desires and reset if not sequential
   useEffect(() => {
     if (!loadedDesires) return
     const isSequentialOrder: boolean = areDesiresInSequentialOrder(loadedDesires)
@@ -32,6 +34,7 @@ const DndDesires = () => {
   }, [loadedDesires])
 
 
+  //show success message if fetcher is loading
   useEffect(() => {
     if (fetcher.state === 'loading') {
       setSuccessMessage(fetcher.data);
@@ -40,6 +43,7 @@ const DndDesires = () => {
   }, [fetcher])
 
 
+  //submit new sort order to db
   const handleEditSortOrder = useCallback(async () => {
     const desiresString = JSON.stringify(desires);
     try {
@@ -54,6 +58,7 @@ const DndDesires = () => {
   }, [desires, fetcher])
 
 
+  //if saveNewSortOrder is true, submit new sort order
   useEffect(() => {
     if (saveNewSortOrder) {
       handleEditSortOrder()
@@ -61,6 +66,7 @@ const DndDesires = () => {
   }, [saveNewSortOrder, handleEditSortOrder])
 
 
+  //reset sort order of desires
   const resetDesiresSortOrder = (desires: DesireWithValuesAndOutcomes[]) => {
     const reOrdered = desires?.map((desire, index) => {
       return {
@@ -73,6 +79,7 @@ const DndDesires = () => {
   }
 
 
+  //handle drag end
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active.id !== over?.id) {
@@ -86,6 +93,7 @@ const DndDesires = () => {
   }
 
 
+  //dnd sensors
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -119,7 +127,7 @@ const DndDesires = () => {
             const desireValues = desire.desireValues
             desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
 
-            const desireOutcomes = desire.desireOutcomes
+            const desireOutcomes = desire.outcomes
             desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
 
             return (

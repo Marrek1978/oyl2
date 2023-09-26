@@ -1,7 +1,6 @@
-import { Form, Link, useActionData, useNavigation } from '@remix-run/react'
-import React from 'react'
+import { Form, Link, useActionData, useNavigation, useSearchParams } from '@remix-run/react'
+
 import SolidBtn from '../SolidBtn'
-import { useSearchParams } from '@remix-run/react';
 import { SignUp, LoginIcon } from '~/components/utilities/icons';
 
 const AuthForm = () => {

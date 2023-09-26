@@ -29,7 +29,7 @@ import DisplayImportantLists from '~/components/today/DisplayImportantLists'
 
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndToDos } from '~/types/routineTypes'
-import type {  DesireOutcome,Project, ScheduledList } from '@prisma/client'
+import type {  Outcome, ScheduledList } from '@prisma/client'
 import type { ProjectWithListsAndRoutines } from '~/types/projectTypes'
 import type { DesireWithOutcomes } from '~/types/desireTypes'
 import RoutinesDisplayToday from '~/components/routines/RoutinesDisplayToday'
@@ -67,19 +67,20 @@ function TodayPage() {
   const loadedScheduledLists: ScheduledList[] = useMemo(() => transformScheduledListsDataDates(initialListsData.scheduledLists), [initialListsData.scheduledLists])
   const thisWeeksScheduledLists = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledLists), [loadedScheduledLists])
   const loadedLists: ListAndToDos[] = useMemo(() => transformToDoDataDates(initialListsData.loadedLists), [initialListsData.loadedLists]) //initialListsData.loadedToDos as ListAndToDos[
-  const loadedProjects: Project[] = useMemo(() => transformProjectDataDates(initialListsData.loadedProjects), [initialListsData.loadedProjects]) //initialListsData.loadedProjects as Project[]
   const loadedRoutines: RoutineAndToDos[] = useMemo(() => transformRoutineDataDates(initialListsData.loadedRoutines), [initialListsData.loadedRoutines]) //initialListsData.loadedRoutines as RoutineAndToDos[]
   const loadedDesires: DesireWithOutcomes[] = useMemo(() => transformDesireWithOutcomesDataDates(initialListsData.loadedDesires), [initialListsData.loadedDesires]) //initialListsData.loadedRoutines as RoutineAndToDos[]
+  
+  //?   change to DesiresWithOutcomesWithAll
 
-  const projectsWithListsAndRoutines: ProjectWithListsAndRoutines[] = loadedProjects.map(project => {
-    const projectLists = loadedLists.filter(list => list.projectId === project.id)
-    const projectRoutines = loadedRoutines.filter(routine => routine.projectId === project.id)
-    return {
-      ...project,
-      lists: projectLists,
-      routines: projectRoutines
-    }
-  })
+  // const projectsWithListsAndRoutines: ProjectWithListsAndRoutines[] = loadedProjects.map(project => {
+  //   const projectLists = loadedLists.filter(list => list.projectId === project.id)
+  //   const projectRoutines = loadedRoutines.filter(routine => routine.projectId === project.id)
+  //   return {
+  //     ...project,
+  //     lists: projectLists,
+  //     routines: projectRoutines
+  //   }
+  // })
 
 
   const focusProject: ProjectWithListsAndRoutines = projectsWithListsAndRoutines[0]

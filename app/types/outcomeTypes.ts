@@ -1,7 +1,7 @@
-import type { DesireOutcome, } from "@prisma/client";
+import type {  Outcome, } from "@prisma/client";
 
 export type NewlyCreatedOutcome = Omit<
-  DesireOutcome,
+   Outcome,
   "createdAt" | "updatedAt"
 >;
 
@@ -10,7 +10,7 @@ export type NewlyCreatedOutcome = Omit<
 // };
 
 //String dates
-export type DesireOutcomeWithStringDates = Omit<DesireOutcome,  | 'createdAt' | 'updatedAt'> & {
+export type DesireOutcomeWithStringDates = Omit<Outcome,  | 'createdAt' | 'updatedAt'> & {
   createdAt: string;
   updatedAt: string;
 };

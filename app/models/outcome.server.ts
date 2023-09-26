@@ -1,29 +1,20 @@
-//create new desireOutcome and DesireOutcomeProgress
 
 import { prisma } from "~/db.server";
 import type {
   Desire,
-  DesireOutcome,
-  // DesireOutcomeProgress,
+  Outcome,
   User,
 } from "@prisma/client";
 
-// Omit<Project, 'description' | 'desireid'> & { description: string | null,  desireId: string | null}
 
-type CreateOutcome = Omit<DesireOutcome, "id" | "createdAt" | "updatedAt"> & {
+type CreateOutcome = Omit<Outcome, "id" | "createdAt" | "updatedAt"> & {
   userId: User["id"];
 };
-// title: DesireOutcome["title"];
-// description: DesireOutcome["description"];
-// sortOrder: DesireOutcome["sortOrder"];
-// complete: DesireOutcome["complete"];
-// desireId: DesireOutcome["desireId"];
-// & Omit<DesireOutcome, "id" | "createdAt" | "updatedAt">
-// };
+ 
 
-export async function createDesireOutcome(outcome: CreateOutcome) {
+export async function createOutcome(outcome: CreateOutcome) {
   try {
-    const createOutcome = await prisma.desireOutcome.create({
+    const createOutcome = await prisma.outcome.create({
       data: {
         title: outcome.title,
         description: outcome.description,
@@ -40,9 +31,9 @@ export async function createDesireOutcome(outcome: CreateOutcome) {
   }
 }
 
-export async function updateDesireOutcome(outcome: DesireOutcome) {
+export async function updateOutcome(outcome:  Outcome) {
   try {
-    const updatedOutcome = await prisma.desireOutcome.update({
+    const updatedOutcome = await prisma.outcome.update({
       where: { id: outcome.id },
       data: {
         title: outcome.title,
@@ -61,7 +52,7 @@ export async function updateDesireOutcome(outcome: DesireOutcome) {
 
 export async function getOutcomesByDesireId(desireId: Desire["id"]) {
   try {
-    const outcomes = await prisma.desireOutcome.findMany({
+    const outcomes = await prisma.outcome.findMany({
       where: { desireId },
       orderBy: { sortOrder: "asc" },
     });
@@ -71,9 +62,9 @@ export async function getOutcomesByDesireId(desireId: Desire["id"]) {
   }
 }
 
-export async function getOutcomeByOutcomeId(outcomeId: DesireOutcome["id"]) {
+export async function getOutcomeByOutcomeId(outcomeId: Outcome["id"]) {
   try {
-    const outcome = await prisma.desireOutcome.findFirst({
+    const outcome = await prisma.outcome.findFirst({
       where: { id: outcomeId },
     });
     return outcome;
@@ -82,10 +73,10 @@ export async function getOutcomeByOutcomeId(outcomeId: DesireOutcome["id"]) {
   }
 }
 
-export async function updateOutcomesOrder(outcomes: DesireOutcome[]) {
+export async function updateOutcomesOrder(outcomes: Outcome[]) {
   try {
     const updatedOutcomes = await outcomes.map((outcome) => {
-      return prisma.desireOutcome.update({
+      return prisma.outcome.update({
         where: { id: outcome.id },
         data: { sortOrder: outcome.sortOrder },
       });
@@ -97,9 +88,9 @@ export async function updateOutcomesOrder(outcomes: DesireOutcome[]) {
   }
 }
 
-export async function deleteOutcomeById(outcomeId: DesireOutcome["id"]) {
+export async function deleteOutcomeById(outcomeId: Outcome["id"]) {
   try {
-    const deletedOutcome = await prisma.desireOutcome.delete({
+    const deletedOutcome = await prisma.outcome.delete({
       where: { id: outcomeId },
     });
     return deletedOutcome;

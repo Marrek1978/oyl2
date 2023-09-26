@@ -2,10 +2,7 @@ import { Outlet, useLoaderData } from '@remix-run/react'
 import { redirect, type LoaderArgs, type ActionArgs } from '@remix-run/server-runtime';
 
 import { requireUserId } from '~/models/session.server';
-import {
-  getClarifyingQuestions, upsertMaxAge,
-  //  upsertClarifyingQuestions
-} from '~/models/clarifying.server';
+import {  getClarifyingQuestions, upsertMaxAge} from '~/models/clarifying.server';
 import TimeLeft from '~/components/clarifyingQuestions/TimeLeft';
 import ClarifyingQuestionsDisplay from '~/components/clarifyingQuestions/ClarifyingQuestionsDisplay';
 

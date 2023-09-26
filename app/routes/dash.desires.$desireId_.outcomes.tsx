@@ -6,7 +6,7 @@ import DndOutcomes from '~/components/dnds/outcomes/DndOutcomes';
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
 
 import DndPlus800OutletFlex from '~/components/baseContainers/DndPlus800OutletFlex';
-import { Link, Outlet } from '@remix-run/react';
+import { Link,  } from '@remix-run/react';
 
 
 export const action = async ({ request }: ActionArgs) => {

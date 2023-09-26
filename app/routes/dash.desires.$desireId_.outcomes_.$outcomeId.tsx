@@ -1,14 +1,11 @@
 import { parse } from 'querystring'
 import { useEffect, useState } from 'react'
-import { useParams, Outlet, useNavigate } from '@remix-run/react'
+import { useParams,  useNavigate } from '@remix-run/react'
 import { redirect, type ActionArgs } from '@remix-run/server-runtime'
 
-import Modal from '~/components/modals/Modal'
-import { updateDesireOutcome } from '~/models/outcome.server'
-import { useGetDesireWithValuesAndOutcomes } from './dash.desires'
-import DesiresOutcomesForm from '~/components/forms/DesiresOutcomesForm'
+import { updateOutcome } from '~/models/outcome.server'
 
-import type { DesireOutcome } from '@prisma/client'
+import type { Outcome } from '@prisma/client'
 import type { DesireWithValuesAndOutcomes, validationErrorsTypes } from '~/types/desireTypes'
 
 
@@ -23,7 +20,7 @@ export const action = async ({ request }: ActionArgs) => {
   if (!outcomeData.title || !outcomeData.description) return validationErrors
 
   try {
-    await updateDesireOutcome(outcomeData)
+    await updateOutcome(outcomeData)
     return redirect('..')
   } catch (error) { throw error }
 }
@@ -38,7 +35,7 @@ function EditOutcomePage() {
   return (
     <>
       {/* <Outlet /> */}
-      Outcome Id
+      Outcome Id - basicall the old Project - outcome page to start 
       {/* <Modal onClose={() => { }} zIndex={10}>
         <DesiresOutcomesForm
           desire={desire}
@@ -52,23 +49,14 @@ function EditOutcomePage() {
 
 export default EditOutcomePage
 
-export const useGetOutcome = (desire: DesireWithValuesAndOutcomes | undefined): DesireOutcome | undefined => {
+export const useGetOutcome = (desire: DesireWithValuesAndOutcomes | undefined): Outcome | undefined => {
 
   const params = useParams();
   const navigate = useNavigate();
-  const [outcome, setOutcome] = useState<DesireOutcome | undefined>(undefined)
+  const [outcome, setOutcome] = useState< Outcome | undefined>(undefined)
 
   useEffect(() => {
-    console.log(' in useGetOutcome useEffect')
-    const loadedOutcome: DesireOutcome | undefined= desire?.desireOutcomes.find((outcome: DesireOutcome) => outcome.id === params.outcomeId)
-    
-    // console.log(' loadedOutcome is', loadedOutcome)
-    // if (!loadedOutcome) {
-    //   // navigate('/dash/desires');
-    //   return
-    // }
-    
-    console.log('setting outcome')
+    const loadedOutcome:  Outcome | undefined= desire?.outcomes.find((outcome:  Outcome) => outcome.id === params.outcomeId)
     setOutcome(loadedOutcome)
   }, [ desire, params.outcomeId, navigate])
 

@@ -13,12 +13,12 @@ import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
 import { DesireOutcomeVisionDefaultText, DesireOutcomesDefaultText } from '~/components/utilities/PlaceHolderTexts';
 import { DesireOutcomeGuideline, ProperDesireOutcomeVision, ProperDesireOutcomes } from "../utilities/Guidelines";
 
-import type { DesireOutcome } from '@prisma/client';
+import type { Outcome } from '@prisma/client';
 import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes'
 
 interface DesireFormProps {
   desire?: DesireWithValuesAndOutcomes;
-  outcome?: DesireOutcome;
+  outcome?:Outcome;
   isNew?: boolean
 }
 
@@ -37,7 +37,7 @@ function DesiresOutcomesForm({ desire, outcome, isNew = true }: DesireFormProps)
   const [outcomeSortOrder, setOutcomeSortOrder] = useState<number>(0) //if adding new desire, set to desires.length
   const [outcomeDescription, setOutcomeDescription] = useState<string>('')
 
-  const loadedOutcomes = desire?.desireOutcomes
+  const loadedOutcomes = desire?.outcomes
 
   const maxOutcomesSortOrder = Math.max(...loadedOutcomes?.map(outcome => outcome.sortOrder) || [0]);
   const nextSortOrder = isNew ? maxOutcomesSortOrder + 1 : desire?.sortOrder;

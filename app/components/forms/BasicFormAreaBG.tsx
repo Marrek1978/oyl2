@@ -1,5 +1,5 @@
 import React from 'react'
-import {GetHeaderBgColor} from '~/components/forms/GetHeaderBgColor';
+import { GetHeaderBgColor } from '~/components/forms/GetHeaderBgColor';
 import H2WithLink from '~/components/titles/H2WithLink';
 import HeadingH2 from '~/components/titles/HeadingH2';
 
@@ -13,20 +13,22 @@ interface BasicFormAreaBGProps {
 
 }
 
-function BasicFormAreaBG({ children, title, maxWidth = '800', linkDestination, linkColor = 'primary', linkText }: BasicFormAreaBGProps) {
+function BasicFormAreaBG({ children, title, maxWidth = '800px', linkDestination, linkColor = 'primary', linkText }: BasicFormAreaBGProps) {
 
   const backgroundColor = GetHeaderBgColor()
 
   return (
     <div className={`
       bg-base-100 shadow-xl
-      grid grid-cols-[minmax(300px,${maxWidth}px)]
-      grid-rows-[min-content_1fr_min-content]
       cursor-defaultshadow-lg
-      w-full
+      w-full max-w-[${maxWidth}]
+      min-w-[350px]
       max-h-full
       overflow-auto
+       
     `}>
+
+      {/* //**************HEADER *************** */}
       <div className={`
         w-full min-h-[72px]  px-8 pt-2 pb-3
         ${backgroundColor}
@@ -36,19 +38,21 @@ function BasicFormAreaBG({ children, title, maxWidth = '800', linkDestination, l
         overflow-ellipsis  
       `}>
 
-        {linkDestination && linkText && (
-          <H2WithLink
-            title={title}
-            linkDestination={linkDestination}
-            linkColor={linkColor}
-            linkText={linkText}
-          />
-        )}
+        <div className='max-w-prose'>
+          {linkDestination && linkText && (
+            <H2WithLink
+              title={title}
+              linkDestination={linkDestination}
+              linkColor={linkColor}
+              linkText={linkText}
+            />
+          )}
 
-        {!linkDestination || !linkText ? (
-          <HeadingH2 text={title} />
-        ) : null}
+          {!linkDestination || !linkText ? (
+            <HeadingH2 text={title} />
+          ) : null}
 
+        </div>
       </div>
       {children}
     </div>

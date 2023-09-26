@@ -13,7 +13,7 @@ import { useGetDesireWithValuesAndOutcomes } from '~/routes/dash.desires';
 
 
 import type { DragEndEvent } from "@dnd-kit/core";
-import type { DesireOutcome } from '@prisma/client';
+import type { Outcome } from '@prisma/client';
 import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
 
 
@@ -24,11 +24,11 @@ const DndOutcomes: React.FC = () => {
   const fetcher = useFetcher();
   const [desireName, setDesireName] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [outcomes, setOutcomes] = useState<DesireOutcome[]>([]);
+  const [outcomes, setOutcomes] = useState<Outcome[]>([]);
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
 
-  const desire: DesireWithValuesAndOutcomes | undefined = useGetDesireWithValuesAndOutcomes( );
-  const loadedOutcomes = desire?.desireOutcomes
+  const desire: DesireWithValuesAndOutcomes | undefined = useGetDesireWithValuesAndOutcomes();
+  const loadedOutcomes = desire?.outcomes
 
 
   useEffect(() => {
@@ -40,10 +40,7 @@ const DndOutcomes: React.FC = () => {
   useEffect(() => {
 
     if (!loadedOutcomes) return
-
     const sortedOutcomes = loadedOutcomes.sort((a, b) => a.sortOrder - b.sortOrder)
-
-
     const isSequentialOrder = areOutcomesInSequentialOrder(sortedOutcomes)
 
     setOutcomes(isSequentialOrder
@@ -82,7 +79,7 @@ const DndOutcomes: React.FC = () => {
   }, [saveNewSortOrder, handleEditSortOrder])
 
 
-  const resetOutcomesSortOrder = (outcomes: DesireOutcome[]) => {
+  const resetOutcomesSortOrder = (outcomes: Outcome[]) => {
     const reOrdered = outcomes?.map((outcome, index) => {
       return {
         ...outcome,
@@ -97,7 +94,7 @@ const DndOutcomes: React.FC = () => {
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      setOutcomes((prevOutcomes: DesireOutcome[]) => {
+      setOutcomes((prevOutcomes: Outcome[]) => {
         const oldIndex = prevOutcomes.findIndex(outcome => outcome.id === active.id);
         const newIndex = prevOutcomes.findIndex(outcome => outcome.id === over?.id);
         const newOutcomes = arrayMove(prevOutcomes, oldIndex, newIndex);
@@ -168,8 +165,8 @@ const DndOutcomes: React.FC = () => {
 
 export default DndOutcomes
 
- 
-export function areOutcomesInSequentialOrder(outcomes: DesireOutcome[]): boolean {
+
+export function areOutcomesInSequentialOrder(outcomes: Outcome[]): boolean {
   outcomes.sort((a, b) => a.sortOrder - b.sortOrder)
   const isNOTSequentialOrder = outcomes.some((outcome, index) => {
     return outcome.sortOrder !== index

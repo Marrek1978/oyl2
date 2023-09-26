@@ -1,59 +1,51 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 .input-field-text-title {
-  @apply  
-  w-full
-  input border-none input-secondary 
-  bg-base-200 rounded-none
-  font-poppins font-normal tracking-wide
+  @apply input
+  input-secondary w-full 
+  rounded-none 
+  border-none bg-base-200
+  font-poppins font-normal tracking-wide;
 }
 
 .input-field-text-para {
-  @apply  
+  @apply input  textarea
+  textarea-bordered textarea-secondary h-24 
   w-full 
-  input border-none textarea-secondary 
-  bg-base-200 rounded-none
-  textarea textarea-bordered h-24 
-  font-poppins font-normal tracking-wide
+  rounded-none
+  border-none bg-base-200 py-2 
+  font-poppins text-base font-normal
   leading-snug
-  py-2 !important
+  tracking-wide !important;
 }
 
 .input-field-text-para::placeholder {
-  @apply  
-  text-base
-  
+  @apply text-base
+  w-full ;
 }
 
 .validation-error {
-  @apply  
-  text-base text-error
-  font-poppins font-normal  
+  @apply pb-0 font-poppins
+  text-base font-normal  
   leading-snug
-  pb-0 !important
+  text-error !important;
 }
 
 .vert-space-between-inputs {
-  @apply  
-  mt-6
+  @apply mt-6;
 }
 
 .list-grid {
-  @apply  
-  grid gap-x-6 
-  grid-cols-[minmax(0,_max-content)_min-content] 
+  @apply grid grid-cols-[minmax(0,_max-content)_min-content] 
+  gap-x-6;
 }
 
 .two-button-spacing {
-  @apply  
-  w-full flex gap-4 
+  @apply flex w-full gap-4;
 }
 
 .checkbox-label-flex {
-  @apply  
-  flex items-center gap-4
+  @apply flex items-center gap-4;
 }
-

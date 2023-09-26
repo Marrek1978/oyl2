@@ -69,11 +69,11 @@ const SideNav = () => {
           </li>
 
 
-          <li className="">
+          {/* <li className="">
             <NavLink to='/dash/projects'  >
               <span>Projects</span>
             </NavLink>
-          </li>
+          </li> */}
 
 
           <li className="relative">

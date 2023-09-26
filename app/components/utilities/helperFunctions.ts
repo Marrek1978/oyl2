@@ -1,8 +1,6 @@
 import type { CreationTodo, Todo } from "~/types/listTypes";
 import type { CreationRoutineToDo } from "~/types/routineTypes";
 
-import type { Project } from "@prisma/client";
-import type { ProjectFromDBWithStringDates } from "~/types/projectTypes";
 import type {
   DesireWithOutcomes,
   DesireWithOutcomesWithStringDates,
@@ -42,7 +40,7 @@ export function transformDesireWithOutcomesDataDates(
     ...desire,
     createdAt: new Date(desire.createdAt!),
     updatedAt: new Date(desire.updatedAt!),
-    desireOutcomes: desire.desireOutcomes.map((outcome) => ({
+    outcomes: desire.outcomes.map((outcome) => ({
       ...outcome,
       createdAt: new Date(outcome.createdAt!),
       updatedAt: new Date(outcome.updatedAt!),
@@ -50,15 +48,7 @@ export function transformDesireWithOutcomesDataDates(
   }));
 }
 
-export function transformProjectDataDates(
-  projects: ProjectFromDBWithStringDates[]
-): Project[] {
-  return projects.map((project: ProjectFromDBWithStringDates) => ({
-    ...project,
-    createdAt: new Date(project.createdAt!),
-    updatedAt: new Date(project.updatedAt!),
-  }));
-}
+ 
 
 export function transformScheduledListsDataDates(lists: any) {
   return lists.map((list: any) => ({

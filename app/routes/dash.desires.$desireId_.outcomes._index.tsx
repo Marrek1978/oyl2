@@ -1,7 +1,7 @@
 import { parse } from 'querystring';
 
 import { requireUserId } from '~/models/session.server';
-import { createDesireOutcome } from '~/models/outcome.server';
+import { createOutcome } from '~/models/outcome.server';
 import { useGetDesireWithValuesAndOutcomes } from './dash.desires';
 import DesiresOutcomesForm from '~/components/forms/DesiresOutcomesForm'
 
@@ -10,7 +10,6 @@ import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
 
 
 export const action = async ({ request }: ActionArgs) => {
-  console.log('outocmes_index action')
   const userId = await requireUserId(request)
   const formBody = await request.text();
   const outcomeData = JSON.parse(parse(formBody).outcomeString as string);
@@ -26,9 +25,9 @@ export const action = async ({ request }: ActionArgs) => {
     desireId: outcomeData.desireId as string,
   }
 
-  console.log('in index action and outcome is ', outcome)
   try {
-    await createDesireOutcome(outcome)
+    console.log('outcome', outcome)
+    await createOutcome(outcome)
     return null
   } catch (error) { throw error }
 }
