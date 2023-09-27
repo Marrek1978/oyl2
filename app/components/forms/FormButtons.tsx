@@ -10,9 +10,11 @@ type Props = {
   saveBtnTxt:string;
   isSaveable:boolean;
   isNew?:boolean;
+  deleteBtnText?:string;
+ 
 }
 
-function FormButtons({saveBtnTxt, isSaveable, isNew=true}: Props) {
+function FormButtons({saveBtnTxt, isSaveable, isNew=true, deleteBtnText='Delete'}: Props) {
   return (
    <>
     <div className='vert-space-between-inputs my-8 w-full'>
@@ -28,7 +30,7 @@ function FormButtons({saveBtnTxt, isSaveable, isNew=true}: Props) {
                   <div className='flex-1'>
                     <Link to='delete' >
                       <OutlinedBtn
-                        text='Delete Value'
+                        text={deleteBtnText}
                         onClickFunction={() => { }}
                         icon={trashIcon}
                         daisyUIBtnColor='error'

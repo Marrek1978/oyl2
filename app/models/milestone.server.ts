@@ -4,6 +4,7 @@ import type { Milestone } from "@prisma/client";
 import type { CreateMilestone } from "~/types/milestoneTypes";
 
 
+//milestons
 
 export const getMilestonesByMilestoneGroupId = async (
   milestoneGroupId: string
@@ -21,12 +22,6 @@ export const getMilestonesByMilestoneGroupId = async (
     throw error;
   }
 };
-
-
-
-
-
-
 
 
 
@@ -64,3 +59,27 @@ export const updateMilestonesOrder = async (milestones: Milestone[]) => {
     throw error;
   }
 };
+
+
+export const getMilestoneById = async (milestoneId: string) => {
+  try {
+    const milestone = await prisma.milestone.findUnique({
+      where: { id: milestoneId },
+    });
+    return milestone;
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+export const deleteMilestoneById = async (milestoneId: string) => {
+  try {
+    const milestone = await prisma.milestone.delete({
+      where: { id: milestoneId },
+    });
+    return milestone;
+  } catch (error) {
+    throw error;
+  }
+}

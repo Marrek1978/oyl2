@@ -1,7 +1,7 @@
 import { parse } from "querystring";
 import { redirect } from "@remix-run/node";
 import { useEffect, useState } from "react";
-import { Outlet, useLoaderData, useNavigate } from "@remix-run/react";
+import { Outlet, useLoaderData, useMatches, useNavigate, useRouteLoaderData } from "@remix-run/react";
 
 import { requireUserId } from '~/models/session.server';
 import { getOutcomeByOutcomeId } from '~/models/outcome.server';
@@ -32,7 +32,6 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 export const action = async ({ request, params }: ActionArgs) => {
 
   if (request.method === 'PUT') {
-    console.log('PUT')
     const formBody = await request.text();
     const parsedBody = parse(formBody);
     const groups = JSON.parse(parsedBody.itemsString as string);
@@ -68,7 +67,6 @@ function MilestoneGroupsPage() {
 
   const [groups, setGroups] = useState<MilestoneGroup[]>([]);
   const loadedGroups: MilestoneGroup[] | undefined = useGetAllMilestoneGroupsForOutcome()
-
 
   useEffect(() => {
     if (!loadedGroups) return
@@ -106,16 +104,12 @@ export default MilestoneGroupsPage
 
 export const useGetAllMilestoneGroupsForOutcome = (): MilestoneGroup[] | undefined => {
 
-
-  // get groups from loaderData, transform dates, and set to state
   const navigate = useNavigate();
   const loaderData = useLoaderData();
   const [groups, setGroups] = useState<MilestoneGroup[]>();
 
   useEffect(() => {
     const groupsWithStrDates: MilestoneGroupsWithStrDates[] = loaderData?.allMilestoneGroupsByOutcome;
-    if (groupsWithStrDates === undefined) return navigate('/dash/desires');
-
     const groupsWithProperDates: MilestoneGroup[] = transformGroupDates(groupsWithStrDates);
     setGroups(groupsWithProperDates);
   }, [loaderData, navigate]);
@@ -125,9 +119,25 @@ export const useGetAllMilestoneGroupsForOutcome = (): MilestoneGroup[] | undefin
 
 
 
+
+// export const useGetSpecificMilestoneGroupsById = (groupId: string): MilestoneGroup | undefined => {
+
+//   const allGroups = useGetAllMilestoneGroupsForOutcome();
+//   const [group, setGroup] = useState<MilestoneGroup>();
+
+//   useEffect(() => {
+//     const specificGroup = allGroups?.find((group) => group.id === groupId)
+//     setGroup(specificGroup);
+//   }, [allGroups, groupId]);
+
+//   return group;
+// };
+
+
+
 function transformGroupDates(items: MilestoneGroupsWithStrDates[]): MilestoneGroup[] {
 
-  return items.map((item: any) => ({
+  return items?.map((item: any) => ({
     ...item,
     createdAt: new Date(item.createdAt!),
     updatedAt: new Date(item.updatedAt!),

@@ -9,9 +9,14 @@ interface TextBtnGuidelineProps {
   onMouseOver?: React.MouseEventHandler<HTMLButtonElement>;
   onMouseOut?: React.MouseEventHandler<HTMLButtonElement>;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  textForIcon?: string;
 }
 
-function TextBtnGuideLine({ text, onClickFunction, icon, color = 'text-secondary', type='submit', onMouseOver, onMouseOut }: TextBtnGuidelineProps) {
+function TextBtnGuideLine({ text, onClickFunction, icon, color = 'text-secondary', type = 'submit', onMouseOver, onMouseOut, textForIcon }: TextBtnGuidelineProps) {
+
+
+
+
 
   return (
     <>
@@ -24,12 +29,18 @@ function TextBtnGuideLine({ text, onClickFunction, icon, color = 'text-secondary
         type={type}
         onMouseOver={onMouseOver}
         onMouseOut={onMouseOut}
-        
+
       >
-        <div className=' flex gap-2 items-center'>
-          <div>{text}</div>
-          <div>{icon}</div>
-        </div>
+        {textForIcon
+          ? (
+            <div className='border-2 border-seconday rounded-3xl text-xs px-2 '>{textForIcon}</div>
+          )
+          : (
+            <div className=' flex gap-2 items-center'>
+              <div>{text}</div>
+              <div>{icon}</div>
+            </div>
+          )}
       </button>
     </>
   )

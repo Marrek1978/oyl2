@@ -2,8 +2,8 @@ import { type MouseEventHandler, type ReactNode } from 'react'
 
 interface TextBtnProps {
   text: string;
-  onClickFunction:  MouseEventHandler<HTMLButtonElement>;
-  icon?: ReactNode;
+  onClickFunction?:  MouseEventHandler<HTMLButtonElement>;
+  icon?: ReactNode
   color?: string;
   type?: 'button' | 'submit' | 'reset' | undefined;
   onMouseOver?: MouseEventHandler<HTMLButtonElement>;
@@ -11,7 +11,7 @@ interface TextBtnProps {
 }
 
 
-function TextBtn({ text, onClickFunction, icon, color = 'text-primary', type = 'submit', onMouseOver, onMouseOut }: TextBtnProps) {
+function TextBtn({ text, onClickFunction=()=>{}, icon, color = 'text-primary', type = 'submit', onMouseOver, onMouseOut }: TextBtnProps) {
 
   const getHoverClass = color === 'error' ? 'hover:text-red-500' : 'hover:opacity-70'
 

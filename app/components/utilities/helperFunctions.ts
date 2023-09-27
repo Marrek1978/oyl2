@@ -48,8 +48,6 @@ export function transformDesireWithOutcomesDataDates(
   }));
 }
 
- 
-
 export function transformScheduledListsDataDates(lists: any) {
   return lists.map((list: any) => ({
     ...list,
@@ -65,9 +63,10 @@ interface ArrayObjectsWithStrDates {
   dateKeys: string[];
 }
 
-
-export function ArrayOfObjectsStrToDates({ items, dateKeys }: ArrayObjectsWithStrDates) {
-
+export function ArrayOfObjectsStrToDates({
+  items,
+  dateKeys,
+}: ArrayObjectsWithStrDates) {
   return items?.map((item: any) => {
     const transformedItem = { ...item };
     dateKeys.forEach((key) => {
@@ -78,8 +77,6 @@ export function ArrayOfObjectsStrToDates({ items, dateKeys }: ArrayObjectsWithSt
     return transformedItem;
   });
 }
-
-
 
 export function sortTodos(todos: Todo[]): Todo[] {
   const todosCopy = [...todos];

@@ -26,6 +26,7 @@ function MilestoneForm({ milestone, isNew = true }: Props) {
   const validationErrors = useActionData()
   const loadedMilestonesArray = useGetAllMilestonesForGroup()
 
+
   const [id, setId] = useState<string>('')
   const [title, setTitle] = useState<string>('')
   const [sortOrder, setSortOrder] = useState<number>(0)
@@ -52,19 +53,23 @@ function MilestoneForm({ milestone, isNew = true }: Props) {
   }, [navigation.state])
 
   useEffect(() => {
-    console.log('navigation.state', navigation.state)
   }, [navigation.state])
 
 
   useEffect(() => {
+    console.log('re-assigning values to default values')
     setId(milestone?.id || '')
     setTitle(milestone?.title || '')
     setDueDate(milestone?.dueDate || null)
     setDescription(milestone?.description || '')
     setIsCompleted(milestone?.isComplete || false)
     setCompletedDate(milestone?.completedAt || null)
-    setSortOrder(milestone?.sortOrder || loadedMilestonesArray?.length || 0)
+  }, [milestone?.id])
+
+  useEffect(() => {
+    setSortOrder(milestone?.sortOrder || loadedMilestonesArray?.milestones?.length || 0)
   }, [milestone, loadedMilestonesArray])
+
 
 
   useEffect(() => {
@@ -92,89 +97,91 @@ function MilestoneForm({ milestone, isNew = true }: Props) {
   }, [completedDate, isCompleted])
 
 
+  console.log('rendering')
+
   return (
-    <div className=''>
-      <BasicFormAreaBG title={headerTxt}  >
+    <BasicFormAreaBG title={headerTxt}  >
 
-        <Form method='post' className='mx-8'>
-          <div className="form-control vert-space-between-inputs gap-y-6   ">
-            <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
-            <input type="string" name='id' value={id} hidden readOnly />
-            <input type="string" name='groupId' value={paramsGroupId} hidden readOnly />
+      <Form method='post' className='mx-8'>
+        <div className="form-control vert-space-between-inputs gap-y-6   ">
+          <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
+          <input type="string" name='id' value={id} hidden readOnly />
+          <input type="string" name='groupId' value={paramsGroupId} hidden readOnly />
 
-            <div>
-              <InputLabelWithGuideLineLink
-                text='Milestone Title'
-                guideline={CoreValue}
-                title='Milestone'
-              />
-              <input type="text"
-                placeholder="Enter a Value Title"
-                name='title'
-                className=" input-field-text-title  "
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
-              {TitleError}
-            </div>
+          <div>
+            <InputLabelWithGuideLineLink
+              text='Milestone Title'
+              guideline={CoreValue}
+              title='Milestone'
+            />
+            <input type="text"
+              placeholder="Enter a Value Title"
+              name='title'
+              className=" input-field-text-title  "
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+            {TitleError}
+          </div>
 
-            <div className=' mb-0  '>
-              <InputLabelWithGuideLineLink
-                text='Milestone Description (Optional)'
+          <div className=' mb-0  '>
+            <InputLabelWithGuideLineLink
+              text='Milestone Description (Optional)'
+              guideline={CoreValueStatement}
+              title='Milestone Description'
+            />
+            <textarea
+              className="input-field-text-para  "
+              placeholder={MilestoneGroupDefaultText}
+              name='description'
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            >
+            </textarea>
+            {DescriptionError}
+          </div>
+
+          <DatePicker
+            labelText={'Due On (Optional)'}
+            selectedDate={dueDate}
+            setSelectedDate={setDueDate}
+          />
+
+          <div className='w-full  flex flex-col items-end'>
+            <div className='w-[50%] flex justify-start'>
+              <ToggleWithLabelAndGuideLineLink
+                text='Completed?'
                 guideline={CoreValueStatement}
                 title='Milestone Description'
+                checkedState={isCompleted}
+                handleCheckedState={handleIsCompleted}
               />
-              <textarea
-                className="input-field-text-para  "
-                placeholder={MilestoneGroupDefaultText}
-                name='description'
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              >
-              </textarea>
-              {DescriptionError}
             </div>
 
-            <DatePicker
-              labelText={'Due On (Optional)'}
-              selectedDate={dueDate}
-              setSelectedDate={setDueDate}
-            />
-
-            <div className='w-full  flex flex-col items-end'>
-              <div className='w-[50%] flex justify-start'>
-                <ToggleWithLabelAndGuideLineLink
-                  text='Completed?'
-                  guideline={CoreValueStatement}
-                  title='Milestone Description'
-                  checkedState={isCompleted}
-                  handleCheckedState={handleIsCompleted}
-                />
-              </div>
-
-              <div className='w-[50%] vert-space-between-inputs'>
-                <DatePicker
-                  labelText={'Completed On'}
-                  selectedDate={completedDate}
-                  setSelectedDate={setCompletedDate}
-                />
-              </div>
+            <div className='w-[50%] vert-space-between-inputs'>
+              <DatePicker
+                labelText={'Completed On'}
+                selectedDate={completedDate}
+                setSelectedDate={setCompletedDate}
+              />
             </div>
-
-
-            {/* //**************BUTTONS ***************  */}
-
-            <FormButtons
-              saveBtnTxt={saveBtnTxt}
-              isSaveable={isSaveable}
-              isNew={isNew}
-            />
-
           </div>
-        </Form>
-      </BasicFormAreaBG>
-    </div>
+
+
+          {/* //**************BUTTONS ***************  */}
+
+          <FormButtons
+            saveBtnTxt={saveBtnTxt}
+            isSaveable={isSaveable}
+            isNew={isNew}
+            deleteBtnText='Delete Milestone'
+
+          />
+
+        </div>
+      </Form>
+    </BasicFormAreaBG>
   )
 }
 

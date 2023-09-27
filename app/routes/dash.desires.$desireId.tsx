@@ -12,8 +12,15 @@ import { varsForPluralText } from '~/components/dnds/desires/DndSortableDesire';
 import AllOutcomesDisplay from '~/components/desires/outcomes/AllOutcomesDisplay';
 import { DesireCurrentDefaultText, DesireIdealPlaceholderText } from '~/components/utilities/PlaceHolderTexts';
 
-import type {  Outcome, Value } from '@prisma/client';
+import type { Outcome, Value } from '@prisma/client';
 import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
+
+
+export const loader = async () => { 
+
+  return ({message:'loading'})
+
+}
 
 
 function DesirePage() {
@@ -21,7 +28,7 @@ function DesirePage() {
   const [values, setValues] = useState<Value[]>([]);
   const [outcomes, setOutcomes] = useState<Outcome[]>([]);
 
-  const desire: DesireWithValuesAndOutcomes | undefined = useGetDesireWithValuesAndOutcomes( );
+  const desire: DesireWithValuesAndOutcomes | undefined = useGetDesireWithValuesAndOutcomes();
 
   useEffect(() => {
     const transformedDesireValues = desire?.desireValues?.map(value => value.value) || [];

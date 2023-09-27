@@ -1,6 +1,7 @@
 import React from 'react'
-import HeadingH1 from '../titles/HeadingH1'
 import Parser from 'html-react-parser';
+
+import HeadingH1 from '../titles/HeadingH1'
 import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
 
 interface basicTextAreaBGProps {

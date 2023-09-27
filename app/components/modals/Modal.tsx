@@ -6,20 +6,19 @@ interface ModalProps {
   zIndex?: number;
 }
 
-const Modal: React.FC<ModalProps> = ({ children, onClose=()=>{}, zIndex = 10 }) => {
+const Modal: React.FC<ModalProps> = ({ children, onClose = () => { }, zIndex = 10 }) => {
   return (
     <>
       <div className={`z-${zIndex} 
           fixed top-0 left-0 w-full h-full
           bg-base-content/50
           flex justify-center items-center
-         
          `}
         onClick={onClose}>
         <dialog
           className="modal  overflow-auto	"
           open
-        onClick={(event) => event.stopPropagation()}
+          onClick={(event) => event.stopPropagation()}
         >
           {children}
         </dialog>

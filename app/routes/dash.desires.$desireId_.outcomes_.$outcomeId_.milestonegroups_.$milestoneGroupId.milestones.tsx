@@ -2,18 +2,19 @@ import { parse } from 'querystring';
 import { redirect } from "@remix-run/node";
 import { useEffect, useState } from 'react';
 import { Outlet, useLoaderData, useNavigate } from '@remix-run/react';
-import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime';
 
 import { requireUserId } from '~/models/session.server';
-import { getMilestoneGroupById } from '~/models/milestoneGroup.server';
+import { getMilestoneGroupAndItsMilesonesById, getMilestoneGroupById } from '~/models/milestoneGroup.server';
 import DndMilestones from '~/components/dnds/milestones/DndMilestones';
 import MilestoneForm from '~/components/forms/milestones/MilestoneForm';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 import { ArrayOfObjectsStrToDates } from '~/components/utilities/helperFunctions';
 import { createMilestone, getMilestonesByMilestoneGroupId, updateMilestonesOrder } from '~/models/milestone.server';
 
-import type { Milestone } from '@prisma/client';
-import type { CreateMilestone, MilestoneWithStrDates } from '~/types/milestoneTypes';
+import type { Milestone, MilestoneGroup } from '@prisma/client';
+import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime';
+import type { CreateMilestone, MilestoneGroupsWithMilestones, MilestoneGroupsWithMilestonesWithStringDates, MilestoneGroupsWithStrDates, MilestoneWithStrDates } from '~/types/milestoneTypes';
+import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   await requireUserId(request);
@@ -23,8 +24,8 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   try {
     const group = await getMilestoneGroupById(milestoneGroupId);
     if (!group) return redirect('/dash/desires')
-    const allMilestonesByGroup = await getMilestonesByMilestoneGroupId(milestoneGroupId);
-    return allMilestonesByGroup
+    const groupAndMilestones = await getMilestoneGroupAndItsMilesonesById(milestoneGroupId);
+    return groupAndMilestones
   } catch (error) { throw error }
 }
 
@@ -68,12 +69,13 @@ export const action = async ({ request, params }: ActionArgs) => {
 
 function MilestonesPage() {
 
-  const [milestones, setMilestones] = useState<Milestone[]>([]);
-  const loadedMilestones: Milestone[] | undefined = useGetAllMilestonesForGroup()
+  const [milestoneGroup, setMilestoneGroup] = useState<MilestoneGroupsWithMilestones>();
+  const loadedMilestones: MilestoneGroupsWithMilestones | undefined = useGetAllMilestonesForGroup()
+  // const loadedMilestones: MilestoneGroupsWithMilestonesWithStringDates | undefined = useLoaderData()
 
   useEffect(() => {
     if (!loadedMilestones) return
-    setMilestones(loadedMilestones)
+    setMilestoneGroup(loadedMilestones)
   }, [loadedMilestones])
 
 
@@ -83,20 +85,20 @@ function MilestonesPage() {
 
       <article className="flex gap-12 flex-wrap w-full   ">
 
-        <section className='flex-1 max-w-max  '>
-          <div className={`w-full min-w-[350px]`} >
-            <BasicTextAreaBG  >
-              <DndMilestones
-                passedArray={milestones}
-                dndTitle={'Milestones'}
-              />
-            </BasicTextAreaBG>
-          </div >
-        </section>
+        {/* <section className='flex-1 max-w-[600px]  '> */}
+        {/* <div className={`w-full min-w-[350px]`} > */}
+        <BasicFormAreaBG title={milestoneGroup?.title} >
+          <DndMilestones
+            passedMilestoneGroup={milestoneGroup}
+            dndTitle={'Milestone Group'}
+          />
+        </BasicFormAreaBG>
+        {/* </div > */}
+        {/* </section> */}
 
-        <section className='flex-1 '>
-          <MilestoneForm />
-        </section>
+        {/* <section className='flex-1 '> */}
+        {/* <MilestoneForm /> */}
+        {/* </section> */}
 
       </article>
     </>
@@ -106,23 +108,42 @@ function MilestonesPage() {
 export default MilestonesPage
 
 
-export const useGetAllMilestonesForGroup = (): Milestone[] | undefined => {
+export const useGetAllMilestonesForGroup = (): MilestoneGroupsWithMilestones | undefined => {
 
   const navigate = useNavigate();
-  const loaderData = useLoaderData();
-  const [milestones, setMilestones] = useState<Milestone[]>();
+  const loaderData: MilestoneGroupsWithMilestonesWithStringDates = useLoaderData();
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [milestoneGroup, setMilestoneGroup] = useState<MilestoneGroup>();
+
 
   useEffect(() => {
-    const milestonesWithStrDates: MilestoneWithStrDates[] = loaderData;
-    if (milestonesWithStrDates === undefined) return navigate('/dash/desires');
-    const datekeys = ['createdAt', 'updatedAt', 'dueDate', 'completedAt'];
-    const milestonesWithProperDates: Milestone[] = ArrayOfObjectsStrToDates({ items: milestonesWithStrDates, dateKeys: datekeys });
-    setMilestones(milestonesWithProperDates);
+    if (!loaderData) return
+    const { milestones: milestonesWithStrDates, ...groupWithStrDates } = loaderData;
+    const groupWithStrDatesIntoArray: MilestoneGroupsWithStrDates[] = [groupWithStrDates];
+    const groupDatekeys = ['createdAt', 'updatedAt'];
+    const milestoneGroupWithProperDates: MilestoneGroup[] = ArrayOfObjectsStrToDates({ items: groupWithStrDatesIntoArray, dateKeys: groupDatekeys });
+    setMilestoneGroup(milestoneGroupWithProperDates[0]);
+
+    if (milestonesWithStrDates) {
+      const milestonesDatekeys = ['createdAt', 'updatedAt', 'dueDate', 'completedAt'];
+      const milestonesWithProperDates: Milestone[] = ArrayOfObjectsStrToDates({ items: milestonesWithStrDates, dateKeys: milestonesDatekeys });
+      setMilestones(milestonesWithProperDates);
+    }
   }, [loaderData, navigate]);
 
-  return milestones;
-
-
+  if (milestoneGroup) {
+    return {
+      ...milestoneGroup,
+      milestones,
+    };
+  }
+  return undefined;
 }
+
+
+
+
+
+
 
 

@@ -159,3 +159,8 @@ Milestones should be specific and measureable.
 Values -> Desires -> Outcomes -> <b>Evidence of Progress towards Outcome</b>
 
 `
+
+
+export const DndGuideline = `
+Drag and drop the outcomes into the order of importance to you.
+`
