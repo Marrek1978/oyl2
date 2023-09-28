@@ -22,8 +22,10 @@ function SolidBtnGreyBlue({ text, onClickFunction, icon, disabledBtnBoolean = fa
       hover:cursor-pointer
       hover:text-primary hover:bg-primary/30
       '>
-      {text}
-      {icon}
+      <div className='flex gap-2 items-center text-md uppercase '>
+        {text}
+        {icon}
+      </div>
     </button>
   )
 }

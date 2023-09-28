@@ -1,7 +1,7 @@
 import React from 'react'
-import { GetHeaderBgColor } from '~/components/forms/GetHeaderBgColor';
-import H2WithLink from '~/components/titles/H2WithLink';
 import HeadingH2 from '~/components/titles/HeadingH2';
+import H2WithLink from '~/components/titles/H2WithLink';
+import { GetHeaderBgColor } from '~/components/forms/GetHeaderBgColor';
 
 interface BasicFormAreaBGProps {
   children: React.ReactNode;
@@ -10,7 +10,6 @@ interface BasicFormAreaBGProps {
   linkDestination?: string;
   linkColor?: string;
   linkText?: string;
-
 }
 
 function BasicFormAreaBG({ children, title, maxWidth = '800px', linkDestination, linkColor = 'primary', linkText }: BasicFormAreaBGProps) {
@@ -25,7 +24,6 @@ function BasicFormAreaBG({ children, title, maxWidth = '800px', linkDestination,
       min-w-[350px]
       max-h-full
       overflow-auto
-       
     `}>
 
       {/* //**************HEADER *************** */}
@@ -36,7 +34,7 @@ function BasicFormAreaBG({ children, title, maxWidth = '800px', linkDestination,
         text-xl font-mont uppercase font-normal tracking-widest 
         text-primary-300
         overflow-ellipsis  
-      `}>
+       `}>
 
         <div className='max-w-prose'>
           {linkDestination && linkText && (
@@ -54,6 +52,9 @@ function BasicFormAreaBG({ children, title, maxWidth = '800px', linkDestination,
 
         </div>
       </div>
+
+
+      {/* //********    FORM     *********** */}
       {children}
     </div>
   )

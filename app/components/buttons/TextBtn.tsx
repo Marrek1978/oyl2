@@ -8,16 +8,19 @@ interface TextBtnProps {
   type?: 'button' | 'submit' | 'reset' | undefined;
   onMouseOver?: MouseEventHandler<HTMLButtonElement>;
   onMouseOut?: MouseEventHandler<HTMLButtonElement>;
+  textSizeClass?: string;
+  textColorDaisyUI?: string;
 }
 
 
-function TextBtn({ text, onClickFunction=()=>{}, icon, color = 'text-primary', type = 'submit', onMouseOver, onMouseOut }: TextBtnProps) {
+function TextBtn({ text, onClickFunction=()=>{}, icon, color = 'text-primary', type = 'submit', onMouseOver, onMouseOut , textSizeClass, textColorDaisyUI='text-base-content'}: TextBtnProps) {
 
   const getHoverClass = color === 'error' ? 'hover:text-red-500' : 'hover:opacity-70'
 
   return (
     <>
       <button className={`bg-none ${color}
+        ${textColorDaisyUI}
         font-bold font-mont rounded-none
         ${getHoverClass} 
         hover:underline hover:scale-105 hover:z-50 
@@ -28,7 +31,7 @@ function TextBtn({ text, onClickFunction=()=>{}, icon, color = 'text-primary', t
         onMouseOver={onMouseOver}
         onMouseOut={onMouseOut}
       >
-        <div className=' flex gap-2 items-center'>
+        <div className={` flex gap-2 items-center ${textSizeClass}`}>
           <div>{text}</div>
           <div>{icon}</div>
         </div>

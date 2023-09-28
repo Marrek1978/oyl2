@@ -1,26 +1,26 @@
-import { useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from '@dnd-kit/sortable';
 
-import { Link } from "@remix-run/react";
-import DndHoverDisplay from "./DndHoverDisplay";
 import TextBtn from "~/components/buttons/TextBtn";
+import { Link, useFetcher } from "@remix-run/react";
 import { ArrowRight, EditIcon } from "~/components/utilities/icons";
 
 import type { Milestone } from "@prisma/client";
+import { formatDateDayDate } from '~/utils/functions';
 
 interface MilestoneSortableProps {
   id: string;
-  item: Milestone
+  passedMilestone: Milestone
   arrayLength: number;
   linkTitle?: string;
+  index: number
+  isLastItem: boolean
 }
 
 
-function DndMilestonesSortable({ id, item, linkTitle = 'Edit' }: MilestoneSortableProps) {
+function DndMilestonesSortable({ id, passedMilestone, linkTitle = 'Edit', index, isLastItem }: MilestoneSortableProps) {
 
-  const [isOpenMileStoneModal, setIsOpenMileStoneModal] = useState(false)
-  const [hoverTimer, setHoverTimer] = useState<NodeJS.Timeout | null>(null);
+  const fetcher = useFetcher();
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: id });
 
   const style = {
@@ -29,21 +29,30 @@ function DndMilestonesSortable({ id, item, linkTitle = 'Edit' }: MilestoneSortab
   };
 
 
-  const handleMouseOver = () => {
-    console.log('mouse over');
-    const timer = setTimeout(() => {
-      setIsOpenMileStoneModal(true);
-    }, 1200); // 2000 milliseconds = 2 seconds
-    setHoverTimer(timer);
+  const handleCompleteClicked = (passedMilestone: Milestone) => {
+
+    const milestone = {
+      ...passedMilestone,
+      isComplete: !passedMilestone.isComplete,
+      completedAt: passedMilestone.isComplete ? null : new Date()
+    }
+    const complete = {
+      milestone,
+      actionType: 'complete'
+    }
+    const submitedString = JSON.stringify(complete)
+    try {
+      fetcher.submit({
+        submitedString
+      }, {
+        method: 'PUT',
+      })
+    } catch (error) { throw error }
   }
 
 
-  const handleMouseOut = () => {
-    setIsOpenMileStoneModal(false);
-    if (hoverTimer) {
-      clearTimeout(hoverTimer);
-      setHoverTimer(null);
-    }
+  const onClickHandler = (milestone: Milestone) => {
+    handleCompleteClicked(milestone)
   }
 
 
@@ -51,41 +60,55 @@ function DndMilestonesSortable({ id, item, linkTitle = 'Edit' }: MilestoneSortab
     <>
       <div key={id} ref={setNodeRef} style={style} {...attributes} {...listeners} className="mt-0">
         <div id={id} className='
-        relative
-          my-4
-          font-poppins
+          relative my-4
+          font-poppins text-left text-base-content
           cursor-pointer 
-          text-left text-base-content
           transition duration-500
           hover:bg-primary/30 
           hover:text-primary-focus
           max-w-prose
-          '
-          onMouseOver={handleMouseOver}
-          onMouseOut={handleMouseOut}
-        >
-          {isOpenMileStoneModal && (
-            <DndHoverDisplay
-              item={item} />
-          )}
-          <div>
-            <div className=" flex">
-              <div className="step step-primary font-semibold capitalize">{item?.title}</div>
+          h-full max-h-[120px]
+          '>
+
+          <div className="grid grid-rows-[70px_40px_30px]   ">
+            <div
+              className={`step ${passedMilestone.isComplete && 'step-primary'} font-semibold capitalize  selection:`}
+              data-content={`${passedMilestone.isComplete ? '✓' : index + 1}`}
+              onClick={() => onClickHandler(passedMilestone)}
+            >
+              {passedMilestone?.title}
             </div>
 
-            <div className='text-xs'>Due Date</div><div> {item?.dueDate?.toString()}</div>
+            <div className="">
+              {passedMilestone?.isComplete && (
+                <div>
+                  <div className='text-xs font-semibold text-center text-success'> {formatDateDayDate(passedMilestone?.completedAt)}</div>
+                </div>
+              )}
 
-            <Link to={id}>
-              <TextBtn
-                text={linkTitle}
-                icon={EditIcon}
-              />
-            </Link>
+              {(passedMilestone?.dueDate && !passedMilestone?.isComplete) && (
+                <div>
+                  <div className='text-xs font-semibold text-center'> {formatDateDayDate(passedMilestone?.dueDate)}</div>
+                </div>
+              )}
+            </div>
+
+            <div className=" text-center">
+              <Link to={id}>
+                <TextBtn
+                  text={linkTitle}
+                  icon={EditIcon}
+                  textSizeClass='text-xs'
+                />
+              </Link>
+            </div>
           </div>
-
         </div>
-      </div>
-      <div className="pt-4 ">  {ArrowRight} </div>
+      </div >
+
+      {(!isLastItem) && (
+        <div className="pt-4 text-primary">  {ArrowRight} </div>
+      )}
     </>
   )
 }

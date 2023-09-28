@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, } from 'react';
-import { Form, useActionData, useParams, useNavigation } from '@remix-run/react'
+import { Form, useActionData, useParams, useNavigation, useFetcher } from '@remix-run/react'
 
 import FormButtons from '../FormButtons'
 import DatePicker from '~/components/list/DatePicker'
@@ -9,23 +9,24 @@ import InputLabelWithGuideLineLink from '../InputLabelWithGuideLineLink'
 import ToggleWithLabelAndGuideLineLink from '../ToggleWithLabelAndGuideLineLink'
 import { CoreValue, CoreValueStatement } from '~/components/utilities/Guidelines'
 import { MilestoneGroupDefaultText } from '~/components/utilities/PlaceHolderTexts'
-import { useGetAllMilestonesForGroup } from '~/routes/dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups_.$milestoneGroupId.milestones'
 
 import type { Milestone } from '@prisma/client'
+import type { CreateMilestone } from '~/types/milestoneTypes';
+// import { useGetAllMilestonesForGroup } from '~/routes/dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId';
 
 
 type Props = {
   milestone?: Milestone
   isNew?: boolean
+  milestoneArrayLength?: number
 }
 
-function MilestoneForm({ milestone, isNew = true }: Props) {
+function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props) {
 
   const params = useParams();
+  const fetcher = useFetcher();
   const navigation = useNavigation();
   const validationErrors = useActionData()
-  const loadedMilestonesArray = useGetAllMilestonesForGroup()
-
 
   const [id, setId] = useState<string>('')
   const [title, setTitle] = useState<string>('')
@@ -37,7 +38,10 @@ function MilestoneForm({ milestone, isNew = true }: Props) {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [completedDate, setCompletedDate] = useState<Date | null>(null)
 
+  const loadedMilestone = useMemo(() => milestone, [milestone])
+
   const paramsGroupId = useMemo(() => params.milestoneGroupId, [params.milestoneGroupId])
+  if (!paramsGroupId) throw new Error('Milestone Group Id is missing')
   const saveBtnTxt = useMemo(() => saveBtnText(isNew, isSubmitting, 'Milestone'), [isNew, isSubmitting])
   const headerTxt = useMemo(() => headerText(isNew, 'Milestone', milestone?.title || ''), [isNew, milestone?.title])
 
@@ -52,24 +56,16 @@ function MilestoneForm({ milestone, isNew = true }: Props) {
     setIsSubmitting(navigation.state === 'submitting')
   }, [navigation.state])
 
-  useEffect(() => {
-  }, [navigation.state])
-
 
   useEffect(() => {
-    console.log('re-assigning values to default values')
-    setId(milestone?.id || '')
-    setTitle(milestone?.title || '')
-    setDueDate(milestone?.dueDate || null)
-    setDescription(milestone?.description || '')
-    setIsCompleted(milestone?.isComplete || false)
-    setCompletedDate(milestone?.completedAt || null)
-  }, [milestone?.id])
-
-  useEffect(() => {
-    setSortOrder(milestone?.sortOrder || loadedMilestonesArray?.milestones?.length || 0)
-  }, [milestone, loadedMilestonesArray])
-
+    setId(loadedMilestone?.id || '')
+    setTitle(loadedMilestone?.title || '')
+    setDueDate(loadedMilestone?.dueDate || null)
+    setDescription(loadedMilestone?.description || '')
+    setIsCompleted(loadedMilestone?.isComplete || false)
+    setCompletedDate(loadedMilestone?.completedAt || null)
+    setSortOrder(loadedMilestone?.sortOrder || milestoneArrayLength || 0)
+  }, [loadedMilestone, milestoneArrayLength])
 
 
   useEffect(() => {
@@ -91,19 +87,75 @@ function MilestoneForm({ milestone, isNew = true }: Props) {
     setIsCompleted(!isCompleted)
   }
 
+
   useEffect(() => {
     if (completedDate === null && isCompleted) setIsCompleted(false)
     if (completedDate !== null && !isCompleted) setIsCompleted(true)
   }, [completedDate, isCompleted])
 
 
-  console.log('rendering')
+  const handleSave = async () => {
+    const milestoneObj: CreateMilestone = {
+      title: title,
+      description: description,
+      sortOrder: sortOrder,
+      dueDate: dueDate,
+      isComplete: isCompleted,
+      completedAt: completedDate,
+      milestoneGroupId: paramsGroupId
+    }
+    const milestoneString = JSON.stringify(milestoneObj);
+    try {
+      fetcher.submit({
+        milestoneString
+      }, {
+        method: 'POST',
+      })
+    } catch (error) { throw error }
+    clearListState();
+  }
+
+
+  // const handleEdits = async () => {
+  const handleEdits = async () => {
+    const milestoneObj: Milestone = {
+      id: id,
+      createdAt: milestone?.createdAt || new Date(),
+      updatedAt: new Date(),
+      title: title,
+      description: description,
+      sortOrder: sortOrder,
+      dueDate: dueDate,
+      isComplete: isCompleted,
+      completedAt: completedDate,
+      milestoneGroupId: paramsGroupId
+    }
+    const milestoneString = JSON.stringify(milestoneObj);
+    try {
+      fetcher.submit({
+        milestoneString
+      }, {
+        method: 'POST',
+      })
+    } catch (error) { throw error }
+    clearListState();
+  }
+
+
+  const clearListState = () => {
+    setId('')
+    setTitle('')
+    setDueDate(null)
+    setDescription('')
+    setIsCompleted(false)
+    setCompletedDate(null)
+  }
 
   return (
     <BasicFormAreaBG title={headerTxt}  >
 
-      <Form method='post' className='mx-8'>
-        <div className="form-control vert-space-between-inputs gap-y-6   ">
+      <Form method='post' className='m-8'>
+        <div className="form-control gap-y-6   ">
           <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
           <input type="string" name='id' value={id} hidden readOnly />
           <input type="string" name='groupId' value={paramsGroupId} hidden readOnly />
@@ -124,6 +176,7 @@ function MilestoneForm({ milestone, isNew = true }: Props) {
             />
             {TitleError}
           </div>
+
 
           <div className=' mb-0  '>
             <InputLabelWithGuideLineLink
@@ -168,20 +221,22 @@ function MilestoneForm({ milestone, isNew = true }: Props) {
             </div>
           </div>
 
-
           {/* //**************BUTTONS ***************  */}
+          <div className='mt-6'>
 
-          <FormButtons
-            saveBtnTxt={saveBtnTxt}
-            isSaveable={isSaveable}
-            isNew={isNew}
-            deleteBtnText='Delete Milestone'
-
-          />
-
+            <FormButtons
+              isNew={isNew}
+              saveBtnTxt={saveBtnTxt}
+              isSaveable={isSaveable}
+              saveBtnType='button'
+              saveBtnOnClickFunction={isNew ? handleSave : handleEdits}
+              showCloseBtn={true}
+              deleteBtnText='Delete Milestone'
+            />
+          </div>
         </div>
       </Form>
-    </BasicFormAreaBG>
+    </BasicFormAreaBG >
   )
 }
 

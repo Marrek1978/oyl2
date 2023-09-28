@@ -9,7 +9,7 @@ interface SolidBtnProps {
   type?: 'button' | 'submit' | 'reset' | undefined;
 }
 
-function SolidBtn({ text, onClickFunction=()=>{}, icon, daisyUIBtnColor='primary', disableBtn=false, type='submit' }: SolidBtnProps) {
+function SolidBtn({ text, onClickFunction = () => { }, icon, daisyUIBtnColor = 'primary', disableBtn = false, type = 'submit' }: SolidBtnProps) {
   return (
     <>
       <button
@@ -20,7 +20,7 @@ function SolidBtn({ text, onClickFunction=()=>{}, icon, daisyUIBtnColor='primary
       >
         <div className='flex gap-2 items-center text-md uppercase '>
           {text}
-            {icon}
+          {icon}
         </div>
       </button>
 

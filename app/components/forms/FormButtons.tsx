@@ -1,55 +1,92 @@
 import { Link } from '@remix-run/react'
 
+import TextBtn from '../buttons/TextBtn'
 import SolidBtn from '../buttons/SolidBtn'
-import OutlinedBtn from '../buttons/OutlinedBtn'
+// import OutlinedBtn from '../buttons/OutlinedBtn'
 import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue'
 import { closeIcon, dbIcon, trashIcon } from '../utilities/icons'
 
 
 type Props = {
-  saveBtnTxt:string;
-  isSaveable:boolean;
-  isNew?:boolean;
-  deleteBtnText?:string;
- 
+  isNew?: boolean;
+  saveBtnTxt: string;
+  isSaveable: boolean;
+  saveBtnType?: 'submit' | 'button';
+  saveBtnOnClickFunction?: () => void;
+  hideSaveBtn?: boolean;
+
+  showCloseBtn?: boolean;
+  closeBtnText?: string;
+
+  deleteBtnText?: string;
+
 }
 
-function FormButtons({saveBtnTxt, isSaveable, isNew=true, deleteBtnText='Delete'}: Props) {
+function FormButtons({
+  isNew = true,
+  saveBtnTxt,
+  isSaveable,
+  saveBtnType = 'submit',
+  saveBtnOnClickFunction,
+  hideSaveBtn = false,
+  showCloseBtn = false,
+  closeBtnText = 'Close w/o saving',
+  deleteBtnText = 'Delete',
+}: Props) {
+
   return (
-   <>
-    <div className='vert-space-between-inputs my-8 w-full'>
+    <>
+      <div className=' w-full flex flex-wrap gap-6  '>
+
+        {/* //! Delete Button */}
+        {!isNew && (
+          <div className='flex-1 min-w-[180px] self-center text-center  '>
+            <Link to='delete' >
+              {/* <OutlinedBtn
+                text={deleteBtnText}
+                onClickFunction={() => { }}
+                icon={trashIcon}
+                daisyUIBtnColor='error'
+              /> */}
+              <TextBtn
+                text={deleteBtnText}
+                color='error'
+                icon={trashIcon}
+                textColorDaisyUI={'text-error'}
+              />
+            </Link>
+          </div>
+        )}
+
+        {/* // ?  Close Button */}
+        {(!isNew || showCloseBtn) && (
+          <div className='flex-1 min-w-[180px]'>
+            <Link to='..' >
+              <SolidBtnGreyBlue text={closeBtnText}
+                onClickFunction={() => { }}
+                icon={closeIcon}
+              />
+            </Link>
+          </div>
+        )}
+
+
+        {/* // *  Save Button */}
+        {!hideSaveBtn && (
+          <div className='flex-1 min-w-[180px]'>
             <SolidBtn text={saveBtnTxt}
-              onClickFunction={() => { }}
+              onClickFunction={saveBtnOnClickFunction}
               icon={dbIcon}
               disableBtn={!isSaveable}
+              type={saveBtnType}
             />
-
-            {!isNew &&
-              (<>
-                <div className='two-button-spacing vert-space-between-inputs mb-8'>
-                  <div className='flex-1'>
-                    <Link to='delete' >
-                      <OutlinedBtn
-                        text={deleteBtnText}
-                        onClickFunction={() => { }}
-                        icon={trashIcon}
-                        daisyUIBtnColor='error'
-                      />
-                    </Link>
-                  </div>
-
-                  <div className='flex-1'>
-                    <Link to='..' >
-                      <SolidBtnGreyBlue text='Close w/o saving'
-                        onClickFunction={() => { }}
-                        icon={closeIcon}
-                      />
-                    </Link>
-                  </div>
-                </div>
-              </>)}
           </div>
-          </>
+
+        )}
+
+
+      </div>
+    </>
   )
 }
 

@@ -5,20 +5,18 @@ import type { DragEndEvent } from "@dnd-kit/core";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { arrayMove, SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
 
-import { SuccessMessageTimeout } from '~/components/dnds/constants';
 
+import DndInfo from '../DndInfo';
 import Modal from '~/components/modals/Modal';
 import useInOrder from '~/components/dnds/useInOrder';
 import SuccessMessage from '~/components/modals/SuccessMessage';
+import { SuccessMessageTimeout } from '~/components/dnds/constants';
 import useResetSortOrder from '~/components/dnds/useResetSortOrder';
 import useCustomSensors from '~/components/dnds/useCustomDndSensors';
-
-import type { Milestone, MilestoneGroup } from '@prisma/client';
 import DndMilestonesSortable from '~/components/dnds/milestones/DndMilestonesSortable';
 
+import type { Milestone } from '@prisma/client';
 import type { MilestoneGroupsWithMilestones } from '~/types/milestoneTypes';
-import DndInfo from '../DndInfo';
-// type Sortable<T extends { sortOrder: number } = { sortOrder: number }> = T;
 
 interface Props {
   passedMilestoneGroup: MilestoneGroupsWithMilestones | undefined;
@@ -30,7 +28,6 @@ function DndMilestones({ passedMilestoneGroup, dndTitle }: Props) {
 
   const fetcher = useFetcher();
   const [successMessage, setSuccessMessage] = useState('');
-  const [milestoneGroup, setMilestoneGroup] = useState<MilestoneGroup>();
   const [milestonesArray, setMilestonesArray] = useState<Milestone[]>([]);
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
 
@@ -38,6 +35,7 @@ function DndMilestones({ passedMilestoneGroup, dndTitle }: Props) {
   const inOrder = useInOrder()
   const sensors = useCustomSensors();
   const reOrderItems = useResetSortOrder();
+
 
   const setStateArrayInProperOrder = useCallback((array: Milestone[]) => {
     const isSequentialOrder: boolean = inOrder(array)
@@ -50,24 +48,13 @@ function DndMilestones({ passedMilestoneGroup, dndTitle }: Props) {
   }, [reOrderItems, inOrder])
 
 
-
   useEffect(() => {
     if (!passedMilestoneGroup) return
     const { milestones, ...group } = passedMilestoneGroup
     if (!group) return
-    setMilestoneGroup(group)
     if (!milestones) return
     setStateArrayInProperOrder(milestones)
-    // setMilestonesArray(milestones)
   }, [passedMilestoneGroup, setStateArrayInProperOrder])
-
-
-
-
-  // useEffect(() => {
-  //   if (!milestoneGroup?.milestones) return
-  //   setStateArrayInProperOrder(milestoneGroup.milestones)
-  // }, [milestoneGroup?.milestones, reOrderItems, setStateArrayInProperOrder])
 
 
   useEffect(() => {
@@ -80,18 +67,19 @@ function DndMilestones({ passedMilestoneGroup, dndTitle }: Props) {
 
   const handleEditSortOrder = useCallback(async () => {
     if (saveNewSortOrder === false) return
-
-    const itemsString = JSON.stringify(milestonesArray);
+    const editOrder = {
+      milestonesArray,
+      actionType: 'editOrder'
+    }
+    const submitedString = JSON.stringify(editOrder);
     try {
       fetcher.submit({
-        itemsString
+        submitedString
       }, {
         method: 'PUT',
-        // action: '/dash/values',
       })
     } catch (error) { throw error }
     setSaveNewSortOrder(false);
-
   }, [milestonesArray, fetcher, saveNewSortOrder])
 
 
@@ -114,8 +102,6 @@ function DndMilestones({ passedMilestoneGroup, dndTitle }: Props) {
   }
 
 
-
-
   return (
     <>
       {successMessage && (
@@ -123,8 +109,8 @@ function DndMilestones({ passedMilestoneGroup, dndTitle }: Props) {
           <SuccessMessage
             text={successMessage}
           />
-        </Modal>)
-      }
+        </Modal>
+      )}
 
       <DndContext
         collisionDetection={closestCenter}
@@ -135,21 +121,23 @@ function DndMilestones({ passedMilestoneGroup, dndTitle }: Props) {
           items={milestonesArray?.map(item => item.id)}
           strategy={horizontalListSortingStrategy}
         >
-          {/* <div className='w-full flex start-end'> */}
           <DndInfo />
-          {/* </div> */}
-          <div className='steps grid-none border-2 border-gray-200  '>
-            <div className="flex flex-wrap max-w-[1200px] ">
-              {milestonesArray?.map((item) => (
-                <DndMilestonesSortable
-                  key={item.id}
-                  id={item.id}
-                  item={item}
-                  arrayLength={milestonesArray?.length}
-                  linkTitle='Edit'
 
-                />
-              ))}
+          <div className='steps grid-none w-full flex justify-center'>
+            <div className="flex flex-wrap max-w-[1200px] ">
+              {milestonesArray?.map((item, index) => {
+                return (
+                  <DndMilestonesSortable
+                    key={item.id}
+                    id={item.id}
+                    passedMilestone={item}
+                    arrayLength={milestonesArray?.length}
+                    linkTitle='Edit'
+                    index={index}
+                    isLastItem={index === milestonesArray.length - 1}
+                  />
+                )
+              })}
             </div>
           </div>
         </SortableContext>

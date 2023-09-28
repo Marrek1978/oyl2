@@ -15,3 +15,9 @@ export const formatDate = (dateString: Date | null) => {
   const date = new Date(dateString);
   return `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}, ${date.getFullYear()}`;
 };
+
+export const formatDateDayDate = (dateString: Date | null) => {
+  if (!dateString) return null;
+  const date = new Date(dateString);
+  return `${date.toLocaleString('default', { weekday: 'short', month:'short', day:'numeric' } )} `;
+};
