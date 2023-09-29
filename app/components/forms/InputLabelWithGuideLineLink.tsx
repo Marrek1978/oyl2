@@ -3,22 +3,21 @@ import WithGuidelineLink from '../forms/WithGuidelineLink';
 
 
 interface InputLabelWithGuideLineLinkProps {
-  text: string;
+  inputTitle: string;
   guideline: string;
   title: string;
 }
 
-function InputLabelWithGuideLineLink({ text, guideline, title }: InputLabelWithGuideLineLinkProps) {
+function InputLabelWithGuideLineLink({ inputTitle, guideline, title }: InputLabelWithGuideLineLinkProps) {
 
   return (
     <>
       <div className="w-full">
         <WithGuidelineLink
-          text={text}
           guideline={guideline}
-          title={title}
+          guideLineTitle={'title'}
         >
-          <InputLabel text={text} />
+          <InputLabel inputTitle={inputTitle} />
         </WithGuidelineLink>
       </div>
     </>

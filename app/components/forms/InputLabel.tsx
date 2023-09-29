@@ -1,15 +1,15 @@
 
 interface InputLabelProps {
-  text: string;
-  width?: string;
+  inputTitle: string;
+  widthTailwind?: string;
 }
 
-function InputLabel({ text, width = 'w-full' }: InputLabelProps) {
+function InputLabel({ inputTitle, widthTailwind = 'w-full' }: InputLabelProps) {
   return (
     <>
-      <div className={`${width}   `}>
+      <div className={`${widthTailwind} `}>
         <label className="label p-0">
-          <span className="label-text text-base font-mont font-semibold">{text}</span>
+          <span className="label-text text-base font-mont font-semibold">{inputTitle}</span>
         </label>
 
       </div>

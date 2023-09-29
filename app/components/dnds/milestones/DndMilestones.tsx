@@ -126,6 +126,7 @@ function DndMilestones({ passedMilestoneGroup, dndTitle }: Props) {
           <div className='steps grid-none w-full flex justify-center'>
             <div className="flex flex-wrap max-w-[1200px] ">
               {milestonesArray?.map((item, index) => {
+                console.log('item.completedAt', typeof item.completedAt)
                 return (
                   <DndMilestonesSortable
                     key={item.id}

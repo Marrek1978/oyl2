@@ -1,27 +1,24 @@
 import { parse } from 'querystring'
-import { useEffect, useState } from 'react'
-import { Link, Outlet, useLoaderData, useNavigate } from '@remix-run/react'
+import { Link, Outlet, useLoaderData } from '@remix-run/react'
 
 import Modal from '~/components/modals/Modal'
 import TextBtn from '~/components/buttons/TextBtn'
 import FormButtons from '~/components/forms/FormButtons'
-import { DefaultFormWidth } from '~/components/dnds/constants'
 import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG'
 import DndMilestones from '~/components/dnds/milestones/DndMilestones'
-import { ArrayOfObjectsStrToDates } from '~/components/utilities/helperFunctions'
 import { getMilestoneGroupAndItsMilesonesById } from '~/models/milestoneGroup.server'
 import { updateMilestoneCompleted, updateMilestonesOrder } from '~/models/milestone.server'
+import { transformMilestoneArrayDataDates, transformMilestoneGroupDataDates } from '~/components/utilities/helperFunctions'
 
-import type { Milestone, MilestoneGroup } from '@prisma/client'
+import type { Milestone } from '@prisma/client'
 import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime';
-import type { MilestoneGroupsWithMilestones, MilestoneGroupsWithMilestonesWithStringDates, MilestoneGroupsWithStrDates } from '~/types/milestoneTypes'
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   const groupId = params.milestoneGroupId;
   if (!groupId) throw new Error('No milestoneGroupId was provided')
   try {
     const milestoneGroupWithMilestones = await getMilestoneGroupAndItsMilesonesById(groupId);
-    return { milestoneGroupWithMilestones }
+    return milestoneGroupWithMilestones
   } catch (error) { throw error }
 }
 
@@ -57,8 +54,15 @@ export const action = async ({ request, params }: ActionArgs) => {
 function MilestoneGroupPage() {
 
   const loaderData = useLoaderData();
-  const { milestoneGroupWithMilestones } = loaderData;
-  const { milestones, ...milestoneGroup } = milestoneGroupWithMilestones;
+  const { milestones: loadedMilestones, ...loadedGroup } = loaderData;
+
+  const milestoneGroup = transformMilestoneGroupDataDates(loadedGroup)
+  const milestoneArrWithProperDates: Milestone[] = transformMilestoneArrayDataDates(loadedMilestones)
+
+  const milestoneGroupWithMilestones = {
+    ...milestoneGroup,
+    milestones: milestoneArrWithProperDates
+  }
 
   const header = (
     <>
@@ -76,12 +80,12 @@ function MilestoneGroupPage() {
     <>
       <Outlet />
       <Modal >
-        <div className={`w-[${DefaultFormWidth}] min-w-[250px] felx-1`}>
+        <div className={`w-[1200px] min-w-[250px] felx-1`}>
 
           {/* //!  make component */}
 
           {/* // add spinners to dnd */}
-          <BasicFormAreaBG title={header} >
+          <BasicFormAreaBG title={header} maxWidth='1200px' >
             <div className='m-8 flex flex-col gap-8'>
 
               {milestoneGroup?.description && (
@@ -123,37 +127,42 @@ function MilestoneGroupPage() {
 export default MilestoneGroupPage
 
 
-export const useGetAllMilestonesForGroup = (): MilestoneGroupsWithMilestones | undefined => {
+// export const useGetAllMilestonesForGroup = (): MilestoneGroupsWithMilestones | undefined => {
 
-  const navigate = useNavigate();
-  const loaderData: MilestoneGroupsWithMilestonesWithStringDates = useLoaderData();
-  const [milestones, setMilestones] = useState<Milestone[]>([]);
-  const [milestoneGroup, setMilestoneGroup] = useState<MilestoneGroup>();
+//   const navigate = useNavigate();
+//   const loaderData = useLoaderData();
+//   const { milestones: loadedMilestones, ...loadedGroup } = loaderData;
+//   console.log('loadedGroup', loadedGroup)
+//   console.log('loadedMilestones', loadedMilestones)
+//   const [milestones, setMilestones] = useState<Milestone[]>([]);
+//   const [milestoneGroup, setMilestoneGroup] = useState<MilestoneGroup>();
 
+//   useEffect(() => {
+//     if (!loadedGroup) return
+//     const groupDatekeys = ['createdAt', 'updatedAt'];
+//     const groupWithProperDates = ObjectStrToDates({item:loadedGroup, dateKeys:groupDatekeys})
+//     console.log('groupWithProperDates', groupWithProperDates)
+//     const groupWithStrDatesIntoArray: MilestoneGroupsWithStrDates[] = [groupWithStrDates];
+//     const milestoneGroupWithProperDates = ArrayOfObjectsStrToDates({ items: groupWithStrDatesIntoArray, dateKeys: groupDatekeys });
+//     setMilestoneGroup(milestoneGroupWithProperDates[0]);
 
-  useEffect(() => {
-    if (!loaderData) return
-    const { milestones: milestonesWithStrDates, ...groupWithStrDates } = loaderData;
-    const groupWithStrDatesIntoArray: MilestoneGroupsWithStrDates[] = [groupWithStrDates];
-    const groupDatekeys = ['createdAt', 'updatedAt'];
-    const milestoneGroupWithProperDates: MilestoneGroup[] = ArrayOfObjectsStrToDates({ items: groupWithStrDatesIntoArray, dateKeys: groupDatekeys });
-    setMilestoneGroup(milestoneGroupWithProperDates[0]);
+//     console.log('milestoneGroupWithProperDates from helper', typeof milestoneGroupWithProperDates[0].createdAt)
 
-    if (milestonesWithStrDates) {
-      const milestonesDatekeys = ['createdAt', 'updatedAt', 'dueDate', 'completedAt'];
-      const milestonesWithProperDates: Milestone[] = ArrayOfObjectsStrToDates({ items: milestonesWithStrDates, dateKeys: milestonesDatekeys });
-      setMilestones(milestonesWithProperDates);
-    }
-  }, [loaderData, navigate]);
+//     if (milestonesWithStrDates) {
+//       const milestonesDatekeys = ['createdAt', 'updatedAt', 'dueDate', 'completedAt'];
+//       const milestonesWithProperDates: Milestone[] = ArrayOfObjectsStrToDates({ items: milestonesWithStrDates, dateKeys: milestonesDatekeys });
+//       setMilestones(milestonesWithProperDates);
+//     }
+//   }, [loaderData, navigate]);
 
-  if (milestoneGroup) {
-    return {
-      ...milestoneGroup,
-      milestones,
-    };
-  }
-  return undefined;
-}
+//   if (milestoneGroup) {
+//     return {
+//       ...milestoneGroup,
+//       milestones,
+//     };
+//   }
+//   return undefined;
+// }
 
 
 

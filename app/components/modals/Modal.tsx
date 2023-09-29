@@ -4,9 +4,11 @@ interface ModalProps {
   children: React.ReactNode;
   onClose?: () => void;
   zIndex?: number;
+  onMouseOver?: () => void;
+  onMouseOut?: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ children, onClose = () => { }, zIndex = 10 }) => {
+const Modal: React.FC<ModalProps> = ({ children, onClose = () => { }, zIndex = 10, onMouseOver, onMouseOut }) => {
   return (
     <>
       <div className={`z-${zIndex} 
@@ -14,7 +16,10 @@ const Modal: React.FC<ModalProps> = ({ children, onClose = () => { }, zIndex = 1
           bg-base-content/50
           flex justify-center items-center
          `}
-        onClick={onClose}>
+        onClick={onClose}
+        onMouseOver={onMouseOver}
+        onMouseOut={onMouseOut}
+      >
         <dialog
           className="modal  overflow-auto	"
           open

@@ -82,8 +82,8 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
 
 
   const handleIsCompleted = () => {
-    !isCompleted && (completedDate === null) && setCompletedDate(new Date())
-    isCompleted && (completedDate !== null) && setCompletedDate(null)
+    !isCompleted && (!completedDate) && setCompletedDate(new Date())
+    isCompleted && (completedDate) && setCompletedDate(null)
     setIsCompleted(!isCompleted)
   }
 
@@ -162,7 +162,7 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
 
           <div>
             <InputLabelWithGuideLineLink
-              text='Milestone Title'
+              inputTitle='Milestone Title'
               guideline={CoreValue}
               title='Milestone'
             />
@@ -180,7 +180,7 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
 
           <div className=' mb-0  '>
             <InputLabelWithGuideLineLink
-              text='Milestone Description (Optional)'
+              inputTitle='Milestone Description (Optional)'
               guideline={CoreValueStatement}
               title='Milestone Description'
             />

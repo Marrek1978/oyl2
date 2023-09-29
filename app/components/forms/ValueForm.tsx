@@ -87,7 +87,7 @@ function ValueForm({ value, isNew = true }: ValueFormProps) {
             <input type="string" name='valueId' value={valueId} hidden readOnly />
 
             <InputLabelWithGuideLineLink
-              text='Value'
+              inputTitle='Value'
               guideline={CoreValue}
               title='Values'
             />
@@ -103,7 +103,7 @@ function ValueForm({ value, isNew = true }: ValueFormProps) {
 
             <div className='vert-space-between-inputs'>
               <InputLabelWithGuideLineLink
-                text='Value Statement'
+                inputTitle='Value Statement'
                 guideline={CoreValueStatement}
                 title='Value Statement'
               />

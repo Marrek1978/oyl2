@@ -1,4 +1,3 @@
-import React from 'react'
 import WithGuidelineLink from './WithGuidelineLink';
 import InputLabel from './InputLabel';
 
@@ -18,7 +17,7 @@ function ToggleWithLabelAndGuideLineLink({ text, guideline, title, checkedState,
         <div className="  flex flex-wrap gap-2 items-center ">
 
           <div>
-            <InputLabel text={text} width='max-w-max' />
+            <InputLabel inputTitle={text} widthTailwind='max-w-max' />
           </div>
 
           <div>
@@ -32,9 +31,8 @@ function ToggleWithLabelAndGuideLineLink({ text, guideline, title, checkedState,
         </div>
         <div>
           <WithGuidelineLink
-            text={text}
             guideline={guideline}
-            title={title}
+            guideLineTitle={title}
           >
           </WithGuidelineLink>
         </div>

@@ -17,7 +17,7 @@ type Props = {
 
   showCloseBtn?: boolean;
   closeBtnText?: string;
-
+  closeBtnOnClickFunction?: () => void;
   deleteBtnText?: string;
 
 }
@@ -31,6 +31,7 @@ function FormButtons({
   hideSaveBtn = false,
   showCloseBtn = false,
   closeBtnText = 'Close w/o saving',
+  closeBtnOnClickFunction,
   deleteBtnText = 'Delete',
 }: Props) {
 
@@ -61,11 +62,12 @@ function FormButtons({
         {/* // ?  Close Button */}
         {(!isNew || showCloseBtn) && (
           <div className='flex-1 min-w-[180px]'>
-            <Link to='..' >
+          <Link to={!closeBtnOnClickFunction ? `..` : ''} >
               <SolidBtnGreyBlue text={closeBtnText}
-                onClickFunction={() => { }}
+                onClickFunction={ closeBtnOnClickFunction || (() => { }) }
                 icon={closeIcon}
               />
+              
             </Link>
           </div>
         )}

@@ -2,15 +2,24 @@ import { useState, useEffect } from "react";
 import TheDatePicker from "react-datepicker";
 import { DueDates } from "../utilities/Guidelines";
 import InputLabelWithGuideLineLink from "../forms/InputLabelWithGuideLineLink";
+import InputLabel from "../forms/InputLabel";
 
 interface DatePickerProps {
   setSelectedDate: (date: Date | null) => void;
   selectedDate: Date | null;
   labelText?: string;
+  isHorizontal?: boolean;
 }
 
-const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, labelText = 'Due Date' }) => {
+const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, labelText = 'Due Date', isHorizontal }) => {
+
   const [startDate, setStartDate] = useState<Date | null>(selectedDate);
+  const [isHorizontalLayout, setIsHorizontalLayout] = useState<boolean>(false)
+
+
+  useEffect(() => {
+    isHorizontal && setIsHorizontalLayout(true)
+  }, [isHorizontal])
 
   useEffect(() => {
     setStartDate(selectedDate)
@@ -21,14 +30,29 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, 
     setSelectedDate(date);
   };
 
+
+  const parentDivCss = isHorizontalLayout ? 'flex flex-wrap items-center  gap-x-4  ' : ' '
+
+
   return (
     <>
-      <div className="w-full ">
-        <InputLabelWithGuideLineLink
-          text={labelText}
-          title='Due Dates'
-          guideline={DueDates}
-        />
+
+      <div className={`w-full ${parentDivCss} flex  `}>
+
+        {isHorizontalLayout ? (
+          <div className=' '>
+            <InputLabel inputTitle={labelText} />
+          </div>
+        ) : (
+
+          <InputLabelWithGuideLineLink
+            inputTitle={labelText}
+            title='Due Date'
+            guideline={DueDates}
+          />
+        )}
+
+
         <TheDatePicker
           isClearable={true}
           showIcon={false}
@@ -38,7 +62,6 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, 
             font-poppins font-normal tracking-wide
             bg-base-200
             text-blue placeholder:text-neutral-400
-            
             '
           selected={startDate}
           onChange={handleSelectedDateChange}

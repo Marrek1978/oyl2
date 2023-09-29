@@ -58,6 +58,24 @@ export function transformScheduledListsDataDates(lists: any) {
   }));
 }
 
+export function transformMilestoneGroupDataDates(obj: any) {
+  return {
+    ...obj,
+    createdAt: new Date(obj.createdAt!),
+    updatedAt: new Date(obj.updatedAt!),
+  };
+}
+
+export function transformMilestoneArrayDataDates(arr: any) {
+  return arr.map((obj: any) => ({
+    ...obj,
+    createdAt: new Date(obj.createdAt!),
+    updatedAt: new Date(obj.updatedAt!),
+    dueDate: obj.dueDate ? new Date(obj.dueDate) : null,
+    completedAt: obj.completedAt ? new Date(obj.completedAt) : null,
+  }));
+}
+
 interface ArrayObjectsWithStrDates {
   items: any[];
   dateKeys: string[];
@@ -76,6 +94,25 @@ export function ArrayOfObjectsStrToDates({
     });
     return transformedItem;
   });
+}
+
+interface ObjectWithStrDates {
+  item: any;
+  dateKeys: string[];
+}
+
+export function ObjectStrToDates({ item, dateKeys }: ObjectWithStrDates) {
+  console.log("item is ", item.created);
+
+  dateKeys.forEach((key) => {
+    if (item[key] && item[key] !== Date) {
+      return (item[key] = new Date(item[key]));
+    }
+  });
+
+  console.log("item is ", item);
+
+  return item;
 }
 
 export function sortTodos(todos: Todo[]): Todo[] {
