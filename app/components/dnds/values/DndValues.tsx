@@ -24,31 +24,8 @@ const DndValues = () => {
 
 
 
-  useEffect(() => {
-    if (!valuesData) return
-
-    const valuesWithProperDates: Value[] = transformValueDates(valuesData)
-    valuesWithProperDates.sort((a, b) => a.sortOrder - b.sortOrder)
-    const notValuesWithSequentialSortOrder = valuesWithProperDates.some((value, index) => {
-      return value.sortOrder !== index
-    })
-    setValues(notValuesWithSequentialSortOrder
-      ? resetValuesSortOrder(valuesWithProperDates)
-      : valuesWithProperDates
-    )
-
-  }, [valuesData])
-
-
-  useEffect(() => {
-    if (fetcher.state === 'loading') {
-      setSuccessMessage(fetcher.data);
-      setTimeout(() => setSuccessMessage(''), 500); // Clear the message after 3 seconds
-    }
-  }, [fetcher])
-
-
   const handleEditSortOrder = useCallback(async () => {
+    console.log('saving to db')
     const valuesString = JSON.stringify(values);
     try {
       fetcher.submit({
@@ -62,14 +39,8 @@ const DndValues = () => {
   }, [values, fetcher])
 
 
-  useEffect(() => {
-    if (saveNewSortOrder) {
-      handleEditSortOrder()
-    }
-  }, [saveNewSortOrder, handleEditSortOrder])
-
-
   const resetValuesSortOrder = (values: Value[]) => {
+    console.log('resetting sort order')
     const reOrdered = values?.map((value, index) => {
       return {
         ...value,
@@ -81,7 +52,41 @@ const DndValues = () => {
   }
 
 
+  //intial load
+  useEffect(() => {
+    console.log('itnitial loading')
+    if (!valuesData) return
+    const valuesWithProperDates: Value[] = transformValueDates(valuesData)
+    valuesWithProperDates.sort((a, b) => a.sortOrder - b.sortOrder)
+    const notValuesWithSequentialSortOrder = valuesWithProperDates.some((value, index) => {
+      return value.sortOrder !== index
+    })
+
+    setValues(notValuesWithSequentialSortOrder
+      ? resetValuesSortOrder(valuesWithProperDates)
+      : valuesWithProperDates
+    )
+
+  }, [valuesData])
+
+
+  //success message
+  useEffect(() => {
+    if (fetcher.state === 'loading') {
+      setSuccessMessage(fetcher.data);
+      setTimeout(() => setSuccessMessage(''), 500); // Clear the message after 3 seconds
+    }
+  }, [fetcher])
+
+
+  useEffect(() => {
+    console.log('if saveNewSortOrder -> save: ', saveNewSortOrder)
+    if (saveNewSortOrder) handleEditSortOrder()
+  }, [saveNewSortOrder, handleEditSortOrder])
+
+
   function handleDragEnd(event: DragEndEvent) {
+    console.log('dropped')
     const { active, over } = event;
     if (active.id !== over?.id) {
       setValues((prevValues: Value[]) => {

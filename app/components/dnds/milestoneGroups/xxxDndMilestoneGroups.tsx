@@ -6,7 +6,7 @@ import { DndContext, closestCenter } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
 import Modal from '~/components/modals/Modal';
-import { SuccessMessageTimeout } from '../constants';
+import { SuccessMessageTimeout } from '../../utilities/constants';
 import PageTitle from '~/components/titles/PageTitle';
 import SuccessMessage from '~/components/modals/SuccessMessage';
 import useCustomSensors from '~/components/dnds/useCustomDndSensors';

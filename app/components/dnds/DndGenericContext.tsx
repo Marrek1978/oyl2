@@ -11,7 +11,7 @@ import PageTitle from '~/components/titles/PageTitle';
 import DndSortableGeneric from './DndSortableGeneric';
 import useInOrder from '~/components/dnds/useInOrder';
 import SuccessMessage from '~/components/modals/SuccessMessage';
-import { SuccessMessageTimeout } from '~/components/dnds/constants';
+import { SuccessMessageTimeout } from '~/components/utilities/constants';
 import useCustomSensors from '~/components/dnds/useCustomDndSensors';
 
 import type { Sortable } from '~/types/genericArrayTypes';

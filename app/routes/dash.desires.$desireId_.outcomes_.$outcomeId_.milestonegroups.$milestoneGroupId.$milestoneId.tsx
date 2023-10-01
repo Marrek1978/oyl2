@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import Modal from '~/components/modals/Modal'
 import { redirect } from '@remix-run/server-runtime'
-import { DefaultFormWidth } from '~/components/dnds/constants';
+import { DefaultFormWidth } from '~/components/utilities/constants';
 import { Outlet, useLoaderData, useNavigate } from '@remix-run/react';
 import MilestoneForm from '~/components/forms/milestones/MilestoneForm';
 import { getMilestoneById, updateMilestone } from '~/models/milestone.server';

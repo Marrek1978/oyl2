@@ -13,7 +13,7 @@ interface DatePickerProps {
 
 const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, labelText = 'Due Date', isHorizontal }) => {
 
-  const [startDate, setStartDate] = useState<Date | null>(selectedDate);
+  const [displayDate, setDisplayDate] = useState<Date | null>(selectedDate);
   const [isHorizontalLayout, setIsHorizontalLayout] = useState<boolean>(false)
 
 
@@ -22,11 +22,11 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, 
   }, [isHorizontal])
 
   useEffect(() => {
-    setStartDate(selectedDate)
+    setDisplayDate(selectedDate)
   }, [selectedDate])
 
   const handleSelectedDateChange = (date: Date | null) => {
-    setStartDate(date);
+    setDisplayDate(date);
     setSelectedDate(date);
   };
 
@@ -63,7 +63,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, 
             bg-base-200
             text-blue placeholder:text-neutral-400
             '
-          selected={startDate}
+          selected={displayDate}
           onChange={handleSelectedDateChange}
           placeholderText={'Click to select a date.'}
           dateFormat="MMMM do, yyyy"

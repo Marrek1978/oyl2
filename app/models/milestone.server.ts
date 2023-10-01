@@ -6,7 +6,6 @@ import type { CreateMilestone } from "~/types/milestoneTypes";
 //milestons
 
 export const createMilestone = async (milestone: CreateMilestone) => {
-  console.log(" in server func and milestone is ", milestone);
   try {
     const result = await prisma.milestone.create({
       data: {

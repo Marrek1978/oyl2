@@ -1,5 +1,5 @@
 import { useFetcher } from '@remix-run/react';
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import type { DragEndEvent } from "@dnd-kit/core";
 import { DndContext, closestCenter } from "@dnd-kit/core";
@@ -10,13 +10,15 @@ import DndInfo from '../DndInfo';
 import Modal from '~/components/modals/Modal';
 import useInOrder from '~/components/dnds/useInOrder';
 import SuccessMessage from '~/components/modals/SuccessMessage';
-import { SuccessMessageTimeout } from '~/components/dnds/constants';
 import useResetSortOrder from '~/components/dnds/useResetSortOrder';
 import useCustomSensors from '~/components/dnds/useCustomDndSensors';
 import DndMilestonesSortable from '~/components/dnds/milestones/DndMilestonesSortable';
 
-import type { Milestone } from '@prisma/client';
+import type { Milestone, MilestoneGroup } from '@prisma/client';
 import type { MilestoneGroupsWithMilestones } from '~/types/milestoneTypes';
+import { useLoaderData } from '@remix-run/react';
+import { SuccessMessageTimeout } from '../../utilities/constants';
+import ServerMessages from '~/components/modals/ServerMessages';
 
 interface Props {
   passedMilestoneGroup: MilestoneGroupsWithMilestones | undefined;
@@ -27,46 +29,29 @@ interface Props {
 function DndMilestones({ passedMilestoneGroup, dndTitle }: Props) {
 
   const fetcher = useFetcher();
-  const [successMessage, setSuccessMessage] = useState('');
-  const [milestonesArray, setMilestonesArray] = useState<Milestone[]>([]);
-  const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
+  const [isIdle, setIsIdle] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+  const [fetcherState, setFetcherState] = useState<string>()
+  const [fetcherMessage, setFetcherMessage] = useState<'success' | 'failed' | undefined>()
 
+  const loadedData = useLoaderData()
+
+  const [milestonesArray, setMilestonesArray] = useState<any[]>([]);
+  const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
 
   const inOrder = useInOrder()
   const sensors = useCustomSensors();
   const reOrderItems = useResetSortOrder();
 
-
-  const setStateArrayInProperOrder = useCallback((array: Milestone[]) => {
-    const isSequentialOrder: boolean = inOrder(array)
-    if (isSequentialOrder) setMilestonesArray(array)
-    if (!isSequentialOrder) {
-      const reOrderedItemsArray = reOrderItems(array)
-      setMilestonesArray(reOrderedItemsArray as Milestone[])
-      setSaveNewSortOrder(true)
-    }
-  }, [reOrderItems, inOrder])
-
-
   useEffect(() => {
-    if (!passedMilestoneGroup) return
-    const { milestones, ...group } = passedMilestoneGroup
-    if (!group) return
-    if (!milestones) return
-    setStateArrayInProperOrder(milestones)
-  }, [passedMilestoneGroup, setStateArrayInProperOrder])
-
-
-  useEffect(() => {
-    if (fetcher.state === 'loading') {
-      setSuccessMessage(fetcher.data);
-      setTimeout(() => setSuccessMessage(''), SuccessMessageTimeout); // Clear the message after 3 seconds
-    }
+    setIsLoading(fetcher.state === 'loading')
+    setIsIdle(fetcher.state === 'idle')
+    setFetcherState(fetcher.state)
+    setFetcherMessage(fetcher.data || '')
   }, [fetcher])
 
 
   const handleEditSortOrder = useCallback(async () => {
-    if (saveNewSortOrder === false) return
     const editOrder = {
       milestonesArray,
       actionType: 'editOrder'
@@ -80,7 +65,27 @@ function DndMilestones({ passedMilestoneGroup, dndTitle }: Props) {
       })
     } catch (error) { throw error }
     setSaveNewSortOrder(false);
-  }, [milestonesArray, fetcher, saveNewSortOrder])
+  }, [milestonesArray, fetcher,])
+
+
+  const setStateArrayInProperOrder = useCallback((array: any[]) => {
+    if (inOrder(array)) {
+      setMilestonesArray(array)
+    } else {
+      const reOrderedItemsArray = reOrderItems(array)
+      setMilestonesArray(reOrderedItemsArray as Milestone[])
+      setSaveNewSortOrder(true)
+    }
+  }, [reOrderItems, inOrder])
+
+
+  //initial load
+  useEffect(() => {
+    if (!loadedData) return
+    const { milestones } = loadedData
+    if (!milestones) return
+    setStateArrayInProperOrder(milestones)
+  }, [loadedData, setStateArrayInProperOrder])
 
 
   useEffect(() => {
@@ -104,13 +109,20 @@ function DndMilestones({ passedMilestoneGroup, dndTitle }: Props) {
 
   return (
     <>
-      {successMessage && (
-        <Modal onClose={() => { }} zIndex={20}>
-          <SuccessMessage
-            text={successMessage}
-          />
-        </Modal>
+
+      {isLoading || isIdle && (
+        <ServerMessages
+          fetcherState={fetcherState}
+          fetcherMessage={fetcherMessage}
+          showLoading={true}
+          showSuccess={true}
+          showFailed={true}
+          successMessage={'Moved'}
+        // failureMessage
+        />
       )}
+
+
 
       <DndContext
         collisionDetection={closestCenter}
@@ -126,7 +138,6 @@ function DndMilestones({ passedMilestoneGroup, dndTitle }: Props) {
           <div className='steps grid-none w-full flex justify-center'>
             <div className="flex flex-wrap max-w-[1200px] ">
               {milestonesArray?.map((item, index) => {
-                console.log('item.completedAt', typeof item.completedAt)
                 return (
                   <DndMilestonesSortable
                     key={item.id}

@@ -35,16 +35,16 @@ export const action = async ({ request, params }: ActionArgs) => {
       const milestone = JSON.parse(parsedBody.submitedString as string).milestone
       try {
         await updateMilestoneCompleted(milestone)
-        return null
-      } catch (error) { throw error }
+        return 'success'
+      } catch (error) { return 'failed' }
     }
 
     if (actionType === 'editOrder') {
       const milestones = JSON.parse(parsedBody.submitedString as string).milestonesArray
       try {
         await updateMilestonesOrder(milestones)
-        return 'Milestones order was updated'
-      } catch (error) { throw error }
+        return 'success'
+      } catch (error) { return 'failed' }
     }
   }
   return null

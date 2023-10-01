@@ -197,7 +197,7 @@ function TodosListForm({ list }: TodosListFormProps) {
             <div className="form-control gap-6 ">
               <div >
                 <InputLabelWithGuideLineLink
-                  text='List Title'
+                  inputTitle='List Title'
                   title='List Title'
                   guideline={DesireOutcomeGuideline} />
                 <input type="text"
@@ -212,7 +212,7 @@ function TodosListForm({ list }: TodosListFormProps) {
 
               <div className='  '>
                 <InputLabelWithGuideLineLink
-                  text='Add a To-do'
+                  inputTitle='Add a To-do'
                   title='To-dos'
                   guideline={DesireOutcomeGuideline} />
                 <input type="text"
@@ -224,7 +224,7 @@ function TodosListForm({ list }: TodosListFormProps) {
 
               <div className="flex justify-between items-center pt-0  flex-wrap">
                 <div className="checkbox-label-flex">
-                  <InputLabel text='Urgent' />
+                  <InputLabel inputTitle='Urgent' />
                   <input type="checkbox"
                     className="toggle toggle-secondary"
                     checked={isUrgent}
@@ -233,7 +233,7 @@ function TodosListForm({ list }: TodosListFormProps) {
                 </div>
 
                 <div className=" checkbox-label-flex">
-                  <InputLabel text='Important' />
+                  <InputLabel inputTitle='Important' />
                   <input type="checkbox"
                     className="toggle toggle-secondary"
                     checked={isImportant}

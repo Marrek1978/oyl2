@@ -5,7 +5,7 @@ import { Outlet, useLoaderData } from '@remix-run/react';
 
 import Modal from '~/components/modals/Modal';
 import { requireUserId } from '~/models/session.server';
-import { DefaultFormWidth } from '~/components/dnds/constants';
+import { DefaultFormWidth } from '~/components/utilities/constants';
 import MilestoneForm from '~/components/forms/milestones/MilestoneForm';
 import { createMilestone, updateMilestonesOrder } from '~/models/milestone.server';
 import { getMilestoneGroupAndItsMilesonesById, getMilestoneGroupById } from '~/models/milestoneGroup.server';

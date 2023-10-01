@@ -89,8 +89,8 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
 
 
   useEffect(() => {
-    if (completedDate === null && isCompleted) setIsCompleted(false)
-    if (completedDate !== null && !isCompleted) setIsCompleted(true)
+    if (!completedDate && isCompleted) setIsCompleted(false)
+    if (completedDate && !isCompleted) setIsCompleted(true)
   }, [completedDate, isCompleted])
 
 
