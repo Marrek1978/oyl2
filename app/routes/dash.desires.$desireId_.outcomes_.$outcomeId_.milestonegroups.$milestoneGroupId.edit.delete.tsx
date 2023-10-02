@@ -9,14 +9,14 @@ import { deleteMilestoneGroupById, getMilestoneGroupById } from '~/models/milest
 // import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
 
 
-export const loader = async ({ request, params }: LoaderArgs) => {
-  const { milestoneGroupId } = params
-  if (!milestoneGroupId) return 'noId'
-  try {
-    const milestoneGroup = await getMilestoneGroupById(milestoneGroupId)
-    return milestoneGroup
-  } catch (error) { return 'noId' }
-}
+// export const loader = async ({ request, params }: LoaderArgs) => {
+//   const { milestoneGroupId } = params
+//   if (!milestoneGroupId) return 'noId'
+//   try {
+//     const milestoneGroup = await getMilestoneGroupById(milestoneGroupId)
+//     return milestoneGroup
+//   } catch (error) { return 'noId' }
+// }
 
 export const action = async ({ request, params }: ActionArgs) => {
   const formBody = await request.text();
@@ -48,11 +48,11 @@ function DeleteMilestoneGroupPage() {
           {/* ? ( */}
             {/* // <>{alertMessage}</> */}
           {/* ) : ( */}
-            < AreYouSureDeleteModal
+            {/* < AreYouSureDeleteModal
               item={'Milestone Group'}
               title={loaderData?.title}
               id={milestoneGroupId || ''}
-            />
+            /> */}
           {/* )} */}
       </Modal>
     </>

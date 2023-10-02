@@ -21,11 +21,13 @@ import type { MilestoneGroupsWithStrDates } from "~/types/milestoneTypes";
 export const loader = async ({ request, params }: LoaderArgs) => {
   await requireUserId(request);
   const { outcomeId } = params;
+  console.log('in groups loader adn outcomeId', outcomeId)
   if (!outcomeId) return redirect('../..')
 
   try {
     const outcome = await getOutcomeByOutcomeId(outcomeId);
-    if (!outcome) return redirect('/dash/desires')
+    if (!outcome) return redirect('..')
+    console.log('in groups loader and about to get milestone groups by outcomeId')
     const allMilestoneGroupsByOutcome = await getMilestoneGroupsByOutcomeId(outcomeId);
     return { allMilestoneGroupsByOutcome }
   } catch (error) { throw error }
@@ -69,7 +71,10 @@ export const action = async ({ request, params }: ActionArgs) => {
 function MilestoneGroupsPage() {
 
   const [groups, setGroups] = useState<MilestoneGroup[]>([]);
-  const loadedGroups: MilestoneGroup[] | undefined = useGetAllMilestoneGroupsForOutcome()
+  // const loadedGroups: MilestoneGroup[] | undefined = useGetAllMilestoneGroupsForOutcome()
+  const loadedGroups: MilestoneGroup[] | undefined = useLoaderData()?.allMilestoneGroupsByOutcome
+
+  console.log('loading milestoneGroups page')
 
   useEffect(() => {
     if (!loadedGroups) return
@@ -109,7 +114,7 @@ export const useGetAllMilestoneGroupsForOutcome = (): MilestoneGroup[] | undefin
 
   const navigate = useNavigate();
   const loaderData = useLoaderData();
-  // console.log('loaderData from milestoneGroups page(dnd)', loaderData)
+  console.log('loaderData from milestoneGroups page(dnd)', loaderData)
   const [groups, setGroups] = useState<MilestoneGroup[]>();
 
   useEffect(() => {

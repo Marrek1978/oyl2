@@ -1,4 +1,5 @@
 import { parse } from 'querystring'
+import { useEffect, useState } from 'react';
 import { Outlet, useLoaderData } from '@remix-run/react'
 import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime';
 
@@ -6,17 +7,17 @@ import Modal from '~/components/modals/Modal'
 import { getMilestoneGroupAndItsMilesonesById } from '~/models/milestoneGroup.server'
 import { transformMilestoneGroupDataDates } from '~/components/utilities/helperFunctions'
 import { updateMilestoneCompleted, updateMilestonesOrder } from '~/models/milestone.server'
+import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
 import MilestoneGroupHorizontalDisplay from '~/components/milestones/MilestoneGroupHorizontalDisplay';
-import { useEffect, useMemo, useState } from 'react';
 
 import type { MilestoneGroup } from '@prisma/client';
-import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   const { milestoneGroupId } = params
   if (!milestoneGroupId) return 'noId'
   try {
     const milestoneGroupWithMilestones = await getMilestoneGroupAndItsMilesonesById(milestoneGroupId);
+    console.log('returning from loader to groupIdPage')
     return milestoneGroupWithMilestones
   } catch (error) { return 'noId' }
 }
@@ -55,26 +56,24 @@ function MilestoneGroupPage() {
 
   const loaderData = useLoaderData();
   const [milestoneGroup, setMilestoneGroup] = useState<MilestoneGroup>()
-  // const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect(loaderData)
+  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect(loaderData, 2)
 
 
   useEffect(() => {
-    if (loaderData) {
-
-      const group = transformMilestoneGroupDataDates(loaderData)
-      setMilestoneGroup(group as MilestoneGroup)
-    }
+    if (!loaderData) return
+    const group = transformMilestoneGroupDataDates(loaderData)
+    setMilestoneGroup(group as MilestoneGroup)
   }, [loaderData])
 
 
   return (
     <>
       <Outlet />
-      {/* {warning && (
+      {warning && (
         <Modal zIndex={50}>
           {alertMessage}
         </Modal>
-      )} */}
+      )}
       <Modal >
         <div className={`w-[1200px] min-w-[250px] felx-1`}>
           {milestoneGroup && (

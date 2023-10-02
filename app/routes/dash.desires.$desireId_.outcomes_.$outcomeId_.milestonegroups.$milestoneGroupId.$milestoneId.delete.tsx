@@ -9,14 +9,15 @@ import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal'
 import { parse } from 'querystring';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
-  const { milestoneId } = params;
-  if (!milestoneId) throw new Error('No milestoneId was provided')
-  try {
-    const milestone = await getMilestoneById(milestoneId);
-    console.log('milestone', milestone)
-    if (!milestone) redirect('..')
-    return milestone
-  } catch (error) { throw error }
+  // const { milestoneId } = params;
+  // if (!milestoneId) throw new Error('No milestoneId was provided')
+  // try {
+  //   const milestone = await getMilestoneById(milestoneId);
+  //   console.log('milestone', milestone)
+  //   if (!milestone) redirect('..')
+  //   return milestone
+  // } catch (error) { throw error }
+  return null
 }
 
 export const action = async ({ request }: ActionArgs) => {
@@ -48,7 +49,7 @@ function DeleteMilestonePage() {
   return (
     <>
       <Modal onClose={() => { }} zIndex={50}>
-        <AreYouSureDeleteModal item={'Milestone'} title={title} id={id} />
+        {/* <AreYouSureDeleteModal item={'Milestone'} title={title} id={id} /> */}
       </Modal>
     </>
   )

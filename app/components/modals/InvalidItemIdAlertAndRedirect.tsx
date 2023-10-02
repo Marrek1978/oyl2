@@ -1,42 +1,55 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from '@remix-run/react';
+import { useLocation, useNavigate } from '@remix-run/react';
 
 
 
-function useInvalidItemIdAlertAndRedirect(loaderData: any) {
+function useInvalidItemIdAlertAndRedirect(loaderData: any, goBackXPaths:number = 1) {
 
   const navigate = useNavigate()
   const [warning, setWarning] = useState<string>('')
   const [remainingTime, setRemainingTime] = useState(0);
 
+  const location = useLocation()
+  console.log('location', location)
+  const locationArray = location.pathname.split('/')
+  console.log('locationArray', locationArray)
+  locationArray?.splice(-goBackXPaths)
+  console.log('locationArray', locationArray)
+  const path = locationArray.join('/')
+
+  const time = 3
+
   useEffect(() => {
-    if (loaderData === null) return setWarning('That Milestone Group was NOT found!')
-    if (loaderData === 'noId') return setWarning('That Milestone Group was NOT found!')
+    if (loaderData === null || loaderData === 'noId') {
+      setWarning('That Milestone Group was NOT found!')
+      setRemainingTime(time)
+    }
   }, [loaderData])
 
   useEffect(() => {
-    const time = 3
-    let timer: NodeJS.Timeout;
-    if (warning) {
-      setRemainingTime(time)
-      timer = setInterval(() => {
-        setRemainingTime((prevTime) => {
-          if (prevTime <= 1) {
-            clearInterval(timer)
-            navigate('..')
-            return 0
-          }
-          return prevTime - 1
-        });
-      }, 1000);
-    }
+    if (remainingTime <= 0) return;
+
+    const timer = setInterval(() => {
+      setRemainingTime((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(timer)
+          setTimeout(() => {
+            navigate(path)
+            // navigate(-1)
+
+          }, 0)
+          return 0
+        }
+        return prevTime - 1
+      });
+    }, 1000);
 
     return () => {
       if (timer) {
         clearInterval(timer)
       }
     }
-  }, [warning, navigate])
+  }, [remainingTime, navigate, path])
 
   const alertMessage = (
     <div className="alert alert-error">

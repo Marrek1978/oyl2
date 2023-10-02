@@ -14,14 +14,14 @@ import type { Milestone } from '@prisma/client';
 import type { LoaderArgs } from '@remix-run/node';
 import type { MilestoneWithStrDates } from '~/types/milestoneTypes';
 
-export const loader = async ({ request, params }: LoaderArgs) => {
-  const milestoneId = params.milestoneId
-  if (!milestoneId) throw new Error('No milestoneId was provided')
-  try {
-    const milestone = await getMilestoneById(milestoneId)
-    return { milestone }
-  } catch (error) { throw error }
-}
+// export const loader = async ({ request, params }: LoaderArgs) => {
+  // const milestoneId = params.milestoneId
+  // if (!milestoneId) throw new Error('No milestoneId was provided')
+  // try {
+  //   const milestone = await getMilestoneById(milestoneId)
+  //   return { milestone }
+  // } catch (error) { throw error }
+// }
 
 export const action = async ({ request, params }: LoaderArgs) => {
   const requestString = await request.text();
@@ -51,7 +51,7 @@ function EditMilestonePage() {
       <Outlet />
       <Modal onClose={() => { }} zIndex={40}>
         <div className={`w-[${DefaultFormWidth}] min-w-[250px] felx-1`}>
-          <MilestoneForm milestone={milestone} isNew={false} />
+          {/* <MilestoneForm milestone={milestone} isNew={false} /> */}
         </div>
       </Modal>
     </>
