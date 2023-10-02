@@ -1,6 +1,7 @@
 import { prisma } from "~/db.server";
 
 import type { MilestoneGroup } from "@prisma/client";
+import { UpdateMilestoneGroup } from "~/types/milestoneTypes";
 
 type CreateMilestoneGroup = Omit<
   MilestoneGroup,
@@ -56,6 +57,24 @@ export const getMilestoneGroupById = async (id: string) => {
   }
 };
 
+export const updateMilestoneGroupById = async (
+  milestoneGroup: UpdateMilestoneGroup
+) => {
+  console.log("in server file and milestoneGroup", milestoneGroup);
+  try {
+    const result = await prisma.milestoneGroup.update({
+      where: { id: milestoneGroup.id },
+      data: {
+        title: milestoneGroup.title,
+        description: milestoneGroup.description,
+      },
+    });
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const updateGroupsOrder = async (groups: MilestoneGroup[]) => {
   try {
     const updatedGroups = groups.map((group) => {
@@ -86,6 +105,19 @@ export const getMilestoneGroupAndItsMilesonesById = async (id: string) => {
     });
 
     return milestoneGroup;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteMilestoneGroupById = async (id: string) => {
+  try {
+    const result = await prisma.milestoneGroup.delete({
+      where: {
+        id: id,
+      },
+    });
+    return result;
   } catch (error) {
     throw error;
   }

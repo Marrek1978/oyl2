@@ -228,11 +228,10 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
 
             <FormButtons
               isNew={isNew}
-              saveBtnTxt={saveBtnTxt}
-              isSaveable={isSaveable}
+              saveBtnText={saveBtnTxt}
+              isSaveBtnDisabled={!isSaveable}
               saveBtnType='button'
               saveBtnOnClickFunction={isNew ? handleSave : handleEdits}
-              showCloseBtn={true}
               deleteBtnText='Delete Milestone'
             />
           </div>

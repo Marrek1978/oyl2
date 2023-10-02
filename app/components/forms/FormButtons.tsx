@@ -1,38 +1,98 @@
 import { Link } from '@remix-run/react'
 
-import TextBtn from '../buttons/TextBtn'
-import SolidBtn from '../buttons/SolidBtn'
-// import OutlinedBtn from '../buttons/OutlinedBtn'
-import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue'
-import { closeIcon, dbIcon, trashIcon } from '../utilities/icons'
+import BtnWithProps from '../buttons/BtnWithProps'
+
+import type { MouseEventHandler } from 'react'
+import type { DaisyUIBtnColor, DaisyUIBtnSize, DaisyUIColor, TWTextSizes } from '~/types/CSSTypes'
 
 
 type Props = {
+  textSizeTW?: TWTextSizes;
   isNew?: boolean;
-  saveBtnTxt: string;
-  isSaveable: boolean;
+
+  isShowSaveBtn?: boolean;
+  saveBtnText?: string;
   saveBtnType?: 'submit' | 'button';
-  saveBtnOnClickFunction?: () => void;
-  hideSaveBtn?: boolean;
+  saveBtnOnClickFunction?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  saveBtnOnMouseOver?: MouseEventHandler<HTMLButtonElement>;
+  saveBtnOnMouseOut?: MouseEventHandler<HTMLButtonElement>;
+  isSaveBtnDisabled?: boolean
+  isSaveBtnOutlined?: boolean
+  saveBtnIcon?: React.ReactNode
+  saveBtnTextColorDaisyUI?: DaisyUIColor;
+  saveBtnDaisyUIBtnColor?: DaisyUIBtnColor;
+  saveBtnDaisyUIBtnSize?: DaisyUIBtnSize;
 
-  showCloseBtn?: boolean;
+  isShowCloseBtn?: boolean;
   closeBtnText?: string;
-  closeBtnOnClickFunction?: () => void;
-  deleteBtnText?: string;
+  closeBtnType?: 'submit' | 'button';
+  closeBtnOnClickFunction?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  closeBtnOnMouseOver?: MouseEventHandler<HTMLButtonElement>;
+  closeBtnOnMouseOut?: MouseEventHandler<HTMLButtonElement>;
+  isCloseBtnDisabled?: boolean
+  isCloseBtnOutlined?: boolean
+  closeBtnIcon?: React.ReactNode
+  closeBtnTextColorDaisyUI?: DaisyUIColor;
+  closeBtnDaisyUIBtnColor?: DaisyUIBtnColor;
+  closeBtnDaisyUIBtnSize?: DaisyUIBtnSize;
 
+  isShowDeleteBtn?: boolean;
+  deleteBtnType?: 'submit' | 'button';
+  deleteBtnText?: string;
+  deleteBtnOnClickFunction?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  deleteBtnOnMouseOver?: MouseEventHandler<HTMLButtonElement>;
+  deleteBtnOnMouseOut?: MouseEventHandler<HTMLButtonElement>;
+  isDeleteBtnDisabled?: boolean
+  isDeleteBtnOutlined?: boolean
+  deleteBtnIcon?: React.ReactNode
+  deleteBtnTextColorDaisyUI?: DaisyUIColor;
+  deleteBtnDaisyUIBtnColor?: DaisyUIBtnColor;
+  deleteBtnDaisyUIBtnSize?: DaisyUIBtnSize;
 }
 
 function FormButtons({
+  textSizeTW,
   isNew = true,
-  saveBtnTxt,
-  isSaveable,
+  
+  isShowSaveBtn = true,
+  saveBtnText,
   saveBtnType = 'submit',
   saveBtnOnClickFunction,
-  hideSaveBtn = false,
-  showCloseBtn = false,
-  closeBtnText = 'Close w/o saving',
+  saveBtnOnMouseOver,
+  saveBtnOnMouseOut,
+  isSaveBtnDisabled,
+  isSaveBtnOutlined,
+  saveBtnIcon,
+  saveBtnTextColorDaisyUI,
+  saveBtnDaisyUIBtnColor,
+  saveBtnDaisyUIBtnSize,
+
+  isShowCloseBtn = true,
+  closeBtnType = 'button',
+  closeBtnText,
   closeBtnOnClickFunction,
-  deleteBtnText = 'Delete',
+  closeBtnOnMouseOver,
+  closeBtnOnMouseOut,
+  isCloseBtnDisabled,
+  isCloseBtnOutlined,
+  closeBtnIcon,
+  closeBtnTextColorDaisyUI,
+  closeBtnDaisyUIBtnColor,
+  closeBtnDaisyUIBtnSize,
+
+  isShowDeleteBtn = true,
+  deleteBtnType = 'submit',
+  deleteBtnText,
+  deleteBtnOnClickFunction,
+  deleteBtnOnMouseOver,
+  deleteBtnOnMouseOut,
+  isDeleteBtnDisabled,
+  isDeleteBtnOutlined = true,
+  deleteBtnIcon,
+  deleteBtnTextColorDaisyUI,
+  deleteBtnDaisyUIBtnColor,
+  deleteBtnDaisyUIBtnSize,
+
 }: Props) {
 
   return (
@@ -40,53 +100,72 @@ function FormButtons({
       <div className=' w-full flex flex-wrap gap-6  '>
 
         {/* //! Delete Button */}
-        {!isNew && (
+        {!isNew && isShowDeleteBtn && (
           <div className='flex-1 min-w-[180px] self-center text-center  '>
             <Link to='delete' >
-              {/* <OutlinedBtn
-                text={deleteBtnText}
-                onClickFunction={() => { }}
-                icon={trashIcon}
-                daisyUIBtnColor='error'
-              /> */}
-              <TextBtn
-                text={deleteBtnText}
-                color='error'
-                icon={trashIcon}
-                textColorDaisyUI={'text-error'}
+              <BtnWithProps
+                btnPurpose='delete'
+                btnLabel={deleteBtnText}
+                btnType={deleteBtnType}
+                onClickFunction={deleteBtnOnClickFunction || (() => { })}
+                onMouseOver={deleteBtnOnMouseOver}
+                onMouseOut={deleteBtnOnMouseOut}
+                isBtnDisabled={isDeleteBtnDisabled}
+                isOutlined={isDeleteBtnOutlined}
+                icon={deleteBtnIcon}
+                textSizeTW={textSizeTW}
+                textColorDaisyUI={deleteBtnTextColorDaisyUI}
+                daisyUIBtnColor={deleteBtnDaisyUIBtnColor}
+                daisyUIBtnSize={deleteBtnDaisyUIBtnSize}
               />
             </Link>
           </div>
         )}
 
         {/* // ?  Close Button */}
-        {(!isNew || showCloseBtn) && (
+        {(isShowCloseBtn ) && (
           <div className='flex-1 min-w-[180px]'>
-          <Link to={!closeBtnOnClickFunction ? `..` : ''} >
-              <SolidBtnGreyBlue text={closeBtnText}
-                onClickFunction={ closeBtnOnClickFunction || (() => { }) }
-                icon={closeIcon}
+            <Link to={!closeBtnOnClickFunction ? `..` : ''} >
+              <BtnWithProps
+                btnPurpose='close'
+                btnLabel={closeBtnText}
+                btnType={closeBtnType}
+                onClickFunction={closeBtnOnClickFunction || (() => { })}
+                onMouseOver={closeBtnOnMouseOver}
+                onMouseOut={closeBtnOnMouseOut}
+                isBtnDisabled={isCloseBtnDisabled}
+                isOutlined={isCloseBtnOutlined}
+                icon={closeBtnIcon}
+                textSizeTW={textSizeTW}
+                textColorDaisyUI={closeBtnTextColorDaisyUI}
+                daisyUIBtnColor={closeBtnDaisyUIBtnColor}
+                daisyUIBtnSize={closeBtnDaisyUIBtnSize}
               />
-              
             </Link>
           </div>
         )}
 
 
         {/* // *  Save Button */}
-        {!hideSaveBtn && (
+        { isShowSaveBtn && (
           <div className='flex-1 min-w-[180px]'>
-            <SolidBtn text={saveBtnTxt}
+            <BtnWithProps
+              btnPurpose='save'
+              btnLabel={saveBtnText}
               onClickFunction={saveBtnOnClickFunction}
-              icon={dbIcon}
-              disableBtn={!isSaveable}
-              type={saveBtnType}
+              btnType={saveBtnType}
+              isBtnDisabled={isSaveBtnDisabled}
+              onMouseOver={saveBtnOnMouseOver}
+              onMouseOut={saveBtnOnMouseOut}
+              isOutlined={isSaveBtnOutlined}
+              icon={saveBtnIcon}
+              textSizeTW={textSizeTW}
+              textColorDaisyUI={saveBtnTextColorDaisyUI}
+              daisyUIBtnColor={saveBtnDaisyUIBtnColor}
+              daisyUIBtnSize={saveBtnDaisyUIBtnSize}
             />
           </div>
-
         )}
-
-
       </div>
     </>
   )

@@ -19,8 +19,8 @@ type Props = {
 
 function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
 
+
   const params = useParams();
-  // const loaderData = useLoaderData();
   const navigation = useNavigation();
   const validationErrors = useActionData()
   const loaderData = useGetAllMilestoneGroupsForOutcome()
@@ -32,11 +32,9 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false) //true if title and description are not empty
 
-
   const paramsOutcomeId = useMemo(() => params.outcomeId, [params.outcomeId])
   const saveBtnTxt = useMemo(() => saveBtnText(isNew, isSubmitting, 'Milestone Group'), [isNew, isSubmitting])
   const headerTxt = useMemo(() => headerText(isNew, 'Milestone Group', milestoneGroup?.title || ''), [isNew, milestoneGroup?.title])
-
 
   const TitleError = validationErrors?.title && (
     <div className='validation-error'> {validationErrors.title}</div>)
@@ -74,7 +72,7 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
         <Form method='post' className='m-8'>
           <div className="form-control gap-y-6    ">
             <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
-            <input type="string" name='groupId' value={groupId} hidden readOnly />
+            <input type="string" name='rowId' value={groupId} hidden readOnly />
             <input type="string" name='outcomeId' value={paramsOutcomeId} hidden readOnly />
 
             <div>
@@ -115,9 +113,10 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
             {/* //**************BUTTONS ***************  */}
 
             <FormButtons
-              saveBtnTxt={saveBtnTxt}
-              isSaveable={isSaveable}
+              saveBtnText={saveBtnTxt}
+              isSaveBtnDisabled={!isSaveable}
               isNew={isNew}
+              isShowCloseBtn={!isNew}
             />
 
           </div>

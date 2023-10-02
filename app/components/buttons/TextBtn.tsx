@@ -1,20 +1,19 @@
-import { type MouseEventHandler, type ReactNode } from 'react'
-import { TWTextSizes } from '~/types/CSSTypes';
+import type{  MouseEventHandler,  ReactNode } from 'react'
+import type { DaisyUIColor, TWTextSizes } from '~/types/CSSTypes';
 
 interface TextBtnProps {
-  onClickFunction?:  MouseEventHandler<HTMLButtonElement>;
+  onClickFunction?: MouseEventHandler<HTMLButtonElement>;
   onMouseOver?: MouseEventHandler<HTMLButtonElement>;
   onMouseOut?: MouseEventHandler<HTMLButtonElement>;
   type?: 'button' | 'submit' | 'reset' | undefined;
   text: string;
-  color?: string;
   icon?: ReactNode
   textSizeTW?: TWTextSizes;
-  textColorDaisyUI?: string;
+  textColorDaisyUI?: DaisyUIColor;
 }
 
 
-function TextBtn({ text, onClickFunction=()=>{}, icon, type = 'submit', onMouseOver, onMouseOut , textSizeTW='base', textColorDaisyUI='primary'}: TextBtnProps) {
+function TextBtn({ text, onClickFunction = () => { }, icon, type = 'submit', onMouseOver, onMouseOut, textSizeTW = 'base', textColorDaisyUI = 'primary' }: TextBtnProps) {
 
   const getHoverClass = textColorDaisyUI === 'error' ? 'hover:text-red-500' : 'hover:opacity-70'
 
@@ -22,9 +21,10 @@ function TextBtn({ text, onClickFunction=()=>{}, icon, type = 'submit', onMouseO
     <>
       <button className={`  btn-link
         text-${textColorDaisyUI}
-        font-bold font-mont rounded-none
+        decoration-${textColorDaisyUI}
+        font-bold font-mont rounded-none no-underline
         ${getHoverClass} 
-        hover:underline hover:scale-105 hover:z-50 
+        hover:underline hover:scale-105 hover:decoration-${textColorDaisyUI}	
         transition-all duration-300 ease-linear 
          `}
         onClick={onClickFunction}

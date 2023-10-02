@@ -15,13 +15,14 @@ export const headerText = (isNew: boolean, itemType: string, title: string): JSX
   return isNew
     ? <>{`Create New ${itemType}`}</>
     : (<>
-      <div>
+    <span className='text-sm mr-1' >{`Edit ${itemType}:`}</span> {title}
+      {/* <div>
         <span className='text-sm' >
           {`Edit ${itemType}:`}
         </span>
       </div>
       <div>
         {title}
-      </div>
+      </div> */}
     </>)
 }

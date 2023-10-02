@@ -1,6 +1,7 @@
 import type { Milestone, MilestoneGroup } from "@prisma/client";
 
 export type CreateMilestone = Omit<Milestone, "id" | "createdAt" | "updatedAt">;
+export type UpdateMilestoneGroup = Omit<MilestoneGroup, "createdAt" | "updatedAt" | "sortOrder" | "outcomeId">;
 
 export type MilestoneGroupsWithMilestones = MilestoneGroup & {
   milestones: Milestone[];

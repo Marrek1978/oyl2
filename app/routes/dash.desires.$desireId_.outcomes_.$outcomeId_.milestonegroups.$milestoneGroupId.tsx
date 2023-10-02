@@ -1,25 +1,26 @@
 import { parse } from 'querystring'
-import { Link, Outlet, useLoaderData } from '@remix-run/react'
-
-import Modal from '~/components/modals/Modal'
-import TextBtn from '~/components/buttons/TextBtn'
-import FormButtons from '~/components/forms/FormButtons'
-import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG'
-import DndMilestones from '~/components/dnds/milestones/DndMilestones'
-import { getMilestoneGroupAndItsMilesonesById } from '~/models/milestoneGroup.server'
-import { updateMilestoneCompleted, updateMilestonesOrder } from '~/models/milestone.server'
-import { transformMilestoneGroupDataDates } from '~/components/utilities/helperFunctions'
-
+import { Outlet, useLoaderData } from '@remix-run/react'
 import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime';
 
+import Modal from '~/components/modals/Modal'
+import { getMilestoneGroupAndItsMilesonesById } from '~/models/milestoneGroup.server'
+import { transformMilestoneGroupDataDates } from '~/components/utilities/helperFunctions'
+import { updateMilestoneCompleted, updateMilestonesOrder } from '~/models/milestone.server'
+import MilestoneGroupHorizontalDisplay from '~/components/milestones/MilestoneGroupHorizontalDisplay';
+import { useEffect, useMemo, useState } from 'react';
+
+import type { MilestoneGroup } from '@prisma/client';
+import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
+
 export const loader = async ({ request, params }: LoaderArgs) => {
-  const groupId = params.milestoneGroupId;
-  if (!groupId) throw new Error('No milestoneGroupId was provided')
+  const { milestoneGroupId } = params
+  if (!milestoneGroupId) return 'noId'
   try {
-    const milestoneGroupWithMilestones = await getMilestoneGroupAndItsMilesonesById(groupId);
+    const milestoneGroupWithMilestones = await getMilestoneGroupAndItsMilesonesById(milestoneGroupId);
     return milestoneGroupWithMilestones
-  } catch (error) { throw error }
+  } catch (error) { return 'noId' }
 }
+
 
 
 export const action = async ({ request, params }: ActionArgs) => {
@@ -53,54 +54,32 @@ export const action = async ({ request, params }: ActionArgs) => {
 function MilestoneGroupPage() {
 
   const loaderData = useLoaderData();
-  const { milestones: loadedMilestones, ...loadedGroup } = loaderData;
+  const [milestoneGroup, setMilestoneGroup] = useState<MilestoneGroup>()
+  // const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect(loaderData)
 
-  const milestoneGroup = transformMilestoneGroupDataDates(loadedGroup)
-  const header = (<> <span className='text-sm mr-1' >Milestone Group:</span> {milestoneGroup.title}  </>)
+
+  useEffect(() => {
+    if (loaderData) {
+
+      const group = transformMilestoneGroupDataDates(loaderData)
+      setMilestoneGroup(group as MilestoneGroup)
+    }
+  }, [loaderData])
+
 
   return (
     <>
       <Outlet />
+      {/* {warning && (
+        <Modal zIndex={50}>
+          {alertMessage}
+        </Modal>
+      )} */}
       <Modal >
         <div className={`w-[1200px] min-w-[250px] felx-1`}>
-
-          {/* //!  make component */}
-
-          <BasicFormAreaBG
-            h2Text={header}
-            maxWidth='1200px'
-            linkDestination='edit'
-            linkText='Edit'
-            btnColorDaisyUI='link'
-            linkColorDaisyUI='info'
-          >
-            <div className='m-8 flex flex-col gap-8'>
-
-              {milestoneGroup?.description && (
-                <div>
-                  <p>
-                    {milestoneGroup?.description}
-                  </p>
-                </div>
-              )}
-
-              <DndMilestones />
-
-              <div className='w-full flex justify-center'>
-                <Link to='newMilestone '>
-                  <TextBtn text='Add Milestone' />
-                </Link>
-              </div>
-
-              <FormButtons
-                saveBtnTxt={'Save Milestones Order'}
-                isSaveable={false}
-                hideSaveBtn={true}
-                showCloseBtn={true}
-                closeBtnText='Close'
-              />
-            </div>
-          </BasicFormAreaBG >
+          {milestoneGroup && (
+            <MilestoneGroupHorizontalDisplay milestoneGroup={milestoneGroup} />
+          )}
         </div>
       </Modal >
     </>

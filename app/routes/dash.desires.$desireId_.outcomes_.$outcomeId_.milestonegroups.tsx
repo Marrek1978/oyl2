@@ -1,7 +1,7 @@
 import { parse } from "querystring";
 import { redirect } from "@remix-run/node";
 import { useEffect, useState } from "react";
-import { Outlet, useLoaderData,  useNavigate } from "@remix-run/react";
+import { Outlet, useLoaderData, useNavigate } from "@remix-run/react";
 
 import { requireUserId } from '~/models/session.server';
 import { getOutcomeByOutcomeId } from '~/models/outcome.server';
@@ -42,27 +42,27 @@ export const action = async ({ request, params }: ActionArgs) => {
     try {
       await updateGroupsOrder(groups)
       return 'success'
-    } catch (error) { return 'failure'}
+    } catch (error) { return 'failure' }
   }
 
-  const formData = await request.formData()
-  const groupsData = Object.fromEntries(formData);
+  if (request.method === 'POST') {
+    const formData = await request.formData()
+    const groupsData = Object.fromEntries(formData);
 
-  let group = {
-    title: groupsData.title as string,
-    description: groupsData.description as string,
-    sortOrder: groupsData.sortOrder ? parseInt(groupsData.sortOrder as string) : 0,
-    outcomeId: params.outcomeId as string,
+    let group = {
+      title: groupsData.title as string,
+      description: groupsData.description as string,
+      sortOrder: groupsData.sortOrder ? parseInt(groupsData.sortOrder as string) : 0,
+      outcomeId: params.outcomeId as string,
+    }
+
+    try {
+      await createMilestoneGroup(group);
+      return 'success'
+    } catch (error) { return 'failure' }
   }
-
-  try {
-    await createMilestoneGroup(group);
-    return 'success'
-  } catch (error) { return 'failure' }
-
 
   return null
-
 }
 
 
@@ -109,7 +109,7 @@ export const useGetAllMilestoneGroupsForOutcome = (): MilestoneGroup[] | undefin
 
   const navigate = useNavigate();
   const loaderData = useLoaderData();
-  console.log('loaderData', loaderData)
+  // console.log('loaderData from milestoneGroups page(dnd)', loaderData)
   const [groups, setGroups] = useState<MilestoneGroup[]>();
 
   useEffect(() => {

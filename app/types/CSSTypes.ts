@@ -1,3 +1,4 @@
+
 export type TailwindPixelValue = `[${number} px]`;
 export type TWTextSizes =
   | "xs"
@@ -14,6 +15,17 @@ export type TWTextSizes =
   | "8xl"
   | "9xl"
   | TailwindPixelValue;
+
+export type TWFontWidths =
+  | "thin"
+  | "extralight"
+  | "light"
+  | "normal"
+  | "medium"
+  | "semibold"
+  | "bold"
+  | "extrabold"
+  | "black";
 
 export type DaisyUIColor =
   | "primary"
@@ -54,7 +66,11 @@ export type DaisyUIBtnColor =
   | "secondary"
   | "accent"
   | "Ghost"
-  | "link";
+  | "link"
+  | "info"
+  | "success"
+  | "warning"
+  | "error";
 
 export type DaisyUIBtnSize = "lg" | "sm" | "xs";
- 
+export type DaisyUIBtnWide = "wide";
