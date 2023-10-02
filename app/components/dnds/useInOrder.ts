@@ -1,7 +1,8 @@
 import { useCallback } from "react";
+import type { HasSortOrder } from "~/types/genericDndArrayTypes";
 
-function useInOrder() {
-  const isOrdered = useCallback((array: any[]) => {
+function useIsInOrder<T extends HasSortOrder>() {
+  const isOrdered = useCallback((array: T[]): boolean => {
     array.sort((a, b) => a.sortOrder - b.sortOrder);
     const isNOTSequentialOrder = array.some((item, index) => {
       return item.sortOrder !== index;
@@ -11,4 +12,4 @@ function useInOrder() {
   return isOrdered;
 }
 
-export default useInOrder;
+export default useIsInOrder;

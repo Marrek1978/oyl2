@@ -8,9 +8,8 @@ import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG'
 import DndMilestones from '~/components/dnds/milestones/DndMilestones'
 import { getMilestoneGroupAndItsMilesonesById } from '~/models/milestoneGroup.server'
 import { updateMilestoneCompleted, updateMilestonesOrder } from '~/models/milestone.server'
-import { transformMilestoneArrayDataDates, transformMilestoneGroupDataDates } from '~/components/utilities/helperFunctions'
+import { transformMilestoneGroupDataDates } from '~/components/utilities/helperFunctions'
 
-import type { Milestone } from '@prisma/client'
 import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
@@ -28,19 +27,19 @@ export const action = async ({ request, params }: ActionArgs) => {
   if (request.method === 'PUT') {
     const formBody = await request.text();
     const parsedBody = parse(formBody);
-    const submitedString = parsedBody.submitedString
+    const submitedString = parsedBody.toServerDataString
     const actionType = JSON.parse(submitedString as string).actionType
 
     if (actionType === 'complete') {
-      const milestone = JSON.parse(parsedBody.submitedString as string).milestone
+      const milestone = JSON.parse(parsedBody.toServerDataString as string).milestone
       try {
         await updateMilestoneCompleted(milestone)
         return 'success'
       } catch (error) { return 'failed' }
     }
 
-    if (actionType === 'editOrder') {
-      const milestones = JSON.parse(parsedBody.submitedString as string).milestonesArray
+    if (actionType === 'editSortOrder') {
+      const milestones = JSON.parse(parsedBody.toServerDataString as string).sortableArray
       try {
         await updateMilestonesOrder(milestones)
         return 'success'
@@ -57,24 +56,7 @@ function MilestoneGroupPage() {
   const { milestones: loadedMilestones, ...loadedGroup } = loaderData;
 
   const milestoneGroup = transformMilestoneGroupDataDates(loadedGroup)
-  const milestoneArrWithProperDates: Milestone[] = transformMilestoneArrayDataDates(loadedMilestones)
-
-  const milestoneGroupWithMilestones = {
-    ...milestoneGroup,
-    milestones: milestoneArrWithProperDates
-  }
-
-  const header = (
-    <>
-      <div>
-        <span className='text-sm' >
-          Milestone Group:
-        </span>
-      </div>
-      <div>
-        {milestoneGroup.title}
-      </div>
-    </>)
+  const header = (<> <span className='text-sm mr-1' >Milestone Group:</span> {milestoneGroup.title}  </>)
 
   return (
     <>
@@ -84,8 +66,14 @@ function MilestoneGroupPage() {
 
           {/* //!  make component */}
 
-          {/* // add spinners to dnd */}
-          <BasicFormAreaBG title={header} maxWidth='1200px' >
+          <BasicFormAreaBG
+            h2Text={header}
+            maxWidth='1200px'
+            linkDestination='edit'
+            linkText='Edit'
+            btnColorDaisyUI='link'
+            linkColorDaisyUI='info'
+          >
             <div className='m-8 flex flex-col gap-8'>
 
               {milestoneGroup?.description && (
@@ -96,12 +84,7 @@ function MilestoneGroupPage() {
                 </div>
               )}
 
-              <div >
-                <DndMilestones
-                  passedMilestoneGroup={milestoneGroupWithMilestones}
-                  dndTitle={milestoneGroup.title}
-                />
-              </div>
+              <DndMilestones />
 
               <div className='w-full flex justify-center'>
                 <Link to='newMilestone '>

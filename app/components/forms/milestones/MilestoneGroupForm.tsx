@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, } from 'react';
-import { Form,  useActionData, useParams, useNavigation } from '@remix-run/react'
+import { Form, useActionData, useParams, useNavigation } from '@remix-run/react'
 
 import FormButtons from '../FormButtons';
 import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
@@ -21,18 +21,18 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
 
   const params = useParams();
   // const loaderData = useLoaderData();
-  const loaderData = useGetAllMilestoneGroupsForOutcome()
   const navigation = useNavigation();
   const validationErrors = useActionData()
-  
+  const loaderData = useGetAllMilestoneGroupsForOutcome()
+
   const [title, setTitle] = useState<string>('')
   const [groupId, setGroupId] = useState<string>('')
   const [sortOrder, setSortOrder] = useState<number>(0) //if adding new value, set to values.length
   const [description, setDescription] = useState<string>('')
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false) //true if title and description are not empty
-  
-  
+
+
   const paramsOutcomeId = useMemo(() => params.outcomeId, [params.outcomeId])
   const saveBtnTxt = useMemo(() => saveBtnText(isNew, isSubmitting, 'Milestone Group'), [isNew, isSubmitting])
   const headerTxt = useMemo(() => headerText(isNew, 'Milestone Group', milestoneGroup?.title || ''), [isNew, milestoneGroup?.title])
@@ -45,7 +45,7 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
 
 
   useEffect(() => {
-   setIsSubmitting( navigation.state === 'submitting' )
+    setIsSubmitting(navigation.state === 'submitting')
   }, [navigation.state])
 
 
@@ -69,32 +69,34 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
 
   return (
     <div className=''>
-      <BasicFormAreaBG title={headerTxt}  >
+      <BasicFormAreaBG h2Text={headerTxt}  >
 
-        <Form method='post' className='mx-8'>
-          <div className="form-control vert-space-between-inputs    ">
+        <Form method='post' className='m-8'>
+          <div className="form-control gap-y-6    ">
             <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
             <input type="string" name='groupId' value={groupId} hidden readOnly />
             <input type="string" name='outcomeId' value={paramsOutcomeId} hidden readOnly />
 
-            <InputLabelWithGuideLineLink
-              text='Milestone Group Title'
-              guideline={CoreValue}
-              title='Group'
-            />
-            <input type="text"
-              placeholder="Enter a Value Title"
-              name='title'
-              className=" input-field-text-title  "
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-            {TitleError}
-
-            <div className='vert-space-between-inputs  '>
+            <div>
               <InputLabelWithGuideLineLink
-                text='Milestone Group Description (Optional)'
+                inputTitle='Milestone Group Title'
+                guideline={CoreValue}
+                title='Group'
+              />
+              <input type="text"
+                placeholder="Enter a Value Title"
+                name='title'
+                className=" input-field-text-title  "
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+              {TitleError}
+            </div>
+
+            <div className='   '>
+              <InputLabelWithGuideLineLink
+                inputTitle='Milestone Group Description (Optional)'
                 guideline={CoreValueStatement}
                 title='Milestone Group Description'
               />
@@ -108,17 +110,17 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
               </textarea>
               {DescriptionError}
             </div>
+
+
+            {/* //**************BUTTONS ***************  */}
+
+            <FormButtons
+              saveBtnTxt={saveBtnTxt}
+              isSaveable={isSaveable}
+              isNew={isNew}
+            />
+
           </div>
-
-
-          {/* //**************BUTTONS ***************  */}
-
-          <FormButtons
-            saveBtnTxt={saveBtnTxt}
-            isSaveable={isSaveable}
-            isNew={isNew} 
-          />
-
         </Form>
       </BasicFormAreaBG>
     </div>

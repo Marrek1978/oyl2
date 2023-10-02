@@ -6,7 +6,7 @@ import { DndContext, closestCenter } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
 import Modal from '~/components/modals/Modal';
-import useResetSortOrder from './useResetSortOrder';
+import useResetSortOrder from './useSetSortOrderToNewIndex';
 import PageTitle from '~/components/titles/PageTitle';
 import DndSortableGeneric from './DndSortableGeneric';
 import useInOrder from '~/components/dnds/useInOrder';
@@ -14,10 +14,9 @@ import SuccessMessage from '~/components/modals/SuccessMessage';
 import { SuccessMessageTimeout } from '~/components/utilities/constants';
 import useCustomSensors from '~/components/dnds/useCustomDndSensors';
 
-import type { Sortable } from '~/types/genericArrayTypes';
 
 interface Props<T extends { id: string, sortOrder: number, title: string, description: string | null}> {
-  passedArray: Sortable<T>[];
+  passedArray: T[];
   dndTitle: string
 }
 
@@ -26,7 +25,7 @@ function DndGenericContext<T extends { id: string, sortOrder: number, title: str
 
   const fetcher = useFetcher();
   const [successMessage, setSuccessMessage] = useState('');
-  const [itemsArray, setItemsArray] = useState<Sortable<T>[]>([]);
+  const [itemsArray, setItemsArray] = useState<any[]>([]);
   const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
 
   const inOrder = useInOrder()
@@ -39,7 +38,7 @@ function DndGenericContext<T extends { id: string, sortOrder: number, title: str
   }, [passedArray])
 
 
-  const setStateArrayInProperOrder = useCallback((array: Sortable<T>[]) => {
+  const setStateArrayInProperOrder = useCallback((array: any[]) => {
     const isSequentialOrder: boolean = inOrder(array)
     if (isSequentialOrder) setItemsArray(array)
     if (!isSequentialOrder) {
@@ -86,7 +85,7 @@ function DndGenericContext<T extends { id: string, sortOrder: number, title: str
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      setItemsArray((prevValues: Sortable<T>[]) => {
+      setItemsArray((prevValues: any[]) => {
         const oldIndex = prevValues.findIndex(value => value.id === active.id);
         const newIndex = prevValues.findIndex(value => value.id === over?.id);
         const newValues = arrayMove(prevValues, oldIndex, newIndex);
@@ -124,6 +123,7 @@ function DndGenericContext<T extends { id: string, sortOrder: number, title: str
               title={item.title}
               description={item.description || ' '}
               sortOrder={item.sortOrder}
+              linkTitle='Go To'
             />
           ))}
 

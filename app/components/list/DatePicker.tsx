@@ -11,7 +11,7 @@ interface DatePickerProps {
   isHorizontal?: boolean;
 }
 
-const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, labelText = 'Due Date', isHorizontal }) => {
+const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, labelText = 'Due Date', isHorizontal=false }) => {
 
   const [displayDate, setDisplayDate] = useState<Date | null>(selectedDate);
   const [isHorizontalLayout, setIsHorizontalLayout] = useState<boolean>(false)
@@ -37,7 +37,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, 
   return (
     <>
 
-      <div className={`w-full ${parentDivCss} flex  `}>
+      <div className={`w-full ${parentDivCss}`}>
 
         {isHorizontalLayout ? (
           <div className=' '>

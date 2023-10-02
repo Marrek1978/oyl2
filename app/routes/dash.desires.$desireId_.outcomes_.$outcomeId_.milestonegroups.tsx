@@ -1,7 +1,7 @@
 import { parse } from "querystring";
 import { redirect } from "@remix-run/node";
 import { useEffect, useState } from "react";
-import { Outlet, useLoaderData, useMatches, useNavigate, useRouteLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData,  useNavigate } from "@remix-run/react";
 
 import { requireUserId } from '~/models/session.server';
 import { getOutcomeByOutcomeId } from '~/models/outcome.server';
@@ -15,10 +15,13 @@ import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime';
 import type { MilestoneGroupsWithStrDates } from "~/types/milestoneTypes";
 
 
+//!!!!  TEHRE WAS SOMETIHNG WRONG WITH THAT URLMESSAGE FOR LOADING !!!
+//!!!!  deal with there being no outcome Id or it is invalid !!!
+//!!!!   ... a custome message for that, an alert, and a redirect to the outcomes page... cascading backwards until login
 export const loader = async ({ request, params }: LoaderArgs) => {
   await requireUserId(request);
   const { outcomeId } = params;
-  if (!outcomeId) return redirect('/dash')
+  if (!outcomeId) return redirect('../..')
 
   try {
     const outcome = await getOutcomeByOutcomeId(outcomeId);
@@ -38,8 +41,8 @@ export const action = async ({ request, params }: ActionArgs) => {
 
     try {
       await updateGroupsOrder(groups)
-      return 'Milestone Groups order was updated'
-    } catch (error) { throw error }
+      return 'success'
+    } catch (error) { return 'failure'}
   }
 
   const formData = await request.formData()
@@ -55,7 +58,7 @@ export const action = async ({ request, params }: ActionArgs) => {
   try {
     await createMilestoneGroup(group);
     return 'success'
-  } catch (error) { throw error }
+  } catch (error) { return 'failure' }
 
 
   return null
@@ -106,6 +109,7 @@ export const useGetAllMilestoneGroupsForOutcome = (): MilestoneGroup[] | undefin
 
   const navigate = useNavigate();
   const loaderData = useLoaderData();
+  console.log('loaderData', loaderData)
   const [groups, setGroups] = useState<MilestoneGroup[]>();
 
   useEffect(() => {

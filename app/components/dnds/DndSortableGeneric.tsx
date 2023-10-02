@@ -38,7 +38,7 @@ function DndSortableGeneric({ id, sortOrder, title, description,  linkTitle = 'E
         '>
 
           <H2WithLink
-            title={title}
+            h2Text={title}
             linkDestination={id}
             // linkColor={}
             linkText={linkTitle}

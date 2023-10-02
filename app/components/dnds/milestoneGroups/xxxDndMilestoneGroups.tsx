@@ -14,7 +14,7 @@ import DndSortableValue from '~/components/dnds/values/DndSortableValue';
 import { useGetAllMilestoneGroupsForOutcome } from '~/routes/dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups';
 
 import type { MilestoneGroup } from '@prisma/client'
-import useResetSortOrder from '../useResetSortOrder';
+import useResetSortOrder from '../useSetSortOrderToNewIndex';
 import useInOrder from '~/components/dnds/useInOrder';
 import DndGenericContext from '../DndGenericContext';
 

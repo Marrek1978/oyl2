@@ -1,18 +1,51 @@
 import React from 'react'
+
+import { EditIcon } from '../utilities/icons';
 import HeadingH2 from '~/components/titles/HeadingH2';
 import H2WithLink from '~/components/titles/H2WithLink';
 import { GetHeaderBgColor } from '~/components/forms/GetHeaderBgColor';
 
+import type { MouseEventHandler, ReactNode } from 'react'
+import type { DaisyUIBtnColor, DaisyUIColor, TWTextSizes } from '~/types/CSSTypes';
 interface BasicFormAreaBGProps {
   children: React.ReactNode;
-  title: string | React.ReactNode;
+  h2Text: string | React.ReactNode;
+  
   maxWidth?: string;
+  onClickFunction?: MouseEventHandler<HTMLButtonElement>;
+  onMouseOver?: MouseEventHandler<HTMLButtonElement>;
+  onMouseOut?: MouseEventHandler<HTMLButtonElement>;
+  type?: 'button' | 'submit' | 'reset' | undefined;
+  linkText?: string | React.ReactNode;
+  icon?: ReactNode
   linkDestination?: string;
-  linkColor?: string;
-  linkText?: string;
+  linkColorDaisyUI?: DaisyUIColor;
+  btnColorDaisyUI?: DaisyUIBtnColor;
+  textSizeTW?: TWTextSizes;
+  btnSize?: string;
+  date?: Date | null;
+
 }
 
-function BasicFormAreaBG({ children, title, maxWidth = '800px', linkDestination, linkColor = 'primary', linkText }: BasicFormAreaBGProps) {
+function BasicFormAreaBG({
+  children,
+  maxWidth = '800px',
+
+  h2Text,
+  onClickFunction,
+  onMouseOver,
+  onMouseOut,
+  type = 'button',
+  linkText = 'Edit',
+  icon = EditIcon,
+  linkDestination ,
+  linkColorDaisyUI = 'primary',
+  btnColorDaisyUI = 'link',
+  textSizeTW = 'base',
+  btnSize,
+  date,
+
+}: BasicFormAreaBGProps) {
 
   const backgroundColor = GetHeaderBgColor()
 
@@ -28,26 +61,37 @@ function BasicFormAreaBG({ children, title, maxWidth = '800px', linkDestination,
 
       {/* //**************HEADER *************** */}
       <div className={`
-        w-full min-h-[72px]  px-8 pt-2 pb-3
+        w-full min-h-[72px] px-8 
         ${backgroundColor}
         flex items-center
         text-xl font-mont uppercase font-normal tracking-widest 
         text-primary-300
         overflow-ellipsis  
+
+       
        `}>
 
-        <div className='max-w-prose'>
+        <div className='w-full'>
           {linkDestination && linkText && (
             <H2WithLink
-              title={title}
-              linkDestination={linkDestination}
-              linkColor={linkColor}
+              h2Text={h2Text}
+              onClickFunction={onClickFunction}
+              onMouseOver={onMouseOver}
+              onMouseOut={onMouseOut}
+              type={type}
               linkText={linkText}
+              icon={icon}
+              linkDestination={linkDestination}
+              linkColorDaisyUI={linkColorDaisyUI}
+              btnColorDaisyUI={btnColorDaisyUI}
+              textSizeTW={textSizeTW}
+              btnSize={btnSize}
+              date={date}
             />
           )}
 
           {!linkDestination || !linkText ? (
-            <HeadingH2 text={title} />
+            <HeadingH2 text={h2Text} />
           ) : null}
 
         </div>

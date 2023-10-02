@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react';
-import { useFetcher } from '@remix-run/react';
 import { ServerFailureMessage, ServerSuccessMessage } from './constants';
 
+import type { FetcherWithComponents} from '@remix-run/react';
 
 const string1 = ServerSuccessMessage;
 const string2 = ServerFailureMessage;
 
 type ServerResponseMessagesType = typeof string1 | typeof string2 | undefined
 
-function useFetcherState() {
+export interface FetcherStateProps {
+  fetcher: FetcherWithComponents<any>;
+}
 
-  const fetcher = useFetcher();
+
+function useFetcherState({ fetcher }: FetcherStateProps) {
 
   const [isIdle, setIsIdle] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -23,8 +26,8 @@ function useFetcherState() {
     setIsLoading(fetcher.state === 'loading');
     setIsIdle(fetcher.state === 'idle');
     setFetcherState(fetcher.state);
-    setFetcherMessage(fetcher.data || '');
-  }, [fetcher]);
+    setFetcherMessage(fetcher.data);
+  }, [fetcher.state, fetcher.data]);
 
   return {
     isIdle,

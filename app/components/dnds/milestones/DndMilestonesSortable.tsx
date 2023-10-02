@@ -1,5 +1,3 @@
-
-
 import TextBtn from "~/components/buttons/TextBtn";
 import { Link, useFetcher } from "@remix-run/react";
 import { useEffect, useMemo, useState } from "react";
@@ -13,6 +11,7 @@ import { ArrowRight, EditIcon } from "~/components/utilities/icons";
 import useFetcherState from "~/components/utilities/useFetcherState";
 
 import type { Milestone } from "@prisma/client";
+import type { FetcherStateProps } from "~/components/utilities/useFetcherState";
 
 interface MilestoneSortableProps {
   id: string;
@@ -27,35 +26,23 @@ interface MilestoneSortableProps {
 function DndMilestonesSortable({ id, passedMilestone, linkTitle = 'Edit', index, isLastItem }: MilestoneSortableProps) {
 
   const fetcher = useFetcher();
-  // const [isIdle, setIsIdle] = useState(true)
-  // const [isLoading, setIsLoading] = useState(false)
-  const [completed, setCompleted] = useState<boolean>()
-  // const [isSubmitting, setIsSubmitting] = useState(false)
-  // const [fetcherState, setFetcherState] = useState<string>()
-  // const [fetcherMessage, setFetcherMessage] = useState<'success' | 'failed' | undefined>()
+  const [isCompleted, setIsCompleted] = useState<boolean>()
+  const { isIdle, isLoading, isSubmitting, fetcherState, fetcherMessage } = useFetcherState({ fetcher } as FetcherStateProps);
 
   const loadedCompleted = useMemo(() => passedMilestone.isComplete, [passedMilestone.isComplete])
+
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: id });
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
+  const checkedMessage = isCompleted ? `Checked` : 'Unchecked'
 
 
-  // useEffect(() => {
-  //   setIsSubmitting(fetcher.state === 'submitting')
-  //   setIsLoading(fetcher.state === 'loading')
-  //   setIsIdle(fetcher.state === 'idle')
-  //   setFetcherState(fetcher.state)
-  //   setFetcherMessage(fetcher.data || '')
-  // }, [fetcher])
-
-  const {isIdle, isLoading, isSubmitting, fetcherState, fetcherMessage} = useFetcherState()
-
-  console.log('isIdle', isIdle) 
+  //initial loading of isCompleted
   useEffect(() => {
-    setCompleted(loadedCompleted)
-  }, [loadedCompleted, setCompleted])
+    setIsCompleted(loadedCompleted)
+  }, [loadedCompleted, setIsCompleted])
 
 
   const handleSendToDb = (passedMilestone: Milestone) => {
@@ -64,14 +51,14 @@ function DndMilestonesSortable({ id, passedMilestone, linkTitle = 'Edit', index,
       isComplete: !passedMilestone.isComplete,
       completedAt: passedMilestone.isComplete ? null : new Date()
     }
-    const complete = {
+    const toServerDataObj = {
       milestone,
       actionType: 'complete'
     }
-    const submitedString = JSON.stringify(complete)
+    const toServerDataString = JSON.stringify(toServerDataObj)
     try {
       fetcher.submit({
-        submitedString
+        toServerDataString
       }, {
         method: 'PUT',
       })
@@ -81,10 +68,10 @@ function DndMilestonesSortable({ id, passedMilestone, linkTitle = 'Edit', index,
 
   const onClickHandler = (milestone: Milestone) => {
     handleSendToDb(milestone)
-    setCompleted(!completed)
+    setIsCompleted(!isCompleted)
   }
 
-  const checkedMessage = completed ? `Checked` : 'Unchecked'
+
 
   return (
     <>
@@ -117,11 +104,10 @@ function DndMilestonesSortable({ id, passedMilestone, linkTitle = 'Edit', index,
 
             <div className={`
               ${!isSubmitting && (
-                `step ${completed && 'step-primary'}`
+                `step ${isCompleted && 'step-primary'}`
               )}
-              font-semibold capitalize 
-              `}
-              data-content={`${completed ? '✓' : index + 1}`}
+              font-semibold capitalize`}
+              data-content={`${isCompleted ? '✓' : index + 1}`}
               onClick={() => onClickHandler(passedMilestone)}
             >
               <div className="

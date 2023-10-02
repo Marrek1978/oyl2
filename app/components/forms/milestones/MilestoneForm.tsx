@@ -152,7 +152,9 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
   }
 
   return (
-    <BasicFormAreaBG title={headerTxt}  >
+    <BasicFormAreaBG 
+    h2Text={headerTxt} 
+    >
 
       <Form method='post' className='m-8'>
         <div className="form-control gap-y-6   ">
