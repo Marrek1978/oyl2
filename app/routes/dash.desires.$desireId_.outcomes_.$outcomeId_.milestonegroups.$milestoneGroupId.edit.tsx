@@ -1,25 +1,17 @@
+import { parse } from 'querystring';
+import { Outlet } from '@remix-run/react';
 import { redirect } from '@remix-run/node';
+import { useEffect, useState } from 'react';
+import type { LoaderArgs } from '@remix-run/node';
 
 import Modal from '~/components/modals/Modal'
+import { updateMilestoneGroupById } from '~/models/milestoneGroup.server';
 import MilestoneGroupForm from '~/components/forms/milestones/MilestoneGroupForm'
-import { getMilestoneGroupById, updateMilestoneGroupById } from '~/models/milestoneGroup.server';
+import { useGetMilestoneGroupWithMilestones } from './dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId';
 
-import type { LoaderArgs } from '@remix-run/node';
-import { Outlet, useLoaderData } from '@remix-run/react';
-import { parse } from 'querystring';
-// import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
-
+import type { MilestoneGroup } from '@prisma/client';
 import type { UpdateMilestoneGroup } from '~/types/milestoneTypes';
 
-
-export const loader = async ({ request, params }: LoaderArgs) => {
-  const { milestoneGroupId } = params
-  if (!milestoneGroupId) return 'noId'
-  try {
-    const milestoneGroup = await getMilestoneGroupById(milestoneGroupId)
-    return milestoneGroup
-  } catch (error) { return 'noId' }
-}
 
 export const action = async ({ request, params }: LoaderArgs) => {
   const formBody = await request.text();
@@ -38,23 +30,22 @@ export const action = async ({ request, params }: LoaderArgs) => {
 
 function EditMilestoneGroupPage() {
 
-  const loaderData = useLoaderData()
-  // const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect(loaderData)
+  const loadedGroup = useGetMilestoneGroup()
+  const [group, setGroup] = useState<MilestoneGroup | undefined>()
+
+  useEffect(() => {
+    if (!loadedGroup) return
+    setGroup(loadedGroup)
+  }, [loadedGroup])
 
 
   return (
     <>
       <Outlet />
-      {/* {warning && (
-        <Modal zIndex={50}>
-          {alertMessage}
-        </Modal>
-      )} */}
       <Modal zIndex={40} >
-
         <MilestoneGroupForm
           isNew={false}
-          milestoneGroup={loaderData}
+          milestoneGroup={group}
         />
       </Modal>
     </>
@@ -63,3 +54,15 @@ function EditMilestoneGroupPage() {
 
 export default EditMilestoneGroupPage
 
+export const useGetMilestoneGroup = (): MilestoneGroup | null | undefined => {
+  const loaderData = useGetMilestoneGroupWithMilestones()
+  const [group, setGroup] = useState<MilestoneGroup | undefined>()
+
+  useEffect(() => {
+    if (!loaderData) return
+    const { milestones, ...milestoneGroup } = loaderData
+    setGroup(milestoneGroup as MilestoneGroup)
+  }, [loaderData])
+
+  return group
+}

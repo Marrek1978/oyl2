@@ -1,24 +1,13 @@
-import { useEffect, useState } from 'react'
-import { useLoaderData, useNavigate } from '@remix-run/react';
+import { parse } from 'querystring';
 import { redirect } from '@remix-run/node'
-import type{ActionArgs, LoaderArgs} from '@remix-run/server-runtime'
+import { useEffect, useState } from 'react'
+import type{ActionArgs} from '@remix-run/server-runtime'
 
 import Modal from '~/components/modals/Modal'
-import { deleteMilestoneById, getMilestoneById } from '~/models/milestone.server';
+import { deleteMilestoneById } from '~/models/milestone.server';
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal'
-import { parse } from 'querystring';
-
-export const loader = async ({ request, params }: LoaderArgs) => {
-  // const { milestoneId } = params;
-  // if (!milestoneId) throw new Error('No milestoneId was provided')
-  // try {
-  //   const milestone = await getMilestoneById(milestoneId);
-  //   console.log('milestone', milestone)
-  //   if (!milestone) redirect('..')
-  //   return milestone
-  // } catch (error) { throw error }
-  return null
-}
+import { useGetMilestone } from './dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId.$milestoneId';
+ 
 
 export const action = async ({ request }: ActionArgs) => {
   const formBody = await request.text();
@@ -30,26 +19,24 @@ export const action = async ({ request }: ActionArgs) => {
   } catch (error) { throw error }
 }
 
+
 function DeleteMilestonePage() {
-
-
-  const navigate = useNavigate();
-  const loaderData = useLoaderData();
-  console.log('loaderData', loaderData)
-  const [title, setTitle] = useState<string>('')
+  
+  const loadedGroup = useGetMilestone()
   const [id, setId] = useState<string>('')
-
+  const [title, setTitle] = useState<string>('')
 
   useEffect(() => {
-    if (!loaderData || loaderData === null) return
-    setTitle(loaderData?.title)
-    setId(loaderData?.id)
-  }, [loaderData, navigate])
+    if (!loadedGroup) return
+    setId(loadedGroup?.id)
+    setTitle(loadedGroup?.title)
+  }, [loadedGroup])
+
 
   return (
     <>
       <Modal onClose={() => { }} zIndex={50}>
-        {/* <AreYouSureDeleteModal item={'Milestone'} title={title} id={id} /> */}
+        <AreYouSureDeleteModal item={'Milestone'} title={title} id={id} />
       </Modal>
     </>
   )

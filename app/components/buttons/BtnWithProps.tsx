@@ -1,12 +1,12 @@
 import React from 'react'
-import { closeIcon, dbIcon, trashIcon } from '~/components/utilities/icons';
+import { EditIcon, closeIcon, dbIcon, trashIcon } from '~/components/utilities/icons';
 
 import type { MouseEventHandler, ReactNode } from 'react'
 import type { DaisyUIBtnColor, DaisyUIBtnSize, DaisyUIColor, TWFontWidths, TWTextSizes } from '~/types/CSSTypes';
 
 type Props = {
   //btn purpose & functiionality
-  btnPurpose: 'save' | 'delete' | 'close';
+  btnPurpose: 'save' | 'delete' | 'close' | 'goto' | undefined;
   btnType?: 'button' | 'submit' | 'reset'
   onClickFunction?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onMouseOver?: MouseEventHandler<HTMLButtonElement>;
@@ -46,9 +46,9 @@ function BtnWithProps({
 }: Props) {
 
 
-  const buttonText = btnLabel ? btnLabel : btnPurpose === 'save' ? 'Save' : btnPurpose === 'delete' ? 'Delete' : 'Close'
-  const buttonIcon = icon ? icon : btnPurpose === 'save' ? dbIcon : btnPurpose === 'delete' ? trashIcon : closeIcon
-  const buttonColorClass = daisyUIBtnColor ? `btn-${daisyUIBtnColor}` : btnPurpose === 'save' ? 'btn-primary' : btnPurpose === 'delete' ? 'btn-error' : ''
+  const buttonText = btnLabel ? btnLabel : btnPurpose === 'save' ? 'Save' : btnPurpose === 'delete' ? 'Delete' : btnPurpose === 'close' ? 'Close' : btnPurpose === 'goto' ? 'Edit' : 'Go To'
+  const buttonIcon = icon ? icon : btnPurpose === 'save' ? dbIcon : btnPurpose === 'delete' ? trashIcon : btnPurpose === 'close' ? closeIcon : btnPurpose === 'goto' ? EditIcon : null
+  const buttonColorClass = daisyUIBtnColor ? `btn-${daisyUIBtnColor}` : btnPurpose === 'save' ? 'btn-primary' : btnPurpose === 'delete' ? 'btn-error' :  btnPurpose === 'close' ? '' : 'btn-link'
   const buttonOutlineClass = isOutlined ? 'btn-outline' : ''
   const buttonSizeClass = daisyUIBtnSize ? `btn-${daisyUIBtnSize}` : ''
   const textSizeClass = textSizeTW ? `text-${textSizeTW}` : ''

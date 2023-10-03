@@ -1,27 +1,18 @@
 import { parse } from 'querystring'
 import { useEffect, useState } from 'react';
+import { redirect } from '@remix-run/server-runtime'
+import { Outlet, useParams } from '@remix-run/react';
 
 import Modal from '~/components/modals/Modal'
-import { redirect } from '@remix-run/server-runtime'
+import { updateMilestone } from '~/models/milestone.server';
 import { DefaultFormWidth } from '~/components/utilities/constants';
-import { Outlet, useLoaderData, useNavigate } from '@remix-run/react';
 import MilestoneForm from '~/components/forms/milestones/MilestoneForm';
-import { getMilestoneById, updateMilestone } from '~/models/milestone.server';
-import { ArrayOfObjectsStrToDates } from '~/components/utilities/helperFunctions';
-
+import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
+import { useGetMilestoneGroupWithMilestones } from './dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId';
 
 import type { Milestone } from '@prisma/client';
 import type { LoaderArgs } from '@remix-run/node';
-import type { MilestoneWithStrDates } from '~/types/milestoneTypes';
 
-// export const loader = async ({ request, params }: LoaderArgs) => {
-  // const milestoneId = params.milestoneId
-  // if (!milestoneId) throw new Error('No milestoneId was provided')
-  // try {
-  //   const milestone = await getMilestoneById(milestoneId)
-  //   return { milestone }
-  // } catch (error) { throw error }
-// }
 
 export const action = async ({ request, params }: LoaderArgs) => {
   const requestString = await request.text();
@@ -37,6 +28,7 @@ function EditMilestonePage() {
 
   const loadedMilestone = useGetMilestone();
   const [milestone, setMilestone] = useState<Milestone>()
+  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect(loadedMilestone)
 
 
   useEffect(() => {
@@ -49,9 +41,14 @@ function EditMilestonePage() {
   return (
     <>
       <Outlet />
+      {warning && (
+        <Modal zIndex={50}>
+          {alertMessage}
+        </Modal>
+      )}
       <Modal onClose={() => { }} zIndex={40}>
         <div className={`w-[${DefaultFormWidth}] min-w-[250px] felx-1`}>
-          {/* <MilestoneForm milestone={milestone} isNew={false} /> */}
+          <MilestoneForm milestone={milestone} isNew={false} />
         </div>
       </Modal>
     </>
@@ -61,20 +58,19 @@ function EditMilestonePage() {
 export default EditMilestonePage
 
 
-export const useGetMilestone = () => {
-  const navigate = useNavigate();
-  const loaderData = useLoaderData();
-  const [milestone, setMilestone] = useState<Milestone>();
-  const loadedMilestoneWithStrDates: MilestoneWithStrDates = loaderData.milestone;
-  if (!loadedMilestoneWithStrDates) navigate('../')
+export const useGetMilestone = (): Milestone | null | undefined => {
+  const params = useParams()
+  const { milestoneId } = params
+  const loaderData = useGetMilestoneGroupWithMilestones()
+  const [milestone, setMilestone] = useState<Milestone | undefined | null>()
 
   useEffect(() => {
-    if (!loadedMilestoneWithStrDates) return
-    const loadedMilestone: MilestoneWithStrDates[] = [loadedMilestoneWithStrDates];
-    const datekeys = ['createdAt', 'updatedAt', 'dueDate', 'completedAt'];
-    const milestoneWithProperDates: Milestone[] = ArrayOfObjectsStrToDates({ items: loadedMilestone, dateKeys: datekeys });
-    setMilestone(milestoneWithProperDates[0]);
-  }, [loadedMilestoneWithStrDates, navigate]);
+    if (!loaderData) return
+    const milestonesArray = loaderData.milestones as Milestone[]
+    const milestoneByParamId = milestonesArray.find(milestone => milestone.id === milestoneId)
+    if (!milestoneByParamId) return setMilestone(null)
+    setMilestone(milestoneByParamId as Milestone)
+  }, [loaderData, milestoneId])
 
   return milestone;
 }

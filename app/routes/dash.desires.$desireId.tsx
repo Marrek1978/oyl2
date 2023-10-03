@@ -16,13 +16,6 @@ import type { Outcome, Value } from '@prisma/client';
 import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
 
 
-export const loader = async () => { 
-
-  return ({message:'loading'})
-
-}
-
-
 function DesirePage() {
 
   const [values, setValues] = useState<Value[]>([]);

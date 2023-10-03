@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import TheDatePicker from "react-datepicker";
+
+import InputLabel from "../forms/InputLabel";
 import { DueDates } from "../utilities/Guidelines";
 import InputLabelWithGuideLineLink from "../forms/InputLabelWithGuideLineLink";
-import InputLabel from "../forms/InputLabel";
 
 interface DatePickerProps {
   setSelectedDate: (date: Date | null) => void;
@@ -11,10 +12,12 @@ interface DatePickerProps {
   isHorizontal?: boolean;
 }
 
-const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, labelText = 'Due Date', isHorizontal=false }) => {
+const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, labelText = 'Due Date', isHorizontal = false }) => {
 
   const [displayDate, setDisplayDate] = useState<Date | null>(selectedDate);
   const [isHorizontalLayout, setIsHorizontalLayout] = useState<boolean>(false)
+
+  const parentDivCss = isHorizontalLayout ? 'flex flex-wrap items-center  gap-x-4  ' : ' '
 
 
   useEffect(() => {
@@ -25,33 +28,32 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, 
     setDisplayDate(selectedDate)
   }, [selectedDate])
 
+
   const handleSelectedDateChange = (date: Date | null) => {
     setDisplayDate(date);
     setSelectedDate(date);
   };
 
 
-  const parentDivCss = isHorizontalLayout ? 'flex flex-wrap items-center  gap-x-4  ' : ' '
-
-
   return (
     <>
 
       <div className={`w-full ${parentDivCss}`}>
-
         {isHorizontalLayout ? (
-          <div className=' '>
-            <InputLabel inputTitle={labelText} />
-          </div>
+          <>
+            {labelText && (
+              <div className=' '>
+                <InputLabel inputTitle={labelText} />
+              </div>
+            )}
+          </>
         ) : (
-
           <InputLabelWithGuideLineLink
             inputTitle={labelText}
             title='Due Date'
             guideline={DueDates}
           />
         )}
-
 
         <TheDatePicker
           isClearable={true}

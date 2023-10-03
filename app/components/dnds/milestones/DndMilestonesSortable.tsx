@@ -1,4 +1,3 @@
-import TextBtn from "~/components/buttons/TextBtn";
 import { Link, useFetcher } from "@remix-run/react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -6,8 +5,8 @@ import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from '@dnd-kit/sortable';
 
 import { formatDateDayDate } from '~/utils/functions';
+import BtnWithProps from "~/components/buttons/BtnWithProps";
 import ServerMessages from "~/components/modals/ServerMessages";
-import { ArrowRight, EditIcon } from "~/components/utilities/icons";
 import useFetcherState from "~/components/utilities/useFetcherState";
 
 import type { Milestone } from "@prisma/client";
@@ -27,7 +26,7 @@ function DndMilestonesSortable({ id, passedMilestone, linkTitle = 'Edit', index,
 
   const fetcher = useFetcher();
   const [isCompleted, setIsCompleted] = useState<boolean>()
-  const { isIdle, isLoading, isSubmitting, fetcherState, fetcherMessage } = useFetcherState({ fetcher } as FetcherStateProps);
+  const { isIdle, fetcherState, fetcherMessage } = useFetcherState({ fetcher } as FetcherStateProps);
 
   const loadedCompleted = useMemo(() => passedMilestone.isComplete, [passedMilestone.isComplete])
 
@@ -39,7 +38,6 @@ function DndMilestonesSortable({ id, passedMilestone, linkTitle = 'Edit', index,
   const checkedMessage = isCompleted ? `Checked` : 'Unchecked'
 
 
-  //initial loading of isCompleted
   useEffect(() => {
     setIsCompleted(loadedCompleted)
   }, [loadedCompleted, setIsCompleted])
@@ -72,92 +70,79 @@ function DndMilestonesSortable({ id, passedMilestone, linkTitle = 'Edit', index,
   }
 
 
-
   return (
     <>
-      {isLoading || isIdle && (
+      {/* {isLoading || isIdle && ( */}
         <ServerMessages
           fetcherState={fetcherState}
           fetcherMessage={fetcherMessage}
-          showLoading={true}
-          showSuccess={true}
-          showFailed={true}
+          isShowLoading={false}
+          isShowSuccess={false}
+          isShowFailed={true}
           successMessage={checkedMessage}
-        // failureMessage
         />
-      )}
+      {/* )} */}
 
 
-      <div key={id} ref={setNodeRef} style={style} {...attributes} {...listeners} className="mt-0">
-        <div id={id} className='
-          relative my-4 p-4
+      <li key={id} ref={setNodeRef} style={style} {...attributes} {...listeners}
+        className={`mt-0  
+        ${isIdle && (
+            `step ${isCompleted && 'step-primary'}`
+          )}
+        `}
+        data-content={`${isCompleted ? '✓' : index + 1}`}
+        onClick={() => onClickHandler(passedMilestone)}
+      >
+        <div className='
+          relative  pt-2 px-4 pb-4
           font-poppins text-left text-base-content
           cursor-pointer 
           transition duration-500
           hover:bg-primary/30 
           hover:text-primary-focus
           min-h-[50px] min-w-[50px]  
-          '
-        >
+          '  >
 
-          <div className="grid grid-rows-[70px_20px_20px]    ">
+          <div className="grid grid-rows-[25px_40px_20px]  text-center  ">
 
-            <div className={`
-              ${!isSubmitting && (
-                `step ${isCompleted && 'step-primary'}`
+            <div className="
+              max-w-[150px] 
+              truncate font-semibold capitalize 
+              overflow-hidden 
+              ">
+              {!isIdle ? (
+                <div className="w-full flex justify-center"><span className="loading loading-ring loading-lg "></span></div>
+              ) : (
+                passedMilestone?.title
               )}
-              font-semibold capitalize`}
-              data-content={`${isCompleted ? '✓' : index + 1}`}
-              onClick={() => onClickHandler(passedMilestone)}
-            >
-              <div className="
-                max-w-[150px] truncate 
-                text-wrap overflow-hidden self-end pt-1 
-                "
-              >
-                {isSubmitting ? (
-                  <div className="w-full flex justify-center"><span className="loading loading-ring loading-lg "></span></div>
-                ) : (
-                  passedMilestone?.title
-                )}
-              </div>
             </div>
 
 
-            <div className="">
+            <div>
               {passedMilestone?.isComplete && (
                 <div>
-                  <div className='text-xs font-semibold text-center text-success'> {formatDateDayDate(passedMilestone?.completedAt)}</div>
+                  <div className='text-xs font-semibold   text-success'> {formatDateDayDate(passedMilestone?.completedAt)}</div>
                 </div>
               )}
 
               {(passedMilestone?.dueDate && !passedMilestone?.isComplete) && (
                 <div>
-                  <div className='text-xs font-semibold text-center'> {formatDateDayDate(passedMilestone?.dueDate)}</div>
+                  <div className='text-xs font-semibold '> {formatDateDayDate(passedMilestone?.dueDate)}</div>
                 </div>
               )}
             </div>
 
-            <div className=" text-center">
-              <Link to={id}>
-                <TextBtn
-                  text={linkTitle}
-                  icon={EditIcon}
-                  textSizeClass='text-xs'
+            <div className=" ">
+              <Link to={id} onClick={(e) => e.stopPropagation()}>
+                <BtnWithProps
+                  btnPurpose={"goto"}
+                  fontWidthTW='bold'
                 />
               </Link>
             </div>
           </div>
         </div>
-      </div >
-
-      {
-        (!isLastItem) && (
-          <div className="pt-6 text-primary">  {ArrowRight} </div>
-        )
-      }
-
-
+      </li >
     </>
   )
 }

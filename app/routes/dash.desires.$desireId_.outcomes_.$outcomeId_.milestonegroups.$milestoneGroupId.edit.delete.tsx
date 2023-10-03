@@ -1,22 +1,13 @@
 import { parse } from 'querystring';
 import { redirect } from '@remix-run/node';
-import { useLoaderData, useParams } from '@remix-run/react';
-import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
+import { useEffect, useState } from 'react';
+import type { ActionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
+import { deleteMilestoneGroupById } from '~/models/milestoneGroup.server';
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal'
-import { deleteMilestoneGroupById, getMilestoneGroupById } from '~/models/milestoneGroup.server';
-// import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
+import { useGetMilestoneGroup } from './dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId.edit';
 
-
-// export const loader = async ({ request, params }: LoaderArgs) => {
-//   const { milestoneGroupId } = params
-//   if (!milestoneGroupId) return 'noId'
-//   try {
-//     const milestoneGroup = await getMilestoneGroupById(milestoneGroupId)
-//     return milestoneGroup
-//   } catch (error) { return 'noId' }
-// }
 
 export const action = async ({ request, params }: ActionArgs) => {
   const formBody = await request.text();
@@ -29,13 +20,17 @@ export const action = async ({ request, params }: ActionArgs) => {
 }
 
 
-
-
 function DeleteMilestoneGroupPage() {
 
-  const loaderData = useLoaderData()
-  const { milestoneGroupId } = useParams()
-  // const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect(loaderData)
+  const [id, setId] = useState<string>('')
+  const loadedGroup = useGetMilestoneGroup()
+  const [title, setTitle] = useState<string>('')
+
+  useEffect(() => {
+    if (!loadedGroup) return
+    setId(loadedGroup?.id)
+    setTitle(loadedGroup?.title)
+  }, [loadedGroup])
 
 
   return (
@@ -44,16 +39,11 @@ function DeleteMilestoneGroupPage() {
         onClose={() => { }}
         zIndex={50}
       >
-        {/* {warning */}
-          {/* ? ( */}
-            {/* // <>{alertMessage}</> */}
-          {/* ) : ( */}
-            {/* < AreYouSureDeleteModal
-              item={'Milestone Group'}
-              title={loaderData?.title}
-              id={milestoneGroupId || ''}
-            /> */}
-          {/* )} */}
+        < AreYouSureDeleteModal
+          item={'Milestone Group'}
+          title={title}
+          id={id}
+        />
       </Modal>
     </>
   )

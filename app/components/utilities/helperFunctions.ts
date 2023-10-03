@@ -102,16 +102,11 @@ interface ObjectWithStrDates {
 }
 
 export function ObjectStrToDates({ item, dateKeys }: ObjectWithStrDates) {
-  console.log("item is ", item.createdAt);
-
   dateKeys.forEach((key) => {
     if (item[key] && item[key] !== Date) {
       return (item[key] = new Date(item[key]));
     }
   });
-
-  console.log("item is ", item);
-
   return item;
 }
 

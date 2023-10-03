@@ -1,35 +1,39 @@
 import { parse } from "querystring";
 import { redirect } from "@remix-run/node";
 import { useEffect, useState } from "react";
-import { Outlet, useLoaderData, useNavigate } from "@remix-run/react";
+import { Outlet, useRouteLoaderData } from "@remix-run/react";
 
 import { requireUserId } from '~/models/session.server';
 import { getOutcomeByOutcomeId } from '~/models/outcome.server';
+import DndGenericContext from "~/components/dnds/DndGenericContext";
 import BasicTextAreaBG from "~/components/baseContainers/BasicTextAreaBG";
 import MilestoneGroupForm from "~/components/forms/milestones/MilestoneGroupForm"
-import DndGenericContext from "~/components/dnds/DndGenericContext";
+import { ArrayOfObjectsStrToDates } from "~/components/utilities/helperFunctions";
 import { getMilestoneGroupsByOutcomeId, createMilestoneGroup, updateGroupsOrder } from '~/models/milestoneGroup.server';
 
-import type { MilestoneGroup } from "@prisma/client";
 import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime';
-import type { MilestoneGroupsWithStrDates } from "~/types/milestoneTypes";
+import type { MilestoneGroupsWithMilestones, MilestoneGroupsWithMilestonesWithStringDates } from "~/types/milestoneTypes";
 
 
 //!!!!  TEHRE WAS SOMETIHNG WRONG WITH THAT URLMESSAGE FOR LOADING !!!
 //!!!!  deal with there being no outcome Id or it is invalid !!!
 //!!!!   ... a custome message for that, an alert, and a redirect to the outcomes page... cascading backwards until login
+
+
+
+//? if the outcome Id is not Valid, then alert and go back
+//? there do not need to be any groups at this point 
 export const loader = async ({ request, params }: LoaderArgs) => {
+  console.log('milestonesGroups loader')
   await requireUserId(request);
   const { outcomeId } = params;
-  console.log('in groups loader adn outcomeId', outcomeId)
   if (!outcomeId) return redirect('../..')
 
   try {
     const outcome = await getOutcomeByOutcomeId(outcomeId);
-    if (!outcome) return redirect('..')
-    console.log('in groups loader and about to get milestone groups by outcomeId')
-    const allMilestoneGroupsByOutcome = await getMilestoneGroupsByOutcomeId(outcomeId);
-    return { allMilestoneGroupsByOutcome }
+    if (!outcome) return null
+    const loadedGroups = await getMilestoneGroupsByOutcomeId(outcomeId);
+    return loadedGroups
   } catch (error) { throw error }
 };
 
@@ -70,16 +74,13 @@ export const action = async ({ request, params }: ActionArgs) => {
 
 function MilestoneGroupsPage() {
 
-  const [groups, setGroups] = useState<MilestoneGroup[]>([]);
-  // const loadedGroups: MilestoneGroup[] | undefined = useGetAllMilestoneGroupsForOutcome()
-  const loadedGroups: MilestoneGroup[] | undefined = useLoaderData()?.allMilestoneGroupsByOutcome
-
-  console.log('loading milestoneGroups page')
+  const loadedGroupsData = useGetAllMilestoneGroupsForOutcome()
+  const [groups, setGroups] = useState<MilestoneGroupsWithMilestones[]>([]);
 
   useEffect(() => {
-    if (!loadedGroups) return
-    setGroups(loadedGroups)
-  }, [loadedGroups])
+    if (!loadedGroupsData) return
+    setGroups(loadedGroupsData);
+  }, [loadedGroupsData])
 
 
   return (
@@ -90,7 +91,7 @@ function MilestoneGroupsPage() {
         <section className='flex-1 max-w-max  '>
           <div className={`w-full min-w-[350px]`} >
             <BasicTextAreaBG  >
-              <DndGenericContext<MilestoneGroup>
+              <DndGenericContext<MilestoneGroupsWithMilestones>
                 passedArray={groups}
                 dndTitle={'Milestone Groups'}
               />
@@ -110,18 +111,17 @@ function MilestoneGroupsPage() {
 export default MilestoneGroupsPage
 
 
-export const useGetAllMilestoneGroupsForOutcome = (): MilestoneGroup[] | undefined => {
-
-  const navigate = useNavigate();
-  const loaderData = useLoaderData();
-  console.log('loaderData from milestoneGroups page(dnd)', loaderData)
-  const [groups, setGroups] = useState<MilestoneGroup[]>();
+export const useGetAllMilestoneGroupsForOutcome = (): MilestoneGroupsWithMilestones[] | null | undefined => {
+  const path = "routes/dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups"
+  const loadedGroupsArray = useRouteLoaderData(path)
+  const [groups, setGroups] = useState<MilestoneGroupsWithMilestones[]>();
 
   useEffect(() => {
-    const groupsWithStrDates: MilestoneGroupsWithStrDates[] = loaderData?.allMilestoneGroupsByOutcome;
-    const groupsWithProperDates: MilestoneGroup[] = transformGroupDates(groupsWithStrDates);
+    if (!loadedGroupsArray) return
+    const groupsWithStrDates: MilestoneGroupsWithMilestonesWithStringDates[] = loadedGroupsArray;
+    const groupsWithProperDates: MilestoneGroupsWithMilestones[] = ArrayOfObjectsStrToDates({ items: groupsWithStrDates, dateKeys: ['createdAt', 'updatedAt'] })
     setGroups(groupsWithProperDates);
-  }, [loaderData, navigate]);
+  }, [loadedGroupsArray]);
 
   return groups;
 };
@@ -144,11 +144,11 @@ export const useGetAllMilestoneGroupsForOutcome = (): MilestoneGroup[] | undefin
 
 
 
-function transformGroupDates(items: MilestoneGroupsWithStrDates[]): MilestoneGroup[] {
+// function transformGroupDates(items: MilestoneGroupsWithStrDates[]): MilestoneGroup[] {
 
-  return items?.map((item: any) => ({
-    ...item,
-    createdAt: new Date(item.createdAt!),
-    updatedAt: new Date(item.updatedAt!),
-  }));
-}
+//   return items?.map((item: any) => ({
+//     ...item,
+//     createdAt: new Date(item.createdAt!),
+//     updatedAt: new Date(item.updatedAt!),
+//   }));
+// }

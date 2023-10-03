@@ -152,8 +152,8 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
   }
 
   return (
-    <BasicFormAreaBG 
-    h2Text={headerTxt} 
+    <BasicFormAreaBG
+      h2Text={headerTxt}
     >
 
       <Form method='post' className='m-8'>
@@ -197,29 +197,33 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
             {DescriptionError}
           </div>
 
-          <DatePicker
-            labelText={'Due On (Optional)'}
-            selectedDate={dueDate}
-            setSelectedDate={setDueDate}
-          />
-
-          <div className='w-full  flex flex-col items-end'>
+          <div className='w-full  flex flex-col items-end gap-y-8'>
             <div className='w-[50%] flex justify-start'>
-              <ToggleWithLabelAndGuideLineLink
-                text='Completed?'
-                guideline={CoreValueStatement}
-                title='Milestone Description'
-                checkedState={isCompleted}
-                handleCheckedState={handleIsCompleted}
+              <DatePicker
+                labelText={'Due On (Optional)'}
+                selectedDate={dueDate}
+                setSelectedDate={setDueDate}
               />
             </div>
 
-            <div className='w-[50%] vert-space-between-inputs'>
-              <DatePicker
-                labelText={'Completed On'}
-                selectedDate={completedDate}
-                setSelectedDate={setCompletedDate}
-              />
+            <div className='w-[50%] flex justify-start'>
+              <div className='flex flex-col gap-y-0 w-full'>
+                <ToggleWithLabelAndGuideLineLink
+                  text='Completed?'
+                  guideline={CoreValueStatement}
+                  title='Milestone Description'
+                  checkedState={isCompleted}
+                  handleCheckedState={handleIsCompleted}
+                />
+
+                <DatePicker
+                  labelText={''}
+                  selectedDate={completedDate}
+                  setSelectedDate={setCompletedDate}
+                  isHorizontal={true}
+                />
+
+              </div>
             </div>
           </div>
 

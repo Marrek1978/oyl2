@@ -1,4 +1,4 @@
-export const SuccessMessageTimeout = 500;
+export const SuccessMessageTimeout = 800;
 export const FailureMessageTimeout = 2500;
 export const NavigationTimeout = 2600;
 

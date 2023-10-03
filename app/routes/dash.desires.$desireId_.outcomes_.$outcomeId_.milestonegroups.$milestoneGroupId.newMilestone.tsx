@@ -21,7 +21,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
   try {
     const group = await getMilestoneGroupById(milestoneGroupId);
-    if (!group) return redirect('/dash/desires')
+    if (!group) return redirect('..')
     const groupAndMilestones = await getMilestoneGroupAndItsMilesonesById(milestoneGroupId);
     return groupAndMilestones
   } catch (error) { throw error }
@@ -41,12 +41,15 @@ export const action = async ({ request, params }: ActionArgs) => {
   }
 
   //create new milestone
-  const requestString = await request.text();
-  const milestoneData = JSON.parse(parse(requestString).milestoneString as string);
-  try {
-    await createMilestone(milestoneData)
-    return redirect('..')
-  } catch (error) { throw error }
+  if (request.method === 'POST') {
+    const requestString = await request.text();
+    const milestoneData = JSON.parse(parse(requestString).milestoneString as string);
+    try {
+      await createMilestone(milestoneData)
+      return redirect('..')
+    } catch (error) { throw error }
+  }
+  return null
 }
 
 

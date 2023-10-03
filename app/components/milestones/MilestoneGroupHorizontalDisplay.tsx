@@ -1,18 +1,25 @@
-import React from 'react'
+import { Link } from '@remix-run/react'
+
 import FormButtons from '../forms/FormButtons'
 import BtnWithProps from '../buttons/BtnWithProps'
-import { Link } from '@remix-run/react'
 import DndMilestones from '../dnds/milestones/DndMilestones'
 import BasicFormAreaBG from '../forms/BasicFormAreaBG'
-import type { MilestoneGroup } from '@prisma/client'
+
+import type { MilestoneGroupsWithMilestones } from '~/types/milestoneTypes'
 
 type Props = {
-  milestoneGroup: MilestoneGroup
+  milestoneGroup: MilestoneGroupsWithMilestones
 }
 
 function MilestoneGroupHorizontalDisplay({ milestoneGroup }: Props) {
 
-  const header = (<> <span className='text-sm mr-1' >Milestone Group:</span> {milestoneGroup.title}  </>)
+  const milestones = milestoneGroup?.milestones || []
+  const header = (<>
+    <span className='text-sm mr-1' >Milestone Group:</span> {milestoneGroup.title}
+
+
+
+  </>)
 
   return (
     <>
@@ -24,7 +31,15 @@ function MilestoneGroupHorizontalDisplay({ milestoneGroup }: Props) {
         btnColorDaisyUI='link'
         linkColorDaisyUI='info'
       >
-        <div className='m-8 flex flex-col gap-8'>
+        <div className='m-8  flex flex-col gap-8 overflow-hidden  '>
+          {/* <div className='flex gap-x-2'>
+            <div className='text-base-content/70'>
+              <SubHeading14px text='For Outcome: ' />
+            </div>
+            <div className='text-secondary'>
+              <SubHeading14px text='The thing ' />
+            </div>
+          </div> */}
 
           {milestoneGroup?.description && (
             <div>
@@ -34,7 +49,7 @@ function MilestoneGroupHorizontalDisplay({ milestoneGroup }: Props) {
             </div>
           )}
 
-          <DndMilestones />
+          <DndMilestones milestones={milestones} />
 
           <div className='w-full flex justify-center'>
             <Link to='newMilestone '>
