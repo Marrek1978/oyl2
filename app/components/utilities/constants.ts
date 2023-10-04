@@ -7,6 +7,10 @@ export const DefaultFormWidth = "700px";
 export const ServerSuccessMessage = "success";
 export const ServerFailureMessage = "failed";
 
+//???????????  SIZES
+
+
+
 //**********Colors all Daisy UI
 
 //?  **********   basics    **********

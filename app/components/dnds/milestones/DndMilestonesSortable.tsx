@@ -6,8 +6,8 @@ import { useSortable } from '@dnd-kit/sortable';
 
 import { formatDateDayDate } from '~/utils/functions';
 import BtnWithProps from "~/components/buttons/BtnWithProps";
-import ServerMessages from "~/components/modals/ServerMessages";
 import useFetcherState from "~/components/utilities/useFetcherState";
+import useServerMessages from "~/components/modals/useServerMessages";
 
 import type { Milestone } from "@prisma/client";
 import type { FetcherStateProps } from "~/components/utilities/useFetcherState";
@@ -15,14 +15,11 @@ import type { FetcherStateProps } from "~/components/utilities/useFetcherState";
 interface MilestoneSortableProps {
   id: string;
   passedMilestone: Milestone
-  arrayLength: number;
-  linkTitle?: string;
   index: number
-  isLastItem: boolean
 }
 
 
-function DndMilestonesSortable({ id, passedMilestone, linkTitle = 'Edit', index, isLastItem }: MilestoneSortableProps) {
+function DndMilestonesSortable({ id, passedMilestone, index }: MilestoneSortableProps) {
 
   const fetcher = useFetcher();
   const [isCompleted, setIsCompleted] = useState<boolean>()
@@ -35,7 +32,12 @@ function DndMilestonesSortable({ id, passedMilestone, linkTitle = 'Edit', index,
     transform: CSS.Transform.toString(transform),
     transition,
   };
-  const checkedMessage = isCompleted ? `Checked` : 'Unchecked'
+
+  useServerMessages({
+    fetcherState,
+    fetcherMessage,
+    failureMessage: 'Something went wrong',
+  });
 
 
   useEffect(() => {
@@ -72,17 +74,6 @@ function DndMilestonesSortable({ id, passedMilestone, linkTitle = 'Edit', index,
 
   return (
     <>
-      {/* {isLoading || isIdle && ( */}
-        <ServerMessages
-          fetcherState={fetcherState}
-          fetcherMessage={fetcherMessage}
-          isShowLoading={false}
-          isShowSuccess={false}
-          isShowFailed={true}
-          successMessage={checkedMessage}
-        />
-      {/* )} */}
-
 
       <li key={id} ref={setNodeRef} style={style} {...attributes} {...listeners}
         className={`mt-0  

@@ -156,7 +156,7 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
       h2Text={headerTxt}
     >
 
-      <Form method='post' className='m-8'>
+      <Form method='post' className='p-8'>
         <div className="form-control gap-y-6   ">
           <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
           <input type="string" name='id' value={id} hidden readOnly />

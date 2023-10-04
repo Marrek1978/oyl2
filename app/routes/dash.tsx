@@ -1,14 +1,17 @@
 import type { LoaderArgs } from '@remix-run/server-runtime';
 import { Link, Outlet, isRouteErrorResponse, useRouteError } from '@remix-run/react';
 
+import { Toaster } from 'sonner';
+
 import SideNav from '~/components/nav/SideNav';
 import SolidBtn from '~/components/buttons/SolidBtn';
 import { requireUserId } from '~/models/session.server';
 import { ListProvider } from '~/components/list/ListContext';
 
+
 export const loader = async ({ request }: LoaderArgs) => {
   try {
-     await requireUserId(request);
+    await requireUserId(request);
     return null;
   } catch (error) { throw error }
 
@@ -19,6 +22,7 @@ function Dash() {
 
   return (
     <>
+      <Toaster richColors />
       <main className="
         w-full
         max-w-full
@@ -28,7 +32,7 @@ function Dash() {
         lg:flex-nowrap
           ">
         <aside className='w-56' >
-          <SideNav /> 
+          <SideNav />
         </aside>
         <article className=" flex-1 min-h-[90vh]  ">
           <ListProvider>

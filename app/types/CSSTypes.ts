@@ -1,4 +1,3 @@
-
 export type TailwindPixelValue = `[${number} px]`;
 export type TWTextSizes =
   | "xs"
@@ -14,7 +13,8 @@ export type TWTextSizes =
   | "7xl"
   | "8xl"
   | "9xl"
-  | TailwindPixelValue;
+  | TailwindPixelValue
+  | undefined;
 
 export type TWFontWidths =
   | "thin"
@@ -74,3 +74,4 @@ export type DaisyUIBtnColor =
 
 export type DaisyUIBtnSize = "lg" | "sm" | "xs";
 export type DaisyUIBtnWide = "wide";
+export type BtnType = "button" | "submit" | "reset";

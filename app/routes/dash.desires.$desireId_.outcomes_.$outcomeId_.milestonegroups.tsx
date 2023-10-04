@@ -5,14 +5,14 @@ import { Outlet, useRouteLoaderData } from "@remix-run/react";
 
 import { requireUserId } from '~/models/session.server';
 import { getOutcomeByOutcomeId } from '~/models/outcome.server';
-import DndGenericContext from "~/components/dnds/DndGenericContext";
-import BasicTextAreaBG from "~/components/baseContainers/BasicTextAreaBG";
 import MilestoneGroupForm from "~/components/forms/milestones/MilestoneGroupForm"
 import { ArrayOfObjectsStrToDates } from "~/components/utilities/helperFunctions";
 import { getMilestoneGroupsByOutcomeId, createMilestoneGroup, updateGroupsOrder } from '~/models/milestoneGroup.server';
 
 import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime';
 import type { MilestoneGroupsWithMilestones, MilestoneGroupsWithMilestonesWithStringDates } from "~/types/milestoneTypes";
+import DndAndFormFlex from "~/components/baseContainers/DndAndFormFlex";
+import DndMilestoneGroups from "~/components/dnds/milestoneGroups/DndMilestoneGroups";
 
 
 //!!!!  TEHRE WAS SOMETIHNG WRONG WITH THAT URLMESSAGE FOR LOADING !!!
@@ -41,9 +41,10 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 export const action = async ({ request, params }: ActionArgs) => {
 
   if (request.method === 'PUT') {
+    console.log('in put action')
     const formBody = await request.text();
     const parsedBody = parse(formBody);
-    const groups = JSON.parse(parsedBody.itemsString as string);
+    const groups = JSON.parse(parsedBody.toServerDataString as string);
 
     try {
       await updateGroupsOrder(groups)
@@ -86,24 +87,10 @@ function MilestoneGroupsPage() {
   return (
     <>
       <Outlet />
-      <article className="flex gap-12 flex-wrap ">
-
-        <section className='flex-1 max-w-max  '>
-          <div className={`w-full min-w-[350px]`} >
-            <BasicTextAreaBG  >
-              <DndGenericContext<MilestoneGroupsWithMilestones>
-                passedArray={groups}
-                dndTitle={'Milestone Groups'}
-              />
-            </BasicTextAreaBG>
-          </div >
-        </section>
-
-        <section className='flex-1 '>
-          <MilestoneGroupForm />
-        </section>
-
-      </article>
+      <DndAndFormFlex
+        dnd={<DndMilestoneGroups groups={groups} />}
+        form={<MilestoneGroupForm />}
+      />
     </>
   )
 }

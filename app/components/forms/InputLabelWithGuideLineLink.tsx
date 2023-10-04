@@ -12,14 +12,12 @@ function InputLabelWithGuideLineLink({ inputTitle, guideline, title }: InputLabe
 
   return (
     <>
-      <div className="w-full">
         <WithGuidelineLink
           guideline={guideline}
           guideLineTitle={'title'}
         >
           <InputLabel inputTitle={inputTitle} />
         </WithGuidelineLink>
-      </div>
     </>
   )
 }

@@ -20,12 +20,12 @@ function WithGuidelineLink({guideline, guideLineTitle, children }: WithGuideline
 
   return (
     <>
-      <div className=" flex justify-between items-center mb-1  w-full">
+      <div className=" flex justify-between items-center mb-1 w-full">
         {children && (
           <div>{children}</div>
         )}
         {guideline && (
-          <div className='relative '>
+          <div className='relative'>
             <TextBtnGuideLine
               text={" "}
               type='button'

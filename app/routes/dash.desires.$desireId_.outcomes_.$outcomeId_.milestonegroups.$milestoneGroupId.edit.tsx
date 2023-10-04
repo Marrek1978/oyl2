@@ -43,10 +43,12 @@ function EditMilestoneGroupPage() {
     <>
       <Outlet />
       <Modal zIndex={40} >
-        <MilestoneGroupForm
-          isNew={false}
-          milestoneGroup={group}
-        />
+        <div className='m-8'>
+          <MilestoneGroupForm
+            isNew={false}
+            milestoneGroup={group}
+          />
+        </div>
       </Modal>
     </>
   )

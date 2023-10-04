@@ -66,63 +66,63 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
 
 
   return (
-    <div className=''>
-      <BasicFormAreaBG h2Text={headerTxt}  >
+    <BasicFormAreaBG h2Text={headerTxt}  >
 
-        <Form method='post' className='m-8'>
-          <div className="form-control gap-y-6    ">
-            <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
-            <input type="string" name='rowId' value={groupId} hidden readOnly />
-            <input type="string" name='outcomeId' value={paramsOutcomeId} hidden readOnly />
+      <Form method='post' className='p-8 '>
+        <div className="form-control gap-y-6 max-w-3xl   ">
+          <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
+          <input type="string" name='rowId' value={groupId} hidden readOnly />
+          <input type="string" name='outcomeId' value={paramsOutcomeId} hidden readOnly />
 
-            <div>
-              <InputLabelWithGuideLineLink
-                inputTitle='Milestone Group Title'
-                guideline={CoreValue}
-                title='Group'
-              />
-              <input type="text"
-                placeholder="Enter a Value Title"
-                name='title'
-                className=" input-field-text-title  "
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
-              {TitleError}
-            </div>
+          <div >
+            <InputLabelWithGuideLineLink
+              inputTitle='Milestone Group Title'
+              guideline={CoreValue}
+              title='Group'
+            />
+            <input type="text"
+              placeholder="Enter a Value Title"
+              name='title'
+              className=" input-field-text-title  "
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+            {TitleError}
+          </div>
 
-            <div className='   '>
-              <InputLabelWithGuideLineLink
-                inputTitle='Milestone Group Description (Optional)'
-                guideline={CoreValueStatement}
-                title='Milestone Group Description'
-              />
-              <textarea
-                className="input-field-text-para  "
-                placeholder={MilestoneGroupDefaultText}
-                name='description'
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              >
-              </textarea>
-              {DescriptionError}
-            </div>
+          <div  >
+            <InputLabelWithGuideLineLink
+              inputTitle='Milestone Group Description (Optional)'
+              guideline={CoreValueStatement}
+              title='Milestone Group Description'
+            />
+            <textarea
+              className="input-field-text-para   "
+              placeholder={MilestoneGroupDefaultText}
+              name='description'
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            >
+            </textarea>
+            {DescriptionError}
+          </div>
 
 
-            {/* //**************BUTTONS ***************  */}
+          {/* //**************BUTTONS ***************  */}
 
+          <div className=' '>
             <FormButtons
               saveBtnText={saveBtnTxt}
               isSaveBtnDisabled={!isSaveable}
               isNew={isNew}
               isShowCloseBtn={!isNew}
             />
-
           </div>
-        </Form>
-      </BasicFormAreaBG>
-    </div>
+
+        </div>
+      </Form>
+    </BasicFormAreaBG>
   )
 }
 

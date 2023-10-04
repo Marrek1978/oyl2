@@ -21,7 +21,7 @@ const Modal: React.FC<ModalProps> = ({ children, onClose = () => { }, zIndex = 1
         onMouseOut={onMouseOut}
       >
         <dialog
-          className="modal  overflow-auto	"
+          className="modal  overflow-auto flex-1	"
           open
           onClick={(event) => event.stopPropagation()}
         >

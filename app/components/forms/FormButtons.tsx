@@ -97,7 +97,7 @@ function FormButtons({
 
   return (
     <>
-      <div className=' w-full flex flex-wrap gap-6  '>
+      <div className=' w-full flex flex-wrap gap-6   '>
 
         {/* //! Delete Button */}
         {!isNew && isShowDeleteBtn && (

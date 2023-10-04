@@ -23,23 +23,15 @@ function MilestoneGroupHorizontalDisplay({ milestoneGroup }: Props) {
 
   return (
     <>
+
       <BasicFormAreaBG
         h2Text={header}
-        maxWidth='1200px'
         linkDestination='edit'
         linkText='Edit'
         btnColorDaisyUI='link'
         linkColorDaisyUI='info'
       >
-        <div className='m-8  flex flex-col gap-8 overflow-hidden  '>
-          {/* <div className='flex gap-x-2'>
-            <div className='text-base-content/70'>
-              <SubHeading14px text='For Outcome: ' />
-            </div>
-            <div className='text-secondary'>
-              <SubHeading14px text='The thing ' />
-            </div>
-          </div> */}
+        <div className='p-8 flex flex-col gap-8 overflow-hidden  '>
 
           {milestoneGroup?.description && (
             <div>

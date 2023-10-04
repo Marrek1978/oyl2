@@ -14,10 +14,6 @@ interface TextBtnGuidelineProps {
 
 function TextBtnGuideLine({ text, onClickFunction, icon, color = 'text-secondary', type = 'submit', onMouseOver, onMouseOut, textForIcon }: TextBtnGuidelineProps) {
 
-
-
-
-
   return (
     <>
       <button className={`btn btn-sm btn-ghost ${color}

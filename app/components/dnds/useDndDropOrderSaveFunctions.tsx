@@ -31,6 +31,7 @@ function useDndDropOrderSaveFunctions<T extends HasSortOrder>({
 
 
   const sendToDb = useCallback(async () => {
+    console.log('saving to db')
     const toServerDataObj = {
       sortableArray,
       actionType: 'editSortOrder'
@@ -53,10 +54,15 @@ function useDndDropOrderSaveFunctions<T extends HasSortOrder>({
 
   //fucntions
   function handleDragEnd(event: DragEndEvent) {
+    console.log('drag end')
     const { active, over } = event;
     if (!over || active.id === over?.id) return
+    console.log('sortableArray is: ', sortableArray)
+    
     const reOrderedItemsArray: T[] = reOrderArrayOnDrop(sortableArray, active, over)
+    console.log('reOrderedItemsArray is: ', reOrderedItemsArray)
     const updatedSortOrders:T[] = setSortOrderToNewIndex(reOrderedItemsArray)
+    console.log('updatedSortOrders is: ', updatedSortOrders)
     setSortableArray(updatedSortOrders)
     setSaveNewSortOrder(true)
   }

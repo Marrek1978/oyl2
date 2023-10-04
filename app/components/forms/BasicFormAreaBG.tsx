@@ -29,8 +29,6 @@ interface BasicFormAreaBGProps {
 
 function BasicFormAreaBG({
   children,
-  maxWidth = '800px',
-
   h2Text,
   onClickFunction,
   onMouseOver,
@@ -47,16 +45,14 @@ function BasicFormAreaBG({
 
 }: BasicFormAreaBGProps) {
 
+  //  max-w-prose on inputs
   const backgroundColor = GetHeaderBgColor()
 
   return (
     <div className={`
       bg-base-100 shadow-xl
       cursor-defaultshadow-lg
-      w-full max-w-[${maxWidth}]
-      min-w-[350px]
-      max-h-full
-      overflow-auto
+      w-full  
     `}>
 
       {/* //**************HEADER *************** */}
@@ -67,11 +63,9 @@ function BasicFormAreaBG({
         text-xl font-mont uppercase font-normal tracking-widest 
         text-primary-300
         overflow-ellipsis  
-
-       
        `}>
 
-        <div className='w-full'>
+        <div className='w-full '>
           {linkDestination && linkText && (
             <H2WithLink
               h2Text={h2Text}

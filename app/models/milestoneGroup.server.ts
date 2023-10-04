@@ -1,7 +1,10 @@
 import { prisma } from "~/db.server";
 
 import type { MilestoneGroup } from "@prisma/client";
-import { UpdateMilestoneGroup } from "~/types/milestoneTypes";
+import type {
+  MilestoneGroupsWithMilestones,
+  UpdateMilestoneGroup,
+} from "~/types/milestoneTypes";
 
 type CreateMilestoneGroup = Omit<
   MilestoneGroup,
@@ -32,6 +35,7 @@ export const getMilestoneGroupsByOutcomeId = async (outcomeId: string) => {
       where: {
         outcomeId: outcomeId,
       },
+      orderBy: { sortOrder: "asc" },
       include: {
         milestones: true,
       },
@@ -60,7 +64,6 @@ export const getMilestoneGroupById = async (id: string) => {
 export const updateMilestoneGroupById = async (
   milestoneGroup: UpdateMilestoneGroup
 ) => {
-  console.log("in server file and milestoneGroup", milestoneGroup);
   try {
     const result = await prisma.milestoneGroup.update({
       where: { id: milestoneGroup.id },
@@ -75,16 +78,18 @@ export const updateMilestoneGroupById = async (
   }
 };
 
-export const updateGroupsOrder = async (groups: MilestoneGroup[]) => {
+export const updateGroupsOrder = async (groupsObj: {
+  sortableArray: MilestoneGroupsWithMilestones[];
+}) => {
   try {
-    const updatedGroups = groups.map((group) => {
+    const updatePromises = groupsObj.sortableArray.map((group) => {
       return prisma.milestoneGroup.update({
         where: { id: group.id },
         data: { sortOrder: group.sortOrder },
       });
     });
 
-    await Promise.all(updatedGroups);
+    const updatedGroups = await prisma.$transaction(updatePromises);
     return { updatedGroups };
   } catch (error) {
     throw error;

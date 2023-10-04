@@ -2,10 +2,16 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+.formItemMaxWidth{
+  @apply max-w-3xl
+}
+
+
 .input-field-text-title {
   @apply input
-  input-secondary w-full 
-  rounded-none 
+  input-secondary 
+  w-full 
+  rounded-none  
   border-2 border-base-300 bg-base-200
   font-poppins font-normal tracking-wide;
 }
@@ -13,7 +19,7 @@
 .input-field-text-para {
   @apply input  textarea
   textarea-bordered textarea-secondary h-24 
-  w-full 
+  w-full   
   rounded-none
   border-2 border-base-300 bg-base-200 py-2 
   font-poppins text-base font-normal

@@ -17,7 +17,7 @@ type Props = {
   //btn visuals
   btnLabel?: string;
   icon?: ReactNode
-  textSizeTW?: TWTextSizes;
+  textSizeTW?: TWTextSizes | undefined;
   textColorDaisyUI?: DaisyUIColor;
   daisyUIBtnColor?: DaisyUIBtnColor;
   daisyUIBtnSize?: DaisyUIBtnSize;
@@ -35,7 +35,6 @@ function BtnWithProps({
   onMouseOut,
   isBtnDisabled = false,
   isOutlined = false,
-
   btnLabel,
   icon,
   textSizeTW,
@@ -55,6 +54,7 @@ function BtnWithProps({
   const textColorClass = textColorDaisyUI ? `text-${textColorDaisyUI}` : ''
   const fontWidthClass = fontWidthTW ? `font-${fontWidthTW}` : ''
 
+  // const getHoverClass = linkColorDaisyUI === 'error' ? 'hover:text-red-500' : 'hover:opacity-70'
 
 
   return (

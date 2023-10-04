@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from '@remix-run/react';
 
 
-// if the loaderData is set to null, this triggers the alert message
 
+// if the loaderData is set to null, this triggers the alert message
 function useInvalidItemIdAlertAndRedirect(loaderData: any, goBackXPaths: number = 1) {
 
   const navigate = useNavigate()
