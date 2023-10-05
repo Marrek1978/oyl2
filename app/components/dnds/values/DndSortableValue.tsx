@@ -5,8 +5,8 @@ import H2WithLink from "~/components/titles/H2WithLink";
 import TextProseWidth from "~/components/text/TextProseWidth";
 
 interface SortableGenericProps {
-  title: string;
   id: string;
+  title: string;
   description: string;
   linkTitle?: string;
 }
@@ -37,13 +37,13 @@ function DndSortableValue({ id, title, description, linkTitle = 'Edit' }: Sortab
         '>
 
           <H2WithLink
-            title={title}
+            h2Text={title}
             linkDestination={id}
-            // linkColor={}
             linkText={linkTitle}
+            btnColorDaisyUI={'link'}
           />
 
-          <div className="mt-2">
+          <div className="mt-1">
             <TextProseWidth
               text={description}
             />

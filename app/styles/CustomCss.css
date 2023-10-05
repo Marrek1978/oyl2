@@ -19,3 +19,14 @@
   @apply
   text-base-content/80
 }
+
+.my-steps {
+ @apply
+
+ 
+
+ text-center
+ grid-cols-5 
+ grid-flow-row
+ auto-rows-auto !important
+}

@@ -5,26 +5,20 @@ import { Outlet, useRouteLoaderData } from "@remix-run/react";
 
 import { requireUserId } from '~/models/session.server';
 import { getOutcomeByOutcomeId } from '~/models/outcome.server';
+import DndAndFormFlex from "~/components/baseContainers/DndAndFormFlex";
 import MilestoneGroupForm from "~/components/forms/milestones/MilestoneGroupForm"
 import { ArrayOfObjectsStrToDates } from "~/components/utilities/helperFunctions";
+import DndMilestoneGroups from "~/components/dnds/milestoneGroups/DndMilestoneGroups";
 import { getMilestoneGroupsByOutcomeId, createMilestoneGroup, updateGroupsOrder } from '~/models/milestoneGroup.server';
 
 import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime';
 import type { MilestoneGroupsWithMilestones, MilestoneGroupsWithMilestonesWithStringDates } from "~/types/milestoneTypes";
-import DndAndFormFlex from "~/components/baseContainers/DndAndFormFlex";
-import DndMilestoneGroups from "~/components/dnds/milestoneGroups/DndMilestoneGroups";
-
-
-//!!!!  TEHRE WAS SOMETIHNG WRONG WITH THAT URLMESSAGE FOR LOADING !!!
-//!!!!  deal with there being no outcome Id or it is invalid !!!
-//!!!!   ... a custome message for that, an alert, and a redirect to the outcomes page... cascading backwards until login
 
 
 
 //? if the outcome Id is not Valid, then alert and go back
 //? there do not need to be any groups at this point 
 export const loader = async ({ request, params }: LoaderArgs) => {
-  console.log('milestonesGroups loader')
   await requireUserId(request);
   const { outcomeId } = params;
   if (!outcomeId) return redirect('../..')
@@ -41,11 +35,10 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 export const action = async ({ request, params }: ActionArgs) => {
 
   if (request.method === 'PUT') {
-    console.log('in put action')
     const formBody = await request.text();
     const parsedBody = parse(formBody);
-    const groups = JSON.parse(parsedBody.toServerDataString as string);
-
+    const groupsObj = JSON.parse(parsedBody.toServerDataString as string);
+    const groups = groupsObj.sortableArray
     try {
       await updateGroupsOrder(groups)
       return 'success'
@@ -77,7 +70,7 @@ function MilestoneGroupsPage() {
 
   const loadedGroupsData = useGetAllMilestoneGroupsForOutcome()
   const [groups, setGroups] = useState<MilestoneGroupsWithMilestones[]>([]);
-
+ 
   useEffect(() => {
     if (!loadedGroupsData) return
     setGroups(loadedGroupsData);
@@ -116,26 +109,3 @@ export const useGetAllMilestoneGroupsForOutcome = (): MilestoneGroupsWithMilesto
 
 
 
-// export const useGetSpecificMilestoneGroupsById = (groupId: string): MilestoneGroup | undefined => {
-
-//   const allGroups = useGetAllMilestoneGroupsForOutcome();
-//   const [group, setGroup] = useState<MilestoneGroup>();
-
-//   useEffect(() => {
-//     const specificGroup = allGroups?.find((group) => group.id === groupId)
-//     setGroup(specificGroup);
-//   }, [allGroups, groupId]);
-
-//   return group;
-// };
-
-
-
-// function transformGroupDates(items: MilestoneGroupsWithStrDates[]): MilestoneGroup[] {
-
-//   return items?.map((item: any) => ({
-//     ...item,
-//     createdAt: new Date(item.createdAt!),
-//     updatedAt: new Date(item.updatedAt!),
-//   }));
-// }

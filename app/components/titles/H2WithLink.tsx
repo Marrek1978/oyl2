@@ -26,6 +26,7 @@ interface Props {
   textSizeTW?: TWTextSizes;
   btnSizeDaisyUI?: DaisyUIBtnSize;
   date?: Date | null;
+  sortOrder?: number;
 }
 
 function H2WithLink({
@@ -44,9 +45,6 @@ function H2WithLink({
   date,
 }: Props) {
 
-  // const getHoverClass = linkColorDaisyUI === 'error' ? 'hover:text-red-500' : 'hover:opacity-70'
-  // const linkColor = linkColorDaisyUI && `text-${linkColorDaisyUI}`
-
 
   let formattedDate = null
   if (date) {
@@ -55,18 +53,19 @@ function H2WithLink({
 
   return (
     <>
-      <div className="flex flex-wrap justify-between  items-baseline gap-x-4 
-        w-full  mt-2 ">
+      <div className="
+        mt-0
+        flex flex-wrap justify-between  items-baseline gap-x-4 w-full 
+        ">
 
         <div
-          className='flex-1 flex gap-2 items-baseline flex-wrap  '>
+          className='flex-1 flex gap-2 items-baseline flex-wrap capitalize '>
           <HeadingH2 text={h2Text} />
           {formattedDate && <div className='text-sm text-success  '>{formattedDate}</div>}
         </div>
 
         {linkDestination && (
-
-          <Link to={linkDestination} className='justify-end self-baseline'>
+          <Link to={linkDestination} className='justify-end self-baseline  '>
             <BtnWithProps
               btnPurpose='goto'
               btnLabel={linkText}
@@ -78,7 +77,7 @@ function H2WithLink({
               icon={icon}
               textSizeTW={textSizeTW}
               textColorDaisyUI={linkColorDaisyUI}
-              daisyUIBtnColor={ btnColorDaisyUI}
+              daisyUIBtnColor={btnColorDaisyUI}
               daisyUIBtnSize={btnSizeDaisyUI}
               fontWidthTW='bold'
             />

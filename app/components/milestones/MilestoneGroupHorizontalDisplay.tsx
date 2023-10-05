@@ -6,6 +6,7 @@ import DndMilestones from '../dnds/milestones/DndMilestones'
 import BasicFormAreaBG from '../forms/BasicFormAreaBG'
 
 import type { MilestoneGroupsWithMilestones } from '~/types/milestoneTypes'
+import TextProseWidth from '../text/TextProseWidth'
 
 type Props = {
   milestoneGroup: MilestoneGroupsWithMilestones
@@ -16,9 +17,6 @@ function MilestoneGroupHorizontalDisplay({ milestoneGroup }: Props) {
   const milestones = milestoneGroup?.milestones || []
   const header = (<>
     <span className='text-sm mr-1' >Milestone Group:</span> {milestoneGroup.title}
-
-
-
   </>)
 
   return (
@@ -34,11 +32,9 @@ function MilestoneGroupHorizontalDisplay({ milestoneGroup }: Props) {
         <div className='p-8 flex flex-col gap-8 overflow-hidden  '>
 
           {milestoneGroup?.description && (
-            <div>
-              <p>
-                {milestoneGroup?.description}
-              </p>
-            </div>
+            <TextProseWidth
+              text={milestoneGroup?.description}
+            />
           )}
 
           <DndMilestones milestones={milestones} />

@@ -1,41 +1,40 @@
-import {redirect } from '@remix-run/server-runtime';
-import { useMatches, useParams } from '@remix-run/react';
+import { useParams } from '@remix-run/react';
+import { redirect } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
+import { useGetSpecificValue } from './dash.values';
 import { deleteValue } from '~/models/values.server';
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
 
-import type { Value } from '@prisma/client';
 import type { ActionArgs } from '@remix-run/server-runtime';
 
-export const action = async ({request}:ActionArgs) => {
-  //delete value from db
+
+export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData()
   const valueData = Object.fromEntries(formData);
-  const valueId = valueData.rowId as string
-  try{
-    await deleteValue({valueId})
-    return redirect('/dash/values')
-  }catch(error){throw error}
+  const id = valueData.rowId as string
+  try {
+    await deleteValue(id)
+    return redirect('../..')
+  } catch (error) { throw error }
 }
 
 function DeleteValuePage() {
 
   const params = useParams();
   const valueId = params.valueId as string
-  const matches = useMatches();
-  const values = matches.find(match => match.id === 'routes/dash.values')?.data
-  const value = values?.find((value: Value) => value.id === valueId)
-  const title = value?.valueTitle
+
+  const { value } = useGetSpecificValue(valueId)
+  const title = value?.title || ''
 
   return (
     <>
       <Modal onClose={() => { }} zIndex={20}>
-      < AreYouSureDeleteModal
-        item={'value'}
-        title={title}
-        id={valueId}
-      />
+        < AreYouSureDeleteModal
+          item={'Value'}
+          title={title}
+          id={valueId}
+        />
       </Modal>
     </>
   )

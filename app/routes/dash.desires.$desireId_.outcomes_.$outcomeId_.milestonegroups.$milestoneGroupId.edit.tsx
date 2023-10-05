@@ -43,7 +43,7 @@ function EditMilestoneGroupPage() {
     <>
       <Outlet />
       <Modal zIndex={40} >
-        <div className='m-8'>
+        <div className='m-8 w-full'>
           <MilestoneGroupForm
             isNew={false}
             milestoneGroup={group}

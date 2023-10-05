@@ -10,7 +10,6 @@ import useSetSortOrderToNewIndex from '~/components/dnds/useSetSortOrderToNewInd
 
 import type { HasSortOrder } from '~/types/genericDndArrayTypes'
 
-
 // type Props<T extends HasSortOrder & { id: string }> = {
 interface Props<T extends HasSortOrder> {
   fetcher: FetcherWithComponents<any>;
@@ -54,15 +53,11 @@ function useDndDropOrderSaveFunctions<T extends HasSortOrder>({
 
   //fucntions
   function handleDragEnd(event: DragEndEvent) {
-    console.log('drag end')
     const { active, over } = event;
     if (!over || active.id === over?.id) return
-    console.log('sortableArray is: ', sortableArray)
     
     const reOrderedItemsArray: T[] = reOrderArrayOnDrop(sortableArray, active, over)
-    console.log('reOrderedItemsArray is: ', reOrderedItemsArray)
     const updatedSortOrders:T[] = setSortOrderToNewIndex(reOrderedItemsArray)
-    console.log('updatedSortOrders is: ', updatedSortOrders)
     setSortableArray(updatedSortOrders)
     setSaveNewSortOrder(true)
   }

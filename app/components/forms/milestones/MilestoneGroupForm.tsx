@@ -1,15 +1,16 @@
 import { useState, useEffect, useMemo, } from 'react';
-import { Form, useActionData, useParams, useNavigation } from '@remix-run/react'
+import { Form, useParams, } from '@remix-run/react'
 
 import FormButtons from '../FormButtons';
 import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
-import { headerText, saveBtnText } from '../FormsCommonFunctions';
-import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
+import { headerText, useSaveBtnText } from '../FormsCommonFunctions';
+import useGetNavigationState from '~/components/utilities/useNavigationState';
 import { CoreValue, CoreValueStatement } from '~/components/utilities/Guidelines';
+import { MilestoneGroupDefaultText } from '~/components/utilities/PlaceHolderTexts';
+import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
+import { useGetAllMilestoneGroupsForOutcome } from '~/routes/dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups';
 
 import type { MilestoneGroup } from '@prisma/client';
-import { MilestoneGroupDefaultText } from '~/components/utilities/PlaceHolderTexts';
-import { useGetAllMilestoneGroupsForOutcome } from '~/routes/dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups';
 
 
 type Props = {
@@ -18,11 +19,7 @@ type Props = {
 }
 
 function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
-
-
   const params = useParams();
-  const navigation = useNavigation();
-  const validationErrors = useActionData()
   const loaderData = useGetAllMilestoneGroupsForOutcome()
 
   const [title, setTitle] = useState<string>('')
@@ -30,21 +27,13 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
   const [sortOrder, setSortOrder] = useState<number>(0) //if adding new value, set to values.length
   const [description, setDescription] = useState<string>('')
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false) //true if title and description are not empty
+
+  const { isIdle } = useGetNavigationState()
 
   const paramsOutcomeId = useMemo(() => params.outcomeId, [params.outcomeId])
-  const saveBtnTxt = useMemo(() => saveBtnText(isNew, isSubmitting, 'Milestone Group'), [isNew, isSubmitting])
+  const saveBtnTxt = useSaveBtnText(isNew, isIdle, 'Milestone Group')
   const headerTxt = useMemo(() => headerText(isNew, 'Milestone Group', milestoneGroup?.title || ''), [isNew, milestoneGroup?.title])
 
-  const TitleError = validationErrors?.title && (
-    <div className='validation-error'> {validationErrors.title}</div>)
-  const DescriptionError = validationErrors?.description && (
-    <div className='validation-error'> {validationErrors.description}</div>)
-
-
-  useEffect(() => {
-    setIsSubmitting(navigation.state === 'submitting')
-  }, [navigation.state])
 
 
   useEffect(() => {
@@ -69,14 +58,14 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
     <BasicFormAreaBG h2Text={headerTxt}  >
 
       <Form method='post' className='p-8 '>
-        <div className="form-control gap-y-6 max-w-3xl   ">
+        <div className="form-control gap-y-6 max-w-3xl  ">
           <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
           <input type="string" name='rowId' value={groupId} hidden readOnly />
           <input type="string" name='outcomeId' value={paramsOutcomeId} hidden readOnly />
 
           <div >
             <InputLabelWithGuideLineLink
-              inputTitle='Milestone Group Title'
+              inputTitle='Milestone Group Title2'
               guideline={CoreValue}
               title='Group'
             />
@@ -88,7 +77,6 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
               onChange={(e) => setTitle(e.target.value)}
               required
             />
-            {TitleError}
           </div>
 
           <div  >
@@ -105,7 +93,6 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
               onChange={(e) => setDescription(e.target.value)}
             >
             </textarea>
-            {DescriptionError}
           </div>
 
 
@@ -114,7 +101,7 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
           <div className=' '>
             <FormButtons
               saveBtnText={saveBtnTxt}
-              isSaveBtnDisabled={!isSaveable}
+              isSaveBtnDisabled={!isSaveable || !isIdle}
               isNew={isNew}
               isShowCloseBtn={!isNew}
             />

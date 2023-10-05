@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react'
 import { useFetcher } from '@remix-run/react';
 
 import DndInfo from '~/components/dnds/DndInfo';
-import SubHeading16px from '~/components/titles/SubHeading16px';
-import type { MilestoneGroupsWithMilestones } from '~/types/milestoneTypes'
+import PageTitle from '~/components/titles/PageTitle';
 import DndAndSortableContexts from '~/components/dnds/DndAndSortableContexts';
 import useDndDropOrderSaveFunctions from '~/components/dnds/useDndDropOrderSaveFunctions';
 import DndMilestoneGroupsSortable from '~/components/dnds/milestoneGroups/DndMilestoneGroupsSortable';
 
+import type { MilestoneGroupsWithMilestones } from '~/types/milestoneTypes'
 
 type Props = {
   groups: MilestoneGroupsWithMilestones[];
@@ -19,6 +19,7 @@ function DndMilestoneGroups({ groups }: Props) {
   const [groupsArray, setGroupsArray] = useState<any[]>([]);
   const { handleDragEnd, setItemsArrayInProperOrder } = useDndDropOrderSaveFunctions({ fetcher, sortableArray: groupsArray, setSortableArray: setGroupsArray })
 
+
   //initial load
   useEffect(() => {
     if (!groups) return
@@ -28,7 +29,7 @@ function DndMilestoneGroups({ groups }: Props) {
 
   return (
     <>
-      <SubHeading16px text='Milestone Groups' />
+      <PageTitle text='Milestone Groups' />
       <DndAndSortableContexts
         handleDragEnd={handleDragEnd}
         sortableArray={groupsArray}

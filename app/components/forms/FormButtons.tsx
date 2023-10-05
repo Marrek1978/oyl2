@@ -39,6 +39,7 @@ type Props = {
   isShowDeleteBtn?: boolean;
   deleteBtnType?: 'submit' | 'button';
   deleteBtnText?: string;
+  deleteBtnLink?: string;
   deleteBtnOnClickFunction?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   deleteBtnOnMouseOver?: MouseEventHandler<HTMLButtonElement>;
   deleteBtnOnMouseOut?: MouseEventHandler<HTMLButtonElement>;
@@ -53,7 +54,7 @@ type Props = {
 function FormButtons({
   textSizeTW,
   isNew = true,
-  
+
   isShowSaveBtn = true,
   saveBtnText,
   saveBtnType = 'submit',
@@ -83,6 +84,7 @@ function FormButtons({
   isShowDeleteBtn = true,
   deleteBtnType = 'submit',
   deleteBtnText,
+  deleteBtnLink = 'delete',
   deleteBtnOnClickFunction,
   deleteBtnOnMouseOver,
   deleteBtnOnMouseOut,
@@ -95,35 +97,48 @@ function FormButtons({
 
 }: Props) {
 
+
+  function renderDeleteButton() {
+    const btn = (
+      <BtnWithProps
+        btnPurpose='delete'
+        btnLabel={deleteBtnText}
+        btnType={deleteBtnType}
+        onClickFunction={deleteBtnOnClickFunction || (() => { })}
+        onMouseOver={deleteBtnOnMouseOver}
+        onMouseOut={deleteBtnOnMouseOut}
+        isBtnDisabled={isDeleteBtnDisabled}
+        isOutlined={isDeleteBtnOutlined}
+        icon={deleteBtnIcon}
+        textSizeTW={textSizeTW}
+        textColorDaisyUI={deleteBtnTextColorDaisyUI}
+        daisyUIBtnColor={deleteBtnDaisyUIBtnColor}
+        daisyUIBtnSize={deleteBtnDaisyUIBtnSize}
+      />
+    )
+
+    if (deleteBtnLink) {
+      return <Link to={deleteBtnLink}>{btn}</Link>;
+    }
+
+    return btn;
+  }
+
+
   return (
     <>
       <div className=' w-full flex flex-wrap gap-6   '>
 
-        {/* //! Delete Button */}
+
+
         {!isNew && isShowDeleteBtn && (
-          <div className='flex-1 min-w-[180px] self-center text-center  '>
-            <Link to='delete' >
-              <BtnWithProps
-                btnPurpose='delete'
-                btnLabel={deleteBtnText}
-                btnType={deleteBtnType}
-                onClickFunction={deleteBtnOnClickFunction || (() => { })}
-                onMouseOver={deleteBtnOnMouseOver}
-                onMouseOut={deleteBtnOnMouseOut}
-                isBtnDisabled={isDeleteBtnDisabled}
-                isOutlined={isDeleteBtnOutlined}
-                icon={deleteBtnIcon}
-                textSizeTW={textSizeTW}
-                textColorDaisyUI={deleteBtnTextColorDaisyUI}
-                daisyUIBtnColor={deleteBtnDaisyUIBtnColor}
-                daisyUIBtnSize={deleteBtnDaisyUIBtnSize}
-              />
-            </Link>
+          <div className='flex-1 min-w-[180px] self-center text-center'>
+            {renderDeleteButton()}
           </div>
         )}
 
         {/* // ?  Close Button */}
-        {(isShowCloseBtn ) && (
+        {(isShowCloseBtn) && (
           <div className='flex-1 min-w-[180px]'>
             <Link to={!closeBtnOnClickFunction ? `..` : ''} >
               <BtnWithProps
@@ -147,7 +162,7 @@ function FormButtons({
 
 
         {/* // *  Save Button */}
-        { isShowSaveBtn && (
+        {isShowSaveBtn && (
           <div className='flex-1 min-w-[180px]'>
             <BtnWithProps
               btnPurpose='save'

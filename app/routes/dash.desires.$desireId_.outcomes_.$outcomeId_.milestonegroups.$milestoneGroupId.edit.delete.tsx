@@ -10,6 +10,7 @@ import { useGetMilestoneGroup } from './dash.desires.$desireId_.outcomes_.$outco
 
 
 export const action = async ({ request, params }: ActionArgs) => {
+  console.log('in action, detele milestone group')
   const formBody = await request.text();
   const parsedBody = parse(formBody);
   const id = parsedBody.rowId as string

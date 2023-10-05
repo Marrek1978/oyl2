@@ -6,7 +6,7 @@ import H2WithLink from '~/components/titles/H2WithLink';
 import { GetHeaderBgColor } from '~/components/forms/GetHeaderBgColor';
 
 import type { MouseEventHandler, ReactNode } from 'react'
-import type { DaisyUIBtnColor, DaisyUIColor, TWTextSizes } from '~/types/CSSTypes';
+import type { BtnType, DaisyUIBtnColor, DaisyUIBtnSize, DaisyUIColor, TWTextSizes } from '~/types/CSSTypes';
 interface BasicFormAreaBGProps {
   children: React.ReactNode;
   h2Text: string | React.ReactNode;
@@ -15,14 +15,14 @@ interface BasicFormAreaBGProps {
   onClickFunction?: MouseEventHandler<HTMLButtonElement>;
   onMouseOver?: MouseEventHandler<HTMLButtonElement>;
   onMouseOut?: MouseEventHandler<HTMLButtonElement>;
-  type?: 'button' | 'submit' | 'reset' | undefined;
-  linkText?: string | React.ReactNode;
+  type?: BtnType;
+  linkText?: string | undefined;
   icon?: ReactNode
   linkDestination?: string;
   linkColorDaisyUI?: DaisyUIColor;
   btnColorDaisyUI?: DaisyUIBtnColor;
   textSizeTW?: TWTextSizes;
-  btnSize?: string;
+  btnSizeDaisyUI?: DaisyUIBtnSize;
   date?: Date | null;
 
 }
@@ -40,7 +40,7 @@ function BasicFormAreaBG({
   linkColorDaisyUI = 'primary',
   btnColorDaisyUI = 'link',
   textSizeTW = 'base',
-  btnSize,
+  btnSizeDaisyUI,
   date,
 
 }: BasicFormAreaBGProps) {
@@ -72,14 +72,14 @@ function BasicFormAreaBG({
               onClickFunction={onClickFunction}
               onMouseOver={onMouseOver}
               onMouseOut={onMouseOut}
-              type={type}
+              btnType={type}
               linkText={linkText}
               icon={icon}
               linkDestination={linkDestination}
               linkColorDaisyUI={linkColorDaisyUI}
               btnColorDaisyUI={btnColorDaisyUI}
               textSizeTW={textSizeTW}
-              btnSize={btnSize}
+              btnSizeDaisyUI={btnSizeDaisyUI}
               date={date}
             />
           )}

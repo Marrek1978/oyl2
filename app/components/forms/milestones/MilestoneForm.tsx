@@ -1,19 +1,18 @@
 import { useState, useEffect, useMemo, } from 'react';
-import { Form, useActionData, useParams, useNavigation, useFetcher } from '@remix-run/react'
+import { Form,  useParams,  useFetcher } from '@remix-run/react'
 
 import FormButtons from '../FormButtons'
 import DatePicker from '~/components/list/DatePicker'
 import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
-import { headerText, saveBtnText } from '../FormsCommonFunctions';
-import InputLabelWithGuideLineLink from '../InputLabelWithGuideLineLink'
-import ToggleWithLabelAndGuideLineLink from '../ToggleWithLabelAndGuideLineLink'
+import useGetNavigationState from '~/components/utilities/useNavigationState';
 import { CoreValue, CoreValueStatement } from '~/components/utilities/Guidelines'
 import { MilestoneGroupDefaultText } from '~/components/utilities/PlaceHolderTexts'
+import { headerText, useSaveBtnText } from '~/components/forms/FormsCommonFunctions';
+import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink'
+import ToggleWithLabelAndGuideLineLink from '~/components/forms/ToggleWithLabelAndGuideLineLink'
 
 import type { Milestone } from '@prisma/client'
 import type { CreateMilestone } from '~/types/milestoneTypes';
-// import { useGetAllMilestonesForGroup } from '~/routes/dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId';
-
 
 type Props = {
   milestone?: Milestone
@@ -25,8 +24,6 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
 
   const params = useParams();
   const fetcher = useFetcher();
-  const navigation = useNavigation();
-  const validationErrors = useActionData()
 
   const [id, setId] = useState<string>('')
   const [title, setTitle] = useState<string>('')
@@ -35,26 +32,16 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
   const [description, setDescription] = useState<string>('')
   const [isSaveable, setIsSaveable] = useState<boolean>(false)
   const [isCompleted, setIsCompleted] = useState<boolean>(false)
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [completedDate, setCompletedDate] = useState<Date | null>(null)
 
+  const { isIdle } = useGetNavigationState()
+  
   const loadedMilestone = useMemo(() => milestone, [milestone])
-
   const paramsGroupId = useMemo(() => params.milestoneGroupId, [params.milestoneGroupId])
   if (!paramsGroupId) throw new Error('Milestone Group Id is missing')
-  const saveBtnTxt = useMemo(() => saveBtnText(isNew, isSubmitting, 'Milestone'), [isNew, isSubmitting])
+  
+  const saveBtnTxt = useSaveBtnText(isNew, isIdle, 'Milestone')
   const headerTxt = useMemo(() => headerText(isNew, 'Milestone', milestone?.title || ''), [isNew, milestone?.title])
-
-
-  const TitleError = validationErrors?.title && (
-    <div className='validation-error'> {validationErrors.title}</div>)
-  const DescriptionError = validationErrors?.description && (
-    <div className='validation-error'> {validationErrors.description}</div>)
-
-
-  useEffect(() => {
-    setIsSubmitting(navigation.state === 'submitting')
-  }, [navigation.state])
 
 
   useEffect(() => {
@@ -169,14 +156,13 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
               title='Milestone'
             />
             <input type="text"
-              placeholder="Enter a Value Title"
+              placeholder="Enter a Milestone Title"
               name='title'
               className=" input-field-text-title  "
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
             />
-            {TitleError}
           </div>
 
 
@@ -194,7 +180,6 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
               onChange={(e) => setDescription(e.target.value)}
             >
             </textarea>
-            {DescriptionError}
           </div>
 
           <div className='w-full  flex flex-col items-end gap-y-8'>
@@ -229,7 +214,6 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
 
           {/* //**************BUTTONS ***************  */}
           <div className='mt-6'>
-
             <FormButtons
               isNew={isNew}
               saveBtnText={saveBtnTxt}

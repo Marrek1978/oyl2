@@ -2,21 +2,19 @@ import { prisma } from "~/db.server";
 import type { User, Value } from "@prisma/client";
 
 type CreateValue = {
-  valueTitle: Value["valueTitle"];
-  valueDescription: Value["valueDescription"];
+  title: Value["title"];
+  description: Value["description"];
   userId: User["id"];
   sortOrder: Value["sortOrder"];
 };
 
 type EditValue = {
-  valueTitle: Value["valueTitle"];
-  valueDescription: Value["valueDescription"];
-  valueId: Value["id"];
+  title: Value["title"];
+  description: Value["description"];
+  id: Value["id"];
 };
 
-type DeleteValue = {
-  valueId: Value["id"];
-};
+ 
 
 export const getValues = async (userId: User["id"]) => {
   try {
@@ -35,8 +33,8 @@ export const createValue = async (value: CreateValue) => {
   try {
     const result = await prisma.value.create({
       data: {
-        valueTitle: value.valueTitle,
-        valueDescription: value.valueDescription,
+        title: value.title,
+        description: value.description,
         sortOrder: value.sortOrder,
         userId: value.userId,
       },
@@ -52,11 +50,11 @@ export const updateValue = async (value: EditValue) => {
   try {
     const result = await prisma.value.update({
       where: {
-        id: value.valueId,
+        id: value.id,
       },
       data: {
-        valueTitle: value.valueTitle,
-        valueDescription: value.valueDescription,
+        title: value.title,
+        description: value.description,
       },
     });
     return result;
@@ -65,11 +63,12 @@ export const updateValue = async (value: EditValue) => {
   }
 };
 
-export const deleteValue = async (value: DeleteValue) => {
+export const deleteValue = async (id: string) => {
+  console.log('value in deleteValue', id)
   try {
     const result = await prisma.value.delete({
       where: {
-        id: value.valueId,
+        id: id,
       },
     });
     return result;
@@ -79,8 +78,9 @@ export const deleteValue = async (value: DeleteValue) => {
 };
 
 export async function updateValuesOrder(values: Value[]) {
+  console.log("in server function and values", values);
   try {
-    const updateSortOrder = values.map((value) => {
+    const updatePromises = values.map((value) => {
       return prisma.value.update({
         where: { id: value.id },
         data: {
@@ -89,8 +89,8 @@ export async function updateValuesOrder(values: Value[]) {
       });
     });
 
-    await Promise.all(updateSortOrder);
-    return { updateSortOrder };
+    const updatedValues = await prisma.$transaction(updatePromises);
+    return updatedValues;
   } catch (error) {
     throw error;
   }

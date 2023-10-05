@@ -78,11 +78,11 @@ export const updateMilestoneGroupById = async (
   }
 };
 
-export const updateGroupsOrder = async (groupsObj: {
-  sortableArray: MilestoneGroupsWithMilestones[];
-}) => {
+export const updateGroupsOrder = async (
+  groups: MilestoneGroupsWithMilestones[]
+) => {
   try {
-    const updatePromises = groupsObj.sortableArray.map((group) => {
+    const updatePromises = groups.map((group) => {
       return prisma.milestoneGroup.update({
         where: { id: group.id },
         data: { sortOrder: group.sortOrder },
@@ -90,7 +90,7 @@ export const updateGroupsOrder = async (groupsObj: {
     });
 
     const updatedGroups = await prisma.$transaction(updatePromises);
-    return { updatedGroups };
+    return updatedGroups;
   } catch (error) {
     throw error;
   }

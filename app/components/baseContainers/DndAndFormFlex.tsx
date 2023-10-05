@@ -10,7 +10,7 @@ function DndAndFormFlex({ dnd, form }: Props) {
   return (
     <>
       <article className="flex gap-8 flex-wrap ">
-        <section className='flex-1 w-full max-w-max min-w-[350px]  '>
+        <section className='flex-1 w-full max-w-max min-w-[350px] '>
           <BasicTextAreaBG  >
             {dnd}
           </BasicTextAreaBG>

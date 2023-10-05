@@ -65,7 +65,7 @@ function MilestoneGroupPage() {
         </Modal>
       )}
       <Modal >
-        <div className={`w-[90%] min-w-[250px] `}>
+        <div className={`w-full min-w-[450px] `}>
           {milestoneGroup && (
             <MilestoneGroupHorizontalDisplay milestoneGroup={milestoneGroup} />
           )}

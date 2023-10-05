@@ -1,6 +1,6 @@
-import { Form, Link, useNavigation } from '@remix-run/react'
-import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue'
-import { closeIcon, trashIcon } from '../utilities/icons'
+import { Form } from '@remix-run/react'
+import FormButtons from '../forms/FormButtons';
+import useGetNavigationState from '~/components/utilities/useNavigationState';
 
 interface AreYouSureDeleteModalProps {
   item: string;
@@ -10,10 +10,8 @@ interface AreYouSureDeleteModalProps {
 
 function AreYouSureDeleteModal({ item, title, id }: AreYouSureDeleteModalProps) {
 
-  const navigation = useNavigation();
-  let isIdle = navigation.state === 'idle'
+  const { isIdle } = useGetNavigationState()
 
- 
   return (
     <>
       <div className="card w-[700px] 
@@ -28,27 +26,21 @@ function AreYouSureDeleteModal({ item, title, id }: AreYouSureDeleteModalProps) 
             Are you sure you want to delete the {item}:<br />
             <span className='underline'>{title}</span> ?
           </h2>
+
           <p className='mt-2'>Deleting the {item} is permament</p>
-          <div className="flex gap-6 w-full justify-between mt-8">
-            <Link to='..' className='w-6/12 flex gap-2 flex-1 '>
-              <SolidBtnGreyBlue
-                text='Cancel Delete'
-                onClickFunction={() => { }}
-                icon={closeIcon}
+
+          <div className="  mt-8">
+            <Form method='POST'>
+              <input type="hidden" name="rowId" value={id} />
+              <FormButtons
+                isShowSaveBtn={false}
+                isShowDeleteBtn={true}
+                isNew={false}
+                isDeleteBtnOutlined={false}
+                isDeleteBtnDisabled={!isIdle}
+                deleteBtnLink=''
               />
-            </Link>
-            <div className='flex-1'>
-              <Form method='post'>
-                <input type="hidden" name="rowId" value={id} />
-                <button
-                  className="btn btn-error rounded-none w-full hover:bg-red-500"
-                  type='submit'
-                  disabled={!isIdle}
-                >
-                  {isIdle ? <>Delete  {trashIcon}</> : 'Deleting...'}
-                </button>
-              </Form>
-            </div>
+            </Form>
           </div>
         </div>
       </div>

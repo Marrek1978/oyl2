@@ -47,14 +47,22 @@ function BtnWithProps({
 
   const buttonText = btnLabel ? btnLabel : btnPurpose === 'save' ? 'Save' : btnPurpose === 'delete' ? 'Delete' : btnPurpose === 'close' ? 'Close' : btnPurpose === 'goto' ? 'Edit' : 'Go To'
   const buttonIcon = icon ? icon : btnPurpose === 'save' ? dbIcon : btnPurpose === 'delete' ? trashIcon : btnPurpose === 'close' ? closeIcon : btnPurpose === 'goto' ? EditIcon : null
-  const buttonColorClass = daisyUIBtnColor ? `btn-${daisyUIBtnColor}` : btnPurpose === 'save' ? 'btn-primary' : btnPurpose === 'delete' ? 'btn-error' :  btnPurpose === 'close' ? '' : 'btn-link'
   const buttonOutlineClass = isOutlined ? 'btn-outline' : ''
   const buttonSizeClass = daisyUIBtnSize ? `btn-${daisyUIBtnSize}` : ''
   const textSizeClass = textSizeTW ? `text-${textSizeTW}` : ''
   const textColorClass = textColorDaisyUI ? `text-${textColorDaisyUI}` : ''
   const fontWidthClass = fontWidthTW ? `font-${fontWidthTW}` : ''
 
-  // const getHoverClass = linkColorDaisyUI === 'error' ? 'hover:text-red-500' : 'hover:opacity-70'
+  const buttonColorClasses = daisyUIBtnColor
+    ? daisyUIBtnColor === 'link' ? 'btn-link'
+      : `btn btn-${daisyUIBtnColor}`
+    : btnPurpose === 'save' ? 'btn btn-primary'
+      : btnPurpose === 'delete' ? 'btn btn-error'
+        : btnPurpose === 'close' ? 'btn'
+          : 'btn-link'
+
+  const buttonPaddingClasses = buttonColorClasses === 'btn-link' ? 'px-0 py-0' : 'px-4 py-2'
+
 
 
   return (
@@ -67,15 +75,16 @@ function BtnWithProps({
         onMouseOut={onMouseOut}
         disabled={isBtnDisabled}
         className={`
-          font-mont rounded-none w-full px-4 py-2 
+          font-mont rounded-none w-full 
           no-underline  
           ${fontWidthClass}
-          btn ${buttonColorClass} ${buttonOutlineClass}
+          ${buttonColorClasses} ${buttonOutlineClass}
           ${buttonSizeClass}
           ${textSizeClass}  ${textColorClass}
+          ${buttonPaddingClasses}
          `}
       >
-        <div className='flex gap-2 items-center text-md uppercase '>
+        <div className='flex gap-2 items-center text-md uppercase py-0 my-0'>
           {buttonText}{buttonIcon}
         </div>
       </button>

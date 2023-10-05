@@ -1,50 +1,70 @@
-import { Outlet, useMatches, useParams } from '@remix-run/react'
+import { useEffect, useState } from 'react'
+import { Outlet, useNavigate, useParams } from '@remix-run/react'
 import { redirect, type ActionArgs } from '@remix-run/server-runtime'
 
 import Modal from '~/components/modals/Modal'
+import { useGetSpecificValue } from './dash.values'
 import { updateValue } from '~/models/values.server'
 import ValueForm from '~/components/forms/ValueForm'
 
+
 import type { Value } from '@prisma/client';
-// import type { validationErrorsTypes } from '~/types/valueTypes'
+import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect'
 
 
 export const action = async ({ request }: ActionArgs) => {
+  console.log('edit action')
   const formData = await request.formData()
   const valueData = Object.fromEntries(formData);
 
-  // let validationErrors: validationErrorsTypes = {};
-  // !valueData.title && (validationErrors.title = 'A title is required')
-  // !valueData.description && (validationErrors.description = 'A description is required')
-  // if (!valueData.title || !valueData.description) return validationErrors
 
   let value = {
-    valueId: valueData.valueId as string,
-    valueTitle: valueData.title as string,
-    valueDescription: valueData.description as string,
+    id: valueData.rowId as string,
+    title: valueData.title as string,
+    description: valueData.description as string,
   }
-
   try {
     await updateValue(value)
-    return redirect('/dash/values')
+    return redirect('..')
   } catch (error) { throw error }
 }
 
 
 function EditValueRoute() {
 
-  const matches = useMatches();
   const params = useParams();
-  const values = matches.find(match => match.id === 'routes/dash.values')?.data
-  const value = values?.find((value: Value) => value.id === params.valueId)
+  const navigate = useNavigate()
+  const [specificValue, setSpecificValue] = useState<Value>()
+  const [valuesArrLength, setValuesArrLength] = useState<number>(0)
+
+  const id = params.valueId
+  if (!id || id === undefined) navigate('..')
+  const { value, values } = useGetSpecificValue(id as string)
+  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect(value)
+
+
+
+  useEffect(() => {
+    if (!values) return
+    setValuesArrLength(values.length)
+    if (!value) return
+    setSpecificValue(value)
+  }, [value, values])
 
   return (
     <>
       <Outlet />
+      {warning && (
+        <Modal zIndex={50}>
+          {alertMessage}
+        </Modal>
+      )}
+      
       <Modal onClose={() => { }} zIndex={10}>
         <ValueForm
-          value={value}
+          value={specificValue}
           isNew={false}
+          valuesArrayLength={valuesArrLength}
         />
       </Modal>
     </>
