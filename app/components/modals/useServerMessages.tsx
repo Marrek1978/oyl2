@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import {  toast } from 'sonner';
+import { toasterBtnLabel, toasterDuration, toasterPosition } from '~/components/utilities/constants';
 
 
 type Props = {
@@ -33,9 +34,7 @@ function useServerMessages({
   const [isLoadingState, setIsLoadingState] = useState<boolean>(false)
   const [isSubmittingState, setIsSubmittingState] = useState<boolean>(false)
 
-  const toasterPosition = 'top-center'
-  const toasterBtnLabel = 'Close'
-  const toasterDuration = 2000
+
 
   //loading
   useEffect(() => {

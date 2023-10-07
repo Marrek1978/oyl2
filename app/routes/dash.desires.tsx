@@ -1,15 +1,19 @@
 import { parse } from 'querystring';
+import { useEffect, useState } from 'react';
+import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime';
 import { Outlet, useNavigate, useParams, useRouteLoaderData } from '@remix-run/react';
-import type { LoaderArgs } from '@remix-run/server-runtime';
 
 import { getValues } from '~/models/values.server';
 import { requireUserId } from '~/models/session.server';
-import { getDesires, getDesiresWithValuesAndOutcomes, updateDesiresOrder } from '~/models/desires.server';
+import DesiresForm from '~/components/forms/DesiresForm';
+import DndDesires from '~/components/dnds/desires/DndDesires';
+import DndAndFormFlex from '~/components/baseContainers/DndAndFormFlex';
+import { ArrayOfObjectsStrToDates, } from '~/components/utilities/helperFunctions';
+import { createDesire, getDesires, getDesiresWithValuesAndOutcomes, updateDesiresOrder } from '~/models/desires.server';
 
 import type { Value } from '@prisma/client';
-import type { DesireWithValues, DesireWithValuesAndOutcomes, DesireWithValuesAndOutcomesWithStringDates } from '~/types/desireTypes';
-import { useEffect, useState } from 'react';
-// import { transformCurrentDesireValueOutcomeDates, transformDesiresValueOutcomeDates } from '~/components/dnds/desires/DndDesires';
+import type { ValueWithStringDates } from '~/types/valueTypes';
+import type { DesireWithValues, DesireWithValuesAndOutcomes, DesireWithValuesAndOutcomesWithStringDates, DesireWithValuesWithStringDates } from '~/types/desireTypes';
 
 export const loader = async ({ request }: LoaderArgs) => {
   let userId = await requireUserId(request);
@@ -21,32 +25,146 @@ export const loader = async ({ request }: LoaderArgs) => {
   } catch (error) { throw error }
 };
 
-export const action = async ({ request }: LoaderArgs) => {
-  const formBody = await request.text();
-  const parsedBody = parse(formBody);
-  const desires = JSON.parse(parsedBody.desiresString as string);
+export const action = async ({ request }: ActionArgs) => {
 
-  try {
-    await updateDesiresOrder(desires)
-    return 'Desires order was updated'
-  } catch (error) {
-    return 'There was an issue updating the sorting order'
+  if (request.method === 'PUT') {
+    const formBody = await request.text();
+    const parsedBody = parse(formBody);
+    const desiresObj = JSON.parse(parsedBody.toServerDataString as string);
+    console.log("🚀 ~ file: dash.desires.tsx:35 ~ action ~ desiresObj:", desiresObj)
+    const desires = desiresObj.sortableArray
+    try {
+      await updateDesiresOrder(desires)
+      return 'success'
+    } catch (error) {
+      return 'failed'
+    }
+  }
+
+  if (request.method === 'POST') {
+    const userId = await requireUserId(request)
+    const formData = await request.formData()
+    const desireData = Object.fromEntries(formData);
+
+    let valueIds: string[] = []
+    for (let key in desireData) {
+      if (key.includes('value-') && desireData[key] === 'on') {
+        let valueId = key.split('-')[1]
+        valueIds.push(valueId)
+      }
+    }
+
+    let desire = {
+      title: desireData.title as string,
+      description: desireData.description as string,
+      userId,
+      sortOrder: desireData.sortOrder ? parseInt(desireData.sortOrder as string) : 0,
+      valueIds,
+    }
+
+    try {
+      await createDesire(desire)
+      return 'success'
+    } catch (error) { return 'failed' }
   }
 }
 
 
 function DesiresPage() {
 
+
+  const desires = useGetAllDesiresWithValues()
+  const nextSortOrder = useGetDesiresArrayLength()
+  const allUserValues: Value[] | undefined = useGetAllValues()
+
   return (
     <>
-      <div className='flex-1'>
-        <Outlet />
-      </div>
+      <Outlet />
+      <DndAndFormFlex
+        dnd={<DndDesires passedDesires={desires} />}
+        form={
+          <DesiresForm isNew={true} nextSortOrder={nextSortOrder} allUserValues={allUserValues} />}
+      />
     </>
   )
 }
 
 export default DesiresPage
+
+
+
+
+export const useGetLoaderData = () => {
+  const path = 'routes/dash.desires'
+  const { desiresWithValues, allUserValues, desiresWithValuesOutcomes } = useRouteLoaderData(path)
+
+  const [allUserValuesStrDates, setAllUserValuesStrDates] = useState<ValueWithStringDates[]>()
+  const [desiresWithValuesStrDates, setDesiresWithValuesStrDates] = useState<DesireWithValuesWithStringDates[]>()
+  const [desiresWithValuesOutcomesStrDates, setDesiresWithValuesOutcomesStrDates] = useState<DesireWithValuesAndOutcomesWithStringDates[]>()
+
+  useEffect(() => {
+    if (allUserValues) setAllUserValuesStrDates(allUserValues)
+    if (desiresWithValues) setDesiresWithValuesStrDates(desiresWithValues)
+    if (desiresWithValuesOutcomes) setDesiresWithValuesOutcomesStrDates(desiresWithValuesOutcomes)
+  }, [allUserValues, desiresWithValues, desiresWithValuesOutcomes])
+
+  return { allUserValuesStrDates, desiresWithValuesStrDates, desiresWithValuesOutcomesStrDates }
+}
+
+
+
+export const useGetAllValues = (): Value[] | undefined => {
+  const [values, setValues] = useState<Value[]>()
+  const { allUserValuesStrDates } = useGetLoaderData()
+
+  useEffect(() => {
+    if (!allUserValuesStrDates) return
+    const valuesWithProperDates: Value[] = ArrayOfObjectsStrToDates({ items: allUserValuesStrDates, dateKeys: ['createdAt', 'updatedAt'] })
+    setValues(valuesWithProperDates)
+  }, [allUserValuesStrDates])
+
+  return values
+}
+
+
+export const useGetDesiresArrayLength = (): number | undefined => {
+  const { desiresWithValuesStrDates } = useGetLoaderData()
+  const [desiresLength, setDesiresLength] = useState<number>()
+
+  useEffect(() => {
+    if (!desiresWithValuesStrDates) return setDesiresLength(0)
+    setDesiresLength(desiresWithValuesStrDates.length)
+  }, [desiresWithValuesStrDates])
+
+  return desiresLength
+}
+
+
+export const useGetAllDesiresWithValues = (): DesireWithValues[] | undefined => {
+  const { desiresWithValuesStrDates } = useGetLoaderData()
+  const [desires, setDesires] = useState<DesireWithValues[]>()
+
+  useEffect(() => {
+    if (!desiresWithValuesStrDates) return
+    const desiresWithProperDates: DesireWithValues[] = ArrayOfObjectsStrToDates({ items: desiresWithValuesStrDates, dateKeys: ['createdAt', 'updatedAt'] })
+    setDesires(desiresWithProperDates)
+  }, [desiresWithValuesStrDates])
+
+  return desires
+}
+
+
+
+
+
+
+
+
+//?????????????????????????????????
+//?????????????????????????????????
+//?????????????????????????????????
+
+
 
 
 export const useGetDesireWithValuesAndOutcomes = () => {
@@ -71,6 +189,7 @@ export const useGetDesireWithValuesAndOutcomes = () => {
 
   return desire;
 };
+
 
 export const useGetAllDesiresWithValuesAndOutcomes = (): DesireWithValuesAndOutcomes[] | undefined => {
   const navigate = useNavigate();

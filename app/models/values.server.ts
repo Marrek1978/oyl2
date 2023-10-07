@@ -64,7 +64,6 @@ export const updateValue = async (value: EditValue) => {
 };
 
 export const deleteValue = async (id: string) => {
-  console.log('value in deleteValue', id)
   try {
     const result = await prisma.value.delete({
       where: {
@@ -78,7 +77,6 @@ export const deleteValue = async (id: string) => {
 };
 
 export async function updateValuesOrder(values: Value[]) {
-  console.log("in server function and values", values);
   try {
     const updatePromises = values.map((value) => {
       return prisma.value.update({

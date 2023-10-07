@@ -1,72 +1,38 @@
-import { useEffect, useState } from 'react'
-import { Form, Link, useActionData, useMatches, useNavigation } from '@remix-run/react';
+import { Form } from '@remix-run/react';
+import { useEffect, useMemo, useState } from 'react'
 
-import SolidBtn from '../buttons/SolidBtn';
+import FormButtons from './FormButtons';
 import BasicFormAreaBG from './BasicFormAreaBG';
-import OutlinedBtn from '../buttons/OutlinedBtn';
 import CheckboxWithLabel from './CheckboxWithLabel';
-import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
-import { closeIcon, dbIcon, trashIcon } from '../utilities/icons';
+import { headerText, useSaveBtnText } from './FormsCommonFunctions';
+import useGetNavigationState from '../utilities/useNavigationState';
 import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
 import { DesireDescription, DesireTitle, DesireValuesServed } from '../utilities/Guidelines';
 
-import type { DesireWithValues, DesireWithValuesAndOutcomes } from '~/types/desireTypes';
-import type { ValueWithStringDates } from '~/types/valueTypes';
-import { useGetAllDesiresWithValuesAndOutcomes } from '~/routes/dash.desires';
+import type { Value } from '@prisma/client';
+import type { DesireWithValues } from '~/types/desireTypes';
 
 interface DesireFormProps {
   desire?: DesireWithValues
   isNew?: boolean
+  nextSortOrder?: number
+  allUserValues: Value[] | undefined
 }
 
-function DesiresForm({ desire, isNew = true }: DesireFormProps) {
-
-  const matches = useMatches();
-  const navigation = useNavigation();
-  const validationErrors = useActionData()
+function DesiresForm({ desire, isNew = true, nextSortOrder, allUserValues }: DesireFormProps) {
 
   const [title, setTitle] = useState<string>('')
   const [desireId, setDesireId] = useState<string>('')
   const [sortOrder, setSortOrder] = useState<number>(0) //if adding new desire, set to desires.length
   const [description, setDescription] = useState<string>('')
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
-  const [loadedValues, setLoadedValues] = useState<ValueWithStringDates[]>([])
+  const [loadedValues, setLoadedValues] = useState<Value[]>([])
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
 
-  const isSubmitting = navigation.state === 'submitting'
-  const isIdle = navigation.state === 'idle'
-  // const desires: DesireWithValuesWithStringDates[] = matches.find(match => match.id === 'routes/dash.desires')?.data.desires
-  const allUserValues: ValueWithStringDates[] = matches.find(match => match.id === 'routes/dash.desires')?.data.allUserValues
-  const desires: DesireWithValuesAndOutcomes[] | undefined = useGetAllDesiresWithValuesAndOutcomes();
+  const { isIdle } = useGetNavigationState()
 
-  const maxDesiresSortOrder = Math.max(...desires?.map(desire => desire.sortOrder) || [0]);
-  const nextSortOrder = isNew ? maxDesiresSortOrder + 1 : sortOrder;
-
-  const saveBtnText =
-    isSubmitting
-      ? 'Saving...'
-      : isNew
-        ? "Save New Desire"
-        : "Save Changes to Desire"
-
-  const header = isNew
-    ? 'Create New Desire'
-    : (<>
-      <div>
-        <span className='text-sm' >
-          Edit Desire:
-        </span>
-      </div>
-      <div>
-        {title}
-      </div>
-    </>)
-
-  const TitleError = validationErrors?.title && (
-    <div className='validation-error'> {validationErrors.title}</div>)
-
-  const DescriptionError = validationErrors?.description && (
-    <div className='validation-error'> {validationErrors.description}</div>)
+  const saveBtnTxt = useSaveBtnText(isNew, isIdle, 'Desire')
+  const headerTxt = useMemo(() => headerText(isNew, 'Desire', desire?.title || ''), [isNew, desire?.title])
 
 
   useEffect(() => {
@@ -74,9 +40,11 @@ function DesiresForm({ desire, isNew = true }: DesireFormProps) {
     setDescription(desire?.description || '')
     setSortOrder(nextSortOrder || 0)
     setDesireId(desire?.id || '')
-    const LoadedDesireValues = desire?.desireValues.map((dv: any) => dv.value.valueTitle)
+    const LoadedDesireValues = desire?.desireValues.map((dv: any) => dv.value.title)
     setLoadedValues(LoadedDesireValues || [])
-    LoadedDesireValues && setCheckedValues(LoadedDesireValues?.map(dv => dv));
+    LoadedDesireValues 
+      ? setCheckedValues(LoadedDesireValues?.map(dv => dv))
+      : setCheckedValues([])
   }, [desire, nextSortOrder])
 
 
@@ -89,20 +57,6 @@ function DesiresForm({ desire, isNew = true }: DesireFormProps) {
     setIsSaveable(!isInputEmpty && (isInputDifferent))
   }, [title, description, desire?.title, desire?.description, isNew, loadedValues, checkedValues]);
 
-
-  function arraysEqual(a: any[], b: any[]) {
-    if (a === b) return true;
-    if (a == null || b == null) return false;
-    if (a.length !== b.length) return false;
-
-    const sortedA = a.slice().sort();
-    const sortedB = b.slice().sort();
-
-    for (let i = 0; i < sortedA.length; ++i) {
-      if (sortedA[i] !== sortedB[i]) return false;
-    }
-    return true;
-  }
 
   const handleCheckboxChange = (valueTitle: string) => {
     setCheckedValues(prevCheckedValues => {
@@ -117,32 +71,33 @@ function DesiresForm({ desire, isNew = true }: DesireFormProps) {
 
   return (
     <>
-      <BasicFormAreaBG title={header} >
-        <Form method='post' className='mx-8'>
-          <div className="form-control vert-space-between-inputs">
+      <BasicFormAreaBG h2Text={headerTxt} >
+        <Form method='post' className='p-8'>
+          <div className="form-control gap-y-6">
             <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
-            <input type="string" name='desireId' value={desireId} hidden readOnly />
+            <input type="string" name='rowId' value={desireId} hidden readOnly />
 
-            <InputLabelWithGuideLineLink
-              text='Desire'
-              guideline={DesireTitle}
-              title='Desires'
-            />
-            <input type="text"
-              placeholder="Enter a Desire Title"
-              name='title'
-              className='input-field-text-title'
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-            {TitleError}
-
-            <div className='vert-space-between-inputs'>
+            <div>
               <InputLabelWithGuideLineLink
-                text='Description'
+                inputTitle='Desire'
+                guideline={DesireTitle}
+                guideLineTitle='Desire'
+              />
+              <input type="text"
+                placeholder="Enter a Desire Title"
+                name='title'
+                className='input-field-text-title'
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className=' '>
+              <InputLabelWithGuideLineLink
+                inputTitle='Description'
                 guideline={DesireDescription}
-                title='Desire Description'
+                guideLineTitle='Desire Statement'
               />
               <textarea
                 className='input-field-text-para '
@@ -153,63 +108,38 @@ function DesiresForm({ desire, isNew = true }: DesireFormProps) {
                 required
               >
               </textarea>
-              {DescriptionError}
             </div>
-          </div>
 
 
-          {/* //**************VALUES CHECKBOXES ***************  */}
+            {/* //**************VALUES CHECKBOXES ***************  */}
 
-          <div className='vert-space-between-inputs'>
-            <InputLabelWithGuideLineLink
-              text='Values Served (Choose at least 1) '
-              guideline={DesireValuesServed}
-              title='Values Served'
-            />
-            {allUserValues?.map((value: ValueWithStringDates) => (
-              <CheckboxWithLabel
-                key={value.id}
-                id={value.id}
-                label={value.valueTitle}
-                checkedValues={checkedValues}
-                handleCheckboxChange={handleCheckboxChange}
+            <div  >
+              <InputLabelWithGuideLineLink
+                inputTitle='Values Served (Choose at least 1) '
+                guideline={DesireValuesServed}
               />
-            ))}
-          </div>
+              {allUserValues?.map((value: Value) => (
+                <CheckboxWithLabel
+                  key={value.id}
+                  id={value.id}
+                  label={value.title}
+                  checkedValues={checkedValues}
+                  handleCheckboxChange={handleCheckboxChange}
+                />
+              ))}
+            </div>
 
-          {/* //**************BUTTONS ***************  */}
-          <div className='mt-6 mb-8'>
-            <SolidBtn text={isSubmitting ? 'Saving...' : saveBtnText}
-              onClickFunction={() => { }}
-              icon={dbIcon}
-              disableBtn={!isIdle || !isSaveable}
+
+            {/* //**************BUTTONS ***************  */}
+
+            <FormButtons
+              saveBtnText={saveBtnTxt}
+              isSaveBtnDisabled={!isSaveable || !isIdle}
+              isNew={isNew}
+              isShowCloseBtn={!isNew}
             />
-
-            {!isNew &&
-              (<>
-                <div className='two-button-spacing mt-6 mb-8'>
-                  <div className='flex-1'>
-                    <Link to='delete' >
-                      <OutlinedBtn
-                        text='Delete Desire'
-                        onClickFunction={() => { }}
-                        icon={trashIcon}
-                        daisyUIBtnColor='error'
-                      />
-                    </Link>
-                  </div>
-
-                  <div className='flex-1'>
-                    <Link to='..' >
-                      <SolidBtnGreyBlue text='Close w/o saving'
-                        onClickFunction={() => { }}
-                        icon={closeIcon}
-                      />
-                    </Link>
-                  </div>
-                </div>
-              </>)}
           </div>
+
         </Form>
       </BasicFormAreaBG>
     </>
@@ -217,3 +147,19 @@ function DesiresForm({ desire, isNew = true }: DesireFormProps) {
 }
 
 export default DesiresForm
+
+
+
+function arraysEqual(a: any[], b: any[]) {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.length !== b.length) return false;
+
+  const sortedA = a.slice().sort();
+  const sortedB = b.slice().sort();
+
+  for (let i = 0; i < sortedA.length; ++i) {
+    if (sortedA[i] !== sortedB[i]) return false;
+  }
+  return true;
+}

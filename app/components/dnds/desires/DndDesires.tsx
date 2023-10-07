@@ -1,162 +1,57 @@
+import { useEffect, useState } from 'react'
 import { useFetcher } from '@remix-run/react';
-import { useCallback, useEffect, useState } from 'react'
-import type { DragEndEvent } from "@dnd-kit/core";
-import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
 
-import Modal from '~/components/modals/Modal';
+import DndInfo from '../DndInfo';
 import DndSortableDesire from './DndSortableDesire';
-import SuccessMessage from '~/components/modals/SuccessMessage';
-import { useGetAllDesiresWithValuesAndOutcomes } from "~/routes/dash.desires";
+import PageTitle from '~/components/titles/PageTitle';
+import DndAndSortableContexts from '../DndAndSortableContexts';
+import useDndDropOrderSaveFunctions from '../useDndDropOrderSaveFunctions';
 
-import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes'
+import type { DesireWithValues } from '~/types/desireTypes'
 
 
-const DndDesires = () => {
+interface Props {
+  passedDesires: DesireWithValues[] | undefined;
+}
 
+const DndDesires = ({ passedDesires }: Props) => {
   const fetcher = useFetcher();
-  const [successMessage, setSuccessMessage] = useState<string>('');
-  const [saveNewSortOrder, setSaveNewSortOrder] = useState<boolean>(false);
-  const [desires, setDesires] = useState<DesireWithValuesAndOutcomes[]>([]);
+  const [desires, setDesires] = useState<DesireWithValues[]>([]);
+  const { handleDragEnd, setItemsArrayInProperOrder } = useDndDropOrderSaveFunctions({ fetcher, sortableArray: desires, setSortableArray: setDesires })
 
-  //get loader data from loader route
-  const loadedDesires: DesireWithValuesAndOutcomes[] | undefined = useGetAllDesiresWithValuesAndOutcomes();
-
-  //check sort order of desires and reset if not sequential
+  //initial load
   useEffect(() => {
-    if (!loadedDesires) return
-    const isSequentialOrder: boolean = areDesiresInSequentialOrder(loadedDesires)
-
-    setDesires(isSequentialOrder
-      ? loadedDesires
-      : resetDesiresSortOrder(loadedDesires)
-    )
-  }, [loadedDesires])
-
-
-  //show success message if fetcher is loading
-  useEffect(() => {
-    if (fetcher.state === 'loading') {
-      setSuccessMessage(fetcher.data);
-      setTimeout(() => setSuccessMessage(''), 500);
-    }
-  }, [fetcher])
-
-
-  //submit new sort order to db
-  const handleEditSortOrder = useCallback(async () => {
-    const desiresString = JSON.stringify(desires);
-    try {
-      fetcher.submit({
-        desiresString
-      }, {
-        method: 'POST',
-        action: '/dash/desires'
-      })
-    } catch (error) { throw error }
-    setSaveNewSortOrder(false);
-  }, [desires, fetcher])
-
-
-  //if saveNewSortOrder is true, submit new sort order
-  useEffect(() => {
-    if (saveNewSortOrder) {
-      handleEditSortOrder()
-    }
-  }, [saveNewSortOrder, handleEditSortOrder])
-
-
-  //reset sort order of desires
-  const resetDesiresSortOrder = (desires: DesireWithValuesAndOutcomes[]) => {
-    const reOrdered = desires?.map((desire, index) => {
-      return {
-        ...desire,
-        sortOrder: index
-      }
-    })
-    setSaveNewSortOrder(true)
-    return reOrdered
-  }
-
-
-  //handle drag end
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (active.id !== over?.id) {
-      setDesires((prevDesires: DesireWithValuesAndOutcomes[]) => {
-        const oldIndex = prevDesires.findIndex(desire => desire.id === active.id);
-        const newIndex = prevDesires.findIndex(desire => desire.id === over?.id);
-        const newDesires = arrayMove(prevDesires, oldIndex, newIndex);
-        return resetDesiresSortOrder(newDesires);
-      })
-    }
-  }
-
-
-  //dnd sensors
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }))
+    if (!passedDesires) return
+    setItemsArrayInProperOrder(passedDesires)
+  }, [passedDesires, setItemsArrayInProperOrder])
 
 
   return (
     <>
-      {successMessage && (
-        <Modal onClose={() => { }} zIndex={20}>
-          <SuccessMessage
-            text={successMessage}
-          />
-        </Modal>
-      )}
-
-      <DndContext
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-        sensors={sensors}
+      <PageTitle text='Desires' />
+      <DndAndSortableContexts
+        handleDragEnd={handleDragEnd}
+        sortableArray={desires}
+        isVertical={true}
       >
-        <SortableContext
-          items={desires?.map(desire => desire.id)}
-          strategy={verticalListSortingStrategy}
-        >
+        <DndInfo />
 
-          {desires?.sort((a, b) => a.sortOrder - b.sortOrder).map((desire) => {
+        {desires?.map((desire) => {
+          return (
+            <DndSortableDesire
+              key={desire.id}
+              id={desire.id}
+              title={desire.title}
+              linkTitle='Go to desire'
+              passedDesireWithValues={desire}
+            />
+          )
+        })}
 
-            const desireValues = desire.desireValues
-            desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
-
-            const desireOutcomes = desire.outcomes
-            desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
-
-            return (
-              <DndSortableDesire
-                key={desire.id}
-                id={desire.id}
-                title={desire.title}
-                linkTitle='Go to desire'
-                desireValues={desireValues}
-                desireOutcomes={desireOutcomes}
-              />
-            )
-          })}
-
-        </SortableContext>
-      </DndContext >
+      </DndAndSortableContexts>
     </>
   )
 }
 
 export default DndDesires
-
-
-export function areDesiresInSequentialOrder(desires: DesireWithValuesAndOutcomes[]): boolean {
-
-  desires.sort((a, b) => a.sortOrder - b.sortOrder)
-  const isNOTSequentialOrder = desires.some((desire, index) => {
-    return desire.sortOrder !== index
-  })
-  return !isNOTSequentialOrder
-}
 

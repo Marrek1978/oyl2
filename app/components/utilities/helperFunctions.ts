@@ -76,6 +76,11 @@ export function transformMilestoneArrayDataDates(arr: any) {
   }));
 }
 
+
+
+///************************************************************************************************************* */
+
+
 interface ArrayObjectsWithStrDates {
   items: any[];
   dateKeys: string[];
@@ -152,3 +157,21 @@ export function resetRoutineTodosSortOrder(todos: CreationRoutineToDo[]) {
     };
   });
 }
+
+
+export function varsForPluralText(array: any[]): { plural: string, length: number } {
+  const plural = array && array.length > 1 ? 's' : '';
+  const length = array.length
+  return { plural, length }
+}
+
+
+// export function areDesiresInSequentialOrder(desires: DesireWithValuesAndOutcomes[]): boolean {
+
+//   desires.sort((a, b) => a.sortOrder - b.sortOrder)
+//   const isNOTSequentialOrder = desires.some((desire, index) => {
+//     return desire.sortOrder !== index
+//   })
+//   return !isNOTSequentialOrder
+// }
+

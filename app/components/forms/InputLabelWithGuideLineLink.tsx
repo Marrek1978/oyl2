@@ -5,19 +5,19 @@ import WithGuidelineLink from '../forms/WithGuidelineLink';
 interface InputLabelWithGuideLineLinkProps {
   inputTitle: string;
   guideline: string;
-  title: string;
+  guideLineTitle?: string;
 }
 
-function InputLabelWithGuideLineLink({ inputTitle, guideline, title }: InputLabelWithGuideLineLinkProps) {
+function InputLabelWithGuideLineLink({ inputTitle, guideline, guideLineTitle = 'Guideline' }: InputLabelWithGuideLineLinkProps) {
 
   return (
     <>
-        <WithGuidelineLink
-          guideline={guideline}
-          guideLineTitle={'title'}
-        >
-          <InputLabel inputTitle={inputTitle} />
-        </WithGuidelineLink>
+      <WithGuidelineLink
+        guideline={guideline}
+        guideLineTitle={guideLineTitle}
+      >
+        <InputLabel inputTitle={inputTitle} />
+      </WithGuidelineLink>
     </>
   )
 }

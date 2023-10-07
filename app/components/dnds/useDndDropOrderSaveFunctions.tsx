@@ -10,7 +10,7 @@ import useSetSortOrderToNewIndex from '~/components/dnds/useSetSortOrderToNewInd
 
 import type { HasSortOrder } from '~/types/genericDndArrayTypes'
 
-// type Props<T extends HasSortOrder & { id: string }> = {
+
 interface Props<T extends HasSortOrder> {
   fetcher: FetcherWithComponents<any>;
   sortableArray: T[];

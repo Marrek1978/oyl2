@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 function useGetNavigationState() {
 
   const navigation = useNavigation();
+
   const [isIdle, setIsIdle] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

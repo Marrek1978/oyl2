@@ -1,10 +1,11 @@
-import { useParams } from '@remix-run/react';
-import { redirect } from '@remix-run/server-runtime';
+import { useEffect, useState } from 'react';
+import { useParams, } from '@remix-run/react';
 
 import Modal from '~/components/modals/Modal'
 import { useGetSpecificValue } from './dash.values';
 import { deleteValue } from '~/models/values.server';
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
+import useFormDeletedToastAndRedirect from '~/components/utilities/useFormDeletedToast';
 
 import type { ActionArgs } from '@remix-run/server-runtime';
 
@@ -15,17 +16,25 @@ export const action = async ({ request }: ActionArgs) => {
   const id = valueData.rowId as string
   try {
     await deleteValue(id)
-    return redirect('../..')
-  } catch (error) { throw error }
+    return 'deleted'
+  } catch (error) { return 'failed' }
 }
 
 function DeleteValuePage() {
 
-  const params = useParams();
-  const valueId = params.valueId as string
 
+  const params = useParams();
+  const [title, setTitle] = useState<string>('')
+
+  const valueId = params.valueId as string
   const { value } = useGetSpecificValue(valueId)
-  const title = value?.title || ''
+
+  useEffect(() => {
+    if (!value) return
+    setTitle(value.title)
+  }, [value])
+
+  useFormDeletedToastAndRedirect()
 
   return (
     <>

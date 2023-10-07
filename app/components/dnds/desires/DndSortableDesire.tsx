@@ -1,40 +1,44 @@
-
 import { v4 as uuidv4 } from 'uuid';
+import { useEffect, useState } from 'react';
 
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from '@dnd-kit/sortable';
 
 import H2WithLink from "~/components/titles/H2WithLink";
 import SubHeading12px from "~/components/titles/SubHeading12px";
+import { varsForPluralText } from '~/components/utilities/helperFunctions';
 
-import type { DesireOutcome, Value } from "@prisma/client";
+import type { Value } from '@prisma/client';
+import type { DesireWithValues } from '~/types/desireTypes';
 
 
 interface SortableGenericDesire {
   title: string;
   id: string;
   linkTitle?: string;
-  desireValues?: { value: Value }[]
-  desireOutcomes?: DesireOutcome[]
+  passedDesireWithValues: DesireWithValues;
 }
 
 
-function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], desireOutcomes = [] }: SortableGenericDesire) {
-
+function DndSortableDesire({ id, title, linkTitle = 'Edit', passedDesireWithValues, }: SortableGenericDesire) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: id });
 
-  const hasValues = desireValues?.length > 0;
-  const hasOutcomes = desireOutcomes?.length > 0
+  const [isHasValues, setIsHasValues] = useState<boolean>(false);
+
+  const values = useGetValuesForDesire(passedDesireWithValues)
+  const { plural: valueS, length: valuesLength } = varsForPluralText(values);
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
 
-  const { plural: valueS, length: valuesLength } = varsForPluralText(desireValues);
-  const { plural: outcomeS, length: outcomesLength } = varsForPluralText(desireOutcomes);
 
+  useEffect(() => {
+    if (values.length === 0) return
+    setIsHasValues(true)
+  }, [values])
 
   return (
     <>
@@ -51,19 +55,19 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
             max-w-prose
           '>
           <H2WithLink
-            title={title}
+            h2Text={title}
             linkDestination={id}
             linkText={linkTitle}
           />
 
-          {hasValues && (
+          {isHasValues && (
             <div className="grid grid-cols-[120px_1fr] gap-x-2 gap-y-0 mt-2 items-start ">
               <div className='text-base-content/70 font-medium'>
                 <SubHeading12px text={`Serves Value${valueS}:`} />
               </div>
               <div className='flex flex-wrap gap-x-2 font-semibold'>
-                {desireValues?.map((value, index) => {
-                  const title = value.value.valueTitle
+                {values?.map((value, index) => {
+                  const title = value.title
                   let id = uuidv4();
                   let placeComma = index < valuesLength - 1 ? ',' : ''
                   return (
@@ -80,29 +84,7 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
             </div>
           )}
 
-          {hasOutcomes && (
-            <div className="grid grid-cols-[120px_1fr] gap-x-2 items-start mt-2 ">
-              <div className='text-base-content/70 font-medium '>
-                <SubHeading12px text={`Has Outome${outcomeS}:`} />
-              </div>
-              <div className='flex flex-wrap gap-x-2 font-semibold'>
-                {desireOutcomes?.map((outcome, index) => {
-                  const title = outcome.title
-                  let id = uuidv4();
-                  let placeComma = index < outcomesLength - 1 ? ',' : ''
-                  return (
-                    <div key={id}
-                      className={`
-                      font-bold
-                      text-base-content/70
-                    `} >
-                      <SubHeading12px text={`${title}${placeComma} `} />
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          )}
+
 
         </div>
       </div>
@@ -112,8 +94,16 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', desireValues = [], d
 
 export default DndSortableDesire
 
-export function varsForPluralText(array: any[]): { plural: string, length: number } {
-  const plural = array && array.length > 1 ? 's' : '';
-  const length = array.length
-  return { plural, length }
+
+
+export const useGetValuesForDesire = (desire: DesireWithValues): Value[] => {
+  const [values, setValues] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!desire.desireValues) return
+    const valuesArray = desire.desireValues.map(obj => obj.value)
+    setValues(valuesArray)
+  }, [desire.desireValues])
+
+  return values
 }

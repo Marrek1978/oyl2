@@ -13,11 +13,10 @@ import useGetNavigationState from '../utilities/useNavigationState';
 interface ValueFormProps {
   value?: Value
   isNew?: boolean
-  valuesArrayLength?: number
+  nextSortOrder?: number
 }
 
-function ValueForm({ value, isNew = true, valuesArrayLength }: ValueFormProps) {
-
+function ValueForm({ value, isNew = true, nextSortOrder }: ValueFormProps) {
 
   const [title, setTitle] = useState<string>('')
   const [valueId, setValueId] = useState<string>('')
@@ -27,17 +26,15 @@ function ValueForm({ value, isNew = true, valuesArrayLength }: ValueFormProps) {
 
   const { isIdle } = useGetNavigationState()
 
-
-
   const saveBtnTxt = useSaveBtnText(isNew, isIdle, 'Value')
   const headerTxt = useMemo(() => headerText(isNew, 'value', value?.title || ''), [isNew, value?.title])
 
   useEffect(() => {
     setTitle(value?.title || '')
     setDescription(value?.description || '')
-    setSortOrder(value?.sortOrder || valuesArrayLength || 0)
+    setSortOrder(value?.sortOrder || nextSortOrder || 0)
     setValueId(value?.id || '')
-  }, [valuesArrayLength, value])
+  }, [nextSortOrder, value])
 
 
   useEffect(() => {
@@ -53,7 +50,7 @@ function ValueForm({ value, isNew = true, valuesArrayLength }: ValueFormProps) {
     <div>
       <BasicFormAreaBG h2Text={headerTxt}  >
 
-        <Form method='POST' className='p-8'>
+        <Form method='post' className='p-8'>
           <div className="form-control  gap-y-6">
             <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
             <input type="string" name='rowId' value={valueId} hidden readOnly />
@@ -62,7 +59,7 @@ function ValueForm({ value, isNew = true, valuesArrayLength }: ValueFormProps) {
               <InputLabelWithGuideLineLink
                 inputTitle='Value'
                 guideline={CoreValue}
-                title='Values'
+                guideLineTitle='Values'
               />
               <input type="text"
                 placeholder="Enter a Value Title"
@@ -78,7 +75,7 @@ function ValueForm({ value, isNew = true, valuesArrayLength }: ValueFormProps) {
               <InputLabelWithGuideLineLink
                 inputTitle='Value Statement'
                 guideline={CoreValueStatement}
-                title='Value Statement'
+                guideLineTitle='Value Statement'
               />
               <textarea
                 className="input-field-text-para "

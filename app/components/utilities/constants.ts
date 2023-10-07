@@ -25,3 +25,10 @@ export const ROOTTEXT = "text-base-content";
 //?  **********   dnd       **********
 export const HEADERBG = "bg-base-content";
 export const HEADERBG_DARKMODE = "text-base-100";
+
+
+
+//?  **********   Toaster       **********
+export const toasterPosition = 'top-center'
+export const toasterBtnLabel = 'Close'
+export const toasterDuration = 2000
