@@ -15,10 +15,9 @@ function H2WithLinkAndProsePara({ title, linkDestination, linkText, paragraph, i
     <>
       <div className='  '>
         <H2WithLink
-          title={title}
+          h2Text={title}
           linkDestination={linkDestination}
           linkText={linkText}
-          isTextBtn={isTextBtn}
         />
         <div className='mt-2 mr-8 para-color  '>
           <TextProseWidth

@@ -47,50 +47,49 @@ function ValueForm({ value, isNew = true, nextSortOrder }: ValueFormProps) {
 
 
   return (
-    <div>
-      <BasicFormAreaBG h2Text={headerTxt}  >
+    <BasicFormAreaBG h2Text={headerTxt}  >
 
-        <Form method='post' className='p-8'>
-          <div className="form-control  gap-y-6">
-            <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
-            <input type="string" name='rowId' value={valueId} hidden readOnly />
+      <Form method='post' className='p-8'>
+        <div className="form-control gap-y-6 ">
+          <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
+          <input type="string" name='rowId' value={valueId} hidden readOnly />
 
-            <div>
-              <InputLabelWithGuideLineLink
-                inputTitle='Value'
-                guideline={CoreValue}
-                guideLineTitle='Values'
-              />
-              <input type="text"
-                placeholder="Enter a Value Title"
-                name='title'
-                className=" input-field-text-title  "
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
-            </div>
+          <div>
+            <InputLabelWithGuideLineLink
+              inputTitle='Value'
+              guideline={CoreValue}
+              guideLineTitle='Values'
+            />
+            <input type="text"
+              placeholder="Enter a Value Title"
+              name='title'
+              className=" input-field-text-title  "
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+          </div>
 
-            <div className=''>
-              <InputLabelWithGuideLineLink
-                inputTitle='Value Statement'
-                guideline={CoreValueStatement}
-                guideLineTitle='Value Statement'
-              />
-              <textarea
-                className="input-field-text-para "
-                placeholder="Describe what you value. You can describe why you value somethihng, but do not spend any time justifying your value."
-                name='description'
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              >
-              </textarea>
-            </div>
+          <div className=''>
+            <InputLabelWithGuideLineLink
+              inputTitle='Value Statement'
+              guideline={CoreValueStatement}
+              guideLineTitle='Value Statement'
+            />
+            <textarea
+              className="input-field-text-para "
+              placeholder="Describe what you value. You can describe why you value somethihng, but do not spend any time justifying your value."
+              name='description'
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+            >
+            </textarea>
+          </div>
 
 
-            {/* //**************BUTTONS ***************  */}
-
+          {/* //**************BUTTONS ***************  */}
+          <div className='mt-2'>
             <FormButtons
               saveBtnText={saveBtnTxt}
               isSaveBtnDisabled={!isSaveable || !isIdle}
@@ -98,10 +97,10 @@ function ValueForm({ value, isNew = true, nextSortOrder }: ValueFormProps) {
               isShowCloseBtn={!isNew}
             />
           </div>
+        </div>
 
-        </Form>
-      </BasicFormAreaBG>
-    </div>
+      </Form>
+    </BasicFormAreaBG>
   )
 }
 

@@ -9,7 +9,7 @@ import DesiresForm from '~/components/forms/DesiresForm';
 import DndDesires from '~/components/dnds/desires/DndDesires';
 import DndAndFormFlex from '~/components/baseContainers/DndAndFormFlex';
 import { ArrayOfObjectsStrToDates, } from '~/components/utilities/helperFunctions';
-import { createDesire, getDesires, getDesiresWithValuesAndOutcomes, updateDesiresOrder } from '~/models/desires.server';
+import { createDesire, getDesires, updateDesiresOrder } from '~/models/desires.server';
 
 import type { Value } from '@prisma/client';
 import type { ValueWithStringDates } from '~/types/valueTypes';
@@ -20,8 +20,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   try {
     const allUserValues: Value[] = await getValues(userId);
     const desiresWithValues: DesireWithValues[] = await getDesires(userId);
-    const desiresWithValuesOutcomes = await getDesiresWithValuesAndOutcomes(userId);
-    return { desiresWithValues, allUserValues, desiresWithValuesOutcomes }
+    return { desiresWithValues, allUserValues }
   } catch (error) { throw error }
 };
 
@@ -31,7 +30,6 @@ export const action = async ({ request }: ActionArgs) => {
     const formBody = await request.text();
     const parsedBody = parse(formBody);
     const desiresObj = JSON.parse(parsedBody.toServerDataString as string);
-    console.log("🚀 ~ file: dash.desires.tsx:35 ~ action ~ desiresObj:", desiresObj)
     const desires = desiresObj.sortableArray
     try {
       await updateDesiresOrder(desires)
@@ -71,11 +69,10 @@ export const action = async ({ request }: ActionArgs) => {
 
 
 function DesiresPage() {
-
-
   const desires = useGetAllDesiresWithValues()
   const nextSortOrder = useGetDesiresArrayLength()
-  const allUserValues: Value[] | undefined = useGetAllValues()
+  const allUserValues: Value[] | undefined = useGetUserAllValues()
+  const unservedValues: Value[] | undefined = useGetAllUnServerdValues()
 
   return (
     <>
@@ -83,7 +80,12 @@ function DesiresPage() {
       <DndAndFormFlex
         dnd={<DndDesires passedDesires={desires} />}
         form={
-          <DesiresForm isNew={true} nextSortOrder={nextSortOrder} allUserValues={allUserValues} />}
+          <DesiresForm
+            isNew={true}
+            nextSortOrder={nextSortOrder}
+            allUserValues={allUserValues}
+            unservedValues={unservedValues}
+          />}
       />
     </>
   )
@@ -93,27 +95,26 @@ export default DesiresPage
 
 
 
+//?????????????????????????????????  CUSTOM HOOKS  ?????????????
 
 export const useGetLoaderData = () => {
   const path = 'routes/dash.desires'
-  const { desiresWithValues, allUserValues, desiresWithValuesOutcomes } = useRouteLoaderData(path)
+  const { desiresWithValues, allUserValues } = useRouteLoaderData(path)
 
   const [allUserValuesStrDates, setAllUserValuesStrDates] = useState<ValueWithStringDates[]>()
   const [desiresWithValuesStrDates, setDesiresWithValuesStrDates] = useState<DesireWithValuesWithStringDates[]>()
-  const [desiresWithValuesOutcomesStrDates, setDesiresWithValuesOutcomesStrDates] = useState<DesireWithValuesAndOutcomesWithStringDates[]>()
 
   useEffect(() => {
     if (allUserValues) setAllUserValuesStrDates(allUserValues)
     if (desiresWithValues) setDesiresWithValuesStrDates(desiresWithValues)
-    if (desiresWithValuesOutcomes) setDesiresWithValuesOutcomesStrDates(desiresWithValuesOutcomes)
-  }, [allUserValues, desiresWithValues, desiresWithValuesOutcomes])
+  }, [allUserValues, desiresWithValues])
 
-  return { allUserValuesStrDates, desiresWithValuesStrDates, desiresWithValuesOutcomesStrDates }
+  return { allUserValuesStrDates, desiresWithValuesStrDates }
 }
 
 
 
-export const useGetAllValues = (): Value[] | undefined => {
+export const useGetUserAllValues = (): Value[] | undefined => {
   const [values, setValues] = useState<Value[]>()
   const { allUserValuesStrDates } = useGetLoaderData()
 
@@ -155,8 +156,51 @@ export const useGetAllDesiresWithValues = (): DesireWithValues[] | undefined => 
 
 
 
+export const useGetAllUnServerdValues = (): Value[] | undefined => {
+  const [unservedValues, setUnservedValues] = useState<Value[]>()
+  const [allServedUserValues, setAllServedUserValues] = useState<Value[]>()
+  const allUserValues: Value[] | undefined = useGetUserAllValues()
+  const allDesiresWithValues: DesireWithValues[] | undefined = useGetAllDesiresWithValues()
+
+  useEffect(() => {
+    if (!allDesiresWithValues) return
+    const allServedValues: Value[] = allDesiresWithValues.reduce((acc: Value[], desire: DesireWithValues) => {
+      const values: Value[] = desire.desireValues.map((dv: any) => dv.value)
+      return [...acc, ...values]
+    }, [])
+    setAllServedUserValues(allServedValues)
+  }, [allDesiresWithValues])
+
+  useEffect(() => {
+    if (!allServedUserValues) return
+    const difference = getDifferenceBetweenObjArraysById(allUserValues, allServedUserValues)
+    setUnservedValues(difference as Value[])
+  }, [allServedUserValues, allUserValues])
+
+  return unservedValues
+}
 
 
+
+
+export type HasId = {
+  id: string;
+  [key: string]: any;
+};
+
+
+
+export const getDifferenceBetweenObjArraysById = <T extends HasId>(largerObjArr: any, smallerObjArr: any[]): T[] => {
+  const smallerArrayIds = smallerObjArr?.map((obj: T) => obj.id)
+  const difference: T[] = largerObjArr?.filter((obj: T) => !smallerArrayIds?.includes(obj.id));
+  return difference
+}
+
+export const isObjInObjArrayById = <T extends HasId>(obj: T, objArray: T[]): boolean => {
+  const objIds = objArray?.map((obj: T) => obj.id)
+  const isInArray = objIds?.includes(obj.id)
+  return isInArray
+}
 
 
 
@@ -196,7 +240,6 @@ export const useGetAllDesiresWithValuesAndOutcomes = (): DesireWithValuesAndOutc
   const path = 'routes/dash.desires'
   const loaderData = useRouteLoaderData(path);
   const [desires, setDesires] = useState<DesireWithValuesAndOutcomes[]>();
-
 
   useEffect(() => {
     const desiresWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates[] = loaderData?.desiresWithValuesOutcomes;

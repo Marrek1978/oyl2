@@ -16,13 +16,11 @@ export const action = async ({ request }: ActionArgs) => {
   const id = valueData.rowId as string
   try {
     await deleteValue(id)
-    return 'deleted'
+    return 'failed'
   } catch (error) { return 'failed' }
 }
 
 function DeleteValuePage() {
-
-
   const params = useParams();
   const [title, setTitle] = useState<string>('')
 
@@ -35,6 +33,7 @@ function DeleteValuePage() {
   }, [value])
 
   useFormDeletedToastAndRedirect()
+
 
   return (
     <>

@@ -41,10 +41,10 @@ export const getDesires = async (userId: User["id"]) => {
   }
 };
 
-export const getDesiresWithValuesAndOutcomes = async (userId: User["id"]) => {
+export const getDesireWithValuesAndOutcomes = async (desireId:string) => {
   try {
-    const result = await prisma.desire.findMany({
-      where: { userId },
+    const result = await prisma.desire.findFirst({
+      where: { id: desireId },
       include: {
         desireValues: {
           select: {

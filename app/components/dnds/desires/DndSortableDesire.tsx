@@ -21,6 +21,7 @@ interface SortableGenericDesire {
 
 
 function DndSortableDesire({ id, title, linkTitle = 'Edit', passedDesireWithValues, }: SortableGenericDesire) {
+  console.log("🚀 ~ file: DndSortableDesire.tsx:24 ~ DndSortableDesire ~ passedDesireWithValues:", passedDesireWithValues)
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: id });
 
@@ -61,11 +62,11 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', passedDesireWithValu
           />
 
           {isHasValues && (
-            <div className="grid grid-cols-[120px_1fr] gap-x-2 gap-y-0 mt-2 items-start ">
+            <div className="flex flex-wrap gap-x-2 mt-1 items-start ">
               <div className='text-base-content/70 font-medium'>
                 <SubHeading12px text={`Serves Value${valueS}:`} />
               </div>
-              <div className='flex flex-wrap gap-x-2 font-semibold'>
+              <div className='flex flex-wrap gap-x-2 font-semibold '>
                 {values?.map((value, index) => {
                   const title = value.title
                   let id = uuidv4();
@@ -74,7 +75,7 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', passedDesireWithValu
                     <div key={id}
                       className={`
                         font-bold
-                        text-base-content/70
+                        text-secondary/70
                     `} >
                       <SubHeading12px text={`${title}${placeComma} `} />
                     </div>

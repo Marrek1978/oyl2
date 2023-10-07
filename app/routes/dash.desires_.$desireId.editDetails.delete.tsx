@@ -1,12 +1,14 @@
-import { redirect } from '@remix-run/server-runtime';
 import type { ActionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import { deleteDesire } from '~/models/desires.server';
-import { useGetDesireWithValuesAndOutcomes } from './dash.desires';
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal'
 
 import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
+import { useEffect, useState } from 'react';
+import { useParams } from '@remix-run/react';
+import { useGetSpecificDesireWithValuesAndOutcomes } from './dash.desires_.$desireId';
+import useFormDeletedToastAndRedirect from '~/components/utilities/useFormDeletedToast';
 
 export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData()
@@ -14,17 +16,24 @@ export const action = async ({ request }: ActionArgs) => {
   const desireId = desireData.rowId as string
   try {
     await deleteDesire({ desireId })
-    return redirect('/dash/desires')
-  } catch (error) { throw error }
+    return 'deleted'
+  } catch (error) { return 'failed' }
 }
 
 
 function DeleteDesirePage() {
+  const params = useParams();
+  const [title, setTitle] = useState<string>('')
 
-  const desire: DesireWithValuesAndOutcomes | undefined = useGetDesireWithValuesAndOutcomes({ route: 'routes/dash.desires' });
-  const title = desire?.title || ''
-  const desireId = desire?.id || ''
+  const desireId = params.desireId as string
+  const desire: DesireWithValuesAndOutcomes | undefined = useGetSpecificDesireWithValuesAndOutcomes();
 
+  useEffect(() => {
+    if (!desire) return
+    setTitle(desire.title)
+  }, [desire])
+
+  useFormDeletedToastAndRedirect({ redirectTo:'/dash/desires' , message:'Desire was deleted'})
 
   return (
     <>

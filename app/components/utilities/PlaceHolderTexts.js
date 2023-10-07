@@ -7,5 +7,4 @@ export const DesireOutcomesDefaultText = "What is one ideal outcome of Achieving
 export const DesireOutcomeVisionDefaultText = "What will happen as a result of achieving the outcome?";
 
 
-
 export const MilestoneGroupDefaultText = "What is the purpose of this Milestone Group?";
