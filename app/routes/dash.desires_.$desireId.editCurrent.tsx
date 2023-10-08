@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useActionData, } from '@remix-run/react';
 import { type ActionArgs, redirect } from '@remix-run/server-runtime';
 
@@ -7,6 +8,8 @@ import DesiresCurrentForm from '~/components/forms/DesiresCurrentForm'
 import { updateDesireCurrentSituation } from '~/models/desires.server';
 import useNavigationState from '~/components/utilities/useNavigationState';
 import { useGetSpecificDesireWithValuesAndOutcomes } from './dash.desires_.$desireId';
+
+import type { Desire } from '@prisma/client';
 
 
 export const action = async ({ request }: ActionArgs) => {
@@ -21,16 +24,25 @@ export const action = async ({ request }: ActionArgs) => {
 
 
 function EditDesireCurrentSituationPage() {
-  const desire = useGetSpecificDesireWithValuesAndOutcomes();
   const serverMessage = useActionData()
-
   const { navigationState } = useNavigationState()
+  const loadedDesireWithValuesOutcomes = useGetSpecificDesireWithValuesAndOutcomes();
+
+  const [isolatedDesire, setIsolatedDesire] = useState<Desire | undefined>()
   useServerMessages({ fetcherMessage: serverMessage, fetcherState: navigationState })
+
+  useEffect(() => {
+    if (!loadedDesireWithValuesOutcomes) return
+    const { desireValues, outcomes, ...desire } = loadedDesireWithValuesOutcomes
+    if (!desire) return
+    setIsolatedDesire(desire)
+  }, [loadedDesireWithValuesOutcomes])
+ 
 
   return (
     <>
       <Modal onClose={() => { }} zIndex={10}>
-        <DesiresCurrentForm desire={desire} />
+        <DesiresCurrentForm desire={isolatedDesire} />
       </Modal>
     </>
   )
@@ -38,4 +50,3 @@ function EditDesireCurrentSituationPage() {
 
 export default EditDesireCurrentSituationPage
 
- 

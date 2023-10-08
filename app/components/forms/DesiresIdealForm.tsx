@@ -8,7 +8,7 @@ import { DesireIdealGuideline } from '../utilities/Guidelines';
 import useGetNavigationState from '../utilities/useNavigationState';
 import { headerText, useSaveBtnText } from './FormsCommonFunctions';
 import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
-import { DesireOutcomeVisionDefaultText } from '../utilities/PlaceHolderTexts';
+import { OutcomeDescriptionDefaultText } from '../utilities/PlaceHolderTexts';
 
 import type { DesireWithValues } from '~/types/desireTypes'
 
@@ -57,7 +57,7 @@ function DesiresIdealForm({ desire, isNew = false }: DesireFormProps) {
               />
               <textarea
                 className='input-field-text-para '
-                placeholder={DesireOutcomeVisionDefaultText}
+                placeholder={OutcomeDescriptionDefaultText}
                 name='ideal'
                 value={ideal}
                 onChange={(e) => setIdeal(e.target.value)}

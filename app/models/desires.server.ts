@@ -41,7 +41,7 @@ export const getDesires = async (userId: User["id"]) => {
   }
 };
 
-export const getDesireWithValuesAndOutcomes = async (desireId:string) => {
+export const getDesireWithValuesAndOutcomes = async (desireId: string) => {
   try {
     const result = await prisma.desire.findFirst({
       where: { id: desireId },
@@ -210,7 +210,7 @@ export const updateDesiresOrder = async (desires: DesireWithValues[]) => {
     const updateSortOrder = desires.map((desire) => {
       return prisma.desire.update({
         where: { id: desire.id },
-        data: {  sortOrder: desire.sortOrder },
+        data: { sortOrder: desire.sortOrder },
       });
     });
 

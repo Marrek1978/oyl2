@@ -1,14 +1,14 @@
+import { useEffect, useState } from 'react';
+import { useParams } from '@remix-run/react';
 import type { ActionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import { deleteDesire } from '~/models/desires.server';
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal'
-
-import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
-import { useEffect, useState } from 'react';
-import { useParams } from '@remix-run/react';
 import { useGetSpecificDesireWithValuesAndOutcomes } from './dash.desires_.$desireId';
 import useFormDeletedToastAndRedirect from '~/components/utilities/useFormDeletedToast';
+
+import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
 
 export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData()

@@ -2,9 +2,8 @@ import { type ActionArgs, redirect } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import { deleteOutcomeById } from '~/models/outcome.server';
-import { useGetDesireWithValuesAndOutcomes } from './dash.desires';
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal'
-import { useGetOutcome } from './dash.desires.$desireId_.outcomes_.$outcomeId';
+import { useGetOutcome } from './dash.desires_.$desireId_.outcomes_.$outcomeId';
 
 import type { Outcome } from '@prisma/client';
 import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
@@ -23,21 +22,21 @@ export const action = async ({ request }: ActionArgs) => {
 
 function DeleteOutcomePage() {
 
-  const desire: DesireWithValuesAndOutcomes | undefined = useGetDesireWithValuesAndOutcomes();
-  let outcome:  Outcome | undefined = useGetOutcome(desire)
+  // const desire: DesireWithValuesAndOutcomes | undefined = useGetDesireWithValuesAndOutcomes();
+  // let outcome:  Outcome | undefined = useGetOutcome(desire)
 
-  const outcomeTitle = outcome?.title
-  const outcomeId = outcome?.id
+  // const outcomeTitle = outcome?.title
+  // const outcomeId = outcome?.id
 
 
   return (
     <>
       <Modal onClose={() => { }} zIndex={30}>
-        <AreYouSureDeleteModal
+        {/* <AreYouSureDeleteModal
           item={'Outcome'}
           title={outcomeTitle || ''}
           id={outcomeId || ''}
-        />
+        /> */}
       </Modal>
     </>
   )

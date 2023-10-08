@@ -1,5 +1,5 @@
 import { Form } from '@remix-run/react'
-import FormButtons from '../forms/FormButtons';
+import FormButtons from '~/components/forms/FormButtons';
 import useGetNavigationState from '~/components/utilities/useNavigationState';
 
 interface AreYouSureDeleteModalProps {

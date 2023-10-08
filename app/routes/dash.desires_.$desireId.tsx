@@ -1,15 +1,16 @@
-import { v4 as uuidv4 } from 'uuid';
 import { useEffect, useState } from 'react';
 import type { LoaderArgs } from '@remix-run/node';
 import { Outlet, useRouteLoaderData } from '@remix-run/react';
 
+import Modal from '~/components/modals/Modal';
 import HeadingH1 from '~/components/titles/HeadingH1';
-import SubHeading14px from '~/components/titles/SubHeading14px';
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
+import TwoToneSubHeading from '~/components/titles/TwoToneSubHeading';
 import { getDesireWithValuesAndOutcomes } from '~/models/desires.server';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 import H2WithLinkAndProsePara from '~/components/text/H2WithLinkAndProsePara';
 import AllOutcomesDisplay from '~/components/desires/outcomes/AllOutcomesDisplay';
+import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
 import { DesireCurrentDefaultText, DesireIdealPlaceholderText } from '~/components/utilities/PlaceHolderTexts';
 import { ArrayOfObjectsStrToDates, ObjectStrToDates, varsForPluralText } from '~/components/utilities/helperFunctions';
 
@@ -22,7 +23,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   if (!desireId) throw new Error('No desireId in params')
   try {
     const desiresWithValuesOutcomes = await getDesireWithValuesAndOutcomes(desireId);
-    return desiresWithValuesOutcomes
+    return desiresWithValuesOutcomes || null
   } catch (error) { throw error }
 };
 
@@ -31,9 +32,13 @@ function DesirePage() {
 
   const [values, setValues] = useState<Value[]>([]);
   const [outcomes, setOutcomes] = useState<Outcome[]>([]);
+  const [desire, setDesire] = useState<DesireWithValuesAndOutcomes | undefined | null>()
+  const loadedDesire: DesireWithValuesAndOutcomes | undefined | null = useGetSpecificDesireWithValuesAndOutcomes();
 
-  const desire: any = useGetSpecificDesireWithValuesAndOutcomes();
-
+  useEffect(() => {
+    if (loadedDesire === null) return setDesire(null)
+    setDesire(loadedDesire)
+  }, [loadedDesire])
 
   useEffect(() => {
     const extractedValuesArrayFromValuesObjArray = desire?.desireValues?.map((value: any) => value.value) || [];
@@ -44,15 +49,20 @@ function DesirePage() {
 
   const { title, description, current, ideal } = desire || {};
   values?.sort((a, b) => a.sortOrder - b.sortOrder)
-  const hasValues = values?.length > 0;
-  const { plural: valueS, length: valuesLength } = varsForPluralText(values);
   const { plural: outcomeS } = varsForPluralText(outcomes);
+  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: desire, itemType: 'Desire' })
 
+  const valueTitles = values?.map((value) => value.title)
   return (
     <>
 
       <BreadCrumbs secondCrumb={'Desire'} />
       <Outlet />
+      {warning && (
+        <Modal zIndex={50}>
+          {alertMessage}
+        </Modal>
+      )}
 
       <BasicTextAreaBG pageTitle='Desire'>
         <article>
@@ -62,24 +72,11 @@ function DesirePage() {
           </div>
 
           <div className="flex flex-wrap gap-2 mt-1  text-base-content/50">
-            <SubHeading14px
-              text={`Serves the Value${valueS} of : `}
+            <TwoToneSubHeading
+              staticHeading='Serves the Value'
+              variableHeadingsArray={valueTitles}
+              size='14px'
             />
-            {hasValues && (
-              <div className='flex flex-wrap gap-x-2 font-semibold text-secondary/70'>
-                {values?.map((value, index) => {
-                  const title = value.title
-                  let id = uuidv4();
-                  let placeComma = index < valuesLength - 1 ? ', ' : ''
-
-                  return (
-                    <div key={id}>
-                      <SubHeading14px text={`${title}${placeComma}`} />
-                    </div>
-                  )
-                })}
-              </ div>
-            )}
           </div>
 
 
@@ -135,13 +132,19 @@ function DesirePage() {
 export default DesirePage
 
 
-export const useGetLoaderData = (): DesireWithValuesAndOutcomesWithStringDates | undefined => {
-  const path = `routes/dash.desires_.$desireId`
+interface getLoaderDataProps {
+  path?: string | undefined;
+}
+
+
+
+export const useGetLoaderData = ({ path = `routes/dash.desires_.$desireId` }: getLoaderDataProps): DesireWithValuesAndOutcomesWithStringDates | undefined | null => {
   const loaderData = useRouteLoaderData(path)
-  const [desiresWithStrDates, setDesiresWithStrDates] = useState<DesireWithValuesAndOutcomesWithStringDates>()
+  const [desiresWithStrDates, setDesiresWithStrDates] = useState<DesireWithValuesAndOutcomesWithStringDates | null>()
 
   useEffect(() => {
-    if (!loaderData) return
+    if (loaderData === undefined) return
+    if (loaderData === null) return setDesiresWithStrDates(null)
     const desiresWithValuesAndOutcomesStrDates = loaderData
     if (desiresWithValuesAndOutcomesStrDates) setDesiresWithStrDates(desiresWithValuesAndOutcomesStrDates)
   }, [loaderData])
@@ -149,13 +152,12 @@ export const useGetLoaderData = (): DesireWithValuesAndOutcomesWithStringDates |
   return desiresWithStrDates
 }
 
-
-export const useGetSpecificDesireWithValuesAndOutcomes = () => {
-  const [desire, setDesire] = useState<DesireWithValuesAndOutcomes | undefined>()
-  const desiresWithStrDates: DesireWithValuesAndOutcomesWithStringDates | undefined = useGetLoaderData()
-
+export const useGetSpecificDesireWithValuesAndOutcomes = ({ path = `routes/dash.desires_.$desireId` } = {} as getLoaderDataProps): DesireWithValuesAndOutcomes | undefined | null => {
+  const [desire, setDesire] = useState<DesireWithValuesAndOutcomes | undefined | null>()
+  const desiresWithStrDates: DesireWithValuesAndOutcomesWithStringDates | undefined | null = useGetLoaderData({ path })
   useEffect(() => {
-    if (!desiresWithStrDates) return
+    if (desiresWithStrDates === undefined) return
+    if (desiresWithStrDates === null) return setDesire(null)
     const { desireValues, outcomes, ...desire } = desiresWithStrDates
     let desireWithProperDates: Desire
     let outcomesWithProperDates: Outcome[] = []
@@ -185,3 +187,5 @@ export const useGetSpecificDesireWithValuesAndOutcomes = () => {
 
   return desire
 }
+
+

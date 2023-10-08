@@ -8,7 +8,7 @@ import { updateMilestoneCompleted, updateMilestonesOrder } from '~/models/milest
 import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
 import { ArrayOfObjectsStrToDates, ObjectStrToDates } from '~/components/utilities/helperFunctions'
 import MilestoneGroupHorizontalDisplay from '~/components/milestones/MilestoneGroupHorizontalDisplay';
-import { useGetAllMilestoneGroupsForOutcome } from './dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups';
+import { useGetAllMilestoneGroupsForOutcome } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups';
 
 import type { Milestone, MilestoneGroup } from '@prisma/client';
 import type { MilestoneGroupsWithMilestones } from '~/types/milestoneTypes';

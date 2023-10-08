@@ -16,9 +16,10 @@ export const action = async ({ request }: ActionArgs) => {
   const id = valueData.rowId as string
   try {
     await deleteValue(id)
-    return 'failed'
+    return 'deleted'
   } catch (error) { return 'failed' }
 }
+
 
 function DeleteValuePage() {
   const params = useParams();
@@ -32,8 +33,8 @@ function DeleteValuePage() {
     setTitle(value.title)
   }, [value])
 
-  useFormDeletedToastAndRedirect()
 
+  useFormDeletedToastAndRedirect({ redirectTo: '/dash/values', message: 'Value was deleted' })
 
   return (
     <>

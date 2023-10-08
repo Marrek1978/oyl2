@@ -46,10 +46,12 @@ function useDndDropOrderSaveFunctions<T extends HasSortOrder>({
     setSaveNewSortOrder(false);
   }, [sortableArray, setSaveNewSortOrder, fetcher,])
 
+
   //useeffects
   useEffect(() => {
     if (saveNewSortOrder === true) sendToDb()
   }, [saveNewSortOrder, sendToDb])
+
 
   //fucntions
   function handleDragEnd(event: DragEndEvent) {
@@ -62,6 +64,7 @@ function useDndDropOrderSaveFunctions<T extends HasSortOrder>({
     setSaveNewSortOrder(true)
   }
 
+
   const setItemsArrayInProperOrder = useCallback((sortableArray: T[]) => {
     const isInOrder = inOrder(sortableArray)
     if (isInOrder) return setSortableArray(sortableArray)
@@ -71,6 +74,7 @@ function useDndDropOrderSaveFunctions<T extends HasSortOrder>({
     setSaveNewSortOrder(true)
   }, [inOrder, setSortOrderToNewIndex, setSaveNewSortOrder, setSortableArray])
 
+  
   return { handleDragEnd, setItemsArrayInProperOrder }
 }
 

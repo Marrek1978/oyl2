@@ -35,7 +35,7 @@ function EditValueRoute() {
   const id = params.valueId
   const { value } = useGetSpecificValue(id as string)
   const nextSortOrder = useGetArrayLength()
-  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect(value)
+  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({loaderData:value, itemType:'Value'})
 
 
   useEffect(() => {

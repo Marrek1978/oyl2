@@ -1,14 +1,15 @@
-import { useState, useEffect, useMemo } from 'react';
 import { Form } from '@remix-run/react'
+import { useState, useEffect, useMemo } from 'react';
 
+import FormButtons from '~/components/forms/FormButtons';
+import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
+import useServerMessages from '~/components/modals/useServerMessages';
+import useGetNavigationState from '~/components/utilities/useNavigationState';
+import { CoreValue, CoreValueStatement } from '~/components/utilities/Guidelines';
+import { headerText, useSaveBtnText } from '~/components/forms/FormsCommonFunctions';
+import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
 
 import type { Value } from '@prisma/client';
-import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
-import { CoreValue, CoreValueStatement } from '../utilities/Guidelines';
-import BasicFormAreaBG from './BasicFormAreaBG';
-import { headerText, useSaveBtnText } from './FormsCommonFunctions';
-import FormButtons from './FormButtons';
-import useGetNavigationState from '../utilities/useNavigationState';
 
 interface ValueFormProps {
   value?: Value
@@ -24,10 +25,13 @@ function ValueForm({ value, isNew = true, nextSortOrder }: ValueFormProps) {
   const [description, setDescription] = useState<string>('')
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
 
-  const { isIdle } = useGetNavigationState()
+  const { isIdle, navigationState } = useGetNavigationState()
+  useServerMessages({ fetcherState: navigationState,   isShowFailed: true})
 
   const saveBtnTxt = useSaveBtnText(isNew, isIdle, 'Value')
   const headerTxt = useMemo(() => headerText(isNew, 'value', value?.title || ''), [isNew, value?.title])
+
+
 
   useEffect(() => {
     setTitle(value?.title || '')

@@ -87,6 +87,7 @@ export const useGetLoaderData = (): ValueWithStringDates[] | undefined => {
   return values
 }
 
+
 export const useGetArrayLength = (): number | undefined => {
   const loadedValues: ValueWithStringDates[] | undefined = useGetLoaderData()
   const [valuesLength, setValuesLength] = useState<number>()
@@ -101,7 +102,6 @@ export const useGetArrayLength = (): number | undefined => {
 
 
 export const useGetAllValues = (): Value[] | undefined => {
-
   const loadedValues: ValueWithStringDates[] | undefined = useGetLoaderData()
   const [values, setValues] = useState<Value[]>();
 

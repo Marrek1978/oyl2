@@ -9,11 +9,11 @@ import { DesireCurrentSituationGuideLine } from '~/components/utilities/Guidelin
 import { headerText, useSaveBtnText } from '~/components/forms/FormsCommonFunctions';
 import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
 
-import type { DesireWithValues } from '~/types/desireTypes'
+import type { Desire } from '@prisma/client';
 
 
 interface DesireFormProps {
-  desire?: DesireWithValues
+  desire?: Desire
   isNew?: boolean
 }
 

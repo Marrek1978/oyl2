@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from '@remix-run/react';
 
+interface Props {
+  loaderData: any;
+  goBackXPaths?: number;
+  itemType?: string
+}
 
 
 // if the loaderData is set to null, this triggers the alert message
-function useInvalidItemIdAlertAndRedirect(loaderData: any, goBackXPaths: number = 1) {
-
+function useInvalidItemIdAlertAndRedirect({ loaderData, goBackXPaths = 1, itemType = 'Item' }: Props) {
   const navigate = useNavigate()
   const location = useLocation()
   const [warning, setWarning] = useState<string>('')
@@ -24,10 +28,10 @@ function useInvalidItemIdAlertAndRedirect(loaderData: any, goBackXPaths: number 
 
   useEffect(() => {
     if (loaderData === null || loaderData === 'noId' && !warning) {
-      setWarning('That Milestone Group was NOT found!')
+      setWarning(`That ${itemType} was NOT found!`)
       setRemainingTime(time)
     }
-  }, [loaderData, warning])
+  }, [loaderData, warning, itemType])
 
   useEffect(() => {
     if (remainingTime <= 0) return;

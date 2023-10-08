@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import FormButtons from './FormButtons';
 import BasicFormAreaBG from './BasicFormAreaBG';
 import CheckboxWithLabel from './CheckboxWithLabel';
+import { isObjInObjArrayById } from '~/routes/dash.desires';
 import { headerText, useSaveBtnText } from './FormsCommonFunctions';
 import useGetNavigationState from '../utilities/useNavigationState';
 import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
@@ -11,7 +12,6 @@ import { DesireDescription, DesireTitle, DesireValuesServed } from '../utilities
 
 import type { Value } from '@prisma/client';
 import type { DesireWithValues, DesireWithValuesAndOutcomes } from '~/types/desireTypes';
-import { isObjInObjArrayById } from '~/routes/dash.desires';
 
 interface DesireFormProps {
   desire?: DesireWithValues | DesireWithValuesAndOutcomes
@@ -43,7 +43,6 @@ function DesiresForm({ desire, isNew = true, nextSortOrder, allUserValues, unser
     setSortOrder(nextSortOrder || 0)
     setDesireId(desire?.id || '')
     const LoadedDesireValues = desire?.desireValues.map((dv: any) => dv.value.title)
-    console.log("🚀 ~ file: DesiresForm.tsx:46 ~ useEffect ~ LoadedDesireValues:", LoadedDesireValues)
     setLoadedValues(LoadedDesireValues || [])
     LoadedDesireValues
       ? setCheckedValues(LoadedDesireValues?.map(dv => dv))
@@ -74,7 +73,7 @@ function DesiresForm({ desire, isNew = true, nextSortOrder, allUserValues, unser
 
   return (
     <>
-      <div className='formWidth'>
+      <div className=' '>
         <BasicFormAreaBG h2Text={headerTxt} >
           <Form method='post' className='p-8'>
             <div className="form-control gap-y-6">
@@ -125,8 +124,6 @@ function DesiresForm({ desire, isNew = true, nextSortOrder, allUserValues, unser
                 {allUserValues?.map((value: Value) => {
 
                   const isUnServed = isObjInObjArrayById(value, unservedValues || [])
-                  console.log("🚀 ~ file: DesiresForm.tsx:126 ~ {allUserValues?.map ~ isUnServed:", isUnServed)
-
                   return (
                     <div key={value.id} className='mt-2'>
                       <CheckboxWithLabel

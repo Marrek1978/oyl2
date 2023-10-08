@@ -165,13 +165,4 @@ export function varsForPluralText(array: any[]): { plural: string, length: numbe
   return { plural, length }
 }
 
-
-// export function areDesiresInSequentialOrder(desires: DesireWithValuesAndOutcomes[]): boolean {
-
-//   desires.sort((a, b) => a.sortOrder - b.sortOrder)
-//   const isNOTSequentialOrder = desires.some((desire, index) => {
-//     return desire.sortOrder !== index
-//   })
-//   return !isNOTSequentialOrder
-// }
-
+ 

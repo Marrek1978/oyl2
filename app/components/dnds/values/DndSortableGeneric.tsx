@@ -11,7 +11,7 @@ interface SortableGenericProps {
   linkTitle?: string;
 }
 
-function DndSortableValue({ id, title, description, linkTitle = 'Edit' }: SortableGenericProps) {
+function DndSortableGeneric({ id, title, description, linkTitle = 'Edit' }: SortableGenericProps) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: id });
 
@@ -27,13 +27,13 @@ function DndSortableValue({ id, title, description, linkTitle = 'Edit' }: Sortab
         <div key={id} id={id} className='
           px-3 py-4 
           mt-4
+          max-w-prose max-h-36 overflow-hidden
           font-poppins
           cursor-pointer 
           text-left text-base-content
           transition duration-500
           hover:bg-primary/30 
           hover:text-primary-focus
-          max-w-prose
         '>
 
           <H2WithLink
@@ -55,4 +55,4 @@ function DndSortableValue({ id, title, description, linkTitle = 'Edit' }: Sortab
   )
 }
 
-export default DndSortableValue
+export default DndSortableGeneric

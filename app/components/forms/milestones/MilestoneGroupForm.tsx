@@ -8,7 +8,7 @@ import useGetNavigationState from '~/components/utilities/useNavigationState';
 import { CoreValue, CoreValueStatement } from '~/components/utilities/Guidelines';
 import { MilestoneGroupDefaultText } from '~/components/utilities/PlaceHolderTexts';
 import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
-import { useGetAllMilestoneGroupsForOutcome } from '~/routes/dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups';
+import { useGetAllMilestoneGroupsForOutcome } from '~/routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups';
 
 import type { MilestoneGroup } from '@prisma/client';
 

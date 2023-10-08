@@ -21,7 +21,6 @@ interface SortableGenericDesire {
 
 
 function DndSortableDesire({ id, title, linkTitle = 'Edit', passedDesireWithValues, }: SortableGenericDesire) {
-  console.log("🚀 ~ file: DndSortableDesire.tsx:24 ~ DndSortableDesire ~ passedDesireWithValues:", passedDesireWithValues)
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: id });
 
