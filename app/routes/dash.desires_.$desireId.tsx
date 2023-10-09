@@ -155,6 +155,9 @@ export const useGetLoaderData = ({ path = `routes/dash.desires_.$desireId` }: ge
 export const useGetSpecificDesireWithValuesAndOutcomes = ({ path = `routes/dash.desires_.$desireId` } = {} as getLoaderDataProps): DesireWithValuesAndOutcomes | undefined | null => {
   const [desire, setDesire] = useState<DesireWithValuesAndOutcomes | undefined | null>()
   const desiresWithStrDates: DesireWithValuesAndOutcomesWithStringDates | undefined | null = useGetLoaderData({ path })
+ 
+ 
+ 
   useEffect(() => {
     if (desiresWithStrDates === undefined) return
     if (desiresWithStrDates === null) return setDesire(null)
@@ -185,6 +188,7 @@ export const useGetSpecificDesireWithValuesAndOutcomes = ({ path = `routes/dash.
     setDesire(objWithProperDates)
   }, [desiresWithStrDates])
 
+  
   return desire
 }
 

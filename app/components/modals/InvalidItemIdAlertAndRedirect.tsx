@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from '@remix-run/react';
 
 interface Props {
-  loaderData: any;
+  loaderData?: any | null | undefined;
   goBackXPaths?: number;
   itemType?: string
 }
 
 
 // if the loaderData is set to null, this triggers the alert message
-function useInvalidItemIdAlertAndRedirect({ loaderData, goBackXPaths = 1, itemType = 'Item' }: Props) {
+function useInvalidItemIdAlertAndRedirect({ loaderData, goBackXPaths = 1, itemType = 'Item' }: Props = {}) {
   const navigate = useNavigate()
   const location = useLocation()
   const [warning, setWarning] = useState<string>('')
@@ -20,6 +20,8 @@ function useInvalidItemIdAlertAndRedirect({ loaderData, goBackXPaths = 1, itemTy
   const path = locationArray.join('/')
 
   const time = 3
+
+
 
   useEffect(() => {
     setWarning('');
@@ -55,6 +57,10 @@ function useInvalidItemIdAlertAndRedirect({ loaderData, goBackXPaths = 1, itemTy
     }
   }, [remainingTime, navigate, path])
 
+
+  if (loaderData === undefined) {
+    return { warning: '', alertMessage: <></> };
+  }
 
   const alertMessage = (
     <div className="alert alert-error">

@@ -37,11 +37,15 @@ const DndDesires = ({ passedDesires }: Props) => {
         <DndInfo />
 
         {desires?.map((desire) => {
+            const title = (<>
+              <span className="text-sm">{desire.sortOrder + 1}</span>. {desire.title}
+            </>)
+
           return (
             <DndSortableDesire
               key={desire.id}
               id={desire.id}
-              title={desire.title}
+              title={title}
               linkTitle='Go to desire'
               passedDesireWithValues={desire}
             />

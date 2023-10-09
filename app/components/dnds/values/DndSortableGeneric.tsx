@@ -6,7 +6,7 @@ import TextProseWidth from "~/components/text/TextProseWidth";
 
 interface SortableGenericProps {
   id: string;
-  title: string;
+  title: string | JSX.Element;
   description: string;
   linkTitle?: string;
 }
@@ -19,6 +19,9 @@ function DndSortableGeneric({ id, title, description, linkTitle = 'Edit' }: Sort
     transform: CSS.Transform.toString(transform),
     transition,
   };
+
+
+
 
 
   return (

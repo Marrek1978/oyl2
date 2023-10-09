@@ -51,11 +51,12 @@ export const action = async ({ request }: ActionArgs) => {
   } catch (error) { throw error }
 }
 
+
 function EditDesireDetailsPage() {
 
   const allUserValues: Value[] | undefined = useGetAllValues()
   const [desire, setDesire] = useState<DesireWithValuesAndOutcomes | undefined>(undefined)
-  const loadedData: DesireWithValuesAndOutcomes | undefined = useGetSpecificDesireWithValuesAndOutcomes();
+  const loadedData: DesireWithValuesAndOutcomes | undefined | null = useGetSpecificDesireWithValuesAndOutcomes();
 
   useEffect(() => {
     if (!loadedData) return

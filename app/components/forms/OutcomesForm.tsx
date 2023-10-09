@@ -10,24 +10,24 @@ import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideL
 import { OutcomeDescriptionDefaultText, OutcomeVisionDefaultText } from '~/components/utilities/PlaceHolderTexts';
 import { DesireOutcomeGuideline, ProperDesireOutcomeVision, ProperDesireOutcomes } from "~/components/utilities/Guidelines";
 
-import type { Desire, Outcome } from '@prisma/client';
+import type { Outcome } from '@prisma/client';
 
-interface DesireFormProps {
-  desire?: Desire;
+interface OutcomeFormProps {
+  passedDesireId?: string;
   outcome?: Outcome;
   isNew?: boolean
   nextSortOrder?: number
 }
 
-function OutcomesForm({ desire, outcome, isNew = true, nextSortOrder }: DesireFormProps) {
+function OutcomesForm({ passedDesireId, outcome, isNew = true, nextSortOrder }: OutcomeFormProps) {
 
-  const [desireId, setDesireId] = useState<string>('')
-  const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
-  const [outcomeId, setOutcomeId] = useState<string>('')
   const [title, setTitle] = useState<string>('')
   const [vision, setVision] = useState<string>('')
-  const [sortOrder, setSortOrder] = useState<number>(0) //if adding new desire, set to desires.length
+  const [desireId, setDesireId] = useState<string>('')
+  const [sortOrder, setSortOrder] = useState<number>(0)  
+  const [outcomeId, setOutcomeId] = useState<string>('')
   const [description, setDescription] = useState<string>('')
+  const [isSaveable, setIsSaveable] = useState<boolean>(false)  
 
 
   const { isIdle } = useGetNavigationState()
@@ -45,11 +45,11 @@ function OutcomesForm({ desire, outcome, isNew = true, nextSortOrder }: DesireFo
 
 
   useEffect(() => {
-    setDesireId(desire?.id || '')
-  }, [desire])
+    if (!passedDesireId) return
+    setDesireId(passedDesireId)
+  }, [passedDesireId])
 
 
-  //  for turning buttons on/off, switching text
   useEffect(() => {
     const isInputEmpty = !title || !description || !vision
     const isInputDifferent =

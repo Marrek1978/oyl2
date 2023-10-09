@@ -65,9 +65,9 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
 
           <div >
             <InputLabelWithGuideLineLink
-              inputTitle='Milestone Group Title2'
+              inputTitle='Milestone Group Title'
               guideline={CoreValue}
-              title='Group'
+              guideLineTitle='Group'
             />
             <input type="text"
               placeholder="Enter a Value Title"
@@ -83,7 +83,7 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
             <InputLabelWithGuideLineLink
               inputTitle='Milestone Group Description (Optional)'
               guideline={CoreValueStatement}
-              title='Milestone Group Description'
+              guideLineTitle='Milestone Group Description'
             />
             <textarea
               className="input-field-text-para   "

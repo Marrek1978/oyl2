@@ -16,3 +16,8 @@ export interface DatabaseRoutineToDo extends CreationRoutineToDo {
 }
 
 export type RoutineToDo = CreationRoutineToDo | DatabaseRoutineToDo;
+
+export type RoutineWithStrDates = Omit<PrismaRoutine, "createdAt" | "updatedAt"> & {
+  createdAt: string;
+  updatedAt: string;
+};

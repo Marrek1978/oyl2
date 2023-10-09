@@ -1,28 +1,30 @@
 import { parse } from 'querystring';
-import { redirect } from '@remix-run/node';
 import { useEffect, useState } from 'react';
+import { useParams } from '@remix-run/react';
 import type { ActionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import { deleteMilestoneGroupById } from '~/models/milestoneGroup.server';
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal'
-import { useGetMilestoneGroup } from './dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId.edit';
+import useFormDeletedToastAndRedirect from '~/components/utilities/useFormDeletedToast';
+import { useGetMilestoneGroup } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId.edit';
 
 
 export const action = async ({ request, params }: ActionArgs) => {
-  console.log('in action, detele milestone group')
   const formBody = await request.text();
   const parsedBody = parse(formBody);
   const id = parsedBody.rowId as string
   try {
     await deleteMilestoneGroupById(id)
-    return redirect('../../..')
-  } catch (error) { return 'failure' }
+    return 'deleted'
+  } catch (error) { return 'failed' }
 }
 
 
 function DeleteMilestoneGroupPage() {
 
+  const params = useParams()
+  const { desireId, outcomeId } = params
   const [id, setId] = useState<string>('')
   const loadedGroup = useGetMilestoneGroup()
   const [title, setTitle] = useState<string>('')
@@ -32,6 +34,8 @@ function DeleteMilestoneGroupPage() {
     setId(loadedGroup?.id)
     setTitle(loadedGroup?.title)
   }, [loadedGroup])
+
+  useFormDeletedToastAndRedirect({ redirectTo: `/dash/desires/${desireId}/outcomes/${outcomeId}`, message: 'MilestoneGroup was deleted' })
 
 
   return (

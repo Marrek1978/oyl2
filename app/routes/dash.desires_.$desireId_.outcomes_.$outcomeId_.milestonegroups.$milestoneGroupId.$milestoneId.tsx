@@ -8,7 +8,7 @@ import { updateMilestone } from '~/models/milestone.server';
 import { DefaultFormWidth } from '~/components/utilities/constants';
 import MilestoneForm from '~/components/forms/milestones/MilestoneForm';
 import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
-import { useGetMilestoneGroupWithMilestones } from './dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId';
+import { useGetMilestoneGroupWithMilestones } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId';
 
 import type { Milestone } from '@prisma/client';
 import type { LoaderArgs } from '@remix-run/node';
@@ -26,9 +26,8 @@ export const action = async ({ request, params }: LoaderArgs) => {
 
 function EditMilestonePage() {
 
-  const loadedMilestone = useGetMilestone();
+  const loadedMilestone:Milestone | undefined  | null = useGetMilestone();
   const [milestone, setMilestone] = useState<Milestone>()
-  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect(loadedMilestone)
 
 
   useEffect(() => {
@@ -41,11 +40,7 @@ function EditMilestonePage() {
   return (
     <>
       <Outlet />
-      {warning && (
-        <Modal zIndex={50}>
-          {alertMessage}
-        </Modal>
-      )}
+   
       <Modal onClose={() => { }} zIndex={40}>
         <div className={`w-[${DefaultFormWidth}] min-w-[250px] felx-1`}>
           <MilestoneForm milestone={milestone} isNew={false} />
@@ -72,5 +67,6 @@ export const useGetMilestone = (): Milestone | null | undefined => {
     setMilestone(milestoneByParamId as Milestone)
   }, [loaderData, milestoneId])
 
+  
   return milestone;
 }

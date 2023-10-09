@@ -41,14 +41,20 @@ const DndValues = ({ passedValues }: Props) => {
       >
         <DndInfo />
 
-        {values?.map((value) => (
-          <DndSortableGeneric
-            key={value.id}
-            id={value.id}
-            description={value.description}
-            title={value.title}
-          />
-        ))}
+        {values?.map((value) => {
+          const title = (<>
+            <span className="text-sm">{value.sortOrder + 1}</span>. {value.title}
+          </>)
+
+          return (
+            <DndSortableGeneric
+              key={value.id}
+              id={value.id}
+              description={value.description}
+              title={title}
+            />
+          )
+        })}
       </DndAndSortableContexts>
     </>
   )

@@ -1,12 +1,42 @@
 import { parse } from 'querystring'
 import { useEffect, useState } from 'react'
-import { useParams,  useNavigate } from '@remix-run/react'
-import { redirect, type ActionArgs } from '@remix-run/server-runtime'
+import { useRouteLoaderData, Outlet, Link } from '@remix-run/react'
+import { redirect, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
 
-import { updateOutcome } from '~/models/outcome.server'
+import Modal from '~/components/modals/Modal'
+import HeadingH1 from '~/components/titles/HeadingH1'
+import { requireUserId } from '~/models/session.server'
+import { getDesireById } from '~/models/desires.server'
+import BtnWithProps from '~/components/buttons/BtnWithProps'
+import SubHeading14px from '~/components/titles/SubHeading14px'
+import H2WithProsePara from '~/components/text/H2WithProsePara'
+import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
+import TwoToneSubHeading from '~/components/titles/TwoToneSubHeading'
+import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
+import { ObjectStrToDates } from '~/components/utilities/helperFunctions'
+import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect'
+import { getOutcomeWithMilestonesListsRoutinesHabitsSavingsById, updateOutcome } from '~/models/outcome.server'
 
 import type { Outcome } from '@prisma/client'
-import type { DesireWithValuesAndOutcomes, validationErrorsTypes } from '~/types/desireTypes'
+import type { OutcomeWithAllWithStringDates } from '~/types/outcomeTypes'
+import type { DesireWithStringDates, validationErrorsTypes } from '~/types/desireTypes'
+
+
+export const loader = async ({ request, params }: LoaderArgs) => {
+  let userId = await requireUserId(request);
+  const { desireId, outcomeId } = params
+  if (!desireId) throw new Error('No desireId in params')
+  if (!outcomeId) throw new Error('No outcomeId in params')
+  try {
+    const desire = await getDesireById(desireId, userId);
+    const outcomeWithAll = await getOutcomeWithMilestonesListsRoutinesHabitsSavingsById(outcomeId)
+    return {
+      desire,
+      outcomeWithAll: outcomeWithAll ? outcomeWithAll : null
+    };
+  } catch (error) { throw error }
+};
+
 
 
 export const action = async ({ request }: ActionArgs) => {
@@ -26,40 +56,202 @@ export const action = async ({ request }: ActionArgs) => {
 }
 
 
-function EditOutcomePage() {
+function OutcomePage() {
+  const outcomeWithAll: OutcomeWithAllWithStringDates | null | undefined = useGetOutcomeWithAll()
+  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: outcomeWithAll, itemType: 'Outcome' })
+  const desireTitle = useGetDesireTitle()
 
-  // const desire: DesireWithValuesAndOutcomes | undefined = useGetDesireWithValuesAndOutcomes();
-  // let outcome: DesireOutcome | undefined = useGetOutcome(desire)
-
+  const title = outcomeWithAll?.title || ''
+  const vision = outcomeWithAll?.vision || ''
+  const description = outcomeWithAll?.description || ''
 
   return (
     <>
-      {/* <Outlet /> */}
-      Outcome Id - basicall the old Project - outcome page to start 
-      {/* <Modal onClose={() => { }} zIndex={10}>
-        <DesiresOutcomesForm
-          desire={desire}
-          outcome={outcome}
-          isNew={false}
-        />
-      </Modal> */}
+      <Outlet />
+      <BreadCrumbs secondCrumb={'Desire'} title2={'Outcome'} />
+      {warning && (
+        <Modal zIndex={50}>
+          {alertMessage}
+        </Modal>
+      )}
+
+      <BasicTextAreaBG pageTitle='Outcome'>
+
+        {/* //?  THE TITLE SECTION  */}
+        <section>
+          <div className='
+            mt-2 ml-[-2px] 
+            flex flex-wrap w-full justify-between items-baseline
+            '>
+            <div className='flex-1'>
+              <HeadingH1 text={title || ''} />
+            </div>
+            <div className='flex-1 max-w-max'>
+              <Link to='edit'>
+                <BtnWithProps
+                  btnPurpose={'goto'}
+                  textSizeTW={'sm'}
+                  fontWidthTW={'bold'}
+                  btnLabel={'Edit Outcome Details'}
+                />
+              </Link>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2 mt-1  text-base-content/50">
+            <TwoToneSubHeading
+              staticHeading='Serves the Desire'
+              variableHeadingsArray={[desireTitle]}
+              size='14px'
+            />
+          </div>
+        </section>
+
+        <article className='w-full flex flex-col gap-y-12'>
+          <section>
+            {/* //?  PARAGRAPHS  */}
+            <div className='flex flex-wrap gap-12 mt-8'>
+              {/* //?  THE DESIRED OUTCOME  */}
+              <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max '>
+                <H2WithProsePara
+                  title={'The Desired Outcome'}
+                  paragraph={description || ''}
+                />
+              </div>
+
+              {/* //?  THE IDEAL SITUATION  */}
+              <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max   '>
+                <H2WithProsePara
+                  title={'The Vision'}
+                  paragraph={vision}
+                />
+              </div>
+            </div>
+          </section>
+
+          <section className='w-full flex flex-col gap-y-6'>
+
+            <div className=' grid grid-cols-[250px,_100px] items-baseline'>
+              <SubHeading14px text={'Milestones'} />
+              <Link to='milestonegroups'>
+                <BtnWithProps
+                  btnPurpose={'goto'}
+                  textSizeTW={'sm'}
+                  fontWidthTW={'bold'}
+                  btnLabel={'Go To'}
+                />
+              </Link>
+            </div>
+
+            <div className=' grid grid-cols-[250px,_100px] items-baseline'>
+              <SubHeading14px text={'Lists'} />
+              <Link to='milestones'>
+                <BtnWithProps
+                  btnPurpose={'goto'}
+                  textSizeTW={'sm'}
+                  fontWidthTW={'bold'}
+                  btnLabel={'Go To'}
+                />
+              </Link>
+            </div>
+
+            <div className=' grid grid-cols-[250px,_100px] items-baseline'>
+              <SubHeading14px text={'Routines'} />
+              <Link to='milestones'>
+                <BtnWithProps
+                  btnPurpose={'goto'}
+                  textSizeTW={'sm'}
+                  fontWidthTW={'bold'}
+                  btnLabel={'Go To'}
+                />
+              </Link>
+            </div>
+
+            <div className=' grid grid-cols-[250px,_100px] items-baseline'>
+              <SubHeading14px text={'Habit Trackers'} />
+              <Link to='milestones'>
+                <BtnWithProps
+                  btnPurpose={'goto'}
+                  textSizeTW={'sm'}
+                  fontWidthTW={'bold'}
+                  btnLabel={'Go To'}
+                />
+              </Link>
+            </div>
+
+            <div className=' grid grid-cols-[250px,_100px] items-baseline'>
+              <SubHeading14px text={'Savings Trackers'} />
+              <Link to='milestones'>
+                <BtnWithProps
+                  btnPurpose={'goto'}
+                  textSizeTW={'sm'}
+                  fontWidthTW={'bold'}
+                  btnLabel={'Go To'}
+                />
+              </Link>
+            </div>
+          </section>
+        </article>
+      </BasicTextAreaBG >
     </>
   )
 }
 
-export default EditOutcomePage
+export default OutcomePage
 
-export const useGetOutcome = (desire: DesireWithValuesAndOutcomes | undefined): Outcome | undefined => {
 
-  const params = useParams();
-  const navigate = useNavigate();
-  const [outcome, setOutcome] = useState< Outcome | undefined>(undefined)
+export const useGetDesireAndOutcome = ({ path = `routes/dash.desires_.$desireId_.outcomes_.$outcomeId` })
+  : {
+    desireWithStrDates: DesireWithStringDates | undefined | null,
+    outcomeWithStrDates: OutcomeWithAllWithStringDates | undefined | null
+  } => {
+
+  const loaderData = useRouteLoaderData(path)
+  const [desireWithStrDates, setDesireWithStrDates] = useState<DesireWithStringDates | null | undefined>(undefined)
+  const [outcomeWithStrDates, setOutcomeWithStrDates] = useState<OutcomeWithAllWithStringDates | null | undefined>(undefined)
 
   useEffect(() => {
-    const loadedOutcome:  Outcome | undefined= desire?.outcomes.find((outcome:  Outcome) => outcome.id === params.outcomeId)
-    setOutcome(loadedOutcome)
-  }, [ desire, params.outcomeId, navigate])
+    if (loaderData === undefined) return
+    const { desire, outcomeWithAll } = loaderData
+    setDesireWithStrDates(desire)
+    if (outcomeWithAll === null) return setOutcomeWithStrDates(null)
+    setOutcomeWithStrDates(outcomeWithAll)
+  }, [loaderData])
 
-  console.log('returning outocme', outcome)
-  return outcome
+  return { desireWithStrDates, outcomeWithStrDates }
 }
+
+
+export const useGetOutcomeWithAll = (): OutcomeWithAllWithStringDates | undefined | null => {
+  const { outcomeWithStrDates } = useGetDesireAndOutcome({})
+  return outcomeWithStrDates
+}
+
+
+export const useGetOutcomeOnlyWithProperDates = (): Outcome | undefined | null => {
+  const { outcomeWithStrDates } = useGetDesireAndOutcome({})
+  const [outcomeOnly, setOutcomeOnly] = useState<Outcome | undefined | null>(undefined)
+
+  useEffect(() => {
+    if (!outcomeWithStrDates) return
+    const { habitTrackers, lists, milestoneGroup, routines, savingsTrackers, ...restWithStrDates } = outcomeWithStrDates
+    const outcomeWithProperDates = ObjectStrToDates({ item: restWithStrDates, dateKeys: ['createdAt', 'updatedAt'] })
+    setOutcomeOnly(outcomeWithProperDates)
+  }, [outcomeWithStrDates])
+
+  return outcomeOnly
+}
+
+
+export const useGetDesireTitle = (): string => {
+  const [title, setTitle] = useState<string>('')
+  const { desireWithStrDates } = useGetDesireAndOutcome({})
+
+  useEffect(() => {
+    setTitle(desireWithStrDates?.title || '')
+  }, [desireWithStrDates])
+
+  return title
+}
+
+

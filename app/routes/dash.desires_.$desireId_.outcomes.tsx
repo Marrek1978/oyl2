@@ -1,7 +1,10 @@
 import { parse } from 'querystring';
+import { Outlet } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
 
+import { requireUserId } from '~/models/session.server';
+import OutcomesForm from '~/components/forms/OutcomesForm';
 import DndOutcomes from '~/components/dnds/outcomes/DndOutcomes';
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
 import DndAndFormFlex from '~/components/baseContainers/DndAndFormFlex';
@@ -9,11 +12,7 @@ import { getDesireWithValuesAndOutcomes } from '~/models/desires.server';
 import { createOutcome, updateOutcomesOrder } from '~/models/outcome.server';
 import { useGetSpecificDesireWithValuesAndOutcomes } from './dash.desires_.$desireId';
 
-import { requireUserId } from '~/models/session.server';
-import OutcomesForm from '~/components/forms/OutcomesForm';
-
-import type { Desire, Outcome } from '@prisma/client';
-import { Outlet } from '@remix-run/react';
+import type { Outcome } from '@prisma/client';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   const { desireId } = params
@@ -65,27 +64,28 @@ export const action = async ({ request }: ActionArgs) => {
 
 function DesireSpecificOutcomesPage() {
 
-  const [desire, setDesire] = useState<Desire>();
+  const [desireId, setDesireId] = useState<string>();
   const [outcomesState, setOutcomesState] = useState<Outcome[]>([])
   const desiresIdLoaderData = useGetSpecificDesireWithValuesAndOutcomes({ path: `routes/dash.desires_.$desireId_.outcomes` })
+
 
   useEffect(() => {
     if (!desiresIdLoaderData) return
     const { outcomes, desireValues, ...loadedDesire } = desiresIdLoaderData
-    setDesire(loadedDesire)
+    setDesireId(loadedDesire.id)
     if (outcomes) setOutcomesState(outcomes)
   }, [desiresIdLoaderData])
 
 
   return (
     <>
-    <Outlet />
+      <Outlet />
       <BreadCrumbs secondCrumb={'Desire'} />
       <DndAndFormFlex
         dnd={<DndOutcomes passedOutcomes={outcomesState} />}
         form={
           <OutcomesForm
-            desire={desire}
+            passedDesireId={desireId}
             nextSortOrder={outcomesState.length}
           />
         }

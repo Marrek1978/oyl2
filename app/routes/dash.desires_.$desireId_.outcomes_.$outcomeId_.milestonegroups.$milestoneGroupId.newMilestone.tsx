@@ -81,37 +81,6 @@ function NewMilestonePage() {
 export default NewMilestonePage
 
 
-// export const useGetAllMilestonesForGroup = (): MilestoneGroupsWithMilestones | undefined => {
-
-//   const navigate = useNavigate();
-//   const loaderData: MilestoneGroupsWithMilestonesWithStringDates = useLoaderData();
-//   const [milestones, setMilestones] = useState<Milestone[]>([]);
-//   const [milestoneGroup, setMilestoneGroup] = useState<MilestoneGroup>();
-
-
-//   useEffect(() => {
-//     if (!loaderData) return
-//     const { milestones: milestonesWithStrDates, ...groupWithStrDates } = loaderData;
-//     const groupWithStrDatesIntoArray: MilestoneGroupsWithStrDates[] = [groupWithStrDates];
-//     const groupDatekeys = ['createdAt', 'updatedAt'];
-//     const milestoneGroupWithProperDates: MilestoneGroup[] = ArrayOfObjectsStrToDates({ items: groupWithStrDatesIntoArray, dateKeys: groupDatekeys });
-//     setMilestoneGroup(milestoneGroupWithProperDates[0]);
-
-//     if (milestonesWithStrDates) {
-//       const milestonesDatekeys = ['createdAt', 'updatedAt', 'dueDate', 'completedAt'];
-//       const milestonesWithProperDates: Milestone[] = ArrayOfObjectsStrToDates({ items: milestonesWithStrDates, dateKeys: milestonesDatekeys });
-//       setMilestones(milestonesWithProperDates);
-//     }
-//   }, [loaderData, navigate]);
-
-//   if (milestoneGroup) {
-//     return {
-//       ...milestoneGroup,
-//       milestones,
-//     };
-//   }
-//   return undefined;
-// }
 
 
 

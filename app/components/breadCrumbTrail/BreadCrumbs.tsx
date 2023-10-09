@@ -14,7 +14,7 @@ function BreadCrumbs({ secondCrumb, title2, title3 }: BreadCrumbProps) {
   let breadcrumbArray: string[] = pathArray.slice(2)
   // console.log('breadcrumbArray is ', breadcrumbArray)
   secondCrumb && (breadcrumbArray[1] = secondCrumb)
-  title2 && (breadcrumbArray[4] = title2)
+  title2 && (breadcrumbArray[3] = title2)
 
   const linkColor = 'text-primary'
   const endColor = 'text-base-content'

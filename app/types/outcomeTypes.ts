@@ -1,26 +1,23 @@
-import type {  Outcome, } from "@prisma/client";
+import type { Outcome } from "@prisma/client";
+import type { HabitsWithStrDates } from "./habitsType";
+import type { ListWithStrDates } from "~/types/listTypes";
+import type { SavingsWithStrDates } from "~/types/savingsType";
+import type { RoutineWithStrDates } from "~/types/routineTypes";
+import type { MilestoneGroupsWithStrDates } from "~/types/milestoneTypes";
 
-export type NewlyCreatedOutcome = Omit<
-   Outcome,
-  "createdAt" | "updatedAt"
->;
-
-// export type OutcomeWithProgressList = DesireOutcome & {
-//   desireOutcomeProgress: DesireOutcomeProgress[];
-// };
+export type NewlyCreatedOutcome = Omit<Outcome, "createdAt" | "updatedAt">;
 
 //String dates
-export type DesireOutcomeWithStringDates = Omit<Outcome,  | 'createdAt' | 'updatedAt'> & {
+export type OutcomeWithStringDates = Omit<
+  Outcome,
+  "createdAt" | "updatedAt"
+> & {
   createdAt: string;
   updatedAt: string;
 };
 
-// export type DesireOutcomeProgressWithStringDates = Omit<DesireOutcomeProgress, "dueDate" | 'createdAt' | 'updatedAt'> & {
-//   dueDate: string;
-//   createdAt: string;
-//   updatedAt: string;
-// };
-
-// export type OutcomeWithProgessWithStringDates = DesireOutcomeWithStringDates & {
-//   desireOutcomeProgress: DesireOutcomeProgressWithStringDates[];
-// };
+export type OutcomeWithAllWithStringDates = OutcomeWithStringDates & {
+  milestoneGroup: MilestoneGroupsWithStrDates[];
+} & { lists: ListWithStrDates[] } & { routines: RoutineWithStrDates[] } & {
+  savingsTrackers: SavingsWithStrDates[];
+} & { habitTrackers: HabitsWithStrDates[] };

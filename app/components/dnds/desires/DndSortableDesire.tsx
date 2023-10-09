@@ -12,15 +12,15 @@ import type { Value } from '@prisma/client';
 import type { DesireWithValues } from '~/types/desireTypes';
 
 
-interface SortableGenericDesire {
-  title: string;
+interface SortableDesire {
+  title: string | JSX.Element;
   id: string;
   linkTitle?: string;
   passedDesireWithValues: DesireWithValues;
 }
 
 
-function DndSortableDesire({ id, title, linkTitle = 'Edit', passedDesireWithValues, }: SortableGenericDesire) {
+function DndSortableDesire({ id, title, linkTitle = 'Edit', passedDesireWithValues, }: SortableDesire) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: id });
 

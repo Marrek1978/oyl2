@@ -5,19 +5,19 @@ import { Outlet, useRouteLoaderData } from "@remix-run/react";
 
 import { requireUserId } from '~/models/session.server';
 import { getOutcomeByOutcomeId } from '~/models/outcome.server';
+import BreadCrumbs from "~/components/breadCrumbTrail/BreadCrumbs";
 import DndAndFormFlex from "~/components/baseContainers/DndAndFormFlex";
 import MilestoneGroupForm from "~/components/forms/milestones/MilestoneGroupForm"
 import { ArrayOfObjectsStrToDates } from "~/components/utilities/helperFunctions";
 import DndMilestoneGroups from "~/components/dnds/milestoneGroups/DndMilestoneGroups";
 import { getMilestoneGroupsByOutcomeId, createMilestoneGroup, updateGroupsOrder } from '~/models/milestoneGroup.server';
 
+import type { Milestone } from "@prisma/client";
 import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime';
 import type { MilestoneGroupsWithMilestones, MilestoneGroupsWithMilestonesWithStringDates } from "~/types/milestoneTypes";
 
 
 
-//? if the outcome Id is not Valid, then alert and go back
-//? there do not need to be any groups at this point 
 export const loader = async ({ request, params }: LoaderArgs) => {
   await requireUserId(request);
   const { outcomeId } = params;
@@ -27,7 +27,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     const outcome = await getOutcomeByOutcomeId(outcomeId);
     if (!outcome) return null
     const loadedGroups = await getMilestoneGroupsByOutcomeId(outcomeId);
-    return loadedGroups
+    return loadedGroups || null
   } catch (error) { throw error }
 };
 
@@ -70,7 +70,7 @@ function MilestoneGroupsPage() {
 
   const loadedGroupsData = useGetAllMilestoneGroupsForOutcome()
   const [groups, setGroups] = useState<MilestoneGroupsWithMilestones[]>([]);
- 
+
   useEffect(() => {
     if (!loadedGroupsData) return
     setGroups(loadedGroupsData);
@@ -79,6 +79,7 @@ function MilestoneGroupsPage() {
 
   return (
     <>
+      <BreadCrumbs secondCrumb={'Desire'} title2={'Outcome'} />
       <Outlet />
       <DndAndFormFlex
         dnd={<DndMilestoneGroups groups={groups} />}
@@ -91,16 +92,24 @@ function MilestoneGroupsPage() {
 export default MilestoneGroupsPage
 
 
-export const useGetAllMilestoneGroupsForOutcome = (): MilestoneGroupsWithMilestones[] | null | undefined => {
-  const path = "routes/dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups"
+export const useGetAllMilestoneGroupsForOutcome = (): MilestoneGroupsWithMilestones[] => {
+  const path = "routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups"
   const loadedGroupsArray = useRouteLoaderData(path)
-  const [groups, setGroups] = useState<MilestoneGroupsWithMilestones[]>();
+  const [groups, setGroups] = useState<MilestoneGroupsWithMilestones[]>([]);
 
   useEffect(() => {
     if (!loadedGroupsArray) return
     const groupsWithStrDates: MilestoneGroupsWithMilestonesWithStringDates[] = loadedGroupsArray;
-    const groupsWithProperDates: MilestoneGroupsWithMilestones[] = ArrayOfObjectsStrToDates({ items: groupsWithStrDates, dateKeys: ['createdAt', 'updatedAt'] })
-    setGroups(groupsWithProperDates);
+    const groupWithProperDates = ArrayOfObjectsStrToDates({ items: groupsWithStrDates, dateKeys: ['createdAt', 'updatedAt'] })
+
+    const milestonesDatekeys = ['createdAt', 'updatedAt', 'dueDate', 'completedAt'];
+    groupWithProperDates.map((group) => {
+      const groupMilestones = group.milestones
+      const milestonesWithProperDates: Milestone[] = ArrayOfObjectsStrToDates({ items: groupMilestones, dateKeys: milestonesDatekeys });
+      return group.milestones = milestonesWithProperDates
+    })
+
+    setGroups(groupWithProperDates)
   }, [loadedGroupsArray]);
 
   return groups;

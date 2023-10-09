@@ -1,10 +1,10 @@
 // types.ts
-import type { List as PrismaList, ListToDo } from '@prisma/client'
-import type { RoutineAndToDos, RoutineToDo } from './routineTypes';
+import type { ListToDo, List } from "@prisma/client";
+import type { RoutineAndToDos, RoutineToDo } from "./routineTypes";
 
-export type ListAndToDos = PrismaList & {
-  todos: ListToDo[],
-}
+export type ListAndToDos = List & {
+  todos: ListToDo[];
+};
 
 export interface CreationTodo {
   id: string;
@@ -25,9 +25,11 @@ export interface DatabaseTodo extends CreationTodo {
 
 export type Todo = CreationTodo | DatabaseTodo;
 
-export type ImportedLists = ListAndToDos[] | RoutineAndToDos[]
-export type ImportedList = ListAndToDos | RoutineAndToDos
-export type allTodoTypes = Todo | RoutineToDo 
+export type ImportedLists = ListAndToDos[] | RoutineAndToDos[];
+export type ImportedList = ListAndToDos | RoutineAndToDos;
+export type allTodoTypes = Todo | RoutineToDo;
 
-
-
+export type ListWithStrDates = Omit<List, "createdAt" | "updatedAt"> & {
+  createdAt: string;
+  updatedAt: string;
+};

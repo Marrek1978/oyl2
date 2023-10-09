@@ -13,6 +13,8 @@ function useFormDeletedToastAndRedirect({ redirectTo='/dash/values', message= 'V
   const actionData = useActionData()
   const navigate = useNavigate()
   const isDeleted = actionData === 'deleted'
+  console.log("🚀 ~ file:  ~ isDeleted:", isDeleted)
+  
 
   useEffect(() => {
     if (isDeleted) {

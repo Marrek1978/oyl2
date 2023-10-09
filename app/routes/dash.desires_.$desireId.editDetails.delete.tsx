@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useParams } from '@remix-run/react';
 import type { ActionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
@@ -22,15 +21,15 @@ export const action = async ({ request }: ActionArgs) => {
 
 
 function DeleteDesirePage() {
-  const params = useParams();
+  const [id, setId] = useState<string>('')
   const [title, setTitle] = useState<string>('')
 
-  const desireId = params.desireId as string
-  const desire: DesireWithValuesAndOutcomes | undefined = useGetSpecificDesireWithValuesAndOutcomes();
+  const desire: DesireWithValuesAndOutcomes | undefined | null = useGetSpecificDesireWithValuesAndOutcomes();
 
   useEffect(() => {
     if (!desire) return
     setTitle(desire.title)
+    setId(desire.id)
   }, [desire])
 
   useFormDeletedToastAndRedirect({ redirectTo:'/dash/desires' , message:'Desire was deleted'})
@@ -41,7 +40,7 @@ function DeleteDesirePage() {
         < AreYouSureDeleteModal
           item={'desire'}
           title={title}
-          id={desireId}
+          id={id}
         />
       </Modal>
     </>

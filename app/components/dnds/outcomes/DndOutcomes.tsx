@@ -51,16 +51,22 @@ function DndOutcomes({ passedOutcomes }: Props) {
 
 
         <div className='mt-4'>
-          {outcomes?.map((outcome) => (
-           
-          <DndSortableGeneric
-            key={outcome.id}
-            id={outcome.id}
-            description={outcome.description|| ''}
-            title={outcome.title}
-          />
+          {outcomes?.map((outcome) => {
 
-          ))}
+            const title = (<>
+              <span className="text-sm">{outcome.sortOrder + 1}</span>. {outcome.title}
+            </>)
+
+            return (
+              <DndSortableGeneric
+                key={outcome.id}
+                id={outcome.id}
+                description={outcome.description || ''}
+                title={title}
+              />
+
+            )
+          })}
         </div>
       </DndAndSortableContexts>
 

@@ -123,14 +123,12 @@ function DndMilestonesSortable({ id, passedMilestone, index }: MilestoneSortable
               )}
             </div>
 
-            <div className=" ">
-              <Link to={id} onClick={(e) => e.stopPropagation()}>
-                <BtnWithProps
-                  btnPurpose={"goto"}
-                  fontWidthTW='bold'
-                />
-              </Link>
-            </div>
+            <Link to={id} onClick={(e) => e.stopPropagation()}>
+              <BtnWithProps
+                btnPurpose={"goto"}
+                fontWidthTW='bold'
+              />
+            </Link>
           </div>
         </div>
       </li >

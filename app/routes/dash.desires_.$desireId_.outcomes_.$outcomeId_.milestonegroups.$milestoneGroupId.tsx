@@ -6,11 +6,9 @@ import type { ActionArgs } from '@remix-run/server-runtime';
 import Modal from '~/components/modals/Modal'
 import { updateMilestoneCompleted, updateMilestonesOrder } from '~/models/milestone.server'
 import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
-import { ArrayOfObjectsStrToDates, ObjectStrToDates } from '~/components/utilities/helperFunctions'
 import MilestoneGroupHorizontalDisplay from '~/components/milestones/MilestoneGroupHorizontalDisplay';
 import { useGetAllMilestoneGroupsForOutcome } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups';
 
-import type { Milestone, MilestoneGroup } from '@prisma/client';
 import type { MilestoneGroupsWithMilestones } from '~/types/milestoneTypes';
 
 
@@ -44,15 +42,15 @@ export const action = async ({ request }: ActionArgs) => {
 
 function MilestoneGroupPage() {
 
-  const loadedGroup = useGetMilestoneGroupWithMilestones()
-  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect(loadedGroup)
+  const loadedGroup: MilestoneGroupsWithMilestones | null | undefined = useGetMilestoneGroupWithMilestones()
+  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: loadedGroup, itemType: 'Milestone Group' })
   const [milestoneGroup, setMilestoneGroup] = useState<MilestoneGroupsWithMilestones>()
+
 
 
   useEffect(() => {
     if (!loadedGroup) return
-    const group = ObjectStrToDates({ item: loadedGroup, dateKeys: ['createdAt', 'updatedAt'] })
-    setMilestoneGroup(group as MilestoneGroupsWithMilestones)
+    setMilestoneGroup(loadedGroup as MilestoneGroupsWithMilestones)
   }, [loadedGroup])
 
 
@@ -81,23 +79,22 @@ export default MilestoneGroupPage
 export const useGetMilestoneGroupWithMilestones = (): MilestoneGroupsWithMilestones | null | undefined => {
 
   const params = useParams();
-  const allValidGroups = useGetAllMilestoneGroupsForOutcome()
-  const [group, setGroup] = useState<MilestoneGroupsWithMilestones | null | undefined>()
-
   const paramsMilestoneGroupId = params.milestoneGroupId
+  const [group, setGroup] = useState<MilestoneGroupsWithMilestones | null | undefined>(undefined)
+  const [allGroups, setAllGroups] = useState<MilestoneGroupsWithMilestones[]>()
+  const allValidGroups: MilestoneGroupsWithMilestones[] = useGetAllMilestoneGroupsForOutcome()
 
   useEffect(() => {
     if (!allValidGroups) return
-    const group: MilestoneGroupsWithMilestones | null | undefined = allValidGroups?.find((group: MilestoneGroup) => group.id === paramsMilestoneGroupId)
-    if (!group) return setGroup(null)
-    if (!group.milestones) return setGroup(group)
+    setAllGroups(allValidGroups)
+  }, [allValidGroups])
 
-    const groupMilestones = group.milestones
-    const milestonesDatekeys = ['createdAt', 'updatedAt', 'dueDate', 'completedAt'];
-    const milestonesWithProperDates: Milestone[] = ArrayOfObjectsStrToDates({ items: groupMilestones, dateKeys: milestonesDatekeys });
-    group.milestones = milestonesWithProperDates
-    return setGroup(group)
-  }, [allValidGroups, paramsMilestoneGroupId])
+  useEffect(() => {
+    if (!allGroups || allGroups.length === 0 || !paramsMilestoneGroupId) return
+    const currentGroup: MilestoneGroupsWithMilestones | undefined = allGroups.find((group: MilestoneGroupsWithMilestones) => group.id === paramsMilestoneGroupId);
+    if (currentGroup === undefined) return setGroup(null)
+    setGroup(currentGroup)
+  }, [allGroups, paramsMilestoneGroupId])
 
   return group
 }

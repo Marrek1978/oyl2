@@ -7,7 +7,7 @@ import type { LoaderArgs } from '@remix-run/node';
 import Modal from '~/components/modals/Modal'
 import { updateMilestoneGroupById } from '~/models/milestoneGroup.server';
 import MilestoneGroupForm from '~/components/forms/milestones/MilestoneGroupForm'
-import { useGetMilestoneGroupWithMilestones } from './dash.desires.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId';
+import { useGetMilestoneGroupWithMilestones } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId';
 
 import type { MilestoneGroup } from '@prisma/client';
 import type { UpdateMilestoneGroup } from '~/types/milestoneTypes';

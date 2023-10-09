@@ -1,18 +1,18 @@
-
 import { prisma } from "~/db.server";
-import type {
-  Desire,
-  Outcome,
-  User,
-} from "@prisma/client";
-
+import type { Desire, Outcome, User } from "@prisma/client";
 
 type CreateOutcome = Omit<Outcome, "id" | "createdAt" | "updatedAt"> & {
   userId: User["id"];
 };
- 
+
+type UpdateOutcome = Omit<
+  Outcome,
+  "createdAt" | "updatedAt" | "sortOrder" | "complete" | "desireId"
+>;
 
 export async function createOutcome(outcome: CreateOutcome) {
+  console.log("🚀 ~ file: outcome.server.ts:14 ~ createOutcome ~ outcome:", outcome)
+  
   try {
     const createOutcome = await prisma.outcome.create({
       data: {
@@ -31,16 +31,14 @@ export async function createOutcome(outcome: CreateOutcome) {
   }
 }
 
-export async function updateOutcome(outcome:  Outcome) {
+export async function updateOutcome(outcome: UpdateOutcome) {
   try {
     const updatedOutcome = await prisma.outcome.update({
       where: { id: outcome.id },
       data: {
         title: outcome.title,
         description: outcome.description,
-        sortOrder: outcome.sortOrder,
-        complete: outcome.complete,
-        desireId: outcome.desireId,
+        vision: outcome.vision,
       },
     });
 
@@ -66,6 +64,29 @@ export async function getOutcomeByOutcomeId(outcomeId: Outcome["id"]) {
   try {
     const outcome = await prisma.outcome.findFirst({
       where: { id: outcomeId },
+    });
+    return outcome;
+  } catch (error) {
+    throw error;
+  }
+}
+
+ 
+
+
+export async function getOutcomeWithMilestonesListsRoutinesHabitsSavingsById(
+  outcomeId: Outcome["id"]
+) {
+  try {
+    const outcome = await prisma.outcome.findFirst({
+      where: { id: outcomeId },
+      include: {
+        milestoneGroup: true,
+        lists: true,
+        routines: true,
+        habitTrackers: true,
+        savingsTrackers: true,
+      },
     });
     return outcome;
   } catch (error) {
