@@ -42,10 +42,9 @@ export const action = async ({ request }: ActionArgs) => {
 
 function MilestoneGroupPage() {
 
+  const [milestoneGroup, setMilestoneGroup] = useState<MilestoneGroupsWithMilestones>()
   const loadedGroup: MilestoneGroupsWithMilestones | null | undefined = useGetMilestoneGroupWithMilestones()
   const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: loadedGroup, itemType: 'Milestone Group' })
-  const [milestoneGroup, setMilestoneGroup] = useState<MilestoneGroupsWithMilestones>()
-
 
 
   useEffect(() => {
@@ -63,7 +62,7 @@ function MilestoneGroupPage() {
         </Modal>
       )}
       <Modal >
-        <div className={`w-full min-w-[450px] `}>
+        <div className={`w-full min-w-[450px] formWidth`}>
           {milestoneGroup && (
             <MilestoneGroupHorizontalDisplay milestoneGroup={milestoneGroup} />
           )}

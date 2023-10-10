@@ -4,7 +4,7 @@ import { type ActionArgs, redirect } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal';
 import useServerMessages from '~/components/modals/useServerMessages';
-import DesiresCurrentForm from '~/components/forms/DesiresCurrentForm'
+import DesiresCurrentForm from '~/components/forms/DesiresCurrentStateForm'
 import { updateDesireCurrentSituation } from '~/models/desires.server';
 import useNavigationState from '~/components/utilities/useNavigationState';
 import { useGetSpecificDesireWithValuesAndOutcomes } from './dash.desires_.$desireId';
@@ -37,12 +37,14 @@ function EditDesireCurrentSituationPage() {
     if (!desire) return
     setIsolatedDesire(desire)
   }, [loadedDesireWithValuesOutcomes])
- 
+
 
   return (
     <>
       <Modal onClose={() => { }} zIndex={10}>
-        <DesiresCurrentForm desire={isolatedDesire} />
+        <div className='formWidth'>
+          <DesiresCurrentForm desire={isolatedDesire} />
+        </div>
       </Modal>
     </>
   )

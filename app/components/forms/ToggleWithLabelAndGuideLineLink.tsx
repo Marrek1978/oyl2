@@ -1,15 +1,20 @@
 import WithGuidelineLink from './WithGuidelineLink';
 import InputLabel from './InputLabel';
+import type { DaisyUIBtnColor } from '~/types/CSSTypes';
+
 
 type Props = {
   text: string;
   guideline: string;
   title: string;
   checkedState: boolean;
-  handleCheckedState: () => void;
+  handleCheckedState: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  toggleColorDaisyUI?: DaisyUIBtnColor
 }
 
-function ToggleWithLabelAndGuideLineLink({ text, guideline, title, checkedState, handleCheckedState }: Props) {
+function ToggleWithLabelAndGuideLineLink({ text, guideline, title, checkedState, handleCheckedState, toggleColorDaisyUI = 'secondary' }: Props) {
+
+  const toggleColor = `toggle-${toggleColorDaisyUI}`
 
   return (
     <>
@@ -22,7 +27,7 @@ function ToggleWithLabelAndGuideLineLink({ text, guideline, title, checkedState,
 
           <div>
             <input type="checkbox"
-              className="toggle toggle-secondary itmes-center flex flex-col items-center "
+              className={`toggle  ${toggleColor} itmes-center flex flex-col items-center `}
               checked={checkedState}
               onChange={handleCheckedState}
             />

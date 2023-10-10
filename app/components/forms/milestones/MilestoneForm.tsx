@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, } from 'react';
-import { Form,  useParams,  useFetcher } from '@remix-run/react'
+import { Form, useParams, useFetcher } from '@remix-run/react'
 
 import FormButtons from '../FormButtons'
 import DatePicker from '~/components/list/DatePicker'
@@ -18,9 +18,10 @@ type Props = {
   milestone?: Milestone
   isNew?: boolean
   milestoneArrayLength?: number
+
 }
 
-function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props) {
+function MilestoneForm({ milestone, isNew = true, milestoneArrayLength, }: Props) {
 
   const params = useParams();
   const fetcher = useFetcher();
@@ -35,11 +36,11 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
   const [completedDate, setCompletedDate] = useState<Date | null>(null)
 
   const { isIdle } = useGetNavigationState()
-  
+
   const loadedMilestone = useMemo(() => milestone, [milestone])
   const paramsGroupId = useMemo(() => params.milestoneGroupId, [params.milestoneGroupId])
   if (!paramsGroupId) throw new Error('Milestone Group Id is missing')
-  
+
   const saveBtnTxt = useSaveBtnText(isNew, isIdle, 'Milestone')
   const headerTxt = useMemo(() => headerText(isNew, 'Milestone', milestone?.title || ''), [isNew, milestone?.title])
 
@@ -139,9 +140,7 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
   }
 
   return (
-    <BasicFormAreaBG
-      h2Text={headerTxt}
-    >
+    <BasicFormAreaBG h2Text={headerTxt}  >
 
       <Form method='post' className='p-8'>
         <div className="form-control gap-y-6   ">
@@ -153,7 +152,7 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
             <InputLabelWithGuideLineLink
               inputTitle='Milestone Title'
               guideline={CoreValue}
-              title='Milestone'
+              guideLineTitle='Milestone'
             />
             <input type="text"
               placeholder="Enter a Milestone Title"
@@ -170,7 +169,7 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength }: Props)
             <InputLabelWithGuideLineLink
               inputTitle='Milestone Description (Optional)'
               guideline={CoreValueStatement}
-              title='Milestone Description'
+              guideLineTitle='Milestone Description'
             />
             <textarea
               className="input-field-text-para  "

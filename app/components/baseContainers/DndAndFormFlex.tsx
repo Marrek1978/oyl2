@@ -4,9 +4,11 @@ import BasicTextAreaBG from './BasicTextAreaBG'
 type Props = {
   dnd: React.ReactNode
   form: React.ReactNode
+  formMaxWidthPx?: string
 }
 
-function DndAndFormFlex({ dnd, form }: Props) {
+function DndAndFormFlex({ dnd, form , formMaxWidthPx='830px'}: Props) {
+  console.log("🚀 ~ file: DndAndFormFlex.tsx:11 ~ DndAndFormFlex ~ formMaxWidthPx:", formMaxWidthPx)
   return (
     <>
       <article className="flex gap-8 flex-wrap ">
@@ -16,7 +18,7 @@ function DndAndFormFlex({ dnd, form }: Props) {
           </BasicTextAreaBG>
         </section>
 
-        <section className='flex-1 max-w-[830px] min-w-[350px]  '>
+        <section className={`flex-1 max-w-[` + formMaxWidthPx + `] min-w-[350px] truncate`}>
           {form}
         </section>
       </article>

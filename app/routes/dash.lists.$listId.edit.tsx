@@ -3,7 +3,7 @@ import { Outlet, useMatches, useParams } from '@remix-run/react';
 import { redirect, type ActionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
-import TodosListForm from '~/components/forms/TodosListForm';
+import TodosListForm from '~/components/forms/ListForm';
 import { updateListAndTodos } from '~/models/list.server';
 
 import type { ListAndToDos } from '~/types/listTypes';

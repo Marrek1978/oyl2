@@ -127,7 +127,7 @@ function FormButtons({
 
   return (
     <>
-      <div className=' w-full flex flex-wrap gap-6   '>
+      <div className=' w-full flex flex-wrap gap-x-6 gap-y-2  '>
 
         {!isNew && isShowDeleteBtn && (
           <div className='flex-1 min-w-[180px] self-center text-center'>

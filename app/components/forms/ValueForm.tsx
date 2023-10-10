@@ -53,7 +53,7 @@ function ValueForm({ value, isNew = true, nextSortOrder }: ValueFormProps) {
   return (
     <BasicFormAreaBG h2Text={headerTxt}  >
 
-      <Form method='post' className='p-8'>
+      <Form method='post' className='p-8  '>
         <div className="form-control gap-y-6 ">
           <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
           <input type="string" name='rowId' value={valueId} hidden readOnly />

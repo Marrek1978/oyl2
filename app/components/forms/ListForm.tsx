@@ -1,23 +1,22 @@
 import { v4 as uuidv4 } from "uuid";
-import React, { useEffect, useRef, useState } from 'react'
-import { Form, Link, useFetcher, useLocation, useNavigation, useParams } from '@remix-run/react';
+import { Form, useFetcher, useParams } from '@remix-run/react';
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
-import InputLabel from './InputLabel';
+import FormButtons from "./FormButtons";
 import HeadingH2 from "../titles/HeadingH2";
-import Modal from '~/components/modals/Modal';
 import BasicFormAreaBG from "./BasicFormAreaBG";
-import SolidBtn from '~/components/buttons/SolidBtn';
 import Divider from '~/components/utilities/Divider';
 import SubHeading14px from "../titles/SubHeading14px";
 import DatePicker from '~/components/list/DatePicker';
 import DndTodos from '~/components/dnds/todos/DndTodos';
 import OutlinedBtn from '~/components/buttons/OutlinedBtn';
-import SuccessMessage from '~/components/modals/SuccessMessage';
-import { closeIcon, dbIcon } from '~/components/utilities/icons';
+import useServerMessages from "../modals/useServerMessages";
 import { DesireOutcomeGuideline } from "../utilities/Guidelines";
-import SolidBtnGreyBlue from '~/components/buttons/SolidBtnGreyBlue';
+import { headerText, useSaveBtnText } from "./FormsCommonFunctions";
+import useGetNavigationState from "../utilities/useNavigationState";
 import EditListToDoModal from '~/components/modals/EditListToDoModal';
 import InputLabelWithGuideLineLink from "./InputLabelWithGuideLineLink";
+import ToggleWithLabelAndGuideLineLink from "./ToggleWithLabelAndGuideLineLink";
 import { sortTodos, resetTodoSortOrder } from '~/components/utilities/helperFunctions';
 
 
@@ -25,77 +24,90 @@ import type { CreationTodo, ListAndToDos } from '~/types/listTypes';
 
 interface TodosListFormProps {
   list?: ListAndToDos;
+  isNew?: boolean
+  nextSortOrder?: number
 }
 
-function TodosListForm({ list }: TodosListFormProps) {
+function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
 
-  const fetcher = useFetcher();
-  const location = useLocation();
-  const navigation = useNavigation();
+  const fetcher = useFetcher()
+  const params = useParams()
+
   const inputToDoRef = useRef<HTMLInputElement>(null);
-  const { projectId, desireOutcomeId } = useParams()
 
   const [todos, setTodos] = useState<CreationTodo[]>([]);
-  const [listTitle, setListTitle] = useState<string>('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [title, setTitle] = useState<string>('');
   const [isUrgent, setIsUrgent] = useState<boolean>(false);
   const [isImportant, setIsImportant] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
-  const [isEditToDoModalOpen, setIsEditToDoModalOpen] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<CreationTodo | null>(null);
   const [selectedTodoIndex, setSelectedTodoIndex] = useState<number | null>(null);
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
-
-  const pathArray = location.pathname.split('/')
-  const isNew = pathArray[pathArray.length - 1] === 'new'
-
-  const isSubmitting = navigation.state === 'submitting'
-  const isIdle = navigation.state === 'idle'
+  const [outcomeId, setOutcomeId] = useState<string>('')
 
 
-  const saveBtnText =
-    isSubmitting
-      ? 'Saving...'
-      : isNew
-        ? "Save New List"
-        : "Save Changes"
+  const [isEditToDoModalOpen, setIsEditToDoModalOpen] = useState(false);
+
+
+  const { isIdle, navigationState } = useGetNavigationState()
+  // const {
+  //   isIdle,
+  //   setIsIdle,
+  //   isLoading,
+  //   setIsLoading,
+  //   isSubmitting,
+  //   setIsSubmitting,
+  //   fetcherState,
+  //   setFetcherState,
+  //   fetcherMessage,
+  //   setFetcherMessage
+  // } = useFetcherState({ fetcher })
+  useServerMessages({ fetcherState: navigationState, isShowFailed: true })
+
+
+  const saveBtnTxt = useSaveBtnText(isNew, isIdle, 'To-Do List')
+  const headerTxt = useMemo(() => headerText(isNew, 'To-Do List', list?.title || ''), [isNew, list?.title])
+
+
+  // useEffect(() => {
+  //   if (fetcher.data) {
+  //     setSuccessMessage(fetcher.data);
+  //     setTimeout(() => setSuccessMessage(''), 1000);
+  //   }
+  // }, [fetcher])
 
 
   useEffect(() => {
-    if (fetcher.data) {
-      setSuccessMessage(fetcher.data);
-      setTimeout(() => setSuccessMessage(''), 1000);
+    if (params.outcomeId) {
+      setOutcomeId(params.outcomeId)
     }
-  }, [fetcher])
+  }, [params])
 
 
   useEffect(() => {
     if (list) {
-      setListTitle(list.title);
+      setTitle(list.title);
       setTodos(list.todos);
     }
   }, [list])
 
 
   useEffect(() => {
-    let saveable =
-      isNew
-        ? (listTitle && todos.length > 0) ? true : false
-        : (listTitle !== list?.title || todos !== list?.todos) ? true : false
-    setIsSaveable(saveable)
-  }, [isNew, todos, listTitle, list, isIdle])
+    const isInputEmpty = !title || !todos
+    const isInputDifferent = title !== list?.title || todos !== list?.todos
+    setIsSaveable(!isInputEmpty && (isInputDifferent))
+  }, [todos, title, list])
 
 
   const handleSave = async () => {
+    console.log('saveing list')
     const todosString = JSON.stringify(todos);
-    const projectIdNum = projectId ? projectId : null
-    const outcomeIdNum = desireOutcomeId ? desireOutcomeId : null
+
     try {
       fetcher.submit({
-        listTitle,
+        title,
         todosString,
-        projectIdNum,
-        outcomeIdNum,
+        outcomeId,
       }, {
         method: 'POST',
       })
@@ -105,12 +117,14 @@ function TodosListForm({ list }: TodosListFormProps) {
 
 
   const clearListState = () => {
-    setListTitle('')
+    console.log('clearing')
+
+    setTitle('')
     setTodos([])
   }
 
   const handleEdits = async () => {
-    const editedList = { ...list, title: listTitle, todos }
+    const editedList = { ...list, title, todos }
     const editedListString = JSON.stringify(editedList);
     try {
       fetcher.submit({
@@ -171,49 +185,34 @@ function TodosListForm({ list }: TodosListFormProps) {
 
   return (
     <>
-      {successMessage && (
-        <Modal onClose={() => { }} zIndex={20}>
-          <SuccessMessage
-            text={successMessage}
-          />
-        </Modal>)
-      }
 
-      <BasicFormAreaBG
-        maxWidth="1200"
-        title={!isNew ? (<div ><span className='text-sm' >Update your To-Do List: </span> {listTitle}</div>)
-          : (<div className='' >Make a New List of To-Dos</div>)
-        }
-      >
-        <Form method='post' className='mx-8'>
-          <div className='vert-space-between-inputs 
-            md:grid md:grid-cols-2 md:grid-rows-[1fr_min-content]
-            md:gap-x-8
-            '>
-            <input type="string" name='listId' value={list?.id} hidden readOnly />
-            <input type="string" name='projectId' value={projectId} hidden readOnly />
-            <input type='string' name='outcomeId' value={desireOutcomeId} hidden readOnly />
+      <BasicFormAreaBG h2Text={headerTxt}  >
+        <Form method='post' className='p-8'>
+          <input type="string" name='rowId' value={list?.id} hidden readOnly />
+          <input type='string' name='outcomeId' value={outcomeId} hidden readOnly />
 
-            <div className="form-control gap-6 ">
+          <div className=' flex gap-6 flex-wrap'>
+
+            <div className="flex-1 form-control gap-y-8 ">
               <div >
                 <InputLabelWithGuideLineLink
                   inputTitle='List Title'
-                  title='List Title'
+                  guideLineTitle='List Title'
                   guideline={DesireOutcomeGuideline} />
                 <input type="text"
                   placeholder="Enter a List Title"
-                  value={listTitle}
-                  onChange={(e) => setListTitle(e.target.value)}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
                   className=" input-field-text-title "
                 />
               </div>
 
-              <div className='mt-8 mb-5'>  <Divider />   </div>
+              <div className=' '>  <Divider />   </div>
 
               <div className='  '>
                 <InputLabelWithGuideLineLink
                   inputTitle='Add a To-do'
-                  title='To-dos'
+                  guideLineTitle='To-dos'
                   guideline={DesireOutcomeGuideline} />
                 <input type="text"
                   placeholder="Enter a To-Do"
@@ -222,74 +221,92 @@ function TodosListForm({ list }: TodosListFormProps) {
                 />
               </div>
 
-              <div className="flex justify-between items-center pt-0  flex-wrap">
-                <div className="checkbox-label-flex">
-                  <InputLabel inputTitle='Urgent' />
-                  <input type="checkbox"
-                    className="toggle toggle-secondary"
-                    checked={isUrgent}
-                    onChange={handleIsUrgent}
+              <div className='w-full  flex flex-col items-end gap-y-4'>
+
+                <div className="checkbox-label-flex min-w-[230px] ">
+                  <ToggleWithLabelAndGuideLineLink
+                    text='Urgent'
+                    guideline={DesireOutcomeGuideline}
+                    title='Milestone Description'
+                    checkedState={isUrgent}
+                    handleCheckedState={handleIsUrgent}
+                    toggleColorDaisyUI='accent'
                   />
                 </div>
 
-                <div className=" checkbox-label-flex">
-                  <InputLabel inputTitle='Important' />
-                  <input type="checkbox"
-                    className="toggle toggle-secondary"
-                    checked={isImportant}
-                    onChange={handleIsImportant}
+                <div className={`checkbox-label-flex min-w-[230px]`}>
+                  <ToggleWithLabelAndGuideLineLink
+                    text='Important'
+                    guideline={DesireOutcomeGuideline}
+                    title='Milestone Description'
+                    checkedState={isImportant}
+                    handleCheckedState={handleIsImportant}
+                    toggleColorDaisyUI='success'
+                  />
+                </div>
+
+                <div className={` min-w-[230px]`}>
+                  <DatePicker
+                    setSelectedDate={setSelectedDate}
+                    selectedDate={selectedDate}
                   />
                 </div>
               </div>
 
-              <DatePicker
-                setSelectedDate={setSelectedDate}
-                selectedDate={selectedDate}
-              />
-            </div>
 
-            <div className="col-start-1 row-start-2 vert-space-between-inputs">
               <OutlinedBtn
                 text='Add To-Do to List'
                 onClickFunction={handleAddTodoToList}
                 daisyUIBtnColor='primary'
                 type='button'
               />
+
             </div>
 
 
             {/* //? PREVIEW PANEL */}
-            <div className="col-start-2 row-start-1 mt-8 md:mt-0 ">
-              <div className='pt-3 text-success'>
-                <SubHeading14px text='To-Do List Preview' />
-              </div>
-              <div className={`mt-2 ${listTitle ? 'text-base-content' : 'text-base-content/60'} `}>
-                <HeadingH2 text={listTitle || 'List Title'} />
+            <div className="flex-1 form-control gap-y-6 justify-between">
+              <div>
+                <div className='mt-3 text-success'>
+                  <SubHeading14px text='To-Do List Preview' />
+                </div>
+                <div className={`mt-2 truncate max-w-sm capitalize ${title ? 'text-base-content' : 'text-base-content/60'} `}>
+                  <HeadingH2 text={title || 'List Title'} />
+                </div>
+
+                <div className={` ${todos.length ? 'text-base-content' : 'text-base-content/60'}  mt-8`}>
+                  <SubHeading14px text={`To-Dos`} />
+                </div>
+
+                <div className=' max-h-[375px] overflow-auto overflow-x-hidden mt-1'>
+                  <DndTodos
+                    setTodos={setTodos}
+                    todos={todos}
+                    setTodoSortOrder={resetTodoSortOrder}
+                    setIsEditToDoModalOpen={setIsEditToDoModalOpen}
+                    setSelectedTodoIndex={setSelectedTodoIndex}
+                    setSelectedTodo={setSelectedTodo} />
+                </div>
               </div>
 
-              <div className={` ${todos.length ? 'text-base-content' : 'text-base-content/60'}  mt-8`}>
-                <SubHeading14px text={`To-Dos`} />
-              </div>
+              {/* //******** BUTTONS   **************** */}
+              <div className=" justify-end  ">
 
-              <div className=' max-h-[426px] overflow-auto overflow-x-hidden pt-6'>
-                <DndTodos
-                  setTodos={setTodos}
-                  todos={todos}
-                  setTodoSortOrder={resetTodoSortOrder}
-                  setIsEditToDoModalOpen={setIsEditToDoModalOpen}
-                  setSelectedTodoIndex={setSelectedTodoIndex}
-                  setSelectedTodo={setSelectedTodo} />
+                <FormButtons
+                  saveBtnText={saveBtnTxt}
+                  isSaveBtnDisabled={!isSaveable || !isIdle}
+                  isNew={isNew}
+                  isShowCloseBtn={!isNew}
+                  saveBtnOnClickFunction={isNew ? handleSave : handleEdits}
+                  saveBtnType={'button'}
+                />
               </div>
-            </div>
-
-            {/* //******** BUTTONS   **************** */}
-            <div className="col-start-2 row-start-2 mb-8  vert-space-between-inputs">
-              <div className="flex flex-col gap-4">
+              {/* <div className="flex flex-col gap-4">
                 <SolidBtn
-                  text={saveBtnText}
-                  onClickFunction={isNew ? handleSave : handleEdits}
-                  icon={dbIcon}
-                  daisyUIBtnColor='primary'
+                text={saveBtnText}
+                onClickFunction={isNew ? handleSave : handleEdits}
+                icon={dbIcon}
+                daisyUIBtnColor='primary'
                   disableBtn={!isSaveable}
                   type='button'
                 />
@@ -313,7 +330,7 @@ function TodosListForm({ list }: TodosListFormProps) {
                     />
                   </Link>
                 )}
-              </div>
+              </div> */}
 
             </div>
           </div>
@@ -336,4 +353,4 @@ function TodosListForm({ list }: TodosListFormProps) {
   )
 }
 
-export default TodosListForm
+export default ListForm

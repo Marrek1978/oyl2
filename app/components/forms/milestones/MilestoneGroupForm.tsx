@@ -58,7 +58,7 @@ function MilestoneGroupForm({ milestoneGroup, isNew = true }: Props) {
     <BasicFormAreaBG h2Text={headerTxt}  >
 
       <Form method='post' className='p-8 '>
-        <div className="form-control gap-y-6 max-w-3xl  ">
+        <div className="form-control gap-y-6    ">
           <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
           <input type="string" name='rowId' value={groupId} hidden readOnly />
           <input type="string" name='outcomeId' value={paramsOutcomeId} hidden readOnly />

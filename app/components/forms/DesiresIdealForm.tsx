@@ -43,7 +43,7 @@ function DesiresIdealForm({ desire, isNew = false }: DesireFormProps) {
 
 
   return (
-    <div className='formWidth '>
+    <>
       <BasicFormAreaBG h2Text={headerTxt}  >
         <Form method='post' className='p-8'>
           <div className="form-control gap-y-6 ">
@@ -81,7 +81,7 @@ function DesiresIdealForm({ desire, isNew = false }: DesireFormProps) {
           </div>
         </Form>
       </ BasicFormAreaBG>
-    </div >
+    </>
   )
 }
 

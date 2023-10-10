@@ -27,7 +27,7 @@ export function getList({
 }
 
 // Get all list for a specific user
-export function getListItems(userId: User["id"] ) {
+export function getListItems(userId: User["id"]) {
   try {
     return prisma.list.findMany({
       where: { userId },
@@ -38,10 +38,10 @@ export function getListItems(userId: User["id"] ) {
   }
 }
 
-export function getListAndTodos( userId: User["id"]  ) {
+export function getListAndTodos(userId: User["id"]) {
   try {
     return prisma.list.findMany({
-      where: { userId, outcomeId: null },
+      where: { userId, outcomeId: undefined },
       include: {
         todos: {
           orderBy: { sortOrder: "asc" },
@@ -54,7 +54,7 @@ export function getListAndTodos( userId: User["id"]  ) {
   }
 }
 
-export function getAllListAndTodos(userId: User["id"] ) {
+export function getAllListAndTodos(userId: User["id"]) {
   try {
     return prisma.list.findMany({
       where: { userId },
@@ -106,24 +106,33 @@ export async function deleteList({ id }: Pick<List, "id">) {
   }
 }
 
-export async function createListAndTodos({
+export async function createList({
   title,
   userId,
   todos,
   outcomeId,
-}: Pick<List, "title"> & { userId: User["id"] } & { todos: CreateTodo[] } &   { outcomeId?: List["outcomeId"] }) {
+}: Pick<List, "title"> & { userId: User["id"] } & { todos: CreateTodo[] } & {
+  outcomeId?: List["outcomeId"];
+}) {
+  console.log("at server function");
+
+  const data: any = {
+    title,
+    userId,
+    todos: {
+      createMany: {
+        data: todos,
+      },
+    },
+  };
+
+  if (outcomeId) {
+    data.outcomeId = outcomeId;
+  }
+
   try {
     return await prisma.list.create({
-      data: {
-        title,
-        userId,
-        outcomeId,
-        todos: {
-          createMany: {
-            data: todos,
-          },
-        },
-      },
+      data,
     });
   } catch (error) {
     throw error;
@@ -249,7 +258,7 @@ export async function getToDosWhere(
   }
 }
 
-export async function getToDosWhereDueDate(userId: User["id"] ) {
+export async function getToDosWhereDueDate(userId: User["id"]) {
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -308,7 +317,7 @@ export async function getProjectDesiredOutcomeListsAndToDos(
 ) {
   try {
     return prisma.list.findMany({
-      where: { userId,  outcomeId },
+      where: { userId, outcomeId },
       include: {
         todos: {
           orderBy: { sortOrder: "asc" },

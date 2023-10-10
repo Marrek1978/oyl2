@@ -7,8 +7,8 @@ import { requireUserId } from '~/models/session.server';
 import { transformToDoDataDates } from '~/components/utilities/helperFunctions';
 
 export const loader = async ({ request }: LoaderArgs) => {
+  const userId = await requireUserId(request);
   try {
-    const userId = await requireUserId(request);
     const todoLists = await getListAndTodos(userId);
     return todoLists;
   } catch (error) {

@@ -4,7 +4,7 @@ import { type ActionArgs, redirect } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal';
 import { updateListAndTodos } from '~/models/list.server';
-import TodosListForm from '~/components/forms/TodosListForm';
+import TodosListForm from '~/components/forms/ListForm';
 
 import type { ListAndToDos } from '~/types/listTypes';
 

@@ -67,12 +67,13 @@ function EditDesireDetailsPage() {
     <>
       <Outlet />
       <Modal onClose={() => { }} zIndex={10}>
-        <DesiresForm
-          desire={desire}
-          isNew={false}
-          allUserValues={allUserValues}
-        //  unservedValues={}
-        />
+        <div className='formWidth'>
+          <DesiresForm
+            desire={desire}
+            isNew={false}
+            allUserValues={allUserValues}
+          />
+        </div>
       </Modal>
     </>
   )
@@ -82,13 +83,13 @@ export default EditDesireDetailsPage
 
 
 
-export const useGetAllValues = ():Value[] | undefined => {
+export const useGetAllValues = (): Value[] | undefined => {
   const [allValues, setAllValues] = useState<Value[] | undefined>()
   const loadedData: ValueWithStringDates[] = useLoaderData()
 
   useEffect(() => {
     if (!loadedData) return
-    const valuesWithProperDates:Value[] = ArrayOfObjectsStrToDates({ items: loadedData, dateKeys: ['createdAt', 'updatedAt'] })
+    const valuesWithProperDates: Value[] = ArrayOfObjectsStrToDates({ items: loadedData, dateKeys: ['createdAt', 'updatedAt'] })
     setAllValues(valuesWithProperDates)
   }, [loadedData])
 

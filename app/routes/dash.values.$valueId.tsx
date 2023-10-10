@@ -35,7 +35,7 @@ function EditValueRoute() {
   const id = params.valueId
   const { value } = useGetSpecificValue(id as string)
   const nextSortOrder = useGetArrayLength()
-  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({loaderData:value, itemType:'Value'})
+  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: value, itemType: 'Value' })
 
 
   useEffect(() => {
@@ -53,11 +53,13 @@ function EditValueRoute() {
       )}
 
       <Modal onClose={() => { }} zIndex={10}>
-        <ValueForm
-          value={specificValue}
-          isNew={false}
-          nextSortOrder={nextSortOrder}
-        />
+        <div className='formWidth'>
+          <ValueForm
+            value={specificValue}
+            isNew={false}
+            nextSortOrder={nextSortOrder}
+          />
+        </div>
       </Modal>
     </>
   )
