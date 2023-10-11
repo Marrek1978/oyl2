@@ -14,31 +14,31 @@ import { closeIcon, downArrowsIcon, trashIcon } from '~/components/utilities/ico
 import type { ListAndToDos } from '~/types/listTypes';
 
 interface TodosCompletedFormProps {
-  list: ListAndToDos;
+  list: ListAndToDos  ;
 }
 
 function TodosCompletedForm({ list }: TodosCompletedFormProps) {
 
   const fetcher = useFetcher();
-  const todos = list.todos;
+  const todos = list?.todos;
   const [isDeletingToDos, setIsDeletingToDos] = useState<boolean>(false)
   const [isDisableAllBtns, setIsDisableAllBtns] = useState<boolean>(false)
   const [isDisableMoveDownBtn, setIsDisableMoveDownBtn] = useState<boolean>(false)
-
-
+  
+  
   useEffect(() => {
     fetcher.data === 'deleted' && fetcher.state === 'idle' && (  setIsDeletingToDos(false))
   }, [fetcher])
-
-
+  
+  
   useEffect(() => {
     const properlySortedTodos = sortTodos(todos);
     const todosBySortOrder = todos.sort((a, b) => a.sortOrder - b.sortOrder)
     const isSorted = properlySortedTodos.every((todo, index) => todo.id === todosBySortOrder[index].id)
     setIsDisableMoveDownBtn(isSorted)
   }, [todos])
-
-
+  
+  
   const handleCompletedToBottom = async (): Promise<void> => {
     const completedToDosAtBottom = sortTodos(todos);
     const completedToDosAtBottomString = JSON.stringify(completedToDosAtBottom)
@@ -47,12 +47,12 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
         todos: completedToDosAtBottomString,
       }, {
         method: 'PUT',
-      
+        
       })
     } catch (error) { throw error }
   };
-
-
+  
+  
   const handleDeleteCompletedToDos = async (): Promise<void> => {
     setIsDeletingToDos(true)
     try {
@@ -63,29 +63,29 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
       })
     } catch (error) { throw error }
   }
-
-
+  
+  
   return (
     <>
       <BasicFormAreaBG
-        title={list.title}
+        h2Text={list.title}
         linkDestination='edit'
         linkText='EDIT TO-DO LIST'
-        linkColor='text-info'
-      >
+        linkColorDaisyUI='info'
+        >
 
         <div className='py-6 px-8 font-poppins  '>
           <div className=" max-h-[50vh] min-h-[200px] overflow-y-auto">
             {todos.map((todoItem, index) => {
               return (
                 <ToDoWithCompletedBox
-                  key={todoItem.id}
-                  todoItem={todoItem}
-                  setIsDisableAllBtns={setIsDisableAllBtns}
-                  isDisableAllBtns={isDisableAllBtns}
+                key={todoItem.id}
+                todoItem={todoItem}
+                setIsDisableAllBtns={setIsDisableAllBtns}
+                isDisableAllBtns={isDisableAllBtns}
                 />
-              )
-            })}
+                )
+              })}
           </div>
 
           {todos.some(todo => todo.complete === true) && (

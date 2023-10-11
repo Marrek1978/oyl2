@@ -8,7 +8,6 @@ type Props = {
 }
 
 function DndAndFormFlex({ dnd, form , formMaxWidthPx='830px'}: Props) {
-  console.log("🚀 ~ file: DndAndFormFlex.tsx:11 ~ DndAndFormFlex ~ formMaxWidthPx:", formMaxWidthPx)
   return (
     <>
       <article className="flex gap-8 flex-wrap ">

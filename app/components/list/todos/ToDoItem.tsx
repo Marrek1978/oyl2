@@ -6,6 +6,7 @@ import { EditIcon, trashIcon } from '~/components/utilities/icons';
 import OutlinedIconOnlyBtn from '~/components/buttons/OutlinedIconOnlyBtn';
 
 import type { CreationTodo } from '~/types/listTypes';
+// import DndSortableStyling from '~/components/dnds/DndSortableStyling';
 
 interface ToDoItemProps {
   todo: CreationTodo;
@@ -14,7 +15,7 @@ interface ToDoItemProps {
   editTodo: (todoIndex: string) => void;
 }
 
- 
+
 const ToDoItem: React.FC<ToDoItemProps> = ({ todo, id, removeTodo, editTodo }) => {
   const formattedDate = formatDate(todo['dueDate']);
 
@@ -35,6 +36,7 @@ const ToDoItem: React.FC<ToDoItemProps> = ({ todo, id, removeTodo, editTodo }) =
           hover:text-primary-focus
          ${priorityStyling}
            `}>
+      {/* <DndSortableStyling priorityStyling={priorityStyling}> */}
         <div className="flex w-full justify-between "  >
           <div className={`w-2/3 wrap truncate text-ellipsis	${todo['complete'] && 'line-through'}`} >
             {todo['body']}
@@ -61,7 +63,8 @@ const ToDoItem: React.FC<ToDoItemProps> = ({ todo, id, removeTodo, editTodo }) =
           </div>
         </div>
 
-      </div>
+        </div>
+      {/* </DndSortableStyling> */}
     </>
   )
 };

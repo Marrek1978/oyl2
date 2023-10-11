@@ -30,67 +30,40 @@ interface TodosListFormProps {
 
 function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
 
-  const fetcher = useFetcher()
   const params = useParams()
+  const fetcher = useFetcher()
 
   const inputToDoRef = useRef<HTMLInputElement>(null);
 
   const [todos, setTodos] = useState<CreationTodo[]>([]);
   const [title, setTitle] = useState<string>('');
+  const [sortOrder, setSortOrder] = useState<number>(0)  
+  const [listId, setListId] = useState<string>('')  
+  const [outcomeId, setOutcomeId] = useState<string>('')
   const [isUrgent, setIsUrgent] = useState<boolean>(false);
   const [isImportant, setIsImportant] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [selectedTodo, setSelectedTodo] = useState<CreationTodo | null>(null);
   const [selectedTodoIndex, setSelectedTodoIndex] = useState<number | null>(null);
-  const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
-  const [outcomeId, setOutcomeId] = useState<string>('')
-
-
+  const [isSaveable, setIsSaveable] = useState<boolean>(false)  
   const [isEditToDoModalOpen, setIsEditToDoModalOpen] = useState(false);
 
-
   const { isIdle, navigationState } = useGetNavigationState()
-  // const {
-  //   isIdle,
-  //   setIsIdle,
-  //   isLoading,
-  //   setIsLoading,
-  //   isSubmitting,
-  //   setIsSubmitting,
-  //   fetcherState,
-  //   setFetcherState,
-  //   fetcherMessage,
-  //   setFetcherMessage
-  // } = useFetcherState({ fetcher })
   useServerMessages({ fetcherState: navigationState, isShowFailed: true })
-
 
   const saveBtnTxt = useSaveBtnText(isNew, isIdle, 'To-Do List')
   const headerTxt = useMemo(() => headerText(isNew, 'To-Do List', list?.title || ''), [isNew, list?.title])
 
 
-  // useEffect(() => {
-  //   if (fetcher.data) {
-  //     setSuccessMessage(fetcher.data);
-  //     setTimeout(() => setSuccessMessage(''), 1000);
-  //   }
-  // }, [fetcher])
-
-
   useEffect(() => {
-    if (params.outcomeId) {
-      setOutcomeId(params.outcomeId)
-    }
-  }, [params])
+    setTitle(list?.title || '');
+    setTodos(list?.todos || []);
+    setListId(list?.id || '')
+    setSortOrder(list?.sortOrder || nextSortOrder || 0)
+    setOutcomeId(list?.outcomeId || params.outcomeId || '')
+  }, [list, params, nextSortOrder])
 
-
-  useEffect(() => {
-    if (list) {
-      setTitle(list.title);
-      setTodos(list.todos);
-    }
-  }, [list])
-
+ 
 
   useEffect(() => {
     const isInputEmpty = !title || !todos
@@ -100,14 +73,13 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
 
 
   const handleSave = async () => {
-    console.log('saveing list')
     const todosString = JSON.stringify(todos);
-
     try {
       fetcher.submit({
         title,
         todosString,
         outcomeId,
+        sortOrder,
       }, {
         method: 'POST',
       })
@@ -117,10 +89,11 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
 
 
   const clearListState = () => {
-    console.log('clearing')
-
     setTitle('')
     setTodos([])
+    setListId('')
+    setSortOrder(0)
+    setOutcomeId('')
   }
 
   const handleEdits = async () => {
@@ -183,15 +156,17 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
     setTodos(todos.map((todo, i) => (i === index ? updatedTodo : todo)));
   };
 
+
   return (
     <>
 
       <BasicFormAreaBG h2Text={headerTxt}  >
         <Form method='post' className='p-8'>
-          <input type="string" name='rowId' value={list?.id} hidden readOnly />
+          <input type="string" name='rowId' value={listId} hidden readOnly />
+          <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
           <input type='string' name='outcomeId' value={outcomeId} hidden readOnly />
 
-          <div className=' flex gap-6 flex-wrap'>
+          <div className=' flex gap-8 flex-wrap'>
 
             <div className="flex-1 form-control gap-y-8 ">
               <div >

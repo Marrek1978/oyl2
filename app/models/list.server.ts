@@ -12,113 +12,23 @@ type CreateTodo = {
   sortOrder: ListToDo["sortOrder"];
 };
 
-// Get a list by id and userId
-export function getList({
-  id,
-  userId,
-}: Pick<List, "id"> & { userId: User["id"] }) {
-  try {
-    return prisma.list.findFirst({
-      where: { id, userId },
-    });
-  } catch (error) {
-    throw error;
-  }
-}
-
-// Get all list for a specific user
-export function getListItems(userId: User["id"]) {
-  try {
-    return prisma.list.findMany({
-      where: { userId },
-      orderBy: { updatedAt: "desc" },
-    });
-  } catch (error) {
-    throw error;
-  }
-}
-
-export function getListAndTodos(userId: User["id"]) {
-  try {
-    return prisma.list.findMany({
-      where: { userId, outcomeId: undefined },
-      include: {
-        todos: {
-          orderBy: { sortOrder: "asc" },
-        },
-      },
-      orderBy: { updatedAt: "desc" },
-    });
-  } catch (error) {
-    throw error;
-  }
-}
-
-export function getAllListAndTodos(userId: User["id"]) {
-  try {
-    return prisma.list.findMany({
-      where: { userId },
-      include: {
-        todos: {
-          orderBy: { sortOrder: "asc" },
-        },
-      },
-      orderBy: { updatedAt: "desc" },
-    });
-  } catch (error) {
-    throw error;
-  }
-}
-
-//update the todo table based on it's id, the list id, adn teh user id
-export async function updateToDoComplete({
-  id,
-  complete,
-}: {
-  id: ListToDo["id"];
-  complete: ListToDo["complete"];
-}) {
-  try {
-    const result = prisma.listToDo.update({
-      where: {
-        id: id,
-      },
-      data: {
-        complete: complete,
-      },
-    });
-
-    console.log("Updated records:", result);
-    return result;
-  } catch (error) {
-    console.error("Error updating ToDo:", error);
-    throw error;
-  }
-}
-// Delete a list by id
-export async function deleteList({ id }: Pick<List, "id">) {
-  try {
-    return prisma.list.delete({
-      where: { id },
-    });
-  } catch (error) {
-    throw error;
-  }
-}
-
+//************* CREATE LIST WITH OR WITHOUT OUTCOME ID ***************//
 export async function createList({
   title,
   userId,
   todos,
   outcomeId,
+  sortOrder,
 }: Pick<List, "title"> & { userId: User["id"] } & { todos: CreateTodo[] } & {
   outcomeId?: List["outcomeId"];
-}) {
+} & { sortOrder?: List["sortOrder"] }) {
+  
   console.log("at server function");
 
   const data: any = {
     title,
     userId,
+    sortOrder, 
     todos: {
       createMany: {
         data: todos,
@@ -139,6 +49,60 @@ export async function createList({
   }
 }
 
+//************* GET ALL LIST AND TODOS BY USER ID ***************//
+export function getAllListAndTodos(userId: User["id"]) {
+  try {
+    return prisma.list.findMany({
+      where: { userId },
+      include: {
+        todos: {
+          orderBy: { sortOrder: "asc" },
+        },
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+//************* GET MISC. LIST AND TODOS BY USER ID ***************//
+
+export function getListAndTodos(userId: User["id"]) {
+  try {
+    return prisma.list.findMany({
+      where: { userId, outcomeId: undefined },
+      include: {
+        todos: {
+          orderBy: { sortOrder: "asc" },
+        },
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateListsOrder(lists: List[]) {
+  try {
+    const updatePromises = lists.map((list) => {
+      return prisma.list.update({
+        where: { id: list.id },
+        data: {
+          sortOrder: list.sortOrder,
+        },
+      });
+    });
+
+    const updateLists = await prisma.$transaction(updatePromises);
+    return updateLists;
+  } catch (error) {
+    throw error;
+  }
+}
+
+//************* UPDATE LIST  OUTCOME ID NOT NEEDED ***************//
 export async function updateListAndTodos({
   id,
   title,
@@ -182,6 +146,44 @@ export async function updateListAndTodos({
   }
 }
 
+//************* UPDATE COMPLETED TODO BY ID ***************//
+export async function updateToDoComplete({
+  id,
+  complete,
+}: {
+  id: ListToDo["id"];
+  complete: ListToDo["complete"];
+}) {
+  try {
+    const result = prisma.listToDo.update({
+      where: {
+        id: id,
+      },
+      data: {
+        complete: complete,
+      },
+    });
+
+    console.log("Updated records:", result);
+    return result;
+  } catch (error) {
+    console.error("Error updating ToDo:", error);
+    throw error;
+  }
+}
+
+//? ***********************DELETE *************************//
+export async function deleteList({ id }: Pick<List, "id">) {
+  try {
+    return prisma.list.delete({
+      where: { id },
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+//??? ******************  TO DO CRUD ******************//
 export async function reorderCompletedToDos({ todos }: { todos: ListToDo[] }) {
   try {
     const updateTodos = todos.map((todo) => {
@@ -225,6 +227,8 @@ type ToDoCondition = Partial<
     | "sortOrder"
   >
 >;
+
+//? ************* GET TO DO BY CRITERIA   ***************//
 export async function getToDosWhere(
   { userId }: { userId: User["id"] },
   condition: ToDoCondition
@@ -293,6 +297,7 @@ export async function getToDosWhereDueDate(userId: User["id"]) {
   }
 }
 
+//  ??  *******************  SPECIAL FOR TODAY/PRIORITIES PAGES*******************//
 export async function deleteCompletedToDosFromPriorityList(
   completedTodoIds: string[]
 ) {
@@ -309,9 +314,9 @@ export async function deleteCompletedToDosFromPriorityList(
   }
 }
 
-//?  ------------------ Project Lists ----------------- //
+//?  ------------------ Outcome Lists ----------------- //
 
-export async function getProjectDesiredOutcomeListsAndToDos(
+export async function getListsByOutcomeId(
   userId: User["id"],
   outcomeId: List["outcomeId"]
 ) {
@@ -323,6 +328,32 @@ export async function getProjectDesiredOutcomeListsAndToDos(
           orderBy: { sortOrder: "asc" },
         },
       },
+      orderBy: { updatedAt: "desc" },
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+//! *****************   NOT USED? *****************//
+export function getList({
+  id,
+  userId,
+}: Pick<List, "id"> & { userId: User["id"] }) {
+  try {
+    return prisma.list.findFirst({
+      where: { id, userId },
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Get all list for a specific user
+export function getListItems(userId: User["id"]) {
+  try {
+    return prisma.list.findMany({
+      where: { userId },
       orderBy: { updatedAt: "desc" },
     });
   } catch (error) {

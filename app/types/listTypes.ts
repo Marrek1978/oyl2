@@ -14,7 +14,6 @@ export interface CreationTodo {
   complete: boolean;
   dueDate: Date | null;
   sortOrder: number | null;
-  // createdAt: string;
 }
 
 export interface DatabaseTodo extends CreationTodo {
@@ -32,4 +31,17 @@ export type allTodoTypes = Todo | RoutineToDo;
 export type ListWithStrDates = Omit<List, "createdAt" | "updatedAt"> & {
   createdAt: string;
   updatedAt: string;
+};
+
+export type TodoWithStrDates = Omit<
+  ListToDo,
+  "createdAt" | "updatedAt" | "dueDate"
+> & {
+  createdAt: string;
+  updatedAt: string;
+  dueDate: string;
+};
+
+export type ListAndTodosWithStrDates = ListWithStrDates & {
+  todos: TodoWithStrDates[];
 };
