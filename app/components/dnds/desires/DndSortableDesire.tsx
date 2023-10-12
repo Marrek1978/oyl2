@@ -10,6 +10,7 @@ import { varsForPluralText } from '~/components/utilities/helperFunctions';
 
 import type { Value } from '@prisma/client';
 import type { DesireWithValues } from '~/types/desireTypes';
+import DndSortableStyling from '../DndSortableStyling';
 
 
 interface SortableDesire {
@@ -43,17 +44,7 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', passedDesireWithValu
   return (
     <>
       <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mt-4">
-        <div key={id} id={id} className='
-            px-3 py-4 
-            mt-4
-            font-poppins
-            cursor-pointer 
-            text-left text-base-content
-            transition duration-500
-            hover:bg-primary/30 
-            hover:text-primary-focus
-            max-w-prose
-          '>
+        <DndSortableStyling id={id} priorityStyling={''}>
           <H2WithLink
             h2Text={title}
             linkDestination={id}
@@ -83,10 +74,7 @@ function DndSortableDesire({ id, title, linkTitle = 'Edit', passedDesireWithValu
               </div>
             </div>
           )}
-
-
-
-        </div>
+        </DndSortableStyling>
       </div>
     </>
   )

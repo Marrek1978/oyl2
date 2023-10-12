@@ -17,7 +17,7 @@ function DndAndFormFlex({ dnd, form , formMaxWidthPx='830px'}: Props) {
           </BasicTextAreaBG>
         </section>
 
-        <section className={`flex-1 max-w-[` + formMaxWidthPx + `] min-w-[350px] truncate`}>
+        <section className={`flex-1 max-w-[830px] min-w-[350px] truncate`}>
           {form}
         </section>
       </article>

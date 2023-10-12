@@ -10,6 +10,7 @@ import type { Milestone } from "@prisma/client";
 import type { MilestoneGroupsWithMilestones } from '~/types/milestoneTypes';
 import useSetSortOrderToNewIndex from "../useSetSortOrderToNewIndex";
 import type { HasSortOrder } from "~/types/genericDndArrayTypes";
+import DndSortableStyling from "../DndSortableStyling";
 
 type Props = {
   id: string;
@@ -48,32 +49,18 @@ function DndMilestoneGroupsSortable<T extends HasSortOrder>({ id, passedGroup }:
   return (
     <>
       <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mt-0">
-        <div key={id} id={id} className='
-          px-3 py-4 
-          mt-4
-          font-poppins
-          cursor-pointer 
-          text-left text-base-content
-          transition duration-500
-          hover:bg-primary/30 
-          hover:text-primary-focus
-          max-w-prose
-         
-        '>
-
+        <DndSortableStyling id={id} priorityStyling={''}>
           <H2WithLink
             h2Text={title}
             linkDestination={id}
             linkText={'Go To'}
             btnColorDaisyUI={'link'}
-
           />
 
           {isMilestones ? (<>
             <div className="
               w-full mt-4
               text-center   
-                       
             ">
               <ul className={`steps my-steps    `}>
                 {milestonesNoGroup?.map((milestone) => {
@@ -98,7 +85,7 @@ function DndMilestoneGroupsSortable<T extends HasSortOrder>({ id, passedGroup }:
             </div>
           </>)}
 
-        </div>
+        </DndSortableStyling>
       </div>
     </>
   )

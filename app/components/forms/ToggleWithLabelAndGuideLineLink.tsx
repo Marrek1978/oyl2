@@ -1,6 +1,5 @@
-import WithGuidelineLink from './WithGuidelineLink';
 import InputLabel from './InputLabel';
-import type { DaisyUIBtnColor } from '~/types/CSSTypes';
+import WithGuidelineLink from './WithGuidelineLink';
 
 
 type Props = {
@@ -9,7 +8,7 @@ type Props = {
   title: string;
   checkedState: boolean;
   handleCheckedState: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  toggleColorDaisyUI?: DaisyUIBtnColor
+  toggleColorDaisyUI?: string
 }
 
 function ToggleWithLabelAndGuideLineLink({ text, guideline, title, checkedState, handleCheckedState, toggleColorDaisyUI = 'secondary' }: Props) {

@@ -1,9 +1,9 @@
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from '@dnd-kit/sortable';
 
+import DndSortableStyling from "../DndSortableStyling";
 import H2WithLink from "~/components/titles/H2WithLink";
 import TextProseWidth from "~/components/text/TextProseWidth";
-import DndSortableStyling from "../DndSortableStyling";
 
 interface SortableGenericProps {
   id: string;
@@ -20,8 +20,6 @@ function DndSortableGeneric({ id, title, description, linkTitle = 'Edit' }: Sort
     transform: CSS.Transform.toString(transform),
     transition,
   };
-
-
 
 
 
@@ -42,7 +40,7 @@ function DndSortableGeneric({ id, title, description, linkTitle = 'Edit' }: Sort
             />
           </div>
 
-        </DndSortableStyling> 
+        </DndSortableStyling>
       </div>
     </>
   )

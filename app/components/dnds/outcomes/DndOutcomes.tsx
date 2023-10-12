@@ -24,18 +24,12 @@ function DndOutcomes({ passedOutcomes }: Props) {
 
 
   //initial load
-  // useEffec
   useEffect(() => {
     if (!passedOutcomes) return
     setItemsArrayInProperOrder(passedOutcomes)
   }, [passedOutcomes, setItemsArrayInProperOrder])
 
-
-  // useEffect(() => {
-  //   if (!desire) return
-  //   setDesireName(desire.title)
-  // }, [desire])
-
+ 
 
   return (
     <>

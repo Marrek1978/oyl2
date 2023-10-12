@@ -38,7 +38,7 @@ const ToDoItem: React.FC<ToDoItemProps> = ({ todo, id, removeTodo, editTodo }) =
            `}>
       {/* <DndSortableStyling priorityStyling={priorityStyling}> */}
         <div className="flex w-full justify-between "  >
-          <div className={`w-2/3 wrap truncate text-ellipsis	${todo['complete'] && 'line-through'}`} >
+          <div className={`w-2/3 wrap truncate text-ellipsis capitalize	${todo['complete'] && 'line-through'}`} >
             {todo['body']}
           </div>
           {formattedDate && (

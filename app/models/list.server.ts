@@ -23,8 +23,6 @@ export async function createList({
   outcomeId?: List["outcomeId"];
 } & { sortOrder?: List["sortOrder"] }) {
   
-  console.log("at server function");
-
   const data: any = {
     title,
     userId,
@@ -110,14 +108,14 @@ export async function updateListAndTodos({
   todos,
 }: Pick<List, "id" | "title"> & { userId: User["id"] } & { todos: Todo[] }) {
   try {
-    const updateList = await prisma.list.update({
-      where: { id },
+    const updatedList = await prisma.list.update({
+      where: { id, userId},
       data: {
         title,
       },
     });
 
-    const updateTodos = await todos.map((todo) => {
+    const updatePromises = await todos.map((todo) => {
       return prisma.listToDo.upsert({
         where: { id: todo.id },
         create: {
@@ -139,8 +137,10 @@ export async function updateListAndTodos({
         },
       });
     });
-    await Promise.all(updateTodos);
-    return { updateList, updateTodos };
+
+    const updatedToDos = await prisma.$transaction(updatePromises);
+    return {updatedList, updatedToDos};
+   
   } catch (error) {
     throw error;
   }

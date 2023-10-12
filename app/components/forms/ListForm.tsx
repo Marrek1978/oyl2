@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { Form, useFetcher, useParams } from '@remix-run/react';
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import FormButtons from "./FormButtons";
 import HeadingH2 from "../titles/HeadingH2";
@@ -9,7 +9,6 @@ import Divider from '~/components/utilities/Divider';
 import SubHeading14px from "../titles/SubHeading14px";
 import DatePicker from '~/components/list/DatePicker';
 import DndTodos from '~/components/dnds/todos/DndTodos';
-import OutlinedBtn from '~/components/buttons/OutlinedBtn';
 import useServerMessages from "../modals/useServerMessages";
 import { DesireOutcomeGuideline } from "../utilities/Guidelines";
 import { headerText, useSaveBtnText } from "./FormsCommonFunctions";
@@ -21,6 +20,8 @@ import { sortTodos, resetTodoSortOrder } from '~/components/utilities/helperFunc
 
 
 import type { CreationTodo, ListAndToDos } from '~/types/listTypes';
+import BtnWithProps from "../buttons/BtnWithProps";
+import { ArrowIcon45deg } from "../utilities/icons";
 
 interface TodosListFormProps {
   list?: ListAndToDos;
@@ -33,19 +34,19 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
   const params = useParams()
   const fetcher = useFetcher()
 
-  const inputToDoRef = useRef<HTMLInputElement>(null);
-
+  const [todo, setTodo] = useState<string>('');
   const [todos, setTodos] = useState<CreationTodo[]>([]);
   const [title, setTitle] = useState<string>('');
-  const [sortOrder, setSortOrder] = useState<number>(0)  
-  const [listId, setListId] = useState<string>('')  
+  const [sortOrder, setSortOrder] = useState<number>(0)
+  const [listId, setListId] = useState<string>('')
   const [outcomeId, setOutcomeId] = useState<string>('')
   const [isUrgent, setIsUrgent] = useState<boolean>(false);
   const [isImportant, setIsImportant] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [selectedTodo, setSelectedTodo] = useState<CreationTodo | null>(null);
   const [selectedTodoIndex, setSelectedTodoIndex] = useState<number | null>(null);
-  const [isSaveable, setIsSaveable] = useState<boolean>(false)  
+  const [isSaveable, setIsSaveable] = useState<boolean>(false)
+  const [isAddable, setIsAddable] = useState<boolean>(false)
   const [isEditToDoModalOpen, setIsEditToDoModalOpen] = useState(false);
 
   const { isIdle, navigationState } = useGetNavigationState()
@@ -63,13 +64,19 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
     setOutcomeId(list?.outcomeId || params.outcomeId || '')
   }, [list, params, nextSortOrder])
 
- 
 
   useEffect(() => {
-    const isInputEmpty = !title || !todos
+    const isInputEmpty = !title || todos.length === 0
     const isInputDifferent = title !== list?.title || todos !== list?.todos
     setIsSaveable(!isInputEmpty && (isInputDifferent))
   }, [todos, title, list])
+
+
+  useEffect(() => {
+    const isInputEmpty = !todo
+    console.log("🚀 ~ file: ListForm.tsx:77 ~ useEffect ~ isInputEmpty:", isInputEmpty)
+    setIsAddable(!isInputEmpty)
+  }, [todo])
 
 
   const handleSave = async () => {
@@ -87,6 +94,19 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
     clearListState();
   }
 
+  const handleEdits = async () => {
+    const todosString = JSON.stringify(todos);
+    try {
+      fetcher.submit({
+        id: listId,
+        title,
+        todosString
+      }, {
+        method: 'PUT',
+      })
+    } catch (error) { throw error }
+    clearListState();
+  }
 
   const clearListState = () => {
     setTitle('')
@@ -96,24 +116,11 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
     setOutcomeId('')
   }
 
-  const handleEdits = async () => {
-    const editedList = { ...list, title, todos }
-    const editedListString = JSON.stringify(editedList);
-    try {
-      fetcher.submit({
-        editedListString
-      }, {
-        method: 'PUT',
-      })
-    } catch (error) { throw error }
-    clearListState();
-  }
-
 
   const handleAddTodoToList = () => {
-    if (inputToDoRef.current?.value) {
-      addTodoToTodosState(inputToDoRef.current.value);
-      inputToDoRef.current.value = '';
+    if (todo) {
+      addTodoToTodosState(todo);
+      setTodo('');
       setIsUrgent(false);
       setIsImportant(false);
       setSelectedDate(null);
@@ -161,8 +168,8 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
     <>
 
       <BasicFormAreaBG h2Text={headerTxt}  >
-        <Form method='post' className='p-8'>
-          <input type="string" name='rowId' value={listId} hidden readOnly />
+        <Form method='post' className='  form-control gap-y-8 p-8'>
+          <input type="string" name='id' value={listId} hidden readOnly />
           <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
           <input type='string' name='outcomeId' value={outcomeId} hidden readOnly />
 
@@ -191,7 +198,8 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
                   guideline={DesireOutcomeGuideline} />
                 <input type="text"
                   placeholder="Enter a To-Do"
-                  ref={inputToDoRef}
+                  value={todo}
+                  onChange={(e) => setTodo(e.target.value)}
                   className=" input-field-text-title "
                 />
               </div>
@@ -229,15 +237,15 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
               </div>
 
 
-              <OutlinedBtn
-                text='Add To-Do to List'
+              <BtnWithProps
+                btnPurpose={'save'}
+                isOutlined={true}
+                btnLabel={'Add to List'}
+                icon={ArrowIcon45deg}
+                isBtnDisabled={!isAddable}
                 onClickFunction={handleAddTodoToList}
-                daisyUIBtnColor='primary'
-                type='button'
               />
-
             </div>
-
 
             {/* //? PREVIEW PANEL */}
             <div className="flex-1 form-control gap-y-6 justify-between">
@@ -267,24 +275,18 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
               {/* //******** BUTTONS   **************** */}
               <div className=" justify-end  ">
 
-                <FormButtons
-                  saveBtnText={saveBtnTxt}
-                  isSaveBtnDisabled={!isSaveable || !isIdle}
-                  isNew={isNew}
-                  isShowCloseBtn={!isNew}
-                  saveBtnOnClickFunction={isNew ? handleSave : handleEdits}
-                  saveBtnType={'button'}
+
+                <BtnWithProps
+                  btnPurpose={'save'}
+                  btnLabel={saveBtnTxt}
+                  isBtnDisabled={!isSaveable || !isIdle}
+                  onClickFunction={isNew ? handleSave : handleEdits}
                 />
               </div>
+
+  
               {/* <div className="flex flex-col gap-4">
-                <SolidBtn
-                text={saveBtnText}
-                onClickFunction={isNew ? handleSave : handleEdits}
-                icon={dbIcon}
-                daisyUIBtnColor='primary'
-                  disableBtn={!isSaveable}
-                  type='button'
-                />
+           
 
                 <Link to='..'>
                   <SolidBtnGreyBlue
@@ -309,6 +311,17 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
 
             </div>
           </div>
+
+          <FormButtons
+          isShowSaveBtn={false}
+            isNew={isNew}
+            isShowCloseBtn={!isNew}
+            saveBtnOnClickFunction={isNew ? handleSave : handleEdits}
+            saveBtnType={'button'}
+          />
+
+
+
         </Form >
       </BasicFormAreaBG >
 

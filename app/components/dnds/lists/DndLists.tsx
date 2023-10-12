@@ -17,9 +17,7 @@ type Props = {
   passedLists: List[] | undefined;
 }
 
-const DndLists = ({ passedLists }: Props) => {
-  console.log("🚀 ~ file: DndLists.tsx:21 ~ DndLists ~ passedLists:", passedLists)
-
+const DndLists = ({ passedLists}: Props) => {
   const fetcher = useFetcher();
   const [lists, setLists] = useState<List[]>([]);
   const { handleDragEnd, setItemsArrayInProperOrder } = useDndDropOrderSaveFunctions({ fetcher, sortableArray: lists, setSortableArray: setLists })
@@ -35,11 +33,14 @@ const DndLists = ({ passedLists }: Props) => {
 
   return (
     <>
-      <div className='flex justify-between items-center'>
+      <div className='flex justify-between gap-x-4 flex-wrap items-center'>
         <PageTitle text='To-Do Lists' />
         <Link to={`/dash/desires/clngb3neo001oeqkox8i36911/outcomes/clnjg8eyr0029eqzwt17xu6no/lists/`}  >
           <BtnWithProps
             btnPurpose={'goto'}
+            btnLabel='Create New List'
+            fontWidthTW='bold'
+            textSizeTW='sm'
           />
         </Link>
       </div>

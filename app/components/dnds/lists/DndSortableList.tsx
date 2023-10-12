@@ -25,7 +25,7 @@ function DndSortableList({ id, title }: Props) {
     <>
       <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mt-0">
         <DndSortableStyling id={id} priorityStyling={''}>
-          <div className="mt-0 capitalize">
+          <div className="mt-0 capitalize max-h-[60px] overflow-hidden">
             <H2WithLink
               h2Text={title}
               linkDestination={id}
