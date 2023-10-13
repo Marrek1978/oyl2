@@ -197,9 +197,9 @@ model ListToDo {
   updatedAt DateTime @updatedAt
   
   body String
-  urgent Boolean
-  important Boolean
-  complete Boolean @default(false)
+  isUrgent Boolean @default(false)
+  isImportant Boolean @default(false)
+  isComplete Boolean @default(false)
   dueDate DateTime?
   sortOrder Int
 

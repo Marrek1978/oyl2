@@ -19,7 +19,7 @@ const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem, setIsDisableAllBt
 
   const fetcher = useFetcher();
   const [isUpdating, setIsUpdating] = useState(false)
-  const [isChecked, setIsChecked] = useState(todoItem.complete)
+  const [isChecked, setIsChecked] = useState(todoItem.isComplete)
   const [errorMessage, setErrorMessage] = useState<string>()
 
   const borderClass = ToDoItemStylesNoBg({ todo: todoItem })
@@ -49,7 +49,7 @@ const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem, setIsDisableAllBt
         completeString
       }, {
         method: 'POST',
-        action: '/dash/lists/$listId',
+        // action: '/dash/lists/$listId',
       })
     } catch (error) { throw error }
   };

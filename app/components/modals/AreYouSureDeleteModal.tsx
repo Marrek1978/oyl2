@@ -24,7 +24,7 @@ function AreYouSureDeleteModal({ item, title, id }: AreYouSureDeleteModalProps) 
         <div className="card-body">
           <h2 className="text-2xl">
             Are you sure you want to delete the {item}:<br />
-            <span className='underline'>{title}</span> ?
+            <span className='underline whitespace-normal'>{title}</span> ?
           </h2>
 
           <p className='mt-2'>Deleting the {item} is permament</p>

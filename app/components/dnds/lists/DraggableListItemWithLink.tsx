@@ -1,10 +1,9 @@
 import React from 'react'
 import { Link } from '@remix-run/react';
 
-import HeadingH2 from '~/components/titles/HeadingH2';
 import { EditIcon } from '~/components/utilities/icons';
-import { formatDate } from '~/utils/functions';
 import BtnWithProps from '~/components/buttons/BtnWithProps';
+import Heading16pxWithLink from '~/components/titles/Heading16pxWithLink';
 
 import type { MouseEventHandler, ReactNode } from 'react'
 import type { BtnType, DaisyUIBtnColor, DaisyUIBtnSize, DaisyUIColor, TWTextSizes } from '~/types/CSSTypes';
@@ -13,7 +12,7 @@ import type { BtnType, DaisyUIBtnColor, DaisyUIBtnSize, DaisyUIColor, TWTextSize
 
 interface Props {
   // onClickFunction?: () => void;
-  h2Text: string | React.ReactNode;
+  listTitle: string | React.ReactNode;
   onClickFunction?: MouseEventHandler<HTMLButtonElement>;
   onMouseOver?: MouseEventHandler<HTMLButtonElement>;
   onMouseOut?: MouseEventHandler<HTMLButtonElement>;
@@ -29,8 +28,8 @@ interface Props {
   sortOrder?: number;
 }
 
-function H2WithLink({
-  h2Text,
+function DraggableListItemWithLink({
+  listTitle,
   onClickFunction = () => { },
   onMouseOver = () => { },
   onMouseOut = () => { },
@@ -43,25 +42,18 @@ function H2WithLink({
   textSizeTW = 'sm',
   btnSizeDaisyUI,
   date,
+
 }: Props) {
 
 
-  let formattedDate = null
-  if (date) {
-    formattedDate = formatDate(date)
-  }
 
   return (
     <>
-      <div className="
-        mt-0
-        flex flex-wrap justify-between  items-baseline gap-x-4 w-full 
-        ">
+      <div className={` flex flex-wrap justify-between  items-baseline gap-x-4 w-full`} >
 
         <div
-          className='flex-1 flex gap-2 items-baseline flex-wrap capitalize '>
-          <HeadingH2 text={h2Text} />
-          {formattedDate && <div className='text-sm text-success  '>{formattedDate}</div>}
+          className='flex-1 flex gap-2 items-baseline truncate capitalize '>
+          <Heading16pxWithLink text={listTitle} />
         </div>
 
         {linkDestination && (
@@ -85,10 +77,7 @@ function H2WithLink({
         )}
       </div>
     </>
-
-
-
   )
 }
 
-export default H2WithLink
+export default DraggableListItemWithLink

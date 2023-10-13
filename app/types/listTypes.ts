@@ -6,15 +6,8 @@ export type ListAndToDos = List & {
   todos: ListToDo[];
 };
 
-export interface CreationTodo {
-  id: string;
-  body: string;
-  urgent: boolean;
-  important: boolean;
-  complete: boolean;
-  dueDate: Date | null;
-  sortOrder: number | null;
-}
+export interface CreationTodo
+  extends Omit<ListToDo, "listId" | "createdAt" | "updatedAt"> {}
 
 export interface DatabaseTodo extends CreationTodo {
   createdAt: Date;

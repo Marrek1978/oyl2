@@ -11,7 +11,7 @@ import { useGetMilestoneGroupWithMilestones } from './dash.desires_.$desireId_.o
 
 import type { Milestone } from '@prisma/client';
 import type { LoaderArgs } from '@remix-run/node';
-import { MilestoneGroupsWithMilestones } from '~/types/milestoneTypes';
+import type { MilestoneGroupsWithMilestones } from '~/types/milestoneTypes';
 
 
 export const action = async ({ request, params }: LoaderArgs) => {

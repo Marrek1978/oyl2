@@ -1,10 +1,12 @@
-import type { CreationTodo, Todo } from "~/types/listTypes";
 import type { CreationRoutineToDo } from "~/types/routineTypes";
 
 import type {
   DesireWithOutcomes,
   DesireWithOutcomesWithStringDates,
 } from "~/types/desireTypes";
+
+import type { HasSortOrder } from "~/types/genericDndArrayTypes";
+
 
 export function transformToDoDataDates(data: any) {
   return data.map((item: any) => ({
@@ -76,10 +78,7 @@ export function transformMilestoneArrayDataDates(arr: any) {
   }));
 }
 
-
-
 ///************************************************************************************************************* */
-
 
 interface ArrayObjectsWithStrDates {
   items: any[];
@@ -115,32 +114,32 @@ export function ObjectStrToDates({ item, dateKeys }: ObjectWithStrDates) {
   return item;
 }
 
-export function sortTodos(todos: Todo[]): Todo[] {
-  const todosCopy = [...todos];
+export function sortTodos<T extends HasSortOrder>(items: T[]): T[] {
+  const itemsCopy = [...items];
 
-  todosCopy.sort((a, b) => {
+  itemsCopy.sort((a, b) => {
     // Put completed todos at the bottom
-    if (a.complete && !b.complete) {
+    if (a.isComplete && !b.isComplete) {
       return 1;
-    } else if (!a.complete && b.complete) {
+    } else if (!a.isComplete && b.isComplete) {
       return -1;
-    } else if (a.urgent && !b.urgent) {
+    } else if (a.isUrgent && !b.isUrgent) {
       return -1;
-    } else if (!a.urgent && b.urgent) {
+    } else if (!a.isUrgent && b.isUrgent) {
       return 1;
-    } else if (a.important && !b.important) {
+    } else if (a.isImportant && !b.isImportant) {
       return -1;
-    } else if (!a.important && b.important) {
+    } else if (!a.isImportant && b.isImportant) {
       return 1;
     } else {
       return 0;
     }
   });
 
-  return resetTodoSortOrder(todosCopy);
+  return resetTodoSortOrder(itemsCopy);
 }
 
-export function resetTodoSortOrder(todos: CreationTodo[]): CreationTodo[] {
+export function resetTodoSortOrder<T extends HasSortOrder>(todos: T[]): T[] {
   return todos.map((todo, index) => {
     return {
       ...todo,
@@ -158,11 +157,11 @@ export function resetRoutineTodosSortOrder(todos: CreationRoutineToDo[]) {
   });
 }
 
-
-export function varsForPluralText(array: any[]): { plural: string, length: number } {
-  const plural = array && array.length > 1 ? 's' : '';
-  const length = array.length
-  return { plural, length }
+export function varsForPluralText(array: any[]): {
+  plural: string;
+  length: number;
+} {
+  const plural = array && array.length > 1 ? "s" : "";
+  const length = array.length;
+  return { plural, length };
 }
-
- 

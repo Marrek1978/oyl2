@@ -1,6 +1,6 @@
 import { parse } from 'querystring';
 import { useEffect, useState } from 'react';
-import { Outlet, useRouteLoaderData } from '@remix-run/react'
+import { Outlet, useParams, useRouteLoaderData } from '@remix-run/react'
 import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
 
 import { requireUserId } from '~/models/session.server';
@@ -42,11 +42,29 @@ export const action = async ({ request }: ActionArgs) => {
 
 
 function OutcomeListsPage() {
-  const lists: List[] = useGetListsOnly()
+  const lists: ListAndToDos[] = useGetListsWithTodos()
+
+
+  const params = useParams()
+  const [breadcumbTitle3, setBreadcumbTitle3] = useState<string>()
+
+  useEffect(() => {
+    if (params.listId) {
+      setBreadcumbTitle3('List')
+    }
+    else {
+      setBreadcumbTitle3(undefined)
+    }
+  }, [params])
+
 
   return (
     <>
-      <BreadCrumbs secondCrumb={'Desire'} title2={'Outcome'} />
+      <BreadCrumbs
+        secondCrumb={'Desire'}
+        title2={'Outcome'}
+        title3={breadcumbTitle3}
+      />
       <DndAndFormFlex
         dnd={<DndLists passedLists={lists} />}
         form={<Outlet />}
@@ -57,6 +75,7 @@ function OutcomeListsPage() {
 }
 
 export default OutcomeListsPage
+
 
 
 export const useGetLoaderData = ({ path = `routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.lists` }): ListAndTodosWithStrDates[] => {

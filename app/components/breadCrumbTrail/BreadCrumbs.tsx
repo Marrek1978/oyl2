@@ -15,6 +15,7 @@ function BreadCrumbs({ secondCrumb, title2, title3 }: BreadCrumbProps) {
   // console.log('breadcrumbArray is ', breadcrumbArray)
   secondCrumb && (breadcrumbArray[1] = secondCrumb)
   title2 && (breadcrumbArray[3] = title2)
+  title3 && (breadcrumbArray[5] = title3)
 
   const linkColor = 'text-primary'
   const endColor = 'text-base-content'

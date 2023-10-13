@@ -5,9 +5,9 @@ import type { Todo } from "~/types/listTypes";
 
 type CreateTodo = {
   body: ListToDo["body"];
-  urgent: ListToDo["urgent"];
-  important: ListToDo["important"];
-  complete: ListToDo["complete"];
+  urgent: ListToDo["isUrgent"];
+  important: ListToDo["isImportant"];
+  complete: ListToDo["isComplete"];
   dueDate: ListToDo["dueDate"];
   sortOrder: ListToDo["sortOrder"];
 };
@@ -22,11 +22,10 @@ export async function createList({
 }: Pick<List, "title"> & { userId: User["id"] } & { todos: CreateTodo[] } & {
   outcomeId?: List["outcomeId"];
 } & { sortOrder?: List["sortOrder"] }) {
-  
   const data: any = {
     title,
     userId,
-    sortOrder, 
+    sortOrder,
     todos: {
       createMany: {
         data: todos,
@@ -109,7 +108,7 @@ export async function updateListAndTodos({
 }: Pick<List, "id" | "title"> & { userId: User["id"] } & { todos: Todo[] }) {
   try {
     const updatedList = await prisma.list.update({
-      where: { id, userId},
+      where: { id, userId },
       data: {
         title,
       },
@@ -120,18 +119,18 @@ export async function updateListAndTodos({
         where: { id: todo.id },
         create: {
           body: todo.body,
-          urgent: todo.urgent,
-          important: todo.important,
-          complete: todo.complete,
+          isUrgent: todo.isUrgent,
+          isImportant: todo.isImportant,
+          isComplete: todo.isComplete,
           dueDate: todo.dueDate,
           sortOrder: todo.sortOrder !== null ? todo.sortOrder : 0,
           list: { connect: { id } },
         },
         update: {
           body: todo.body,
-          urgent: todo.urgent,
-          important: todo.important,
-          complete: todo.complete,
+          isUrgent: todo.isUrgent,
+          isImportant: todo.isImportant,
+          isComplete: todo.isComplete,
           dueDate: todo.dueDate,
           sortOrder: todo.sortOrder !== null ? todo.sortOrder : 0,
         },
@@ -139,8 +138,7 @@ export async function updateListAndTodos({
     });
 
     const updatedToDos = await prisma.$transaction(updatePromises);
-    return {updatedList, updatedToDos};
-   
+    return { updatedList, updatedToDos };
   } catch (error) {
     throw error;
   }
@@ -149,10 +147,10 @@ export async function updateListAndTodos({
 //************* UPDATE COMPLETED TODO BY ID ***************//
 export async function updateToDoComplete({
   id,
-  complete,
+  isComplete,
 }: {
   id: ListToDo["id"];
-  complete: ListToDo["complete"];
+  isComplete: ListToDo["isComplete"];
 }) {
   try {
     const result = prisma.listToDo.update({
@@ -160,14 +158,12 @@ export async function updateToDoComplete({
         id: id,
       },
       data: {
-        complete: complete,
+        isComplete,
       },
     });
 
-    console.log("Updated records:", result);
     return result;
   } catch (error) {
-    console.error("Error updating ToDo:", error);
     throw error;
   }
 }
@@ -207,7 +203,7 @@ export async function deleteCompletedToDosFromList({ id }: Pick<List, "id">) {
     return await prisma.listToDo.deleteMany({
       where: {
         listId: id,
-        complete: true,
+        isComplete: true,
       },
     });
   } catch (error) {
@@ -220,9 +216,9 @@ type ToDoCondition = Partial<
     ListToDo,
     | "id"
     | "body"
-    | "urgent"
-    | "important"
-    | "complete"
+    | "isUrgent"
+    | "isImportant"
+    | "isComplete"
     | "dueDate"
     | "sortOrder"
   >
@@ -276,7 +272,7 @@ export async function getToDosWhereDueDate(userId: User["id"]) {
                 dueDate: {
                   not: null,
                 },
-                complete: false,
+                isComplete: false,
               },
             },
           },

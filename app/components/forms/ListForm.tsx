@@ -133,9 +133,9 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
     const todo: CreationTodo = {
       id,
       body: newTodo,
-      urgent: isUrgent,
-      important: isImportant,
-      complete: false,
+      isUrgent,
+      isImportant,
+      isComplete: false,
       dueDate: selectedDate || null,
       sortOrder: 0
     }
@@ -168,7 +168,7 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
     <>
 
       <BasicFormAreaBG h2Text={headerTxt}  >
-        <Form method='post' className='  form-control gap-y-8 p-8'>
+        <Form method='post' className='  form-control gap-y-4 p-8'>
           <input type="string" name='id' value={listId} hidden readOnly />
           <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
           <input type='string' name='outcomeId' value={outcomeId} hidden readOnly />
@@ -284,7 +284,7 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
                 />
               </div>
 
-  
+
               {/* <div className="flex flex-col gap-4">
            
 
@@ -312,16 +312,16 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
             </div>
           </div>
 
-          <FormButtons
-          isShowSaveBtn={false}
-            isNew={isNew}
-            isShowCloseBtn={!isNew}
-            saveBtnOnClickFunction={isNew ? handleSave : handleEdits}
-            saveBtnType={'button'}
-          />
+          {!isNew && (
 
-
-
+            <FormButtons
+              isShowSaveBtn={false}
+              isNew={isNew}
+              isShowCloseBtn={!isNew}
+              saveBtnOnClickFunction={isNew ? handleSave : handleEdits}
+              saveBtnType={'button'}
+            />
+          )}
         </Form >
       </BasicFormAreaBG >
 

@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react'
-import { Link, useFetcher } from '@remix-run/react';
+import { useFetcher, useMatches } from '@remix-run/react';
 
 import SolidBtn from '../buttons/SolidBtn';
 import BasicFormAreaBG from './BasicFormAreaBG';
 import OutlinedBtn from '../buttons/OutlinedBtn';
-import Divider from '~/components/utilities/Divider'
 import { sortTodos } from '~/components/utilities/helperFunctions';
-import SolidBtnGreyBlue from '~/components/buttons/SolidBtnGreyBlue';
+// import SolidBtnGreyBlue from '~/components/buttons/SolidBtnGreyBlue';
 import ToDoWithCompletedBox from '~/components/list/todos/ToDoWithCompletedBox';
-import { closeIcon, downArrowsIcon, trashIcon } from '~/components/utilities/icons';
+import { downArrowsIcon, trashIcon } from '~/components/utilities/icons';
 
 
-import type { ListAndToDos } from '~/types/listTypes';
+import type { ListAndToDos, Todo } from '~/types/listTypes';
+import FormButtons from './FormButtons';
+import BtnWithProps from '../buttons/BtnWithProps';
+import { set } from 'date-fns';
 
 interface TodosCompletedFormProps {
   list: ListAndToDos;
@@ -19,35 +21,75 @@ interface TodosCompletedFormProps {
 
 function TodosCompletedForm({ list }: TodosCompletedFormProps) {
 
-  const todos = list?.todos;
+  // const todos = list?.todos;
+  const matches = useMatches()
   const fetcher = useFetcher();
   const [isDeletingToDos, setIsDeletingToDos] = useState<boolean>(false)
   const [isDisableAllBtns, setIsDisableAllBtns] = useState<boolean>(false)
   const [isDisableMoveDownBtn, setIsDisableMoveDownBtn] = useState<boolean>(false)
 
+  const [isShowCloseBtn, setIsShowCloseBtn] = useState<boolean>(true)
+  const [isACompletedToDo, setIsACompletedToDo] = useState<boolean>(false)
+
+
+  const [todos, setTodos] = useState<Todo[]>([])
+
+
 
   useEffect(() => {
-    fetcher.data === 'deleted' && fetcher.state === 'idle' && (setIsDeletingToDos(false))
-  }, [fetcher])
+    matches.find((match => match.id === 'routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.lists.$listId'))
+      && setIsShowCloseBtn(false)
+  }, [matches])
 
 
   useEffect(() => {
-    const properlySortedTodos = sortTodos(todos);
-    const todosBySortOrder = todos.sort((a, b) => a.sortOrder - b.sortOrder)
-    const isSorted = properlySortedTodos.every((todo, index) => todo.id === todosBySortOrder[index].id)
-    setIsDisableMoveDownBtn(isSorted)
+    if (!list.todos) return
+    const properlySortedTodos = sortTodos(list.todos);
+    setTodos(properlySortedTodos)
+  }, [list.todos])
+
+  // useEffect(() => {
+  // }, [matches])
+
+  useEffect(() => {
+    setIsACompletedToDo(todos.some(todo => todo.isComplete === true))
   }, [todos])
 
 
-  const handleCompletedToBottom = async (): Promise<void> => {
-    const completedToDosAtBottom = sortTodos(todos);
-    const completedToDosAtBottomString = JSON.stringify(completedToDosAtBottom)
-    try {
-      fetcher.submit({
-        todos: completedToDosAtBottomString,
-      }, { method: 'PUT' })
-    } catch (error) { throw error }
-  };
+  // useEffect(() => {
+  //   fetcher.data === 'deleted' && fetcher.state === 'idle' && (setIsDeletingToDos(false))
+  // }, [fetcher])
+
+
+  // useEffect(() => {
+  //   const properlySortedTodos = sortTodos(todos);
+  //   setTodos(properlySortedTodos)
+  // const todosBySortOrder = todos.sort((a, b) => a.sortOrder - b.sortOrder)
+  // const todosBySortOrder = todos.sort((a, b) => {
+  //   // If a is completed and b is not, a should come after b
+  //   if (a.isComplete && !b.isComplete) return 1;
+
+  //   // If b is completed and a is not, b should come after a
+  //   if (b.isComplete && !a.isComplete) return -1;
+
+  //   // If both have the same completion status, sort by sortOrder
+  //   return a.sortOrder - b.sortOrder;
+  // });
+  // const isSorted = properlySortedTodos.every((todo, index) => todo.id === todosBySortOrder[index].id)
+  // setIsDisableMoveDownBtn(isSorted)
+
+  // }, [todos])
+
+
+  // const handleCompletedToBottom = async (): Promise<void> => {
+  //   const completedToDosAtBottom = sortTodos(todos);
+  //   const completedToDosAtBottomString = JSON.stringify(completedToDosAtBottom)
+  //   try {
+  //     fetcher.submit({
+  //       todos: completedToDosAtBottomString,
+  //     }, { method: 'PUT' })
+  //   } catch (error) { throw error }
+  // };
 
 
   const handleDeleteCompletedToDos = async (): Promise<void> => {
@@ -71,7 +113,7 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
         linkColorDaisyUI='info'
       >
 
-        <div className='py-6 px-8 font-poppins  '>
+        <div className='p-8  form-control gap-y-6 '>
           <div className=" max-h-[50vh] min-h-[200px] overflow-y-auto">
             {todos.map((todoItem, index) => {
               return (
@@ -85,14 +127,13 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
             })}
           </div>
 
-          {todos.some(todo => todo.complete === true) && (
+          {/* {todos.some(todo => todo.isComplete === true) && (
             <div>
-              <Divider />
               <div className='w-full mt-8 flex justify-between items-center gap-8'>
 
                 <div className='flex-1'>
-                  {todos.filter(todo => todo.complete).length > 0
-                    && todos.filter(todo => !todo.complete).length > 0
+                  {todos.filter(todo => todo.isComplete).length > 0
+                    // && todos.filter(todo => !todo.isComplete).length > 0
                     && (
                       <OutlinedBtn
                         text='Move Completed To-Dos Down'
@@ -105,40 +146,38 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
                 </div>
 
                 <div className='flex-1'>
-                  <SolidBtn
-                    text='Delete Completed To-Dos'
-                    onClickFunction={handleDeleteCompletedToDos}
-                    daisyUIBtnColor='error'
-                    icon={trashIcon}
-                    disableBtn={isDeletingToDos || isDisableAllBtns}
-                  />
+
                 </div>
+              </div>
+            </div>
+          )} */}
+
+
+          {isACompletedToDo && (
+            <div className=' text-right flex justify-end'>
+              <div className='flex-1 max-w-max' >
+                <BtnWithProps
+                  btnPurpose={'goto'}
+                  onClickFunction={handleDeleteCompletedToDos}
+                  isBtnDisabled={isDeletingToDos || isDisableAllBtns}
+                  btnLabel={'Delete Completed To-Dos'}
+                  textColorDaisyUI={'error'}
+                  fontWidthTW={'bold'}
+                  icon={trashIcon}
+                  textSizeTW={'sm'}
+                />
               </div>
             </div>
           )}
 
-          <div className='w-full mt-8 flex gap-8 '>
-            <div className='w-full flex-1 '>
-              <Link to='edit/delete' >
-                <OutlinedBtn
-                  text='Delete List'
-                  onClickFunction={() => { }}
-                  daisyUIBtnColor='error'
-                  disabledBtnBoolean={isDisableAllBtns}
-                />
-              </Link>
-            </div>
+          <FormButtons
+            isNew={false}
+            isShowSaveBtn={false}
+            isShowCloseBtn={isShowCloseBtn}
+            deleteBtnText='Delete List'
+            deleteBtnLink='delete'
+          />
 
-            <div className='w-full flex-1 '>
-              <Link to='..' >
-                <SolidBtnGreyBlue text='Close'
-                  onClickFunction={() => { }}
-                  icon={closeIcon}
-                  disabledBtnBoolean={isDisableAllBtns}
-                />
-              </Link>
-            </div>
-          </div>
         </div>
       </BasicFormAreaBG>
     </>

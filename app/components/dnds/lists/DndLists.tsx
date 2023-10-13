@@ -1,28 +1,39 @@
 import { useEffect, useState } from 'react'
-import { Link, useFetcher } from '@remix-run/react';
+import { Link, useFetcher, useMatches, useParams } from '@remix-run/react';
 
 import DndSortableList from './DndSortableList';
 import DndInfo from '~/components/dnds/DndInfo';
 import PageTitle from '~/components/titles/PageTitle';
+import BtnWithProps from '~/components/buttons/BtnWithProps';
 import useFetcherState from '~/components/utilities/useFetcherState';
 import useServerMessages from '~/components/modals/useServerMessages';
 import DndAndSortableContexts from '~/components/dnds/DndAndSortableContexts';
 import useDndDropOrderSaveFunctions from '~/components/dnds/useDndDropOrderSaveFunctions';
 
-import type { List } from '@prisma/client';
-import BtnWithProps from '~/components/buttons/BtnWithProps';
+import type { ListAndToDos } from '~/types/listTypes';
 
 
 type Props = {
-  passedLists: List[] | undefined;
+  passedLists: ListAndToDos[] | undefined;
 }
 
-const DndLists = ({ passedLists}: Props) => {
+const DndLists = ({ passedLists }: Props) => {
+  const params = useParams()
+  const { desireId, outcomeId } = params
+  const matches = useMatches();
   const fetcher = useFetcher();
-  const [lists, setLists] = useState<List[]>([]);
+  const [lists, setLists] = useState<ListAndToDos[]>([]);
+  const [isIndexPage, setIsIndexPage] = useState(true);
   const { handleDragEnd, setItemsArrayInProperOrder } = useDndDropOrderSaveFunctions({ fetcher, sortableArray: lists, setSortableArray: setLists })
   const { fetcherState, fetcherMessage, } = useFetcherState({ fetcher })
   useServerMessages({ fetcherMessage, fetcherState, isShowFailed: true })
+
+
+  useEffect(() => {
+    if (!matches) return
+    setIsIndexPage(matches.some(match => match.id === 'routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.lists._index'))
+  }, [matches])
+
 
   //initial load
   useEffect(() => {
@@ -35,14 +46,16 @@ const DndLists = ({ passedLists}: Props) => {
     <>
       <div className='flex justify-between gap-x-4 flex-wrap items-center'>
         <PageTitle text='To-Do Lists' />
-        <Link to={`/dash/desires/clngb3neo001oeqkox8i36911/outcomes/clnjg8eyr0029eqzwt17xu6no/lists/`}  >
-          <BtnWithProps
-            btnPurpose={'goto'}
-            btnLabel='Create New List'
-            fontWidthTW='bold'
-            textSizeTW='sm'
-          />
-        </Link>
+        {!isIndexPage && (
+          <Link to={`/dash/desires/${desireId}/outcomes/${outcomeId}/lists/`}  >
+            <BtnWithProps
+              btnPurpose={'goto'}
+              btnLabel='Create New List'
+              fontWidthTW='bold'
+              textSizeTW='xs'
+            />
+          </Link>
+        )}
       </div>
 
       <DndAndSortableContexts
@@ -53,6 +66,10 @@ const DndLists = ({ passedLists}: Props) => {
         <DndInfo />
 
         {lists?.map((list) => {
+          
+
+          // const uncompleteTodos = list.todos.filter(todo => !todo.complete)
+          // const completedToDos
           const title = (<>
             <span className="text-sm">{list.sortOrder + 1}</span>. {list.title}
           </>)
@@ -65,7 +82,6 @@ const DndLists = ({ passedLists}: Props) => {
             />
           )
         })}
-
       </DndAndSortableContexts>
     </>
   )

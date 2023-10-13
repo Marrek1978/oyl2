@@ -8,6 +8,7 @@ import { deleteList } from '~/models/list.server';
 import { useGetCurrentList } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.lists.$listId';
 import { parse } from 'querystring';
 import { useParams } from '@remix-run/react';
+import DeleteList from '~/components/list/DeleteList';
 
 
 export const action = async ({ request }: ActionArgs) => {
@@ -27,29 +28,31 @@ function DeleteListPage() {
 
   const params = useParams()
   const { desireId, outcomeId } = params
-  const loadedList = useGetCurrentList()
-  const [id, setId] = useState<string>('')
-  const [title, setTitle] = useState<string>('')
+  // const loadedList = useGetCurrentList()
+  // const [id, setId] = useState<string>('')
+  // const [title, setTitle] = useState<string>('')
 
 
-  useEffect(() => {
-    if (!loadedList) return
-    setId(loadedList.id)
-    setTitle(loadedList.title)
-  }, [loadedList])
+  // useEffect(() => {
+  //   if (!loadedList) return
+  //   setId(loadedList.id)
+  //   setTitle(loadedList.title)
+  // }, [loadedList])
 
   useFormDeletedToastAndRedirect({ redirectTo: `/dash/desires/${desireId}/outcomes/${outcomeId}/lists`, message: 'List was deleted' })
 
 
   return (
     <>
-      <Modal onClose={() => { }} zIndex={20}>
+      {/* <Modal onClose={() => { }} zIndex={20}>
         < AreYouSureDeleteModal
           item={'To-Do List'}
           title={title}
           id={id}
         />
-      </Modal>
+      </Modal> */}
+      <DeleteList />
+
     </>
   )
 }

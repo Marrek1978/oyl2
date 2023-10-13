@@ -1,8 +1,10 @@
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from '@dnd-kit/sortable';
 
-import DndSortableStyling from "../DndSortableStyling";
-import H2WithLink from "~/components/titles/H2WithLink";
+import DndSortableListStyling from "../DndSortableListStyling";
+import DraggableListItemWithLink from "./DraggableListItemWithLink";
+import { useParams } from '@remix-run/react';
+import { useEffect, useState } from "react";
 
 
 type Props = {
@@ -11,6 +13,10 @@ type Props = {
 }
 
 function DndSortableList({ id, title }: Props) {
+  const params = useParams()
+
+  const [isCurrentList, setIsCurrentList] = useState<boolean>(false)
+
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: id });
 
@@ -19,21 +25,30 @@ function DndSortableList({ id, title }: Props) {
     transition,
   };
 
+  useEffect(() => {
+    if (!params.listId) return setIsCurrentList(false)
+    setIsCurrentList(params.listId === id)
+  }, [params, id])
+
+
+
+
 
 
   return (
     <>
       <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mt-0">
-        <DndSortableStyling id={id} priorityStyling={''}>
-          <div className="mt-0 capitalize max-h-[60px] overflow-hidden">
-            <H2WithLink
-              h2Text={title}
+        <DndSortableListStyling id={id} isHighlighted={isCurrentList} >
+          <div className="mt-0 capitalize ">
+            <DraggableListItemWithLink
+              listTitle={title}
               linkDestination={id}
               linkText={'See List'}
               btnColorDaisyUI={'link'}
+              textSizeTW={'xs'}
             />
           </div>
-        </DndSortableStyling>
+        </DndSortableListStyling>
       </div>
     </>
   )
