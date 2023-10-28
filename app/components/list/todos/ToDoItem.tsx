@@ -1,12 +1,11 @@
 import React from 'react';
 import { formatDate } from '~/utils/functions';
 
-import { ToDoItemStyles } from '../../../styles/ToDoItemStyles';
+import { ToDoItemStyles } from '~/styles/ToDoItemStyles';
 import { EditIcon, trashIcon } from '~/components/utilities/icons';
 import OutlinedIconOnlyBtn from '~/components/buttons/OutlinedIconOnlyBtn';
 
 import type { CreationTodo } from '~/types/listTypes';
-// import DndSortableStyling from '~/components/dnds/DndSortableStyling';
 
 interface ToDoItemProps {
   todo: CreationTodo;
@@ -17,8 +16,8 @@ interface ToDoItemProps {
 
 
 const ToDoItem: React.FC<ToDoItemProps> = ({ todo, id, removeTodo, editTodo }) => {
-  const formattedDate = formatDate(todo['dueDate']);
 
+  const formattedDate = formatDate(todo['dueDate']);
   const priorityStyling = ToDoItemStyles({ todo })
 
   return (
@@ -36,9 +35,8 @@ const ToDoItem: React.FC<ToDoItemProps> = ({ todo, id, removeTodo, editTodo }) =
           hover:text-primary-focus
          ${priorityStyling}
            `}>
-      {/* <DndSortableStyling priorityStyling={priorityStyling}> */}
         <div className="flex w-full justify-between "  >
-          <div className={`w-2/3 wrap truncate text-ellipsis capitalize	${todo['complete'] && 'line-through'}`} >
+          <div className={`w-2/3 wrap truncate text-ellipsis capitalize	${todo['isComplete'] && 'line-through'}`} >
             {todo['body']}
           </div>
           {formattedDate && (
@@ -62,9 +60,7 @@ const ToDoItem: React.FC<ToDoItemProps> = ({ todo, id, removeTodo, editTodo }) =
 
           </div>
         </div>
-
-        </div>
-      {/* </DndSortableStyling> */}
+      </div>
     </>
   )
 };

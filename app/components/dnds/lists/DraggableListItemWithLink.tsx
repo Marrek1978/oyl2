@@ -46,7 +46,6 @@ function DraggableListItemWithLink({
 }: Props) {
 
 
-
   return (
     <>
       <div className={` flex flex-wrap justify-between  items-baseline gap-x-4 w-full`} >

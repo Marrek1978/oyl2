@@ -6,16 +6,16 @@ interface ToDoItemStylesProps {
 
 export function ToDoItemStyles({ todo }: ToDoItemStylesProps) {
   return (
-    todo['urgent'] ? 'text-accent-focus bg-accent-content'
-      : todo['important'] ? ' text-success-content bg-success'
+    todo['isUrgent'] ? 'text-accent-focus bg-accent-content'
+      : todo['isImportant'] ? ' text-success-content bg-success'
         : 'text-base-content'
   )
 }
 
 export function ToDoItemStylesNoBg({ todo }: ToDoItemStylesProps) {
   return (
-    todo['urgent'] ? 'text-accent'
-      : todo['important'] ? ' text-success'
+    todo['isUrgent'] ? 'text-accent'
+      : todo['isImportant'] ? ' text-success'
         : 'text-base-content'
   )
 }

@@ -8,6 +8,10 @@ import { useGetListsArrayLength } from './dash.desires_.$desireId_.outcomes_.$ou
 
 
 export const action = async ({ request }: ActionArgs) => {
+
+  console.log('lists._index.tsx action')
+
+
   if (request.method === 'POST') {
     const userId = await requireUserId(request);
     const formBody = await request.text();

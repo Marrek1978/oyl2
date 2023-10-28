@@ -74,7 +74,6 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
 
   useEffect(() => {
     const isInputEmpty = !todo
-    console.log("🚀 ~ file: ListForm.tsx:77 ~ useEffect ~ isInputEmpty:", isInputEmpty)
     setIsAddable(!isInputEmpty)
   }, [todo])
 
@@ -119,7 +118,7 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
 
   const handleAddTodoToList = () => {
     if (todo) {
-      addTodoToTodosState(todo);
+      addTodoToTodosArray(todo);
       setTodo('');
       setIsUrgent(false);
       setIsImportant(false);
@@ -128,7 +127,7 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
   }
 
 
-  const addTodoToTodosState = (newTodo: string) => {
+  const addTodoToTodosArray = (newTodo: string) => {
     const id = uuidv4();
     const todo: CreationTodo = {
       id,
@@ -160,6 +159,7 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
   }
 
   const updateTodo = (index: number | null, updatedTodo: CreationTodo) => {
+    console.log('updateding todo', updatedTodo)
     setTodos(todos.map((todo, i) => (i === index ? updatedTodo : todo)));
   };
 
@@ -173,7 +173,7 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
           <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
           <input type='string' name='outcomeId' value={outcomeId} hidden readOnly />
 
-          <div className=' flex gap-8 flex-wrap'>
+          <div className=' flex gap-12 flex-wrap'>
 
             <div className="flex-1 form-control gap-y-8 ">
               <div >
@@ -214,6 +214,7 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
                     checkedState={isUrgent}
                     handleCheckedState={handleIsUrgent}
                     toggleColorDaisyUI='accent'
+                    isSecondaryInput={true}
                   />
                 </div>
 
@@ -251,17 +252,14 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
             <div className="flex-1 form-control gap-y-6 justify-between">
               <div>
                 <div className='mt-3 text-success'>
-                  <SubHeading14px text='To-Do List Preview' />
+                  <SubHeading14px text='Preview' />
                 </div>
                 <div className={`mt-2 truncate max-w-sm capitalize ${title ? 'text-base-content' : 'text-base-content/60'} `}>
                   <HeadingH2 text={title || 'List Title'} />
                 </div>
 
-                <div className={` ${todos.length ? 'text-base-content' : 'text-base-content/60'}  mt-8`}>
-                  <SubHeading14px text={`To-Dos`} />
-                </div>
-
-                <div className=' max-h-[375px] overflow-auto overflow-x-hidden mt-1'>
+            
+                <div className=' max-h-[375px] overflow-auto overflow-x-hidden mt-8'>
                   <DndTodos
                     setTodos={setTodos}
                     todos={todos}
@@ -274,8 +272,6 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
 
               {/* //******** BUTTONS   **************** */}
               <div className=" justify-end  ">
-
-
                 <BtnWithProps
                   btnPurpose={'save'}
                   btnLabel={saveBtnTxt}
@@ -283,32 +279,6 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
                   onClickFunction={isNew ? handleSave : handleEdits}
                 />
               </div>
-
-
-              {/* <div className="flex flex-col gap-4">
-           
-
-                <Link to='..'>
-                  <SolidBtnGreyBlue
-                    text={listTitle || todos.length > 0
-                      ? ('Close without Saving')
-                      : ('Close')}
-                    onClickFunction={() => { }}
-                    icon={closeIcon}
-                  />
-                </Link>
-
-                {!isNew && (
-                  <Link to='../delete'>
-                    <OutlinedBtn
-                      text='Delete List'
-                      onClickFunction={() => { }}
-                      daisyUIBtnColor='error'
-                    />
-                  </Link>
-                )}
-              </div> */}
-
             </div>
           </div>
 
@@ -320,6 +290,8 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
               isShowCloseBtn={!isNew}
               saveBtnOnClickFunction={isNew ? handleSave : handleEdits}
               saveBtnType={'button'}
+              deleteBtnText={'Delete List'}
+              flexXGap={'12'}
             />
           )}
         </Form >

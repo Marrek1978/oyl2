@@ -15,12 +15,14 @@ interface Props<T extends HasSortOrder> {
   fetcher: FetcherWithComponents<any>;
   sortableArray: T[];
   setSortableArray: React.Dispatch<React.SetStateAction<T[]>>;
+  saveOrderToDB?: boolean;
 }
 
 function useDndDropOrderSaveFunctions<T extends HasSortOrder>({
   fetcher,
   sortableArray,
   setSortableArray,
+  saveOrderToDB = true,
 }: Props<T>) {
 
   const inOrder = useIsInOrder()
@@ -43,23 +45,28 @@ function useDndDropOrderSaveFunctions<T extends HasSortOrder>({
         method: 'PUT',
       })
     } catch (error) { throw error }
-    setSaveNewSortOrder(false);
+    // setSaveNewSortOrder(false);
   }, [sortableArray, setSaveNewSortOrder, fetcher,])
+
 
 
   //useeffects
   useEffect(() => {
-    if (saveNewSortOrder === true) sendToDb()
-  }, [saveNewSortOrder, sendToDb])
+    if (saveNewSortOrder === true) {
+      if (saveOrderToDB === true) sendToDb()
+      setSaveNewSortOrder(false);
+    }
+  }, [saveNewSortOrder, sendToDb, saveOrderToDB])
 
 
   //fucntions
   function handleDragEnd(event: DragEndEvent) {
+    console.log('handling drag end')
     const { active, over } = event;
     if (!over || active.id === over?.id) return
-    
+
     const reOrderedItemsArray: T[] = reOrderArrayOnDrop(sortableArray, active, over)
-    const updatedSortOrders:T[] = setSortOrderToNewIndex(reOrderedItemsArray)
+    const updatedSortOrders: T[] = setSortOrderToNewIndex(reOrderedItemsArray)
     setSortableArray(updatedSortOrders)
     setSaveNewSortOrder(true)
   }
@@ -74,7 +81,7 @@ function useDndDropOrderSaveFunctions<T extends HasSortOrder>({
     setSaveNewSortOrder(true)
   }, [inOrder, setSortOrderToNewIndex, setSaveNewSortOrder, setSortableArray])
 
-  
+
   return { handleDragEnd, setItemsArrayInProperOrder }
 }
 

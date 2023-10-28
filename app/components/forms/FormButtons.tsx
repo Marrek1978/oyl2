@@ -9,7 +9,7 @@ import type { DaisyUIBtnColor, DaisyUIBtnSize, DaisyUIColor, TWTextSizes } from 
 type Props = {
   textSizeTW?: TWTextSizes;
   isNew?: boolean;
-
+  flexXGap?: string
   isShowSaveBtn?: boolean;
   saveBtnText?: string;
   saveBtnType?: 'submit' | 'button';
@@ -54,7 +54,7 @@ type Props = {
 function FormButtons({
   textSizeTW,
   isNew = true,
-
+  flexXGap='6',
   isShowSaveBtn = true,
   saveBtnText,
   saveBtnType = 'submit',
@@ -127,7 +127,7 @@ function FormButtons({
 
   return (
     <>
-      <div className=' w-full flex flex-wrap gap-x-6 gap-y-2  '>
+      <div className={` w-full flex flex-wrap gap-x-${flexXGap} gap-y-2 `}>
 
         {!isNew && isShowDeleteBtn && (
           <div className='flex-1 min-w-[180px] self-center text-center'>

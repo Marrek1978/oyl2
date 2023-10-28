@@ -3,13 +3,13 @@ import { useFetcher } from '@remix-run/react';
 
 import DndInfo from '~/components/dnds/DndInfo';
 import PageTitle from '~/components/titles/PageTitle';
-import DndAndSortableContexts from '~/components/dnds/DndAndSortableContexts';
+import useFetcherState from '~/components/utilities/useFetcherState';
+import useServerMessages from '~/components/modals/useServerMessages';
 import DndSortableGeneric from '~/components/dnds/values/DndSortableGeneric';
+import DndAndSortableContexts from '~/components/dnds/DndAndSortableContexts';
 import useDndDropOrderSaveFunctions from '~/components/dnds/useDndDropOrderSaveFunctions';
 
 import type { Value } from '@prisma/client'
-import useFetcherState from '~/components/utilities/useFetcherState';
-import useServerMessages from '~/components/modals/useServerMessages';
 
 
 interface Props {
@@ -22,7 +22,6 @@ const DndValues = ({ passedValues }: Props) => {
   const { handleDragEnd, setItemsArrayInProperOrder } = useDndDropOrderSaveFunctions({ fetcher, sortableArray: values, setSortableArray: setValues })
   const { fetcherState, fetcherMessage, } = useFetcherState({ fetcher })
   useServerMessages({ fetcherMessage, fetcherState, isShowFailed: true })
-
 
   //initial load
   useEffect(() => {

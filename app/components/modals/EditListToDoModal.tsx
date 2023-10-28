@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Form } from '@remix-run/react';
 
-import SolidBtn from '../buttons/SolidBtn';
-import InputLabel from '../forms/InputLabel';
+import SolidBtn from '~/components/buttons/SolidBtn';
+import InputLabel from '~/components/forms/InputLabel';
 import DatePicker from '~/components/list/DatePicker'
-import BasicFormAreaBG from '../forms/BasicFormAreaBG';
-import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
-import { DesireOutcomeGuideline } from '../utilities/Guidelines';
-import InputLabelWithGuideLineLink from '../forms/InputLabelWithGuideLineLink';
+import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
+import SolidBtnGreyBlue from '~/components/buttons/SolidBtnGreyBlue';
+import { DesireOutcomeGuideline } from '~/components/utilities/Guidelines';
+import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
 
 import type { CreationTodo } from '~/types/listTypes';
 
@@ -19,15 +19,16 @@ interface EditToDoProps {
 }
 
 const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOpen, updateTodo, index }) => {
+console.log("🚀 ~ file: EditListToDoModal.tsx:22 ~ todo:", todo)
 
   const [body, setBody] = useState<string>(todo?.body || '');
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
-  const [urgent, setUrgent] = useState<boolean>(todo?.urgent || false);
+  const [isUrgent, setIsUrgent] = useState<boolean>(todo?.isUrgent || false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [important, setImportant] = useState<boolean>(todo?.important || false);
+  const [isImportant, setIsImportant] = useState<boolean>(todo?.isImportant || false);
 
 
-  useEffect(() => {
+    useEffect(() => {
     if (todo?.dueDate) {
       const parsedDate = new Date(todo.dueDate);
       setSelectedDate(parsedDate);
@@ -41,17 +42,18 @@ const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOp
     const dueDate = todo?.dueDate ? new Date(todo.dueDate) : null
 
     if (body !== todo?.body
-      || urgent !== todo?.urgent
-      || important !== todo?.important
+      || isUrgent !== todo?.isUrgent
+      || isImportant !== todo?.isImportant
       || selectedDate?.getTime() !== dueDate?.getTime()) {
       setIsSaveable(true)
     } else {
       setIsSaveable(false)
     }
-  }, [body, urgent, important, selectedDate, todo])
+  }, [body, isUrgent, isImportant, selectedDate, todo])
 
 
   const handleSave = () => {
+    console.log('saving edites')
     if (todo === null || index === null) {
       console.error("Todo or index is null.");
       return;
@@ -60,8 +62,8 @@ const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOp
     const updatedTodo: CreationTodo = {
       ...todo,
       body,
-      urgent,
-      important,
+      isUrgent,
+      isImportant,
       dueDate: selectedDate,
     };
     updateTodo(index, updatedTodo);
@@ -69,13 +71,13 @@ const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOp
   }
 
   const handleIsUrgent = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUrgent(e.target.checked)
-    setImportant(false)
+    setIsUrgent(e.target.checked)
+    setIsImportant(false)
   }
 
   const handleIsImportant = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setImportant(e.target.checked)
-    setUrgent(false)
+    setIsImportant(e.target.checked)
+    setIsUrgent(false)
 
   }
 
@@ -87,14 +89,14 @@ const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOp
 
       <div className="modal z-40 ">
         <BasicFormAreaBG
-          title='Edit your To-Do Item'
+          h2Text='Edit your To-Do Item'
         >
           <Form method='post' className='mx-8'>
             <div className="form-control gap-6 vert-space-between-inputs ">
               <div >
                 <InputLabelWithGuideLineLink
-                  text='To Do Item'
-                  title='To Do Item'
+                  inputTitle='To Do Item'
+                  guideLineTitle='To Do Item'
                   guideline={DesireOutcomeGuideline} />
                 <input type="text"
                   placeholder="Enter a To Do Item"
@@ -107,19 +109,19 @@ const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOp
 
               <div className="flex  items-center gap-12  flex-wrap">
                 <div className="checkbox-label-flex">
-                  <InputLabel text='Urgent' />
+                  <InputLabel inputTitle='Urgent' />
                   <input type="checkbox"
                     className="toggle toggle-secondary"
-                    checked={urgent}
+                    checked={isUrgent}
                     onChange={handleIsUrgent}
                   />
                 </div>
 
                 <div className=" checkbox-label-flex">
-                  <InputLabel text='Important' />
+                  <InputLabel inputTitle='Important' />
                   <input type="checkbox"
                     className="toggle toggle-secondary"
-                    checked={important}
+                    checked={isImportant}
                     onChange={handleIsImportant}
                   />
                 </div>
@@ -142,7 +144,7 @@ const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOp
 
               <div className='flex-1'>
                 <SolidBtn
-                  text='Accept Edits'
+                  text='Save Edits'
                   onClickFunction={handleSave}
                   disableBtn={!isSaveable}
                 />

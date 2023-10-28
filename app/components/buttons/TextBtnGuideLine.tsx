@@ -16,7 +16,8 @@ function TextBtnGuideLine({ text, onClickFunction, icon, color = 'text-secondary
 
   return (
     <>
-      <button className={`btn btn-sm btn-ghost ${color}
+      <button className={`btn btn-sm btn-link ${color}
+        no-underline
         p-0
         font-bold font-mont rounded-none
         transition-all duration-300 ease-linear 

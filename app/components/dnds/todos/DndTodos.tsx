@@ -1,13 +1,15 @@
 import React from 'react'
 import { SortableItem } from '~/components/dnds/todos/SortableItem'
-import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from "@dnd-kit/core";
-import type { DragEndEvent } from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy
-} from "@dnd-kit/sortable";
+
 import type { CreationTodo } from '~/types/listTypes';
+import SubHeading14px from "~/components/titles/SubHeading14px";
+
+import DndAndSortableContexts from '../DndAndSortableContexts';
+import useDndDropOrderSaveFunctions from '../useDndDropOrderSaveFunctions';
+import { useFetcher } from '@remix-run/react';
+import useFetcherState from '~/components/utilities/useFetcherState';
+import useServerMessages from '~/components/modals/useServerMessages';
+import DndInfo from '../DndInfo';
 
 interface DndTodosProps {
   setTodos: React.Dispatch<React.SetStateAction<CreationTodo[]>>;
@@ -19,27 +21,14 @@ interface DndTodosProps {
 }
 
 
-function DndTodos({setTodos, todos, setTodoSortOrder, setIsEditToDoModalOpen, setSelectedTodoIndex, setSelectedTodo}: DndTodosProps) {
+function DndTodos({ setTodos, todos, setTodoSortOrder, setIsEditToDoModalOpen, setSelectedTodoIndex, setSelectedTodo }: DndTodosProps) {
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    })
-  )
+  const fetcher = useFetcher();
 
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (active.id !== over?.id) {
-      setTodos((prevTodos: CreationTodo[]) => {
-        const oldIndex = prevTodos.findIndex(todo => todo.id === active.id);
-        const newIndex = prevTodos.findIndex(todo => todo.id === over?.id);
-        const newTodos = arrayMove(prevTodos, oldIndex, newIndex);
-        return setTodoSortOrder(newTodos)
-      });
-    }
-  }
+  const { handleDragEnd } = useDndDropOrderSaveFunctions({ fetcher, sortableArray: todos, setSortableArray: setTodos, saveOrderToDB: false })
+  const { fetcherState, fetcherMessage, } = useFetcherState({ fetcher })
+  useServerMessages({ fetcherMessage, fetcherState, isShowFailed: true })
+
 
   const removeTodo = (todoId: string) => {
     setTodos(todos.filter(todo => todo.id !== todoId));
@@ -55,25 +44,33 @@ function DndTodos({setTodos, todos, setTodoSortOrder, setIsEditToDoModalOpen, se
 
   return (
     <>
-      <DndContext
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-        sensors={sensors}
+
+      <div className='flex justify-between items-center w-full'>
+        <div className='text-success flex-1 w-full '>
+          <SubHeading14px text='To Dos' />
+        </div>
+        <div className='flex-1'>
+          <DndInfo />
+        </div>
+      </div>
+
+      <DndAndSortableContexts
+        handleDragEnd={handleDragEnd}
+        sortableArray={todos}
+        isVertical={true}
       >
-        <SortableContext
-          items={todos?.map(todo => todo.id)}
-          strategy={verticalListSortingStrategy}
-        >
-          {todos?.map((todo) => (
-            <SortableItem
-              key={todo.id}
-              id={todo.id}
-              todo={todo}
-              removeTodo={removeTodo}
-              handleOpenEditModal={handleOpeningEditModal} />
-          ))}
-        </SortableContext>
-      </DndContext>
+
+        {todos?.map((todo) => (
+          <SortableItem
+            key={todo.id}
+            id={todo.id}
+            todo={todo}
+            removeTodo={removeTodo}
+            handleOpenEditModal={handleOpeningEditModal} />
+        ))}
+
+      </DndAndSortableContexts>
+
     </>
   )
 }

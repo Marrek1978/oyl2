@@ -7,11 +7,15 @@ type Props = {
   formMaxWidthPx?: string
 }
 
-function DndAndFormFlex({ dnd, form , formMaxWidthPx='830px'}: Props) {
+function DndAndFormFlex({ dnd, form, formMaxWidthPx = '830px' }: Props) {
   return (
     <>
       <article className="flex gap-8 flex-wrap ">
-        <section className='flex-1 w-full max-w-max min-w-[350px] '>
+        <section className='
+          flex-1 w-full max-w-max 
+          min-w-[350px] 
+          lg:min-w-[450px] 
+        '>
           <BasicTextAreaBG  >
             {dnd}
           </BasicTextAreaBG>

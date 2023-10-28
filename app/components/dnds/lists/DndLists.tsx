@@ -44,7 +44,7 @@ const DndLists = ({ passedLists }: Props) => {
 
   return (
     <>
-      <div className='flex justify-between gap-x-4 flex-wrap items-center'>
+      <div className='flex justify-between gap-x-4 flex-wrap items-center '>
         <PageTitle text='To-Do Lists' />
         {!isIndexPage && (
           <Link to={`/dash/desires/${desireId}/outcomes/${outcomeId}/lists/`}  >
@@ -63,16 +63,12 @@ const DndLists = ({ passedLists }: Props) => {
         sortableArray={lists}
         isVertical={true}
       >
-        <DndInfo />
+        <div className='mt-4'>
+          <DndInfo />
+        </div>
 
         {lists?.map((list) => {
-          
-
-          // const uncompleteTodos = list.todos.filter(todo => !todo.complete)
-          // const completedToDos
-          const title = (<>
-            <span className="text-sm">{list.sortOrder + 1}</span>. {list.title}
-          </>)
+          const title = (<> <span className="text-sm">{list.sortOrder + 1}</span>. {list.title}</>)
 
           return (
             <DndSortableList
