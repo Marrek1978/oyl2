@@ -10,9 +10,10 @@ interface DatePickerProps {
   selectedDate: Date | null;
   labelText?: string;
   isHorizontal?: boolean;
+  isSecondaryInput?: boolean;
 }
 
-const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, labelText = 'Due Date', isHorizontal = false }) => {
+const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, labelText = 'Due Date', isHorizontal = false, isSecondaryInput=false }) => {
 
   const [displayDate, setDisplayDate] = useState<Date | null>(selectedDate);
   const [isHorizontalLayout, setIsHorizontalLayout] = useState<boolean>(false)
@@ -42,16 +43,16 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, 
         {isHorizontalLayout ? (
           <>
             {labelText && (
-              <div className=' '>
-                <InputLabel inputTitle={labelText} />
-              </div>
+              <InputLabel inputTitle={labelText} isSecondaryInput={isSecondaryInput}
+              />
             )}
           </>
         ) : (
           <InputLabelWithGuideLineLink
-            inputTitle={labelText}
-            title='Due Date'
+            guideLineTitle={labelText}
+            inputTitle='Due Date'
             guideline={DueDates}
+            isSecondaryInput={isSecondaryInput}
           />
         )}
 

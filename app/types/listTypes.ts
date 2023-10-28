@@ -1,33 +1,33 @@
 // types.ts
-import type { ListToDo, List } from "@prisma/client";
-import type { RoutineAndToDos, RoutineToDo } from "./routineTypes";
+import type { ToDo, List } from "@prisma/client";
+import type { RoutineAndTasks, RoutineToDo } from "~/types/routineTypes";
 
 export type ListAndToDos = List & {
-  todos: ListToDo[];
+  todos: ToDo[];
 };
 
 export interface CreationTodo
-  extends Omit<ListToDo, "listId" | "createdAt" | "updatedAt"> {}
+  extends Omit<ToDo, "listId" | "createdAt" | "updatedAt"> {}
 
-export interface DatabaseTodo extends CreationTodo {
-  createdAt: Date;
-  updatedAt: Date;
-  listId: string;
-}
+// export interface DatabaseTodo extends CreationTodo {
+//   createdAt: Date;
+//   updatedAt: Date;
+//   listId: string;
+// }
 
-export type Todo = CreationTodo | DatabaseTodo;
+export type GenerticTodo = CreationTodo | ToDo;
 
-export type ImportedLists = ListAndToDos[] | RoutineAndToDos[];
-export type ImportedList = ListAndToDos | RoutineAndToDos;
-export type allTodoTypes = Todo | RoutineToDo;
+export type ImportedLists = ListAndToDos[] | RoutineAndTasks[];
+export type ImportedList = ListAndToDos | RoutineAndTasks;
+export type allTodoTypes = GenerticTodo | RoutineToDo;
 
 export type ListWithStrDates = Omit<List, "createdAt" | "updatedAt"> & {
   createdAt: string;
   updatedAt: string;
 };
 
-export type TodoWithStrDates = Omit<
-  ListToDo,
+export type ToDoWithStrDates = Omit<
+  ToDo,
   "createdAt" | "updatedAt" | "dueDate"
 > & {
   createdAt: string;
@@ -36,5 +36,5 @@ export type TodoWithStrDates = Omit<
 };
 
 export type ListAndTodosWithStrDates = ListWithStrDates & {
-  todos: TodoWithStrDates[];
+  todos: ToDoWithStrDates[];
 };

@@ -14,7 +14,6 @@ function DndSortableStyling({ children, priorityStyling, id }: Props) {
       className={`block 
           rounded-none
           px-3 py-4 w-full  
-          mt-4
           max-w-prose
           font-poppins
           cursor-pointer 

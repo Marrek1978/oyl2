@@ -10,7 +10,7 @@ function TextProseWidth({ text, textSize = 'text-base', textColor = 'para-color'
   return (
     <>
       <div className={`
-       w-prose max-w-prose
+        w-prose max-w-prose
         ${textSize}
         ${textColor}
       `} >

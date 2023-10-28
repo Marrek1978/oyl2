@@ -2,14 +2,14 @@ import { Outlet, useLoaderData } from '@remix-run/react';
 import type { LoaderArgs } from '@remix-run/server-runtime';
 
 import TodoLists from '~/components/list/TodoLists';
-import { getListAndTodos } from '~/models/list.server';
+import { getAllListsAndTodos } from '~/models/list.server';
 import { requireUserId } from '~/models/session.server';
 import { transformToDoDataDates } from '~/components/utilities/helperFunctions';
 
 export const loader = async ({ request }: LoaderArgs) => {
   const userId = await requireUserId(request);
   try {
-    const todoLists = await getListAndTodos(userId);
+    const todoLists = await getAllListsAndTodos(userId);
     return todoLists;
   } catch (error) {
     throw error

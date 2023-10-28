@@ -3,11 +3,11 @@ import { enUS } from 'date-fns/locale';
 import { useFetcher } from '@remix-run/react';
 import React, { useEffect, useState } from 'react'
 
-
-import type { Todo } from '~/types/listTypes';
 import Modal from '~/components/modals/Modal';
 import ErrorMessage from '~/components/modals/ErrorMessage';
 import { ToDoItemStylesNoBg } from '~/styles/ToDoItemStyles'
+
+import type { Todo } from '~/types/listTypes';
 
 interface ToDoItemProps {
   todoItem: Todo;
@@ -66,13 +66,15 @@ const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem, setIsDisableAllBt
       )}
 
       <div className={` 
-        flex w-full gap-4 items-center justify-between
-        px-3 py-1 mb-1
+        flex gap-4 items-center justify-between
+        w-full max-w-xl
+        px-3 py-0 mb-0
         text-left 
+        font-mont
         ${borderClass}
       `}>
         <div className={`
-          wrap truncate text-ellipsis 
+          wrap truncate text-ellipsis capitalize
           ${isChecked && 'line-through text-slate-400'}
           `} >
           {todoItem.body}

@@ -166,7 +166,6 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
 
   return (
     <>
-
       <BasicFormAreaBG h2Text={headerTxt}  >
         <Form method='post' className='  form-control gap-y-4 p-8'>
           <input type="string" name='id' value={listId} hidden readOnly />
@@ -189,7 +188,7 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
                 />
               </div>
 
-              <div className=' '>  <Divider />   </div>
+              <div className='mt-4 '>  <Divider />   </div>
 
               <div className='  '>
                 <InputLabelWithGuideLineLink
@@ -210,7 +209,7 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
                   <ToggleWithLabelAndGuideLineLink
                     text='Urgent'
                     guideline={DesireOutcomeGuideline}
-                    title='Milestone Description'
+                    guidelineTitle='Milestone Description'
                     checkedState={isUrgent}
                     handleCheckedState={handleIsUrgent}
                     toggleColorDaisyUI='accent'
@@ -222,17 +221,19 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
                   <ToggleWithLabelAndGuideLineLink
                     text='Important'
                     guideline={DesireOutcomeGuideline}
-                    title='Milestone Description'
+                    guidelineTitle='Milestone Description'
                     checkedState={isImportant}
                     handleCheckedState={handleIsImportant}
                     toggleColorDaisyUI='success'
+                    isSecondaryInput={true}
                   />
                 </div>
 
-                <div className={` min-w-[230px]`}>
+                <div className={` min-w-[230px] text-base-content/70`}>
                   <DatePicker
                     setSelectedDate={setSelectedDate}
                     selectedDate={selectedDate}
+                    isSecondaryInput={true}
                   />
                 </div>
               </div>
@@ -251,15 +252,15 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
             {/* //? PREVIEW PANEL */}
             <div className="flex-1 form-control gap-y-6 justify-between">
               <div>
-                <div className='mt-3 text-success'>
+                <div className='mt-1 text-success'>
                   <SubHeading14px text='Preview' />
                 </div>
                 <div className={`mt-2 truncate max-w-sm capitalize ${title ? 'text-base-content' : 'text-base-content/60'} `}>
                   <HeadingH2 text={title || 'List Title'} />
                 </div>
 
-            
-                <div className=' max-h-[375px] overflow-auto overflow-x-hidden mt-8'>
+
+                <div className=' max-h-[360px] overflow-auto overflow-x-hidden mt-4 pr-2'>
                   <DndTodos
                     setTodos={setTodos}
                     todos={todos}
@@ -299,14 +300,12 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
 
 
       {isEditToDoModalOpen && (
-        <>
-          <EditListToDoModal
-            todo={selectedTodo}
-            setIsEditToDoModalOpen={setIsEditToDoModalOpen}
-            updateTodo={updateTodo}
-            index={selectedTodoIndex}
-          />
-        </>
+        <EditListToDoModal
+          todo={selectedTodo}
+          setIsEditToDoModalOpen={setIsEditToDoModalOpen}
+          updateTodo={updateTodo}
+          index={selectedTodoIndex}
+        />
       )
       }
     </>

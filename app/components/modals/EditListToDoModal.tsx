@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Form } from '@remix-run/react';
 
-import SolidBtn from '~/components/buttons/SolidBtn';
-import InputLabel from '~/components/forms/InputLabel';
+import Modal from '~/components/modals/Modal';
 import DatePicker from '~/components/list/DatePicker'
+import FormButtons from '~/components/forms/FormButtons';
 import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
-import SolidBtnGreyBlue from '~/components/buttons/SolidBtnGreyBlue';
 import { DesireOutcomeGuideline } from '~/components/utilities/Guidelines';
 import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
+import ToggleWithLabelAndGuideLineLink from '~/components/forms/ToggleWithLabelAndGuideLineLink';
 
 import type { CreationTodo } from '~/types/listTypes';
 
@@ -19,7 +19,6 @@ interface EditToDoProps {
 }
 
 const EditListToDoModal: React.FC<EditToDoProps> = ({ todo, setIsEditToDoModalOpen, updateTodo, index }) => {
-console.log("🚀 ~ file: EditListToDoModal.tsx:22 ~ todo:", todo)
 
   const [body, setBody] = useState<string>(todo?.body || '');
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
@@ -28,11 +27,11 @@ console.log("🚀 ~ file: EditListToDoModal.tsx:22 ~ todo:", todo)
   const [isImportant, setIsImportant] = useState<boolean>(todo?.isImportant || false);
 
 
-    useEffect(() => {
+  useEffect(() => {
     if (todo?.dueDate) {
       const parsedDate = new Date(todo.dueDate);
       setSelectedDate(parsedDate);
-    }else{
+    } else {
       setSelectedDate(null)
     }
   }, [todo])
@@ -87,73 +86,70 @@ console.log("🚀 ~ file: EditListToDoModal.tsx:22 ~ todo:", todo)
         id={`edit-todo-modal-${todo?.id}`}
         className="modal-toggle" />
 
-      <div className="modal z-40 ">
-        <BasicFormAreaBG
-          h2Text='Edit your To-Do Item'
-        >
-          <Form method='post' className='mx-8'>
-            <div className="form-control gap-6 vert-space-between-inputs ">
-              <div >
-                <InputLabelWithGuideLineLink
-                  inputTitle='To Do Item'
-                  guideLineTitle='To Do Item'
-                  guideline={DesireOutcomeGuideline} />
-                <input type="text"
-                  placeholder="Enter a To Do Item"
-                  value={body}
-                  onChange={(e) => setBody(e.target.value)}
-                  className=" input-field-text-title "
-                />
-              </div>
-
-
-              <div className="flex  items-center gap-12  flex-wrap">
-                <div className="checkbox-label-flex">
-                  <InputLabel inputTitle='Urgent' />
-                  <input type="checkbox"
-                    className="toggle toggle-secondary"
-                    checked={isUrgent}
-                    onChange={handleIsUrgent}
+      <Modal >
+        <div className="modalFormWidth__sm">
+          <BasicFormAreaBG h2Text='Edit your To-Do Item' >
+            <Form method='post' className='p-8'>
+              <div className="form-control gap-y-6   ">
+                <div >
+                  <InputLabelWithGuideLineLink
+                    inputTitle='To Do Item'
+                    guideLineTitle='To Do Item'
+                    guideline={DesireOutcomeGuideline} />
+                  <input type="text"
+                    placeholder="Enter a To Do Item"
+                    value={body}
+                    onChange={(e) => setBody(e.target.value)}
+                    className=" input-field-text-title "
                   />
                 </div>
 
-                <div className=" checkbox-label-flex">
-                  <InputLabel inputTitle='Important' />
-                  <input type="checkbox"
-                    className="toggle toggle-secondary"
-                    checked={isImportant}
-                    onChange={handleIsImportant}
-                  />
+                <div className='w-full  flex flex-col items-end gap-y-4'>
+                  <div className="checkbox-label-flex min-w-[230px] ">
+                    <ToggleWithLabelAndGuideLineLink
+                      text='Urgent'
+                      guideline={DesireOutcomeGuideline}
+                      guidelineTitle='Milestone Description'
+                      checkedState={isUrgent}
+                      handleCheckedState={handleIsUrgent}
+                      toggleColorDaisyUI='accent'
+                      isSecondaryInput={true}
+                    />
+                  </div>
+
+                  <div className={`checkbox-label-flex min-w-[230px]`}>
+                    <ToggleWithLabelAndGuideLineLink
+                      text='Important'
+                      guideline={DesireOutcomeGuideline}
+                      guidelineTitle='Milestone Description'
+                      checkedState={isImportant}
+                      handleCheckedState={handleIsImportant}
+                      toggleColorDaisyUI='success'
+                      isSecondaryInput={true}
+                    />
+                  </div>
+
+                  <div className={` min-w-[230px] text-base-content/70`}>
+                    <DatePicker
+                      setSelectedDate={setSelectedDate}
+                      selectedDate={selectedDate}
+                      isSecondaryInput={true}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <DatePicker
-                setSelectedDate={setSelectedDate}
-                selectedDate={selectedDate}
-              />
-            </div>
-
-
-            <div className="flex justify-between my-8 gap-4">
-              <div className='flex-1'>
-                <SolidBtnGreyBlue
-                  text='Cancel Edits'
-                  onClickFunction={() => setIsEditToDoModalOpen(false)}
+                <FormButtons
+                  saveBtnText='Accept Edits'
+                  saveBtnOnClickFunction={handleSave}
+                  isSaveBtnDisabled={!isSaveable}
+                  closeBtnText='Cancel Edits'
+                  closeBtnOnClickFunction={() => setIsEditToDoModalOpen(false)}
                 />
               </div>
-
-              <div className='flex-1'>
-                <SolidBtn
-                  text='Save Edits'
-                  onClickFunction={handleSave}
-                  disableBtn={!isSaveable}
-                />
-              </div>
-            </div>
-
-          </Form>
-        </BasicFormAreaBG >
-      </div >
+            </Form>
+          </BasicFormAreaBG >
+        </div>
+      </Modal >
     </>
   )
 }

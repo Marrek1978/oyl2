@@ -1,13 +1,13 @@
 import { prisma } from "~/db.server";
-import type { RoutineToDo, Routine, User } from "@prisma/client";
-import type { CreationRoutineToDo } from "~/types/routineTypes";
+import type { Task, Routine, User } from "@prisma/client";
+import type { CreationTask } from "~/types/routineTypes";
 
 export function getRoutines(userId: User["id"]) {
   try {
     const result = prisma.routine.findMany({
-      where: { userId, outcomeId: null },
+      where: { userId, outcomeId: undefined },
       include: {
-        routineToDos: {
+        tasks: {
           orderBy: { sortOrder: "asc" },
         },
       },
@@ -24,7 +24,7 @@ export function getAllRoutines(userId: User["id"]) {
     const result = prisma.routine.findMany({
       where: { userId },
       include: {
-        routineToDos: {
+        tasks: {
           orderBy: { sortOrder: "asc" },
         },
       },
@@ -36,13 +36,13 @@ export function getAllRoutines(userId: User["id"]) {
   }
 }
 
-export function createRoutineAndToDos({
+export function createRoutineAndTasks({
   userId,
   title,
-  routineToDos,
+  tasks,
   outcomeId,
 }: Pick<Routine, "title"> & { userId: User["id"] } & {
-  routineToDos: CreationRoutineToDo[];
+  tasks: CreationTask[];
 } & {  outcomeId?: Routine["outcomeId"];
 }) {
   try {
@@ -51,9 +51,9 @@ export function createRoutineAndToDos({
         title,
         userId,
         outcomeId,
-        routineToDos: {
+        tasks: {
           createMany: {
-            data: routineToDos,
+            data: tasks,
           },
         },
       },
@@ -64,15 +64,15 @@ export function createRoutineAndToDos({
   }
 }
 
-export async function updateRoutineToDoComplete({
+export async function updateCompletedTasks({
   id,
   complete,
 }: {
-  id: RoutineToDo["id"];
-  complete: RoutineToDo["complete"];
+  id: Task["id"];
+  complete: Task["complete"];
 }) {
   try {
-    const result = prisma.routineToDo.update({
+    const result = prisma.task.update({
       where: {
         id: id,
       },
@@ -96,20 +96,20 @@ export async function deleteRoutine({ id }: Pick<Routine, "id">) {
   }
 }
 
-export async function reorderCompletedRoutineToDos({
-  routineToDos,
+export async function reorderCompletedTasks({
+  tasks,
 }: {
-  routineToDos: RoutineToDo[];
+  tasks: Task[];
 }) {
-  if (!routineToDos || !Array.isArray(routineToDos)) {
+  if (!tasks || !Array.isArray(tasks)) {
     throw new Error("Invalid routineToDos");
   }
 
   try {
-    const updateOrder = routineToDos.map((routineToDo) => {
-      return prisma.routineToDo.update({
-        where: { id: routineToDo.id },
-        data: { sortOrder: routineToDo.sortOrder },
+    const updateOrder = tasks.map((task) => {
+      return prisma.task.update({
+        where: { id: task.id },
+        data: { sortOrder: task.sortOrder },
       });
     });
 
@@ -120,13 +120,13 @@ export async function reorderCompletedRoutineToDos({
   }
 }
 
-export async function updateRoutineAndTodos({
+export async function updateRoutineAndTasks({
   id,
   title,
   userId,
   routineToDos,
 }: Pick<Routine, "id" | "title"> & { userId: User["id"] } & {
-  routineToDos: RoutineToDo[];
+  routineToDos: Task[];
 }) {
   try {
     const updateRoutine = await prisma.routine.update({
@@ -134,19 +134,19 @@ export async function updateRoutineAndTodos({
       data: { title },
     });
 
-    const updateRoutineToDos = routineToDos.map((routineToDo) => {
-      return prisma.routineToDo.upsert({
-        where: { id: routineToDo.id },
+    const updateRoutineToDos = routineToDos.map((task) => {
+      return prisma.task.upsert({
+        where: { id: task.id },
         create: {
-          body: routineToDo.body,
-          complete: routineToDo.complete,
-          sortOrder: routineToDo.sortOrder,
+          body: task.body,
+          complete: task.complete,
+          sortOrder: task.sortOrder,
           routine: { connect: { id } },
         },
         update: {
-          body: routineToDo.body,
-          complete: routineToDo.complete,
-          sortOrder: routineToDo.sortOrder,
+          body: task.body,
+          complete: task.complete,
+          sortOrder: task.sortOrder,
         },
       });
     });
@@ -158,7 +158,7 @@ export async function updateRoutineAndTodos({
   }
 }
 
-export async function getProjectDesiredOutcomeRoutinesWithToDos(
+export async function getOutcomeRoutinesWithTasks(
   userId: User["id"],
   outcomeId: Routine["outcomeId"]
 ) {
@@ -166,7 +166,7 @@ export async function getProjectDesiredOutcomeRoutinesWithToDos(
     const result = await prisma.routine.findMany({
       where: { userId, outcomeId },
       include: {
-        routineToDos: {
+        tasks: {
           orderBy: { sortOrder: "asc" },
         },
       },
@@ -174,6 +174,26 @@ export async function getProjectDesiredOutcomeRoutinesWithToDos(
     });
     return result;
   } catch (error) {
+    throw error;
+  }
+}
+
+
+
+//?  ------------------ Outcome Lists ----------------- //
+
+export async function getRoutinesByOutcomeId(userId: User["id"], outcomeId: Routine["outcomeId"]){
+  try{
+    return prisma.routine.findMany({
+      where: { userId, outcomeId},
+      include: {
+        tasks: {
+          orderBy: { sortOrder: "asc" },
+        },
+      },
+      orderBy: { updatedAt: "desc" },
+    })
+  }catch(error){
     throw error;
   }
 }

@@ -13,7 +13,7 @@ import HeadingH2 from '~/components/titles/HeadingH2'
 import { requireUserId } from '~/models/session.server'
 import Scheduler from '~/components/schedule/Scheduler'
 import { getAllRoutines } from '~/models/routines.server'
-import { getAllListAndTodos } from '~/models/list.server'
+import { getAllListsAndTodos } from '~/models/list.server'
 import SubHeading16px from '~/components/titles/SubHeading16px'
 // import MiscellaneousLists from '~/components/schedule/MiscellaneousLists'
 // import ProjectsListAndDraggables from '~/components/schedule/ProjectsListAndDraggables'
@@ -23,7 +23,7 @@ import { transformRoutineDataDates, transformToDoDataDates, transformScheduledLi
 // import SpecialLists from '~/components/schedule/SpecialLists'
 
 import type { ListAndToDos } from '~/types/listTypes'
-import type { RoutineAndToDos } from '~/types/routineTypes'
+import type { RoutineAndTasks } from '~/types/routineTypes'
 import type { ScheduledList } from '@prisma/client'
 import type { ProjectWithListsAndRoutines } from '~/types/projectTypes'
 
@@ -39,7 +39,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   try {
     const userId = await requireUserId(request);
     // const loadedToDos = await getListAndTodos(userId); //! get all and filter on client
-    const loadedToDos = await getAllListAndTodos(userId); //! get all and filter on client
+    const loadedToDos = await getAllListsAndTodos(userId); //! get all and filter on client
     const loadedRoutines = await getAllRoutines(userId);//! get all and filter on client
     const loadedProjects = await getProjects(userId);
     const scheduledLists = await getScheduledLists(userId)
@@ -83,7 +83,7 @@ function Schedule() {
   const fetcher = useFetcher();
   const [currentTab, setCurrentTab] = useState<string>('projects')
   const [saveScheduledLists, setSaveScheduledLists] = useState<boolean>(false)   //  SaveButton
-  const [draggedList, setDraggedList] = useState<ListAndToDos | RoutineAndToDos | ProjectWithListsAndRoutines>()
+  const [draggedList, setDraggedList] = useState<ListAndToDos | RoutineAndTasks | ProjectWithListsAndRoutines>()
   const [scheduledLists, setScheduledLists] = useState<ScheduledList[] | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[]>([])
   //?  when added to the calendar, they should be converted to the event structure, with start and end dates, is draggable, all day, id
   //? loaded scheduled events will be of the correct format, and will be loaded from db
@@ -102,7 +102,7 @@ function Schedule() {
   const thisWeeksScheduledLists = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledLists), [loadedScheduledLists])
   const loadedToDos: ListAndToDos[] = useMemo(() => transformToDoDataDates(initialListsData.loadedToDos), [initialListsData.loadedToDos]) //initialListsData.loadedToDos as ListAndToDos[
   // const loadedProjects: Project[] = useMemo(() => transformProjectDataDates(initialListsData.loadedProjects), [initialListsData.loadedProjects]) //initialListsData.loadedProjects as Project[]
-  const loadedRoutines: RoutineAndToDos[] = useMemo(() => transformRoutineDataDates(initialListsData.loadedRoutines), [initialListsData.loadedRoutines]) //initialListsData.loadedRoutines as RoutineAndToDos[]
+  const loadedRoutines: RoutineAndTasks[] = useMemo(() => transformRoutineDataDates(initialListsData.loadedRoutines), [initialListsData.loadedRoutines]) //initialListsData.loadedRoutines as RoutineAndToDos[]
 
   // const miscellaneousLists = loadedToDos.filter(list => (list.projectId === null && list.outcomeId === null))
   // const miscellaneousRoutines = loadedRoutines.filter(routine => (routine.projectId === null && routine.outcomeId === null))

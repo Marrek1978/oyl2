@@ -62,6 +62,7 @@ function ValuesPage() {
     <>
       <Outlet />
       <DndAndFormFlex
+        listMaxWidthTW={'max-w-max'}
         dnd={<DndValues passedValues={loadedValuesData} />}
         form={
           <ValueForm isNew={true} nextSortOrder={nextSortOrder} />}

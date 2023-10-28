@@ -68,7 +68,8 @@ function OutcomeListsPage() {
       <DndAndFormFlex
         dnd={<DndLists passedLists={lists} />}
         form={<Outlet />}
-        formMaxWidthPx='1200px'
+        formMaxWidthTW='max-w-7xl'
+        listMaxWidthTW='max-w-lg'
       />
     </>
   )

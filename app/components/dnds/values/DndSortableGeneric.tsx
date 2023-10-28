@@ -25,7 +25,7 @@ function DndSortableGeneric({ id, title, description, linkTitle = 'Edit' }: Sort
 
   return (
     <>
-      <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mt-0">
+      <div ref={setNodeRef} style={style} {...attributes} {...listeners} className=" ">
         <DndSortableStyling id={id} priorityStyling={''}>
           <H2WithLink
             h2Text={title}
@@ -34,7 +34,7 @@ function DndSortableGeneric({ id, title, description, linkTitle = 'Edit' }: Sort
             btnColorDaisyUI={'link'}
           />
 
-          <div className="mt-2">
+          <div className="mt-2 ">
             <TextProseWidth
               text={description}
             />

@@ -2,25 +2,37 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-.formItemMaxWidth{
-  @apply max-w-3xl
+.formItemMaxWidth {
+  @apply max-w-3xl;
 }
+
+/* Breakpoint prefix	Minimum width	CSS
+sm	640px	@media (min-width: 640px) { ... }
+md	768px	@media (min-width: 768px) { ... }
+lg	1024px	@media (min-width: 1024px) { ... }
+xl	1280px	@media (min-width: 1280px) { ... }
+2xl	1536px	@media (min-width: 1536px) { ... } */
 
 .formWidth {
-  @apply
-  w-[350px]
+  @apply w-[350px]
   sm:w-[500px]
   md:w-[600px]
-  lg:w-[800px]
+  lg:w-[800px];
 }
 
-.formWidth__lg {
-  @apply
-  w-[350px]
+.modalFormWidth__sm {
+  @apply w-[350px]
+  sm:w-[500px]
+  max-w-lg
+}
+
+.modalFormWidth__lg {
+  @apply w-[350px]   
   sm:w-[500px]
   md:w-[600px]
-  lg:w-[800px]
+  lg:w-[800px] 
   xl:w-[1000px]
+  2xl:w-[1280px];
 }
 
 .input-field-text-title {
@@ -44,8 +56,8 @@
 }
 
 .input-field-text-para::placeholder {
-  @apply text-base
-  w-full 
+  @apply w-full
+  text-base;
 }
 
 .validation-error {

@@ -1,19 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useFetcher, useMatches } from '@remix-run/react';
 
-import SolidBtn from '../buttons/SolidBtn';
-import BasicFormAreaBG from './BasicFormAreaBG';
-import OutlinedBtn from '../buttons/OutlinedBtn';
+import FormButtons from '~/components/forms/FormButtons';
+import { trashIcon } from '~/components/utilities/icons';
+import BtnWithProps from '~/components/buttons/BtnWithProps';
+import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
 import { sortTodos } from '~/components/utilities/helperFunctions';
-// import SolidBtnGreyBlue from '~/components/buttons/SolidBtnGreyBlue';
 import ToDoWithCompletedBox from '~/components/list/todos/ToDoWithCompletedBox';
-import { downArrowsIcon, trashIcon } from '~/components/utilities/icons';
-
 
 import type { ListAndToDos, Todo } from '~/types/listTypes';
-import FormButtons from './FormButtons';
-import BtnWithProps from '../buttons/BtnWithProps';
-import { set } from 'date-fns';
 
 interface TodosCompletedFormProps {
   list: ListAndToDos;
@@ -21,19 +16,14 @@ interface TodosCompletedFormProps {
 
 function TodosCompletedForm({ list }: TodosCompletedFormProps) {
 
-  // const todos = list?.todos;
   const matches = useMatches()
   const fetcher = useFetcher();
-  const [isDeletingToDos, setIsDeletingToDos] = useState<boolean>(false)
-  const [isDisableAllBtns, setIsDisableAllBtns] = useState<boolean>(false)
-  const [isDisableMoveDownBtn, setIsDisableMoveDownBtn] = useState<boolean>(false)
-
-  const [isShowCloseBtn, setIsShowCloseBtn] = useState<boolean>(true)
-  const [isACompletedToDo, setIsACompletedToDo] = useState<boolean>(false)
-
 
   const [todos, setTodos] = useState<Todo[]>([])
-
+  const [isShowCloseBtn, setIsShowCloseBtn] = useState<boolean>(true)
+  const [isDeletingToDos, setIsDeletingToDos] = useState<boolean>(false)
+  const [isDisableAllBtns, setIsDisableAllBtns] = useState<boolean>(false)
+  const [isACompletedToDo, setIsACompletedToDo] = useState<boolean>(false)
 
 
   useEffect(() => {
@@ -48,38 +38,14 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
     setTodos(properlySortedTodos)
   }, [list.todos])
 
-  // useEffect(() => {
-  // }, [matches])
 
   useEffect(() => {
     setIsACompletedToDo(todos.some(todo => todo.isComplete === true))
   }, [todos])
 
 
-  // useEffect(() => {
-  //   fetcher.data === 'deleted' && fetcher.state === 'idle' && (setIsDeletingToDos(false))
-  // }, [fetcher])
-
-
-  // useEffect(() => {
-  //   const properlySortedTodos = sortTodos(todos);
-  //   setTodos(properlySortedTodos)
-  // const todosBySortOrder = todos.sort((a, b) => a.sortOrder - b.sortOrder)
-  // const todosBySortOrder = todos.sort((a, b) => {
-  //   // If a is completed and b is not, a should come after b
-  //   if (a.isComplete && !b.isComplete) return 1;
-
-  //   // If b is completed and a is not, b should come after a
-  //   if (b.isComplete && !a.isComplete) return -1;
-
-  //   // If both have the same completion status, sort by sortOrder
-  //   return a.sortOrder - b.sortOrder;
-  // });
-  // const isSorted = properlySortedTodos.every((todo, index) => todo.id === todosBySortOrder[index].id)
-  // setIsDisableMoveDownBtn(isSorted)
-
-  // }, [todos])
-
+ 
+  // if completed line thru & at bottom
 
   // const handleCompletedToBottom = async (): Promise<void> => {
   //   const completedToDosAtBottom = sortTodos(todos);
@@ -113,8 +79,8 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
         linkColorDaisyUI='info'
       >
 
-        <div className='p-8  form-control gap-y-6 '>
-          <div className=" max-h-[50vh] min-h-[200px] overflow-y-auto">
+        <div className='p-8  form-control gap-y-6  '>
+          <div className=" max-h-[50vh] min-h-[200px] overflow-y-auto  ">
             {todos.map((todoItem, index) => {
               return (
                 <ToDoWithCompletedBox
@@ -126,32 +92,6 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
               )
             })}
           </div>
-
-          {/* {todos.some(todo => todo.isComplete === true) && (
-            <div>
-              <div className='w-full mt-8 flex justify-between items-center gap-8'>
-
-                <div className='flex-1'>
-                  {todos.filter(todo => todo.isComplete).length > 0
-                    // && todos.filter(todo => !todo.isComplete).length > 0
-                    && (
-                      <OutlinedBtn
-                        text='Move Completed To-Dos Down'
-                        onClickFunction={handleCompletedToBottom}
-                        daisyUIBtnColor='primary'
-                        icon={downArrowsIcon}
-                        disabledBtnBoolean={isDisableMoveDownBtn || isDisableAllBtns}
-                      />
-                    )}
-                </div>
-
-                <div className='flex-1'>
-
-                </div>
-              </div>
-            </div>
-          )} */}
-
 
           {isACompletedToDo && (
             <div className=' text-right flex justify-end'>

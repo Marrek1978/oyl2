@@ -4,7 +4,7 @@ import { Outlet, useMatches, useParams } from '@remix-run/react';
 
 import Modal from '~/components/modals/Modal';
 import TodosCompletedForm from '~/components/forms/TodosCompletedForm';
-import { deleteCompletedToDosFromList, reorderCompletedToDos, updateToDoComplete } from '~/models/list.server';
+import { deleteCompletedToDosFromList, reorderCompletedToDos, updateCompletedTodos } from '~/models/list.server';
 
 import type { ListAndToDos } from '~/types/listTypes';
 
@@ -16,7 +16,7 @@ export const action = async ({ request }: ActionArgs) => {
     const id = parsedBody.todoId as string;
     const isComplete = JSON.parse(parsedBody.completeString as string);
     try {
-      await updateToDoComplete({ id, isComplete });
+      await updateCompletedTodos({ id, isComplete });
       return 'success'
     } catch (error) { return 'failed' }
   }

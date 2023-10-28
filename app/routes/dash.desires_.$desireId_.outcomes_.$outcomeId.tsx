@@ -157,7 +157,7 @@ function OutcomePage() {
 
             <div className=' grid grid-cols-[250px,_100px] items-baseline'>
               <SubHeading14px text={'Routines'} />
-              <Link to='milestones'>
+              <Link to='routines'>
                 <BtnWithProps
                   btnPurpose={'goto'}
                   textSizeTW={'sm'}

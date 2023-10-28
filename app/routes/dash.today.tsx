@@ -1,7 +1,7 @@
 // import { parse } from 'querystring'
 import { format } from 'date-fns'
 import { useLoaderData } from '@remix-run/react'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect,  useMemo } from 'react'
 import type { LinksFunction } from '@remix-run/react/dist/routeModules'
 import { json, type LoaderArgs } from '@remix-run/server-runtime'
 
@@ -12,28 +12,25 @@ import { getProjects } from '~/models/project.server'
 import HeadingH2 from '~/components/titles/HeadingH2'
 import { requireUserId } from '~/models/session.server'
 import { getAllRoutines } from '~/models/routines.server'
-import { getAllListAndTodos } from '~/models/list.server'
+import { getAllListsAndTodos } from '~/models/list.server'
 import { getScheduledLists } from '~/models/scheduler.server'
-import { transformRoutineDataDates, transformToDoDataDates, transformScheduledListsDataDates, transformProjectDataDates, transformDesireWithOutcomesDataDates } from '~/components/utilities/helperFunctions'
+import { transformRoutineDataDates, transformToDoDataDates, transformScheduledListsDataDates } from '~/components/utilities/helperFunctions'
 
 import Today from '~/components/today/Today'
-import HeadingH1 from '~/components/titles/HeadingH1'
 import HeadingH3 from '~/components/titles/HeadingH3'
 import HeadingH5 from '~/components/titles/HeadingH5'
-import TextProseWidth from '~/components/text/TextProseWidth'
 import { getDesiresAndOutcomes } from '~/models/desires.server'
 import SubHeading14px from '~/components/titles/SubHeading14px'
-import DisplayCurrentEvent from '~/components/today/DisplayCurrentEvent'
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
 import DisplayImportantLists from '~/components/today/DisplayImportantLists'
 
 import type { ListAndToDos } from '~/types/listTypes'
-import type { RoutineAndToDos } from '~/types/routineTypes'
-import type {  Outcome, ScheduledList } from '@prisma/client'
-import type { ProjectWithListsAndRoutines } from '~/types/projectTypes'
+import type { RoutineAndTasks } from '~/types/routineTypes'
+import type {  ScheduledList } from '@prisma/client'
+// import type { ProjectWithListsAndRoutines } from '~/types/projectTypes'
 import type { DesireWithOutcomes } from '~/types/desireTypes'
-import RoutinesDisplayToday from '~/components/routines/RoutinesDisplayToday'
-import ListsDisplayToday from '~/components/list/ListsDisplayToday'
+// import RoutinesDisplayToday from '~/components/routines/RoutinesDisplayToday'
+// import ListsDisplayToday from '~/components/list/ListsDisplayToday'
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styleSheet }];
@@ -41,7 +38,7 @@ export const links: LinksFunction = () => [
 export const loader = async ({ request }: LoaderArgs) => {
   try {
     const userId = await requireUserId(request);
-    const loadedLists = await getAllListAndTodos(userId); //! get all and filter on client
+    const loadedLists = await getAllListsAndTodos(userId); //! get all and filter on client
     const loadedRoutines = await getAllRoutines(userId);//! get all and filter on client
     const loadedProjects = await getProjects(userId);
     const scheduledLists = await getScheduledLists(userId)
@@ -56,7 +53,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 
 function TodayPage() {
 
-  const [currentEvent, setCurrentEvent] = useState<ScheduledList | null>(null)
+  // const [currentEvent, setCurrentEvent] = useState<ScheduledList | null>(null)
   // const [clickedEvent, setClickedEvent] = useState<ScheduledList | null>(null)
 
   const currentDate = format(new Date(), 'EEE, MMMM d');
@@ -67,8 +64,8 @@ function TodayPage() {
   const loadedScheduledLists: ScheduledList[] = useMemo(() => transformScheduledListsDataDates(initialListsData.scheduledLists), [initialListsData.scheduledLists])
   const thisWeeksScheduledLists = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledLists), [loadedScheduledLists])
   const loadedLists: ListAndToDos[] = useMemo(() => transformToDoDataDates(initialListsData.loadedLists), [initialListsData.loadedLists]) //initialListsData.loadedToDos as ListAndToDos[
-  const loadedRoutines: RoutineAndToDos[] = useMemo(() => transformRoutineDataDates(initialListsData.loadedRoutines), [initialListsData.loadedRoutines]) //initialListsData.loadedRoutines as RoutineAndToDos[]
-  const loadedDesires: DesireWithOutcomes[] = useMemo(() => transformDesireWithOutcomesDataDates(initialListsData.loadedDesires), [initialListsData.loadedDesires]) //initialListsData.loadedRoutines as RoutineAndToDos[]
+  const loadedRoutines: RoutineAndTasks[] = useMemo(() => transformRoutineDataDates(initialListsData.loadedRoutines), [initialListsData.loadedRoutines]) //initialListsData.loadedRoutines as RoutineAndToDos[]
+  // const loadedDesires: DesireWithOutcomes[] = useMemo(() => transformDesireWithOutcomesDataDates(initialListsData.loadedDesires), [initialListsData.loadedDesires]) //initialListsData.loadedRoutines as RoutineAndToDos[]
   
   //?   change to DesiresWithOutcomesWithAll
 
@@ -83,27 +80,25 @@ function TodayPage() {
   // })
 
 
-  const focusProject: ProjectWithListsAndRoutines = projectsWithListsAndRoutines[0]
-  const focusDesireId: string | null = focusProject?.desireId as string;
-  const focusDesire: DesireWithOutcomes | undefined = loadedDesires?.find((desire) => (desire.id === focusDesireId))
-  const focusOutcome: DesireOutcome | undefined = focusDesire?.desireOutcomes[0]
-  const focusOutcomeId: string | undefined = focusOutcome?.id
-  const focusLists: ListAndToDos[] | undefined = focusProject?.lists.filter(list => list.outcomeId === focusOutcomeId)
-  const focusRoutines: RoutineAndToDos[] | undefined = focusProject?.routines.filter(routine => routine.outcomeId === focusOutcomeId)
+  // const focusProject: ProjectWithListsAndRoutines = projectsWithListsAndRoutines[0]
+  // const focusDesireId: string | null = focusProject?.desireId as string;
+  // const focusDesire: DesireWithOutcomes | undefined = loadedDesires?.find((desire) => (desire.id === focusDesireId))
+  // const focusOutcome: Outcome | undefined = focusDesire?.outcomes[0]
+  // const focusOutcomeId: string | undefined = focusOutcome?.id
 
   const todaysEventList = useMemo(() => getTodaysEvents(thisWeeksScheduledLists), [thisWeeksScheduledLists])
 
 
   useEffect(() => {
     const invervalId = setInterval(() => {
-      setCurrentEvent(getCurrentEvent(todaysEventList))
+      // setCurrentEvent(getCurrentEvent(todaysEventList))
     }, (1000 * 60));
     return () => clearInterval(invervalId)
   })
 
 
   useEffect(() => {
-    setCurrentEvent(getCurrentEvent(todaysEventList))
+    // setCurrentEvent(getCurrentEvent(todaysEventList))
   }, [todaysEventList])
 
 
@@ -115,7 +110,7 @@ function TodayPage() {
           <div className='flex flex-wrap flex-col gap-8 w-full  '>
             <div>
               <div className='text-base-content'>
-                <HeadingH1 text={focusOutcome?.title || ''} />
+                {/* <HeadingH1 text={focusOutcome?.title || ''} /> */}
               </div>
 
               <div className="flex gap-4 text-base-content/70">
@@ -123,7 +118,7 @@ function TodayPage() {
                   <SubHeading14px text={'Project #1 : '} />
                 </div>
                 <div className='text-secondary/70'>
-                  <SubHeading14px text={focusProject.title} />
+                  {/* <SubHeading14px text={focusProject.title} /> */}
                 </div>
               </div>
 
@@ -132,7 +127,7 @@ function TodayPage() {
                   <SubHeading14px text={'For Desire : '} />
                 </div>
                 <div className='text-secondary/70'>
-                  <SubHeading14px text={focusDesire?.title || ''} />
+                  {/* <SubHeading14px text={focusDesire?.title || ''} /> */}
                 </div>
               </div>
             </div>
@@ -153,11 +148,11 @@ function TodayPage() {
                   <div className='flex flex-wrap gap-8 mt-8 '>
                     <div>
                       <HeadingH3 text="Routines" />
-                      <RoutinesDisplayToday routines={focusRoutines} />
+                      {/* <RoutinesDisplayToday routines={focusRoutines} /> */}
                     </div>
                     <div>
                       <HeadingH3 text="Lists" />
-                      <ListsDisplayToday lists={focusLists} />
+                      {/* <ListsDisplayToday lists={focusLists} /> */}
                     </div>
 
                     <div>
@@ -180,15 +175,15 @@ function TodayPage() {
                 <div className=' flex flex-wrap gap-8 flex-1 w-full justify-end  '>
                   <div className='w-prose max-w-prose'>
                     <HeadingH2 text="Outcome's Vision" />
-                    <TextProseWidth text={focusOutcome?.vision || ''} />
+                    {/* <TextProseWidth text={focusOutcome?.vision || ''} /> */}
                   </div>
                   <div className='w-prose max-w-prose'>
                     <HeadingH2 text="Desire's Vision" />
-                    <TextProseWidth text={focusDesire?.ideal || ''} />
+                    {/* <TextProseWidth text={focusDesire?.ideal || ''} /> */}
                   </div>
                   <div className='w-prose max-w-prose'>
                     <HeadingH2 text="Life's Vision" />
-                    <TextProseWidth text={focusDesire?.ideal || ''} />
+                    {/* <TextProseWidth text={focusDesire?.ideal || ''} /> */}
                   </div>
                 </div>
               </div>
@@ -213,14 +208,14 @@ function TodayPage() {
               <div className='  border-2 border-red-600'>
                 <HeadingH2 text={`Current Time Block`} />
                 <div>
-                  {currentEvent && (
+                  {/* {currentEvent && (
                     <DisplayCurrentEvent
                       event={currentEvent}
                       loadedLists={loadedLists}
                       loadedRoutines={loadedRoutines}
                       loadedProjects={loadedProjects}
                     />
-                  )}
+                  )} */}
                 </div>
               </div>
 
@@ -296,10 +291,10 @@ export function getTodaysEvents(lists: ScheduledList[]): ScheduledList[] {
   return todaysEvents
 }
 
-const getCurrentEvent = (events: ScheduledList[]) => {
-  const now = new Date()
-  for (let event of events) {
-    if (event.start <= now && event.end >= now) return event
-  }
-  return null
-}
+// const getCurrentEvent = (events: ScheduledList[]) => {
+//   const now = new Date()
+//   for (let event of events) {
+//     if (event.start <= now && event.end >= now) return event
+//   }
+//   return null
+// }

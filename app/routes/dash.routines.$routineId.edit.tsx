@@ -3,10 +3,10 @@ import { Outlet, useMatches, useParams } from '@remix-run/react';
 import { redirect, type ActionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal';
-import RoutinesForm from '~/components/forms/RoutinesForm';
-import { updateRoutineAndTodos } from '~/models/routines.server';
+import RoutinesForm from '~/components/forms/RoutineForm';
+import { updateRoutineAndTasks } from '~/models/routines.server';
 
-import type { RoutineAndToDos } from '~/types/routineTypes';
+import type { RoutineAndTasks } from '~/types/routineTypes';
 
 
 export const action = async ({ request }: ActionArgs) => {
@@ -15,7 +15,7 @@ export const action = async ({ request }: ActionArgs) => {
   const editedRoutineObject = JSON.parse(parsedBody.editedRoutineString as string);
   const { id, title, userId, todos } = editedRoutineObject
   try {
-    await updateRoutineAndTodos({ id, title, userId, routineToDos: todos })
+    await updateRoutineAndTasks({ id, title, userId, routineToDos: todos })
     return redirect('../..')
   } catch (error) { throw error }
 }
@@ -26,7 +26,7 @@ function EditRoutinePage() {
   const params = useParams();
   const matches = useMatches();
   const routines = matches.find(match => match.id === 'routes/dash.routines')?.data
-  const routine = routines?.find((routine: RoutineAndToDos) => routine.id === params.routineId)
+  const routine = routines?.find((routine: RoutineAndTasks) => routine.id === params.routineId)
 
   return (
     <>

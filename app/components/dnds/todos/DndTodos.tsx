@@ -1,5 +1,4 @@
 import React from 'react'
-import { SortableItem } from '~/components/dnds/todos/SortableItem'
 
 import type { CreationTodo } from '~/types/listTypes';
 import SubHeading14px from "~/components/titles/SubHeading14px";
@@ -10,6 +9,7 @@ import { useFetcher } from '@remix-run/react';
 import useFetcherState from '~/components/utilities/useFetcherState';
 import useServerMessages from '~/components/modals/useServerMessages';
 import DndInfo from '../DndInfo';
+import SortableToDo from './SortableTodo';
 
 interface DndTodosProps {
   setTodos: React.Dispatch<React.SetStateAction<CreationTodo[]>>;
@@ -61,16 +61,14 @@ function DndTodos({ setTodos, todos, setTodoSortOrder, setIsEditToDoModalOpen, s
       >
 
         {todos?.map((todo) => (
-          <SortableItem
+          <SortableToDo
             key={todo.id}
             id={todo.id}
             todo={todo}
             removeTodo={removeTodo}
             handleOpenEditModal={handleOpeningEditModal} />
         ))}
-
       </DndAndSortableContexts>
-
     </>
   )
 }

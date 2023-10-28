@@ -8,7 +8,8 @@ type Props = {
 
 function DndSortableListStyling({ children, id, isHighlighted = false, }: Props) {
  
-  const highlightStyles = 'border-2 border-info'
+  const highlightStyles = '  bg-success/40'
+  // const highlightStyles = 'border-2 border-info bg-success'
   const [isHighlightedState, setIsHighlightedState] = useState<boolean>()
 
   useEffect(() => {

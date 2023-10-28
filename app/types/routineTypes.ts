@@ -1,23 +1,27 @@
-import type { Routine as PrismaRoutine, RoutineToDo as RoutineToDos} from "@prisma/client";
+import type { Routine, Task } from "@prisma/client";
 
-export type RoutineAndToDos = PrismaRoutine & { routineToDos: RoutineToDos[] };
+export type RoutineAndTasks = Routine & { tasks: Task[] };
 
-export interface CreationRoutineToDo {
+export interface CreationTask {
   id: string;
   body: string;
   complete: boolean;
   sortOrder: number;
 }
 
-export interface DatabaseRoutineToDo extends CreationRoutineToDo {
-  createdAt: Date;
-  updatedAt: Date;
-  routineId: string;
-}
 
-export type RoutineToDo = CreationRoutineToDo | DatabaseRoutineToDo;
+export type RoutineToDo = CreationTask | Task;
 
-export type RoutineWithStrDates = Omit<PrismaRoutine, "createdAt" | "updatedAt"> & {
+export type RoutineWithStrDates = Omit<Routine, "createdAt" | "updatedAt"> & {
   createdAt: string;
   updatedAt: string;
+};
+
+export type TasksWithStrDates = Omit<Task, "createdAt" | "updatedAt"> & {
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type RoutineAndTasksWithStrDates = RoutineWithStrDates & {
+  tasks: TasksWithStrDates[];
 };

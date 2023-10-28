@@ -6,9 +6,10 @@ interface InputLabelWithGuideLineLinkProps {
   inputTitle: string;
   guideline: string;
   guideLineTitle?: string;
+  isSecondaryInput?: boolean;
 }
 
-function InputLabelWithGuideLineLink({ inputTitle, guideline, guideLineTitle = 'Guideline' }: InputLabelWithGuideLineLinkProps) {
+function InputLabelWithGuideLineLink({ inputTitle, guideline, guideLineTitle = 'Guideline' , isSecondaryInput=false}: InputLabelWithGuideLineLinkProps) {
 
   return (
     <>
@@ -16,7 +17,7 @@ function InputLabelWithGuideLineLink({ inputTitle, guideline, guideLineTitle = '
         guideline={guideline}
         guideLineTitle={guideLineTitle}
       >
-        <InputLabel inputTitle={inputTitle} />
+        <InputLabel inputTitle={inputTitle} isSecondaryInput={isSecondaryInput} />
       </WithGuidelineLink>
     </>
   )

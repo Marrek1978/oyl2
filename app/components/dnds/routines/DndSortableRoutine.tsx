@@ -1,8 +1,8 @@
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from '@dnd-kit/sortable';
 
-import DndSortableListStyling from "../DndSortableListStyling";
-import DraggableListItemWithLink from "./DraggableListItemWithLink";
+import DndSortableListStyling from "~/components/dnds/DndSortableListStyling";
+import DraggableListItemWithLink from "~/components/dnds/lists/DraggableListItemWithLink";
 import { useParams } from '@remix-run/react';
 import { useEffect, useState } from "react";
 
