@@ -4,11 +4,10 @@ import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
 import { Outlet, useParams, useRouteLoaderData } from '@remix-run/react'
 
 import { requireUserId } from '~/models/session.server';
-import { updateListsOrder } from '~/models/list.server';
 import DndRoutines from '~/components/dnds/routines/DndRoutines';
-import { getRoutinesByOutcomeId } from '~/models/routines.server';
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
 import DndAndFormFlex from '~/components/baseContainers/DndAndFormFlex'
+import { getRoutinesByOutcomeId, updateRoutinesOrder } from '~/models/routines.server';
 import { ArrayOfObjectsStrToDates, ObjectStrToDates } from '~/components/utilities/helperFunctions';
 
 import type { List, Routine } from '@prisma/client';
@@ -21,7 +20,6 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
   try {
     const loaderLists = await getRoutinesByOutcomeId(userId, outcomeId)
-    console.log("🚀 ~ file: dash.desires_.$desireId_.outcomes_.$outcomeId_.routines.tsx:24 ~ loader ~ loaderLists:", loaderLists)
     return loaderLists
   } catch (error) { return error }
 }
@@ -31,10 +29,10 @@ export const action = async ({ request }: ActionArgs) => {
   if (request.method === 'PUT') {
     const formBody = await request.text();
     const parsedBody = parse(formBody);
-    const listsObj = JSON.parse(parsedBody.toServerDataString as string);
-    const list = listsObj.sortableArray
+    const routinesObj = JSON.parse(parsedBody.toServerDataString as string);
+    const routine = routinesObj.sortableArray
     try {
-      await updateListsOrder(list)
+      await updateRoutinesOrder(routine)
       return 'success'
     } catch (error) { return 'failed' }
   }
@@ -44,7 +42,7 @@ export const action = async ({ request }: ActionArgs) => {
 
 
 function OutcomeListsPage() {
-  const routines: RoutineAndTasks[] = useGetListsWithTodos()
+  const routines: RoutineAndTasks[] = useGetRoutinesWithTasks()
 
   const params = useParams()
   const [breadcumbTitle3, setBreadcumbTitle3] = useState<string>()
@@ -93,13 +91,12 @@ export const useGetLoaderData = ({ path = `routes/dash.desires_.$desireId_.outco
 }
 
 
-export const useGetListsWithTodos = (): RoutineAndTasks[] => {
+export const useGetRoutinesWithTasks = (): RoutineAndTasks[] => {
   const [routines, setRoutines] = useState<RoutineAndTasks[]>([])
   const loadedRoutines: RoutineAndTasksWithStrDates[] = useGetLoaderData({})
 
   useEffect(() => {
     if (loadedRoutines === undefined) return
-    console.log("🚀 ~ file:  ~ loadedRoutines:", loadedRoutines)
     const routinesWithProperDates: RoutineAndTasks[] = loadedRoutines.map((routine: RoutineAndTasksWithStrDates) => {
       const routineWithProperDates = ObjectStrToDates({ item: routine, dateKeys: ['createdAt', 'updatedAt'] })
       const todosWithProperDates = ArrayOfObjectsStrToDates({ items: routine.tasks, dateKeys: ['createdAt', 'updatedAt'] })
@@ -132,7 +129,7 @@ export const useGetRoutinesOnly = (): List[] => {
   return routines
 }
 
-export const useGetListsArrayLength = (): number => {
+export const useGetRoutinesArrayLength = (): number => {
   const [routinesLength, setRoutinesLength] = useState<number>()
   const loadedRoutines: RoutineAndTasksWithStrDates[] = useGetLoaderData({})
 

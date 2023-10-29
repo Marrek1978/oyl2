@@ -4,12 +4,12 @@ import { Outlet, useParams } from '@remix-run/react'
 import type { ActionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
-import CompletedTodosForm from '~/components/forms/CompletedTodosForm'
-import { useGetListsWithTodos } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.lists'
+import CompletedTasksForm from '~/components/forms/CompletedTasksForm'
 import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect'
+import { useGetRoutinesWithTasks } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.routines'
 import { deleteCompletedToDosFromList, reorderCompletedToDos, updateCompletedTodos } from '~/models/list.server'
 
-import type { ListAndToDos } from '~/types/listTypes'
+import type { RoutineAndTasks } from '~/types/routineTypes';
 
 
 export const action = async ({ request }: ActionArgs) => {
@@ -48,8 +48,8 @@ export const action = async ({ request }: ActionArgs) => {
 
 function SpecificList() {
 
-  const list = useGetCurrentList()
-  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: list, itemType: 'To-Do List' })
+  const routine = useGetCurrentRoutine()
+  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: routine, itemType: 'Routine' })
 
   return (
     <>
@@ -59,9 +59,9 @@ function SpecificList() {
           {alertMessage}
         </Modal>
       )}
-      {list && (
-           <div className='max-w-xl'>  
-          <CompletedTodosForm list={list} />
+      {routine && (
+        <div className='max-w-xl'>
+          <CompletedTasksForm routine={routine} />
         </div>
       )}
     </>
@@ -72,19 +72,19 @@ export default SpecificList
 
 
 
-export const useGetCurrentList = (): ListAndToDos | undefined | null => {
-  const loadedListsAndToDos: ListAndToDos[] | undefined = useGetListsWithTodos()
+export const useGetCurrentRoutine = (): RoutineAndTasks | undefined | null => {
+  const loadedRoutinesAndTasks: RoutineAndTasks[] | undefined = useGetRoutinesWithTasks()
   const params = useParams()
-  const [list, setList] = useState<ListAndToDos | null>()
+  const [routine, setRoutine] = useState<RoutineAndTasks | null>()
 
   useEffect(() => {
-    const { listId } = params
-    if (!loadedListsAndToDos || loadedListsAndToDos === undefined || loadedListsAndToDos.length === 0) return
-    const thisList = loadedListsAndToDos.find(list => list.id === listId)
-    if (!thisList || thisList === undefined) return setList(null)
-    setList(thisList)
+    const { routineId } = params
+    if (!loadedRoutinesAndTasks || loadedRoutinesAndTasks === undefined || loadedRoutinesAndTasks.length === 0) return
+    const thisRoutine = loadedRoutinesAndTasks.find(routine => routine.id === routineId)
+    if (!thisRoutine || thisRoutine === undefined) return setRoutine(null)
+    setRoutine(thisRoutine)
 
-  }, [loadedListsAndToDos, params])
+  }, [loadedRoutinesAndTasks, params])
 
-  return list;
+  return routine;
 }

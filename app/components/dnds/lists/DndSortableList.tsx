@@ -1,10 +1,10 @@
 import { CSS } from "@dnd-kit/utilities";
+import { useEffect, useState } from "react";
+import { useParams } from '@remix-run/react';
 import { useSortable } from '@dnd-kit/sortable';
 
 import DndSortableListStyling from "../DndSortableListStyling";
 import DraggableListItemWithLink from "./DraggableListItemWithLink";
-import { useParams } from '@remix-run/react';
-import { useEffect, useState } from "react";
 
 
 type Props = {
@@ -31,10 +31,6 @@ function DndSortableList({ id, title }: Props) {
   }, [params, id])
 
 
-
-
-
-
   return (
     <>
       <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mt-0">
@@ -43,7 +39,7 @@ function DndSortableList({ id, title }: Props) {
             <DraggableListItemWithLink
               listTitle={title}
               linkDestination={id}
-              linkText={'Display List'}
+              linkText={'View List'}
               btnColorDaisyUI={'link'}
               textSizeTW={'xs'}
             />

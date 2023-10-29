@@ -2,26 +2,25 @@ import { v4 as uuidv4 } from "uuid";
 import { Form, useFetcher, useParams } from '@remix-run/react';
 import React, { useEffect, useMemo, useState } from 'react'
 
-import FormButtons from "./FormButtons";
-import HeadingH2 from "../titles/HeadingH2";
-import BasicFormAreaBG from "./BasicFormAreaBG";
 import Divider from '~/components/utilities/Divider';
-import SubHeading14px from "../titles/SubHeading14px";
 import DatePicker from '~/components/list/DatePicker';
+import HeadingH2 from "~/components/titles/HeadingH2";
 import DndTodos from '~/components/dnds/todos/DndTodos';
-import useServerMessages from "../modals/useServerMessages";
-import { DesireOutcomeGuideline } from "../utilities/Guidelines";
-import { headerText, useSaveBtnText } from "./FormsCommonFunctions";
-import useGetNavigationState from "../utilities/useNavigationState";
+import FormButtons from "~/components/forms/FormButtons";
+import BtnWithProps from "~/components/buttons/BtnWithProps";
+import { ArrowIcon45deg } from "~/components/utilities/icons";
+import SubHeading14px from "~/components/titles/SubHeading14px";
+import BasicFormAreaBG from "~/components/forms/BasicFormAreaBG";
 import EditListToDoModal from '~/components/modals/EditListToDoModal';
-import InputLabelWithGuideLineLink from "./InputLabelWithGuideLineLink";
-import ToggleWithLabelAndGuideLineLink from "./ToggleWithLabelAndGuideLineLink";
+import useServerMessages from "~/components/modals/useServerMessages";
+import { DesireOutcomeGuideline } from "~/components/utilities/Guidelines";
+import useGetNavigationState from "~/components/utilities/useNavigationState";
+import { headerText, useSaveBtnText } from "~/components/forms/FormsCommonFunctions";
 import { sortTodos, resetTodoSortOrder } from '~/components/utilities/helperFunctions';
-
+import InputLabelWithGuideLineLink from "~/components/forms/InputLabelWithGuideLineLink";
+import ToggleWithLabelAndGuideLineLink from "~/components/forms/ToggleWithLabelAndGuideLineLink";
 
 import type { CreationTodo, ListAndToDos } from '~/types/listTypes';
-import BtnWithProps from "../buttons/BtnWithProps";
-import { ArrowIcon45deg } from "../utilities/icons";
 
 interface TodosListFormProps {
   list?: ListAndToDos;
@@ -34,20 +33,20 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
   const params = useParams()
   const fetcher = useFetcher()
 
-  const [todo, setTodo] = useState<string>('');
-  const [todos, setTodos] = useState<CreationTodo[]>([]);
+  const [todoText, setTodoText] = useState<string>('');
   const [title, setTitle] = useState<string>('');
-  const [sortOrder, setSortOrder] = useState<number>(0)
   const [listId, setListId] = useState<string>('')
+  const [sortOrder, setSortOrder] = useState<number>(0)
   const [outcomeId, setOutcomeId] = useState<string>('')
+  const [todos, setTodos] = useState<CreationTodo[]>([]);
   const [isUrgent, setIsUrgent] = useState<boolean>(false);
+  const [isAddable, setIsAddable] = useState<boolean>(false)
+  const [isSaveable, setIsSaveable] = useState<boolean>(false)
   const [isImportant, setIsImportant] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [isEditToDoModalOpen, setIsEditToDoModalOpen] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<CreationTodo | null>(null);
   const [selectedTodoIndex, setSelectedTodoIndex] = useState<number | null>(null);
-  const [isSaveable, setIsSaveable] = useState<boolean>(false)
-  const [isAddable, setIsAddable] = useState<boolean>(false)
-  const [isEditToDoModalOpen, setIsEditToDoModalOpen] = useState(false);
 
   const { isIdle, navigationState } = useGetNavigationState()
   useServerMessages({ fetcherState: navigationState, isShowFailed: true })
@@ -73,9 +72,9 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
 
 
   useEffect(() => {
-    const isInputEmpty = !todo
+    const isInputEmpty = !todoText
     setIsAddable(!isInputEmpty)
-  }, [todo])
+  }, [todoText])
 
 
   const handleSave = async () => {
@@ -117,9 +116,9 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
 
 
   const handleAddTodoToList = () => {
-    if (todo) {
-      addTodoToTodosArray(todo);
-      setTodo('');
+    if (todoText) {
+      addTodoToTodosArray();
+      setTodoText('');
       setIsUrgent(false);
       setIsImportant(false);
       setSelectedDate(null);
@@ -127,19 +126,19 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
   }
 
 
-  const addTodoToTodosArray = (newTodo: string) => {
+  const addTodoToTodosArray = () => {
     const id = uuidv4();
-    const todo: CreationTodo = {
+    const newTodo: CreationTodo = {
       id,
-      body: newTodo,
+      body: todoText,
       isUrgent,
       isImportant,
       isComplete: false,
       dueDate: selectedDate || null,
-      sortOrder: 0
+      sortOrder
     }
     setTodos(prevTodos => {
-      const updatedTodos = [...prevTodos, todo];
+      const updatedTodos = [...prevTodos, newTodo];
       return sortTodos(updatedTodos);
     });
   };
@@ -173,7 +172,6 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
           <input type='string' name='outcomeId' value={outcomeId} hidden readOnly />
 
           <div className=' flex gap-12 flex-wrap'>
-
             <div className="flex-1 form-control gap-y-8 ">
               <div >
                 <InputLabelWithGuideLineLink
@@ -197,8 +195,8 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
                   guideline={DesireOutcomeGuideline} />
                 <input type="text"
                   placeholder="Enter a To-Do"
-                  value={todo}
-                  onChange={(e) => setTodo(e.target.value)}
+                  value={todoText}
+                  onChange={(e) => setTodoText(e.target.value)}
                   className=" input-field-text-title "
                 />
               </div>
@@ -242,7 +240,7 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
               <BtnWithProps
                 btnPurpose={'save'}
                 isOutlined={true}
-                btnLabel={'Add to List'}
+                btnLabel={'Add To-Do to List'}
                 icon={ArrowIcon45deg}
                 isBtnDisabled={!isAddable}
                 onClickFunction={handleAddTodoToList}

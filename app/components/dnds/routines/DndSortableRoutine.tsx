@@ -31,10 +31,6 @@ function DndSortableList({ id, title }: Props) {
   }, [params, id])
 
 
-
-
-
-
   return (
     <>
       <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mt-0">
@@ -43,7 +39,7 @@ function DndSortableList({ id, title }: Props) {
             <DraggableListItemWithLink
               listTitle={title}
               linkDestination={id}
-              linkText={'Display List'}
+              linkText={'View Routine '}
               btnColorDaisyUI={'link'}
               textSizeTW={'xs'}
             />

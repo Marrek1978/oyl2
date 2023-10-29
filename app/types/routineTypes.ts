@@ -5,7 +5,7 @@ export type RoutineAndTasks = Routine & { tasks: Task[] };
 export interface CreationTask {
   id: string;
   body: string;
-  complete: boolean;
+  isComplete: boolean;
   sortOrder: number;
 }
 

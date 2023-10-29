@@ -8,18 +8,19 @@ import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
 import { sortTodos } from '~/components/utilities/helperFunctions';
 import ToDoWithCompletedBox from '~/components/list/todos/ToDoWithCompletedBox';
 
-import type { ListAndToDos, Todo } from '~/types/listTypes';
+import type { ToDo } from '@prisma/client';
+import type { ListAndToDos } from '~/types/listTypes';
 
 interface TodosCompletedFormProps {
   list: ListAndToDos;
 }
 
-function TodosCompletedForm({ list }: TodosCompletedFormProps) {
+function CompletedTodosForm({ list }: TodosCompletedFormProps) {
 
   const matches = useMatches()
   const fetcher = useFetcher();
 
-  const [todos, setTodos] = useState<Todo[]>([])
+  const [todos, setTodos] = useState<ToDo[]>([])
   const [isShowCloseBtn, setIsShowCloseBtn] = useState<boolean>(true)
   const [isDeletingToDos, setIsDeletingToDos] = useState<boolean>(false)
   const [isDisableAllBtns, setIsDisableAllBtns] = useState<boolean>(false)
@@ -44,7 +45,7 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
   }, [todos])
 
 
- 
+
   // if completed line thru & at bottom
 
   // const handleCompletedToBottom = async (): Promise<void> => {
@@ -124,4 +125,4 @@ function TodosCompletedForm({ list }: TodosCompletedFormProps) {
   )
 }
 
-export default TodosCompletedForm
+export default CompletedTodosForm

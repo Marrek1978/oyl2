@@ -1,10 +1,10 @@
 import { parse } from 'querystring';
 import { useEffect, useState } from 'react';
-import { Outlet, useParams, useRouteLoaderData } from '@remix-run/react'
 import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
+import { Outlet, useParams, useRouteLoaderData } from '@remix-run/react'
 
-import { requireUserId } from '~/models/session.server';
 import DndLists from '~/components/dnds/lists/DndLists';
+import { requireUserId } from '~/models/session.server';
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
 import DndAndFormFlex from '~/components/baseContainers/DndAndFormFlex'
 import { getListsByOutcomeId, updateListsOrder } from '~/models/list.server';
@@ -42,10 +42,8 @@ export const action = async ({ request }: ActionArgs) => {
 
 
 function OutcomeListsPage() {
-  const lists: ListAndToDos[] = useGetListsWithTodos()
-
-
   const params = useParams()
+  const lists: ListAndToDos[] = useGetListsWithTodos()
   const [breadcumbTitle3, setBreadcumbTitle3] = useState<string>()
 
   useEffect(() => {
@@ -87,7 +85,6 @@ export const useGetLoaderData = ({ path = `routes/dash.desires_.$desireId_.outco
     if (!loadedData) return
     setLoadedLists(loadedData)
   }, [loadedData])
-
   return loadedLists
 }
 

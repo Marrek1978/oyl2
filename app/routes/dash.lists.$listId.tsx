@@ -3,7 +3,7 @@ import type { ActionArgs } from '@remix-run/server-runtime';
 import { Outlet, useMatches, useParams } from '@remix-run/react';
 
 import Modal from '~/components/modals/Modal';
-import TodosCompletedForm from '~/components/forms/TodosCompletedForm';
+import TodosCompletedForm from '~/components/forms/CompletedTodosForm';
 import { deleteCompletedToDosFromList, reorderCompletedToDos, updateCompletedTodos } from '~/models/list.server';
 
 import type { ListAndToDos } from '~/types/listTypes';

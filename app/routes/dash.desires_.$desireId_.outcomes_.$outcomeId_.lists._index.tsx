@@ -1,16 +1,13 @@
 import { parse } from 'querystring';
-import ListForm from '~/components/forms/ListForm'
 import type { ActionArgs } from '@remix-run/server-runtime';
 
 import { createList } from '~/models/list.server';
+import ListForm from '~/components/forms/ListForm'
 import { requireUserId } from '~/models/session.server';
 import { useGetListsArrayLength } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.lists';
 
 
 export const action = async ({ request }: ActionArgs) => {
-
-  console.log('lists._index.tsx action')
-
 
   if (request.method === 'POST') {
     const userId = await requireUserId(request);
@@ -34,7 +31,6 @@ export const action = async ({ request }: ActionArgs) => {
 
 
 function ListFormIndexPage() {
-
   const nextSortOrder = useGetListsArrayLength()
 
   return (

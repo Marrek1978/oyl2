@@ -6,7 +6,7 @@ import { EditIcon } from '../utilities/icons'
 
 
 import type { ListAndToDos } from '~/types/listTypes'
-import TodosCompletedForm from '../forms/TodosCompletedForm'
+import TodosCompletedForm from '../forms/CompletedTodosForm'
 
 
 type Props = {

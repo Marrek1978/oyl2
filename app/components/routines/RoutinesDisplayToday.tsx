@@ -4,7 +4,7 @@ import TextBtn from '../buttons/TextBtn'
 import { EditIcon } from '../utilities/icons'
 
 import Modal from '../modals/Modal'
-import RoutineTodosCompletedForm from '../forms/RoutineTodosCompletedForm'
+import RoutineTodosCompletedForm from '../forms/CompletedTasksForm'
 
 import type { RoutineAndToDos } from '~/types/routineTypes'
 

@@ -41,14 +41,24 @@ export function createRoutineAndTasks({
   title,
   tasks,
   outcomeId,
-}: Pick<Routine, "title"> & { userId: User["id"] } & {
+  sortOrder
+}: Pick<Routine, "title" | "sortOrder"> & { userId: User["id"] } & {
   tasks: CreationTask[];
 } & {  outcomeId?: Routine["outcomeId"];
 }) {
+  console.log("🚀 ~ file: routines.server.ts:49 ~ sortOrder:", sortOrder)
+  console.log("🚀 ~ file: routines.server.ts:49 ~ outcomeId:", outcomeId)
+  console.log("🚀 ~ file: routines.server.ts:49 ~ tasks:", tasks)
+  console.log("🚀 ~ file: routines.server.ts:49 ~ title:", title)
+  console.log("🚀 ~ file: routines.server.ts:49 ~ userId:", userId)
+
+  console.log('at server fucntion createRoutineAndTasks')
+
   try {
     const result = prisma.routine.create({
       data: {
         title,
+        sortOrder,
         userId,
         outcomeId,
         tasks: {
@@ -58,6 +68,7 @@ export function createRoutineAndTasks({
         },
       },
     });
+    console.log("🚀 ~ file: routines.server.ts:66 ~ result:", result)
     return result;
   } catch (error) {
     throw error;
@@ -66,10 +77,10 @@ export function createRoutineAndTasks({
 
 export async function updateCompletedTasks({
   id,
-  complete,
+  isComplete,
 }: {
   id: Task["id"];
-  complete: Task["complete"];
+  isComplete: Task["isComplete"];
 }) {
   try {
     const result = prisma.task.update({
@@ -77,7 +88,7 @@ export async function updateCompletedTasks({
         id: id,
       },
       data: {
-        complete: complete,
+        isComplete,
       },
     });
     return result;
@@ -139,13 +150,13 @@ export async function updateRoutineAndTasks({
         where: { id: task.id },
         create: {
           body: task.body,
-          complete: task.complete,
+          isComplete: task.isComplete,
           sortOrder: task.sortOrder,
           routine: { connect: { id } },
         },
         update: {
           body: task.body,
-          complete: task.complete,
+          isComplete: task.isComplete,
           sortOrder: task.sortOrder,
         },
       });
@@ -178,6 +189,24 @@ export async function getOutcomeRoutinesWithTasks(
   }
 }
 
+
+export async function updateRoutinesOrder(routines: Routine[]) {
+  try {
+    const updatePromises = routines.map((routine) => {
+    return prisma.routine.update({
+      where: { id: routine.id },
+      data: {
+        sortOrder: routine.sortOrder,
+      },
+    });
+  })
+
+  const updateRoutines = await prisma.$transaction(updatePromises);
+  return updateRoutines;
+} catch (error) {
+  throw error;
+}
+}
 
 
 //?  ------------------ Outcome Lists ----------------- //

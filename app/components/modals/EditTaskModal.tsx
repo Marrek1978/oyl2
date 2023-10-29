@@ -1,60 +1,61 @@
-import React, { useEffect, useState } from 'react'
-import type { CreationRoutineToDo } from '~/types/routineTypes'
-import BasicFormAreaBG from '../forms/BasicFormAreaBG';
 import { Form } from '@remix-run/react';
+import React, { useEffect, useState } from 'react'
+
+import SolidBtn from '../buttons/SolidBtn';
+import BasicFormAreaBG from '../forms/BasicFormAreaBG';
+import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
 import { DesireOutcomeGuideline } from '../utilities/Guidelines';
 import InputLabelWithGuideLineLink from '../forms/InputLabelWithGuideLineLink';
-import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
-import SolidBtn from '../buttons/SolidBtn';
 
-interface EditRoutineToDoProps {
-  todo: CreationRoutineToDo | null;
-  setIsEditRoutineToDoModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  updateRoutineToDo: (index: number, todo: CreationRoutineToDo) => void;
+import type { CreationTask } from '~/types/routineTypes'
+
+
+interface EditTaskProps {
+  task: CreationTask | null;
+  setIsEditTaskModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  updateTask: (index: number, todo: CreationTask) => void;
   index: number | null;
 }
 
-const EditRoutineToDoModal: React.FC<EditRoutineToDoProps> = ({ todo, setIsEditRoutineToDoModalOpen, updateRoutineToDo, index }) => {
+const EditTaskModal: React.FC<EditTaskProps> = ({ task, setIsEditTaskModalOpen, updateTask, index }) => {
 
-  const [body, setBody] = useState<string>(todo?.body || '');
+  const [body, setBody] = useState<string>(task?.body || '');
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
 
 
   useEffect(() => {
-    setIsSaveable(body !== todo?.body)
-  }, [body, todo]);
+    setIsSaveable(body !== task?.body)
+  }, [body, task]);
 
 
   const handleSave = () => {
-    if (todo === null || index === null) {
+    if (task === null || index === null) {
       return;
     }
-    const updatedTodo: CreationRoutineToDo = {
-      ...todo,
+    const updatedTodo: CreationTask = {
+      ...task,
       body,
     };
 
-    updateRoutineToDo(index, updatedTodo);
-    setIsEditRoutineToDoModalOpen(false);
+    updateTask(index, updatedTodo);
+    setIsEditTaskModalOpen(false);
   }
 
 
   return (
     <>
       <input type="checkbox"
-        id={`edit-todo-modal-${todo?.id}`}
+        id={`edit-task-modal-${task?.id}`}
         className="modal-toggle" />
 
       <div className="modal z-40 ">
-        <BasicFormAreaBG
-          title='Edit your Routine Item'
-        >
+        <BasicFormAreaBG h2Text='Edit your Routine Item'  >
           <Form method='post' className='mx-8'>
             <div className="form-control gap-6 vert-space-between-inputs ">
               <div >
                 <InputLabelWithGuideLineLink
-                  text='To Do Item'
-                  title='To Do Item'
+                  inputTitle='Task'
+                  guideLineTitle='Task'
                   guideline={DesireOutcomeGuideline} />
                 <input type="text"
                   placeholder="Enter a Routine To-Do Item"
@@ -69,7 +70,7 @@ const EditRoutineToDoModal: React.FC<EditRoutineToDoProps> = ({ todo, setIsEditR
               <div className='flex-1'>
                 <SolidBtnGreyBlue
                   text='Cancel Edits'
-                  onClickFunction={() => setIsEditRoutineToDoModalOpen(false)}
+                  onClickFunction={() => setIsEditTaskModalOpen(false)}
                 />
               </div>
 
@@ -90,7 +91,7 @@ const EditRoutineToDoModal: React.FC<EditRoutineToDoProps> = ({ todo, setIsEditR
                 font-mont rounded-none 
                 w-40
                 "
-              onClick={() => setIsEditRoutineToDoModalOpen(false)}
+              onClick={() => setIsEditTaskModalOpen(false)}
             >Cancel Edits
             </label>
             <label htmlFor="my-modal-5"
@@ -109,4 +110,4 @@ const EditRoutineToDoModal: React.FC<EditRoutineToDoProps> = ({ todo, setIsEditR
   )
 }
 
-export default EditRoutineToDoModal
+export default EditTaskModal

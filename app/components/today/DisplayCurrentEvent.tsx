@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
-import TodosCompletedForm from '../forms/TodosCompletedForm'
-import RoutineTodosCompletedForm from '../forms/RoutineTodosCompletedForm'
+import TodosCompletedForm from '../forms/CompletedTodosForm'
+import RoutineTodosCompletedForm from '../forms/CompletedTasksForm'
 
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndToDos } from '~/types/routineTypes'

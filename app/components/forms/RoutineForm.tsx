@@ -5,16 +5,16 @@ import { Form, useFetcher, useParams } from '@remix-run/react';
 import Divider from '~/components/utilities/Divider';
 import HeadingH2 from '~/components/titles/HeadingH2';
 import FormButtons from "~/components/forms/FormButtons";
+import DndTasks from '~/components/dnds/routines/DndTasks';
 import BtnWithProps from "~/components/buttons/BtnWithProps";
+import EditTaskModal from '~/components/modals/EditTaskModal';
 import { ArrowIcon45deg } from '~/components/utilities/icons';
 import SubHeading14px from '~/components/titles/SubHeading14px';
 import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
 import useServerMessages from "~/components/modals/useServerMessages";
-import DndRoutineToDos from '~/components/dnds/routines/DndTasks';
 import { DesireOutcomeGuideline } from '~/components/utilities/Guidelines';
-import EditRoutineToDoModal from '~/components/modals/EditRoutineToDoModal';
 import useGetNavigationState from "~/components/utilities/useNavigationState";
-import { resetRoutineTodosSortOrder } from '~/components/utilities/helperFunctions';
+import { resetTasksSortOrder } from '~/components/utilities/helperFunctions';
 import { headerText, useSaveBtnText } from "~/components/forms/FormsCommonFunctions";
 import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
 
@@ -28,23 +28,20 @@ interface RoutinesFormProps {
 }
 
 function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps) {
-
   const params = useParams()
   const fetcher = useFetcher();
 
-  const [routineTodo, setRoutineTodo] = useState<string>(''); // matches todoItem
-  const [routineTodos, setRoutineTodos] = useState<CreationTask[]>([])
-  console.log("🚀 ~ file: RoutineForm.tsx:40 ~ RoutineForm ~ routineTodos:", routineTodos)
   const [title, setTitle] = useState<string>('');
+  const [taskText, setTaskText] = useState<string>(''); // matches todoItem
+  const [tasks, setTasks] = useState<CreationTask[]>([])
   const [sortOrder, setSortOrder] = useState<number>(0)
   const [routineId, setRoutineId] = useState<string>('')
   const [outcomeId, setOutcomeId] = useState<string>('')
-  const [selectedRoutineTodo, setSelectedRoutineTodo] = useState<CreationTask | null>(null);
-
-  const [selectedTodoIndex, setSelectedTodoIndex] = useState<number | null>(null);
-  const [isSaveable, setIsSaveable] = useState<boolean>(false)
   const [isAddable, setIsAddable] = useState<boolean>(false)
-  const [isEditToDoModalOpen, setIsEditToDoModalOpen] = useState(false);
+  const [isSaveable, setIsSaveable] = useState<boolean>(false)
+  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<CreationTask | null>(null);
+  const [selectedTaskIndex, setSelectedTaskIndex] = useState<number | null>(null);
 
 
   const { isIdle, navigationState } = useGetNavigationState()
@@ -54,41 +51,38 @@ function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps
   const headerTxt = useMemo(() => headerText(isNew, 'Routine', routine?.title || ''), [isNew, routine?.title])
 
 
-
-
   useEffect(() => {
-    if (routine) {
-      setTitle(routine?.title || '');
-      setRoutineTodos(routine.tasks || []);
-      setRoutineId(routine?.id || '')
-      setSortOrder(routine?.sortOrder || nextSortOrder || 0)
-      setOutcomeId(routine?.outcomeId || params.outcomeId || '')
-    }
+    setTitle(routine?.title || '');
+    setTasks(routine?.tasks || []);
+    setRoutineId(routine?.id || '')
+    setSortOrder(routine?.sortOrder || nextSortOrder || 0)
+    setOutcomeId(routine?.outcomeId || params.outcomeId || '')
   }, [routine, params, nextSortOrder])
 
 
   useEffect(() => {
-    const isInputEmpty = !title || routineTodos.length === 0
-    const isInputDifferent = title !== routine?.title || routineTodos !== routine?.tasks
+    const isInputEmpty = !title || tasks.length === 0
+    const isInputDifferent = title !== routine?.title || tasks !== routine?.tasks
     setIsSaveable(!isInputEmpty && (isInputDifferent))
-  }, [isNew, routineTodos, title, routine, isIdle])
+  }, [isNew, tasks, title, routine, isIdle])
 
 
 
   useEffect(() => {
-    const isInputEmpty = !routineTodo
+    const isInputEmpty = !taskText
     setIsAddable(!isInputEmpty)
-  }, [routineTodo])
+  }, [taskText])
 
 
 
   const handleSave = async () => {
-    const routineTodosString = JSON.stringify(routineTodos);
+    console.log('saving routine')
+    const tasksString = JSON.stringify(tasks);
 
     try {
       fetcher.submit({
         title,
-        routineTodosString,
+        tasksString,
         outcomeId,
         sortOrder,
       }, {
@@ -100,12 +94,14 @@ function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps
 
 
   const handleEdit = async () => {
-    const routineTodosString = JSON.stringify(routineTodos);
+    console.log('saving routine')
+
+    const tasksString = JSON.stringify(tasks);
     try {
       fetcher.submit({
         id: routineId,
         title,
-        routineTodosString
+        tasksString
       }, {
         method: 'PUT',
       })
@@ -116,34 +112,33 @@ function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps
 
   const clearRoutineState = () => {
     setTitle('')
-    setRoutineTodos([])
+    setTasks([])
   }
 
 
-  const handleAddTodoToRoutineArray = () => {
-    console.log('adding to ')
-
-    if (routineTodo) {
-      addTodoToRoutineTodosArray(routineTodo);
+  const handleAddTaskToRoutine = () => {
+    if (taskText) {
+      addTaskToTasksArray();
+      setTaskText('');
     }
   }
 
-  const addTodoToRoutineTodosArray = (newRoutineTodo: string) => {
+  const addTaskToTasksArray = () => {
     const id = uuidRoutines();
-    const todo: CreationTask = {
+    const newTask: CreationTask = {
       id,
-      body: routineTodo,
-      complete: false,
-      sortOrder: routineTodos.length,
+      body: taskText,
+      isComplete: false,
+      sortOrder: tasks.length,
     }
-    setRoutineTodos(prevRoutineTodos => {
-      return [...prevRoutineTodos, todo];
+    setTasks(prevTasks => {
+      return [...prevTasks, newTask];
     });
   };
 
 
-  const updateTodo = (index: number | null, updatedTodo: CreationTask) => {
-    setRoutineTodos(routineTodos.map((todo, i) => (i === index ? updatedTodo : todo)));
+  const updateTask = (index: number | null, updatedTask: CreationTask) => {
+    setTasks(tasks.map((task, i) => (i === index ? updatedTask : task)));
   };
 
 
@@ -151,7 +146,7 @@ function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps
     <>
       <BasicFormAreaBG h2Text={headerTxt}  >
         <Form method='post' className='  form-control gap-y-4 p-8'>
-          <input type="string" name='listId' value={routineId} hidden readOnly />
+          <input type="string" name='routineId' value={routineId} hidden readOnly />
           <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
           <input type='string' name='outcomeId' value={outcomeId} hidden readOnly />
 
@@ -174,13 +169,13 @@ function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps
 
               <div className='  '>
                 <InputLabelWithGuideLineLink
-                  inputTitle='Add a To-do'
-                  guideLineTitle='To-dos'
+                  inputTitle='Add a Task'
+                  guideLineTitle='Tasks'
                   guideline={DesireOutcomeGuideline} />
                 <input type="text"
-                  placeholder="Enter a Routine To-Do"
-                  value={routineTodo}
-                  onChange={(e) => setRoutineTodo(e.target.value)}
+                  placeholder="Enter a Task"
+                  value={taskText}
+                  onChange={(e) => setTaskText(e.target.value)}
                   className=" input-field-text-title "
                 />
               </div>
@@ -188,10 +183,10 @@ function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps
               <BtnWithProps
                 btnPurpose={'save'}
                 isOutlined={true}
-                btnLabel={'Add to Routine'}
+                btnLabel={'Add Task to Routine'}
                 icon={ArrowIcon45deg}
                 isBtnDisabled={!isAddable}
-                onClickFunction={handleAddTodoToRoutineArray}
+                onClickFunction={handleAddTaskToRoutine}
               />
             </div>
 
@@ -207,14 +202,13 @@ function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps
                 </div>
 
                 <div className=' max-h-[360px] overflow-auto overflow-x-hidden mt-4 pr-2'>
-
-                  <DndRoutineToDos
-                    setTodos={setRoutineTodos}
-                    todos={routineTodos}
-                    setTodoSortOrder={resetRoutineTodosSortOrder}
-                    setIsEditToDoModalOpen={setIsEditToDoModalOpen}
-                    setSelectedTodoIndex={setSelectedTodoIndex}
-                    setSelectedTodo={setSelectedRoutineTodo} />
+                  <DndTasks
+                    setTasks={setTasks}
+                    tasks={tasks}
+                    setTaskSortOrder={resetTasksSortOrder}
+                    setIsEditTaskModalOpen={setIsEditTaskModalOpen}
+                    setSelectedTaskIndex={setSelectedTaskIndex}
+                    setSelectedTask={setSelectedTask} />
                 </div>
               </div>
 
@@ -232,7 +226,6 @@ function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps
 
 
           {!isNew && (
-
             <FormButtons
               isShowSaveBtn={false}
               isNew={isNew}
@@ -272,14 +265,13 @@ function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps
         </Form>
       </BasicFormAreaBG>
 
-
-      {isEditToDoModalOpen && (
+      {isEditTaskModalOpen && (
         <>
-          <EditRoutineToDoModal
-            todo={selectedRoutineTodo}
-            setIsEditRoutineToDoModalOpen={setIsEditToDoModalOpen}
-            updateRoutineToDo={updateTodo}
-            index={selectedTodoIndex}
+          <EditTaskModal
+            task={selectedTask}
+            setIsEditTaskModalOpen={setIsEditTaskModalOpen}
+            updateTask={updateTask}
+            index={selectedTaskIndex}
           />
         </>
       )}

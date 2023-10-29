@@ -1,4 +1,4 @@
-import type { CreationRoutineToDo } from "~/types/routineTypes";
+import type { CreationTask } from "~/types/routineTypes";
 
 import type {
   DesireWithOutcomes,
@@ -148,10 +148,10 @@ export function resetTodoSortOrder<T extends HasSortOrder>(todos: T[]): T[] {
   });
 }
 
-export function resetRoutineTodosSortOrder(todos: CreationRoutineToDo[]) {
-  return todos.map((todo, index) => {
+export function resetTasksSortOrder(tasks: CreationTask[]) {
+  return tasks.map((task, index) => {
     return {
-      ...todo,
+      ...task,
       sortOrder: index,
     };
   });

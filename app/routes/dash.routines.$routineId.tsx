@@ -3,7 +3,7 @@ import type { ActionArgs } from '@remix-run/server-runtime';
 import { Outlet, useMatches, useParams } from '@remix-run/react'
 
 import Modal from '~/components/modals/Modal'
-import RoutineTodosCompletedForm from '~/components/forms/RoutineTodosCompletedForm';
+import RoutineTodosCompletedForm from '~/components/forms/CompletedTasksForm';
 import { reorderCompletedTasks, updateCompletedTasks } from '~/models/routines.server';
 
 import type { RoutineAndTasks } from '~/types/routineTypes';

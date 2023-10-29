@@ -12,9 +12,9 @@ import DndInfo from '../DndInfo';
 import SortableToDo from './SortableTodo';
 
 interface DndTodosProps {
-  setTodos: React.Dispatch<React.SetStateAction<CreationTodo[]>>;
   todos: CreationTodo[];
   setTodoSortOrder: (todos: CreationTodo[]) => CreationTodo[];
+  setTodos: React.Dispatch<React.SetStateAction<CreationTodo[]>>;
   setIsEditToDoModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedTodoIndex: React.Dispatch<React.SetStateAction<number | null>>;
   setSelectedTodo: React.Dispatch<React.SetStateAction<CreationTodo | null>>;
@@ -44,7 +44,6 @@ function DndTodos({ setTodos, todos, setTodoSortOrder, setIsEditToDoModalOpen, s
 
   return (
     <>
-
       <div className='flex justify-between items-center w-full'>
         <div className='text-success flex-1 w-full '>
           <SubHeading14px text='To Dos' />
