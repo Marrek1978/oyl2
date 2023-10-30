@@ -1,4 +1,3 @@
-import type { CreationTask } from "~/types/routineTypes";
 
 import type {
   DesireWithOutcomes,
@@ -6,6 +5,7 @@ import type {
 } from "~/types/desireTypes";
 
 import type { HasSortOrder } from "~/types/genericDndArrayTypes";
+// import type { Task } from "@prisma/client";
 
 
 export function transformToDoDataDates(data: any) {
@@ -148,14 +148,14 @@ export function resetTodoSortOrder<T extends HasSortOrder>(todos: T[]): T[] {
   });
 }
 
-export function resetTasksSortOrder(tasks: CreationTask[]) {
-  return tasks.map((task, index) => {
-    return {
-      ...task,
-      sortOrder: index,
-    };
-  });
-}
+// export function resetTasksSortOrder(tasks: CreationTask[]) {
+//   return tasks.map((task, index) => {
+//     return {
+//       ...task,
+//       sortOrder: index,
+//     };
+//   });
+// }
 
 export function varsForPluralText(array: any[]): {
   plural: string;
@@ -164,4 +164,29 @@ export function varsForPluralText(array: any[]): {
   const plural = array && array.length > 1 ? "s" : "";
   const length = array.length;
   return { plural, length };
+}
+
+
+
+export function sortTasks<T extends HasSortOrder>(tasks: T[]): T[] {
+  const tasksCopy = [...tasks]
+
+  tasksCopy.sort((a, b) => {
+    if (a.isComplete && !b.isComplete) {
+      return 1;
+    } else if (!a.isComplete && b.isComplete) {
+      return -1;
+    } else { return 0; }
+  })
+
+  return resetTasksSortOrder(tasksCopy)
+}
+
+export function resetTasksSortOrder<T extends HasSortOrder>(tasks: T[]): T[] {
+  return tasks.map((task, index) => {
+    return {
+      ...task,
+      sortOrder: index,
+    }
+  })
 }

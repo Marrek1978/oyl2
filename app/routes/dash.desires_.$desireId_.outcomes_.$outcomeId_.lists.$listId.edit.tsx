@@ -33,10 +33,8 @@ function EditListPage() {
   const loadedList = useGetCurrentList()
   const [list, setList] = useState<ListAndToDos>()
 
-
   useEffect(() => {
     if (!loadedList) return
-
     const todos = loadedList.todos
     const properlySortedTodos = sortTodos(todos);
     const newList = {

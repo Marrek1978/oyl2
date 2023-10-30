@@ -8,12 +8,13 @@ import DndAndSortableContexts from '~/components/dnds/DndAndSortableContexts';
 import useDndDropOrderSaveFunctions from '~/components/dnds/useDndDropOrderSaveFunctions';
 
 import type { CreationTask } from '~/types/routineTypes';
+import type { HasSortOrder } from '~/types/genericDndArrayTypes';
 
 
 interface DndRoutineToDosProps {
   tasks: CreationTask[];
   setTasks: React.Dispatch<React.SetStateAction<CreationTask[]>>;
-  setTaskSortOrder: (todos: CreationTask[]) => CreationTask[];
+  setTaskSortOrder: <T extends HasSortOrder>(tasks: T[]) => T[];
   setIsEditTaskModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedTaskIndex: React.Dispatch<React.SetStateAction<number | null>>;
   setSelectedTask: React.Dispatch<React.SetStateAction<CreationTask | null>>;
@@ -21,8 +22,8 @@ interface DndRoutineToDosProps {
 }
 
 
-function DndTasks({setTasks, tasks=[], setTaskSortOrder, setIsEditTaskModalOpen, setSelectedTaskIndex, setSelectedTask}: DndRoutineToDosProps) {
- 
+function DndTasks({ setTasks, tasks = [], setTaskSortOrder, setIsEditTaskModalOpen, setSelectedTaskIndex, setSelectedTask }: DndRoutineToDosProps) {
+
   const fetcher = useFetcher();
 
   const { handleDragEnd } = useDndDropOrderSaveFunctions({ fetcher, sortableArray: tasks, setSortableArray: setTasks, saveOrderToDB: false })
@@ -30,19 +31,6 @@ function DndTasks({setTasks, tasks=[], setTaskSortOrder, setIsEditTaskModalOpen,
   useServerMessages({ fetcherMessage, fetcherState, isShowFailed: true })
 
 
-
-  // function handleDragEnd(event: DragEndEvent) {
-  //   const { active, over } = event;
-  //   if (active.id !== over?.id) {
-  //     setTodos((prevTodos: CreationRoutineToDo[]) => {
-  //       const oldIndex = prevTodos.findIndex(todo => todo.id === active.id);
-  //       const newIndex = prevTodos.findIndex(todo => todo.id === over?.id);
-  //       const newTodos =  arrayMove(prevTodos, oldIndex, newIndex);
-  //       return resetRoutineTodosSortOrder(newTodos)
-  //     });
-  //   }
-  // }
-  
   const removeTask = (taskId: string) => {
     setTasks(tasks.filter(task => task.id !== taskId));
   };
@@ -54,23 +42,23 @@ function DndTasks({setTasks, tasks=[], setTaskSortOrder, setIsEditTaskModalOpen,
     setSelectedTask(todo)
     setIsEditTaskModalOpen(true);
   };
- 
+
   return (
     <>
-       <DndAndSortableContexts
+      <DndAndSortableContexts
         handleDragEnd={handleDragEnd}
         sortableArray={tasks}
         isVertical={true}
       >
-          {tasks?.map((task) => (
-            <SortableTask
-              key={task.id}
-              id={task.id}
-              task={task}
-              removeTask={removeTask}
-              handleOpenEditModal={handleOpeningEditModal} />
-          ))}
-       </DndAndSortableContexts>
+        {tasks?.map((task) => (
+          <SortableTask
+            key={task.id}
+            id={task.id}
+            task={task}
+            removeTask={removeTask}
+            handleOpenEditModal={handleOpeningEditModal} />
+        ))}
+      </DndAndSortableContexts>
     </>
   )
 }

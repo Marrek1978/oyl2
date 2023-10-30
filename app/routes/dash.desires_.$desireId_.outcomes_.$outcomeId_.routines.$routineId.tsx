@@ -5,9 +5,9 @@ import type { ActionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import CompletedTasksForm from '~/components/forms/CompletedTasksForm'
+import { reorderCompletedTasks, updateCompletedTasks } from '~/models/routines.server';
 import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect'
 import { useGetRoutinesWithTasks } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.routines'
-import { deleteCompletedToDosFromList, reorderCompletedToDos, updateCompletedTodos } from '~/models/list.server'
 
 import type { RoutineAndTasks } from '~/types/routineTypes';
 
@@ -17,10 +17,10 @@ export const action = async ({ request }: ActionArgs) => {
   if (request.method === 'POST') {
     const formBody = await request.text();
     const parsedBody = parse(formBody);
-    const id = parsedBody.todoId as string;
+    const id = parsedBody.taskId as string;
     const isComplete = JSON.parse(parsedBody.completeString as string);
     try {
-      await updateCompletedTodos({ id, isComplete });
+      await updateCompletedTasks({ id, isComplete });
       return 'success'
     } catch (error) { return 'failed' }
   }
@@ -28,19 +28,19 @@ export const action = async ({ request }: ActionArgs) => {
   if (request.method === 'PUT') {
     const formBody = await request.text();
     const parsedBody = parse(formBody);
-    const todos = JSON.parse(parsedBody.todos as string);
+    const tasks = JSON.parse(parsedBody.tasks as string);
     try {
-      await reorderCompletedToDos({ todos });
+      await reorderCompletedTasks({ tasks });
     } catch (error) { throw error }
     return null
   }
 
-  if (request.method === 'DELETE') {
-    const formBody = await request.text();
-    const parsedBody = parse(formBody);
-    await deleteCompletedToDosFromList({ id: parsedBody.id as string })
-    return 'deleted'
-  }
+  // if (request.method === 'DELETE') {
+  //   const formBody = await request.text();
+  //   const parsedBody = parse(formBody);
+  //   await deleteCompletedTasksFromList({ id: parsedBody.id as string })
+  //   return 'deleted'
+  // }
 
   throw new Error('Invalid action method in Update List Page');
 }

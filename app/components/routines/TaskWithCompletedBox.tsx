@@ -1,36 +1,41 @@
 import { useFetcher } from '@remix-run/react';
 import React, { useEffect, useState } from 'react'
+
+import Modal from '~/components/modals/Modal';
+import useFetcherState from '../utilities/useFetcherState';
+import ErrorMessage from '~/components/modals/ErrorMessage';
+
 import type { RoutineToDo } from '~/types/routineTypes';
-import Modal from '../modals/Modal';
-import ErrorMessage from '../modals/ErrorMessage';
 
 interface RoutineToDoWithCompletedBoxProps {
-  routineToDoItem: RoutineToDo;
+  task: RoutineToDo;
   setIsDisableAllBtns: React.Dispatch<React.SetStateAction<boolean>>
   isDisableAllBtns: boolean
 }
 
-const RoutineToDoWithCompletedBox: React.FC<RoutineToDoWithCompletedBoxProps> = ({ routineToDoItem, setIsDisableAllBtns, isDisableAllBtns }) => {
+const TaskWithCompletedBox: React.FC<RoutineToDoWithCompletedBoxProps> = ({ task, setIsDisableAllBtns, isDisableAllBtns }) => {
 
   const fetcher = useFetcher();
   const [isUpdating, setIsUpdating] = useState(false)
-  const [isChecked, setIsChecked] = useState(routineToDoItem.complete)
   const [errorMessage, setErrorMessage] = useState<string>()
+  const [isChecked, setIsChecked] = useState(task.isComplete)
+
+  const { fetcherState, fetcherMessage } = useFetcherState({ fetcher })
 
 
   useEffect(() => {
-    if (fetcher.data === 'success' && fetcher.state === 'idle') {
+    if (fetcherMessage === 'success' && fetcherState === 'idle') {
       setIsUpdating(false)
       setIsDisableAllBtns(false);
     }
 
-    if (fetcher.data === 'failed' && fetcher.state === 'idle') {
+    if (fetcherMessage === 'failed' && fetcherState === 'idle') {
       setIsUpdating(false)
       setIsDisableAllBtns(false);
-      setErrorMessage('Failed to update to-do status')
+      setErrorMessage('Failed to update task  status')
       setTimeout(() => setErrorMessage(''), 1000);
     }
-  }, [fetcher, setIsDisableAllBtns])
+  }, [fetcherMessage, fetcherState, setIsDisableAllBtns])
 
 
   const handleCheckboxChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,11 +45,10 @@ const RoutineToDoWithCompletedBox: React.FC<RoutineToDoWithCompletedBoxProps> = 
     const completeString = JSON.stringify(complete)
     try {
       fetcher.submit({
-        routineToDoId: routineToDoItem.id,
+        taskId: task.id,
         completeString
       }, {
         method: 'POST',
-        action: '/dash/routines/%24routineId',
       })
     } catch (error) { throw error }
   };
@@ -61,15 +65,15 @@ const RoutineToDoWithCompletedBox: React.FC<RoutineToDoWithCompletedBoxProps> = 
 
 
       <div className={` 
-      flex w-full  items-center	justify-between
-      px-3 py-1 mb-1
-      text-left 
-    `}>
+        flex w-full  items-center	justify-between
+        px-3 py-1 mb-1
+        text-left 
+      `}>
         <div className={`
         wrap truncate text-ellipsis 
         ${isChecked && 'line-through text-slate-400'}
         `} >
-          {routineToDoItem.body}
+          {task.body}
         </div>
 
         <div className='flex gap-2' >
@@ -92,4 +96,4 @@ const RoutineToDoWithCompletedBox: React.FC<RoutineToDoWithCompletedBoxProps> = 
   )
 }
 
-export default RoutineToDoWithCompletedBox
+export default TaskWithCompletedBox

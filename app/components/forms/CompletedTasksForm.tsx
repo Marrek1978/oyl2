@@ -1,15 +1,13 @@
 import type { Task } from '@prisma/client';
 import { useEffect, useState } from 'react'
-import { Link, useFetcher } from '@remix-run/react';
+import { useMatches } from '@remix-run/react';
 
-import Divider from '../utilities/Divider';
+import FormButtons from './FormButtons';
 import BasicFormAreaBG from './BasicFormAreaBG';
-import OutlinedBtn from '../buttons/OutlinedBtn';
-import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
-import { closeIcon, downArrowsIcon } from '../utilities/icons';
-import RoutineToDoWithCompletedBox from '../routines/RoutineToDoWithCompletedBox';
+import TaskWithCompletedBox from '../routines/TaskWithCompletedBox';
 
 import type { RoutineAndTasks } from '~/types/routineTypes'
+import { sortTasks } from '../utilities/helperFunctions';
 
 interface CompletedTasksFormProps {
   routine: RoutineAndTasks
@@ -17,31 +15,22 @@ interface CompletedTasksFormProps {
 
 function CompletedTasksForm({ routine }: CompletedTasksFormProps) {
 
-  const fetcher = useFetcher();
-  const tasks: Task[] = routine.tasks;
+  const matches = useMatches()
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [isShowCloseBtn, setIsShowCloseBtn] = useState<boolean>(true)
   const [isDisableAllBtns, setIsDisableAllBtns] = useState<boolean>(false)
-  const [isDisableMoveDownBtn, setIsDisableMoveDownBtn] = useState<boolean>(false)
+
+  useEffect(() => {
+    matches.find((match => match.id === 'routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.routines.$routineId'))
+      && setIsShowCloseBtn(false)
+  }, [matches])
 
 
   useEffect(() => {
-    const properlySortedTodos = sortTodos(tasks);
-    const tasksBySortOrder = tasks.sort((a, b) => a.sortOrder - b.sortOrder)
-    const isSorted = properlySortedTodos.every((task, index) => task.id === tasksBySortOrder[index].id)
-    setIsDisableMoveDownBtn(isSorted)
-  }, [tasks])
-
-
-  const handleCompletedToBottom = async (): Promise<void> => {
-    const completedToDosAtBottom = sortTodos(tasks);
-    const completedToDosAtBottomString = JSON.stringify(completedToDosAtBottom)
-    try {
-      fetcher.submit({
-        routineToDos: completedToDosAtBottomString,
-      }, {
-        method: 'PUT',
-      })
-    } catch (error) { throw error }
-  };
+    if (!routine.tasks) return
+    const properlySortedTasks = sortTasks(routine.tasks);
+    setTasks(properlySortedTasks)
+  }, [routine.tasks])
 
 
   return (
@@ -52,13 +41,13 @@ function CompletedTasksForm({ routine }: CompletedTasksFormProps) {
         linkText='EDIT ROUTINE'
         linkColorDaisyUI='info'
       >
-        <div className='py-6 px-8 font-poppins  '>
-          <div className=" max-h-[50vh] min-h-[200px] overflow-y-auto">
-            {tasks.map((todoItem, index) => {
+        <div className='p-8  form-control gap-y-6  '>
+          <div className=" max-h-[50vh] min-h-[200px] overflow-y-auto  ">
+            {tasks.map((task, index) => {
               return (
-                <RoutineToDoWithCompletedBox
-                  key={todoItem.id}
-                  routineToDoItem={todoItem}
+                <TaskWithCompletedBox
+                  key={task.id}
+                  task={task}
                   setIsDisableAllBtns={setIsDisableAllBtns}
                   isDisableAllBtns={isDisableAllBtns}
                 />
@@ -66,83 +55,18 @@ function CompletedTasksForm({ routine }: CompletedTasksFormProps) {
             })}
           </div>
 
-          {tasks.some(task => task.isComplete === true) && (
-            <div>
-              <Divider />
-              <div className='w-full mt-8 F'>
-                {tasks.filter(task => task.isComplete).length > 0
-                  && tasks.filter(task => !task.isComplete).length > 0
-                  && (<>
-                    <OutlinedBtn
-                     text='Move Completed To-Dos Down'
-                      onClickFunction={handleCompletedToBottom}
-                      daisyUIBtnColor='primary'
-                      icon={downArrowsIcon}
-                      disabledBtnBoolean={isDisableMoveDownBtn || isDisableAllBtns}
-                    />
-                  </>
-                  )}
-              </div>
-            </div>
-          )}
-
-          <div className='w-full mt-8 flex gap-8 '>
-            <div className='w-full flex-1 '>
-              <Link to='delete' >
-                <OutlinedBtn
-                  text='Delete Routine'
-                  onClickFunction={() => { }}
-                  daisyUIBtnColor='error'
-                  disabledBtnBoolean={isDisableAllBtns}
-                />
-              </Link>
-            </div>
-
-            <div className='w-full flex-1 '>
-              <Link to='..' >
-                <SolidBtnGreyBlue text='Close'
-                  onClickFunction={() => { }}
-                  icon={closeIcon}
-                  disabledBtnBoolean={isDisableAllBtns}
-                />
-              </Link>
-            </div>
-          </div>
-
+          <FormButtons
+            isNew={false}
+            isShowSaveBtn={false}
+            isShowCloseBtn={isShowCloseBtn}
+            deleteBtnText='Delete Routine'
+            deleteBtnLink='edit/delete'
+          />
         </div>
       </BasicFormAreaBG>
-
-
     </>
   )
 }
 
 export default CompletedTasksForm
 
-
-function sortTodos(tasks: Task[]): Task[] {
-  const tasksCopy = [...tasks]
-
-  tasksCopy.sort((a, b) => {
-    if (a.isComplete && b.isComplete) {
-      return 0;
-    } else if (a.isComplete && !b.isComplete) {
-      return 1;
-    } else if (!a.isComplete && b.isComplete) {
-      return -1;
-    } else { return 0; }
-  })
-
-  return resetRoutineTodosSortOrder(tasksCopy)
-}
-
-function resetRoutineTodosSortOrder(tasks: Task[]): Task[] {
-
-  return tasks.map((todo, index) => {
-    return {
-      ...todo,
-      sortOrder: index,
-    }
-  })
-
-}

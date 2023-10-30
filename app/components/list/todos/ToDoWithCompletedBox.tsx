@@ -6,11 +6,13 @@ import React, { useEffect, useState } from 'react'
 import Modal from '~/components/modals/Modal';
 import ErrorMessage from '~/components/modals/ErrorMessage';
 import { ToDoItemStylesNoBg } from '~/styles/ToDoItemStyles'
+import useFetcherState from '~/components/utilities/useFetcherState';
 
-import type { Todo } from '~/types/listTypes';
+import type { ToDo } from '@prisma/client';
+
 
 interface ToDoItemProps {
-  todoItem: Todo;
+  todoItem: ToDo;
   setIsDisableAllBtns: React.Dispatch<React.SetStateAction<boolean>>
   isDisableAllBtns: boolean
 }
@@ -24,19 +26,22 @@ const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem, setIsDisableAllBt
 
   const borderClass = ToDoItemStylesNoBg({ todo: todoItem })
 
+  const { fetcherState, fetcherMessage } = useFetcherState({ fetcher })
+
   useEffect(() => {
-    if (fetcher.data === 'success' && fetcher.state === 'idle') {
+    if (fetcherMessage === 'success' && fetcherState === 'idle') {
       setIsUpdating(false)
       setIsDisableAllBtns(false);
     }
 
-    if (fetcher.data === 'failed' && fetcher.state === 'idle') {
+    if (fetcherMessage === 'failed' && fetcherState === 'idle') {
       setIsUpdating(false)
       setIsDisableAllBtns(false);
       setErrorMessage('Failed to update to-do status')
       setTimeout(() => setErrorMessage(''), 1000);
     }
-  }, [fetcher, setIsDisableAllBtns])
+  }, [fetcherMessage, fetcherState, setIsDisableAllBtns])
+
 
   const handleCheckboxChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsUpdating(true); // Start progress bar
@@ -49,7 +54,6 @@ const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem, setIsDisableAllBt
         completeString
       }, {
         method: 'POST',
-        // action: '/dash/lists/$listId',
       })
     } catch (error) { throw error }
   };

@@ -4,7 +4,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { EditIcon, trashIcon } from '~/components/utilities/icons';
 import OutlinedIconOnlyBtn from '~/components/buttons/OutlinedIconOnlyBtn';
 
-import type{ CreationTask } from "~/types/routineTypes";
+import type { CreationTask } from "~/types/routineTypes";
 
 
 interface SortableTaskProps {
@@ -15,7 +15,6 @@ interface SortableTaskProps {
 }
 
 function SortableTask({ id, task, removeTask, handleOpenEditModal }: SortableTaskProps) {
-  // const priorityStyling = ToDoItemStyles({ task })
 
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: id });
@@ -42,7 +41,7 @@ function SortableTask({ id, task, removeTask, handleOpenEditModal }: SortableTas
           <div className={`w-2/3 wrap truncate text-ellipsis capitalize	${task['isComplete'] && 'line-through'}`} >
             {task['body']}
           </div>
-         
+
 
           <div className="flex gap-4">
             <label

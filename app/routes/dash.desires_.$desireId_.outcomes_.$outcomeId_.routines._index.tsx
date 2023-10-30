@@ -3,14 +3,11 @@ import type { ActionArgs } from '@remix-run/server-runtime';
 
 import { requireUserId } from '~/models/session.server';
 import RoutineForm from '~/components/forms/RoutineForm';
-import { useGetListsArrayLength } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.lists';
 import { createRoutineAndTasks } from '~/models/routines.server';
+import { useGetRoutinesArrayLength } from '~/routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.routines';
 
 
 export const action = async ({ request }: ActionArgs) => {
-
-  console.log('routines._index.tsx action')
-
 
   if (request.method === 'POST') {
     const userId = await requireUserId(request);
@@ -34,8 +31,7 @@ export const action = async ({ request }: ActionArgs) => {
 
 
 function ListFormIndexPage() {
-
-  const nextSortOrder = useGetListsArrayLength()
+  const nextSortOrder = useGetRoutinesArrayLength()
 
   return (
     <RoutineForm nextSortOrder={nextSortOrder} />

@@ -1,9 +1,9 @@
 import { Form } from '@remix-run/react';
 import React, { useEffect, useState } from 'react'
 
-import SolidBtn from '../buttons/SolidBtn';
+import Modal from './Modal';
+import FormButtons from '../forms/FormButtons';
 import BasicFormAreaBG from '../forms/BasicFormAreaBG';
-import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue';
 import { DesireOutcomeGuideline } from '../utilities/Guidelines';
 import InputLabelWithGuideLineLink from '../forms/InputLabelWithGuideLineLink';
 
@@ -22,7 +22,6 @@ const EditTaskModal: React.FC<EditTaskProps> = ({ task, setIsEditTaskModalOpen, 
   const [body, setBody] = useState<string>(task?.body || '');
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
 
-
   useEffect(() => {
     setIsSaveable(body !== task?.body)
   }, [body, task]);
@@ -32,12 +31,12 @@ const EditTaskModal: React.FC<EditTaskProps> = ({ task, setIsEditTaskModalOpen, 
     if (task === null || index === null) {
       return;
     }
-    const updatedTodo: CreationTask = {
+    const updatedTask: CreationTask = {
       ...task,
       body,
     };
 
-    updateTask(index, updatedTodo);
+    updateTask(index, updatedTask);
     setIsEditTaskModalOpen(false);
   }
 
@@ -48,64 +47,36 @@ const EditTaskModal: React.FC<EditTaskProps> = ({ task, setIsEditTaskModalOpen, 
         id={`edit-task-modal-${task?.id}`}
         className="modal-toggle" />
 
-      <div className="modal z-40 ">
-        <BasicFormAreaBG h2Text='Edit your Routine Item'  >
-          <Form method='post' className='mx-8'>
-            <div className="form-control gap-6 vert-space-between-inputs ">
-              <div >
-                <InputLabelWithGuideLineLink
-                  inputTitle='Task'
-                  guideLineTitle='Task'
-                  guideline={DesireOutcomeGuideline} />
-                <input type="text"
-                  placeholder="Enter a Routine To-Do Item"
-                  value={body}
-                  onChange={(e) => setBody(e.target.value)}
-                  className=" input-field-text-title "
+      <Modal >
+        <div className="modalFormWidth__sm">
+          <BasicFormAreaBG h2Text='Edit your Routine Item'  >
+            <Form method='post' className='p-8'>
+              <div className="form-control gap-6  ">
+                <div >
+                  <InputLabelWithGuideLineLink
+                    inputTitle='Task'
+                    guideLineTitle='Task'
+                    guideline={DesireOutcomeGuideline} />
+                  <input type="text"
+                    placeholder="Enter a Task Item"
+                    value={body}
+                    onChange={(e) => setBody(e.target.value)}
+                    className=" input-field-text-title "
+                  />
+                </div>
+
+                <FormButtons
+                  saveBtnText='Accept Edits'
+                  saveBtnOnClickFunction={handleSave}
+                  isSaveBtnDisabled={!isSaveable}
+                  closeBtnText='Cancel Edits'
+                  closeBtnOnClickFunction={() => setIsEditTaskModalOpen(false)}
                 />
               </div>
-            </div>
-
-            <div className="flex justify-between my-8 gap-4">
-              <div className='flex-1'>
-                <SolidBtnGreyBlue
-                  text='Cancel Edits'
-                  onClickFunction={() => setIsEditTaskModalOpen(false)}
-                />
-              </div>
-
-              <div className='flex-1'>
-                <SolidBtn
-                  text='Accept Edits'
-                  onClickFunction={handleSave}
-                  disableBtn={!isSaveable}
-                />
-              </div>
-            </div>
-
-          </Form>
-        </BasicFormAreaBG >
-
-        {/* <label htmlFor="my-modal-5"
-              className="btn btn-outline btn-primary 
-                font-mont rounded-none 
-                w-40
-                "
-              onClick={() => setIsEditTaskModalOpen(false)}
-            >Cancel Edits
-            </label>
-            <label htmlFor="my-modal-5"
-              className="btn btn-primary 
-                font-mont place-content-center 
-                rounded-none w-40
-                "
-              onClick={handleSave}
-            >Accept Edits
-            </label>
-          </div> */}
-
-        {/* </div> */}
-      </div >
+            </Form>
+          </BasicFormAreaBG >
+        </div >
+      </Modal >
     </>
   )
 }

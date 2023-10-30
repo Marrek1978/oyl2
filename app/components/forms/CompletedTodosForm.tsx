@@ -45,20 +45,6 @@ function CompletedTodosForm({ list }: TodosCompletedFormProps) {
   }, [todos])
 
 
-
-  // if completed line thru & at bottom
-
-  // const handleCompletedToBottom = async (): Promise<void> => {
-  //   const completedToDosAtBottom = sortTodos(todos);
-  //   const completedToDosAtBottomString = JSON.stringify(completedToDosAtBottom)
-  //   try {
-  //     fetcher.submit({
-  //       todos: completedToDosAtBottomString,
-  //     }, { method: 'PUT' })
-  //   } catch (error) { throw error }
-  // };
-
-
   const handleDeleteCompletedToDos = async (): Promise<void> => {
     setIsDeletingToDos(true)
     try {
@@ -116,7 +102,7 @@ function CompletedTodosForm({ list }: TodosCompletedFormProps) {
             isShowSaveBtn={false}
             isShowCloseBtn={isShowCloseBtn}
             deleteBtnText='Delete List'
-            deleteBtnLink='delete'
+            deleteBtnLink='edit/delete'
           />
 
         </div>

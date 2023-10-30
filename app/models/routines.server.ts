@@ -41,18 +41,17 @@ export function createRoutineAndTasks({
   title,
   tasks,
   outcomeId,
-  sortOrder
+  sortOrder,
 }: Pick<Routine, "title" | "sortOrder"> & { userId: User["id"] } & {
   tasks: CreationTask[];
-} & {  outcomeId?: Routine["outcomeId"];
-}) {
-  console.log("🚀 ~ file: routines.server.ts:49 ~ sortOrder:", sortOrder)
-  console.log("🚀 ~ file: routines.server.ts:49 ~ outcomeId:", outcomeId)
-  console.log("🚀 ~ file: routines.server.ts:49 ~ tasks:", tasks)
-  console.log("🚀 ~ file: routines.server.ts:49 ~ title:", title)
-  console.log("🚀 ~ file: routines.server.ts:49 ~ userId:", userId)
+} & { outcomeId?: Routine["outcomeId"] }) {
+  console.log("🚀 ~ file: routines.server.ts:49 ~ sortOrder:", sortOrder);
+  console.log("🚀 ~ file: routines.server.ts:49 ~ outcomeId:", outcomeId);
+  console.log("🚀 ~ file: routines.server.ts:49 ~ tasks:", tasks);
+  console.log("🚀 ~ file: routines.server.ts:49 ~ title:", title);
+  console.log("🚀 ~ file: routines.server.ts:49 ~ userId:", userId);
 
-  console.log('at server fucntion createRoutineAndTasks')
+  console.log("at server fucntion createRoutineAndTasks");
 
   try {
     const result = prisma.routine.create({
@@ -68,7 +67,7 @@ export function createRoutineAndTasks({
         },
       },
     });
-    console.log("🚀 ~ file: routines.server.ts:66 ~ result:", result)
+    console.log("🚀 ~ file: routines.server.ts:66 ~ result:", result);
     return result;
   } catch (error) {
     throw error;
@@ -107,13 +106,9 @@ export async function deleteRoutine({ id }: Pick<Routine, "id">) {
   }
 }
 
-export async function reorderCompletedTasks({
-  tasks,
-}: {
-  tasks: Task[];
-}) {
+export async function reorderCompletedTasks({ tasks }: { tasks: Task[] }) {
   if (!tasks || !Array.isArray(tasks)) {
-    throw new Error("Invalid routineToDos");
+    throw new Error("Invalid Tasks");
   }
 
   try {
@@ -135,17 +130,33 @@ export async function updateRoutineAndTasks({
   id,
   title,
   userId,
-  routineToDos,
+  tasks,
 }: Pick<Routine, "id" | "title"> & { userId: User["id"] } & {
-  routineToDos: Task[];
+  tasks: Task[];
 }) {
   try {
+    //delete
+    const existingTasks = await prisma.task.findMany({
+      where: { routineId: id },
+    });
+    const existingTaskIds = existingTasks.map((task) => task.id);
+    const providedTaskIds = tasks.map((task) => task.id);
+    const tasksToDelete = existingTaskIds.filter(
+      (id) => !providedTaskIds.includes(id)
+    );
+    const deletePromises = tasksToDelete.map((id) =>
+      prisma.task.delete({ where: { id } })
+    );
+    await prisma.$transaction(deletePromises);
+
+    //update ttile
     const updateRoutine = await prisma.routine.update({
-      where: { id },
+      where: { id, userId },
       data: { title },
     });
 
-    const updateRoutineToDos = routineToDos.map((task) => {
+    //update tasks
+    const updatePromises = tasks.map((task: Task) => {
       return prisma.task.upsert({
         where: { id: task.id },
         create: {
@@ -162,8 +173,8 @@ export async function updateRoutineAndTasks({
       });
     });
 
-    await Promise.all(updateRoutineToDos);
-    return { updateRoutine, updateRoutineToDos };
+    const updatedTasks = await prisma.$transaction(updatePromises);
+    return { updateRoutine, updatedTasks };
   } catch (error) {
     throw error;
   }
@@ -189,40 +200,41 @@ export async function getOutcomeRoutinesWithTasks(
   }
 }
 
-
 export async function updateRoutinesOrder(routines: Routine[]) {
   try {
     const updatePromises = routines.map((routine) => {
-    return prisma.routine.update({
-      where: { id: routine.id },
-      data: {
-        sortOrder: routine.sortOrder,
-      },
+      return prisma.routine.update({
+        where: { id: routine.id },
+        data: {
+          sortOrder: routine.sortOrder,
+        },
+      });
     });
-  })
 
-  const updateRoutines = await prisma.$transaction(updatePromises);
-  return updateRoutines;
-} catch (error) {
-  throw error;
+    const updateRoutines = await prisma.$transaction(updatePromises);
+    return updateRoutines;
+  } catch (error) {
+    throw error;
+  }
 }
-}
-
 
 //?  ------------------ Outcome Lists ----------------- //
 
-export async function getRoutinesByOutcomeId(userId: User["id"], outcomeId: Routine["outcomeId"]){
-  try{
+export async function getRoutinesByOutcomeId(
+  userId: User["id"],
+  outcomeId: Routine["outcomeId"]
+) {
+  try {
     return prisma.routine.findMany({
-      where: { userId, outcomeId},
+      where: { userId, outcomeId },
       include: {
         tasks: {
           orderBy: { sortOrder: "asc" },
         },
       },
       orderBy: { updatedAt: "desc" },
-    })
-  }catch(error){
+    });
+  } catch (error) {
     throw error;
   }
 }

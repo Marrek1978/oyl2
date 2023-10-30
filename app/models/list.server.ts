@@ -22,7 +22,6 @@ export async function createList({
 }: Pick<List, "title"> & { userId: User["id"] } & { todos: CreateTodo[] } & {
   outcomeId?: List["outcomeId"];
 } & { sortOrder?: List["sortOrder"] }) {
-  
   const data: any = {
     title,
     userId,
@@ -110,6 +109,22 @@ export async function updateListAndTodos({
   todos: GenerticTodo[];
 }) {
   try {
+    //delete
+    const existingTodos = await prisma.toDo.findMany({
+      where: { listId: id },
+    });
+
+    const existingTodoIds = existingTodos.map((todo) => todo.id);
+    const providedTodoIds = todos.map((todo) => todo.id);
+    const todoIdsToDelete = existingTodoIds.filter(
+      (id) => !providedTodoIds.includes(id)
+    );
+    const deletePromises = todoIdsToDelete.map((id) =>
+      prisma.toDo.delete({ where: { id } })
+    );
+    await prisma.$transaction(deletePromises);
+
+    //update title
     const updatedList = await prisma.list.update({
       where: { id, userId },
       data: {
@@ -117,6 +132,7 @@ export async function updateListAndTodos({
       },
     });
 
+    //update Todos
     const updatePromises = await todos.map((todo) => {
       return prisma.toDo.upsert({
         where: { id: todo.id },

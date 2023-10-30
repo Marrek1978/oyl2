@@ -4,53 +4,53 @@ import { useParams } from '@remix-run/react';
 import type { ActionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
-import { deleteList } from '~/models/list.server';
+import { deleteRoutine } from '~/models/routines.server';
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
 import useFormDeletedToastAndRedirect from '~/components/utilities/useFormDeletedToast';
-import { useGetCurrentList } from '~/routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.lists.$listId';
+import { useGetCurrentRoutine } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.routines.$routineId';
 
 
 export const action = async ({ request }: ActionArgs) => {
   const formBody = await request.text();
   const parsedBody = parse(formBody);
-  const listId = parsedBody.rowId as string
+  const taskId = parsedBody.rowId as string
   try {
-    await deleteList({ id: listId })
+    await deleteRoutine({ id: taskId })
     return 'deleted'
   } catch (error) { throw error }
 }
 
 
-function DeleteListPage() {
-
+function DeleteRoutinePage() {
+  
   const params = useParams()
   const [id, setId] = useState<string>('')
   const [title, setTitle] = useState<string>('')
 
-  const loadedList = useGetCurrentList()
   const { desireId, outcomeId } = params
+  const loadedRoutine = useGetCurrentRoutine()
 
-  useFormDeletedToastAndRedirect({ redirectTo: `/dash/desires/${desireId}/outcomes/${outcomeId}/lists`, message: 'List was deleted' })
+  useFormDeletedToastAndRedirect({ redirectTo: `/dash/desires/${desireId}/outcomes/${outcomeId}/routines`, message: 'Routine was deleted' })
 
 
   useEffect(() => {
-    if (!loadedList) return
-    setId(loadedList.id)
-    setTitle(loadedList.title)
-  }, [loadedList])
+    if (!loadedRoutine) return
+    setId(loadedRoutine.id)
+    setTitle(loadedRoutine.title)
+  }, [loadedRoutine])
 
 
   return (
     <>
       <Modal onClose={() => { }} zIndex={20}>
         < AreYouSureDeleteModal
-          item={'To-Do List'}
+          item={'Routine'}
           title={title}
           id={id}
         />
       </Modal>
     </>
-  )
+     )
 }
 
-export default DeleteListPage
+export default DeleteRoutinePage

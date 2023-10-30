@@ -77,6 +77,7 @@ function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps
 
   const handleSave = async () => {
     console.log('saving routine')
+
     const tasksString = JSON.stringify(tasks);
 
     try {
@@ -94,7 +95,7 @@ function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps
 
 
   const handleEdit = async () => {
-    console.log('saving routine')
+    console.log('editing routine')
 
     const tasksString = JSON.stringify(tasks);
     try {
@@ -224,7 +225,6 @@ function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps
             </div>
           </div>
 
-
           {!isNew && (
             <FormButtons
               isShowSaveBtn={false}
@@ -237,43 +237,16 @@ function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps
             />
           )}
 
-
-          {/* <Link to='..'>
-                    <SolidBtnGreyBlue
-                      text={title || routineTodos.length > 0
-                        ? ('Close without Saving')
-                        : ('Close')}
-                      onClickFunction={() => { }}
-                      icon={closeIcon}
-                    />
-                  </Link>
-
-                  {!isNew && (
-                    <Link to='../delete'>
-                      <OutlinedBtn
-                        text='Delete Routine'
-                        onClickFunction={() => { }}
-                        daisyUIBtnColor='error'
-                      />
-                    </Link>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div> */}
-
         </Form>
       </BasicFormAreaBG>
 
       {isEditTaskModalOpen && (
-        <>
-          <EditTaskModal
-            task={selectedTask}
-            setIsEditTaskModalOpen={setIsEditTaskModalOpen}
-            updateTask={updateTask}
-            index={selectedTaskIndex}
-          />
-        </>
+        <EditTaskModal
+          task={selectedTask}
+          setIsEditTaskModalOpen={setIsEditTaskModalOpen}
+          updateTask={updateTask}
+          index={selectedTaskIndex}
+        />
       )}
     </>
   )
