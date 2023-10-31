@@ -1,7 +1,7 @@
 import { Outlet, useLoaderData } from '@remix-run/react';
 import { type LoaderArgs } from '@remix-run/server-runtime';
 
-import { getRoutines } from '~/models/routines.server';
+import { getAllRoutines } from '~/models/routines.server';
 import { requireUserId } from '~/models/session.server';
 import AllRoutines from '~/components/routines/AllRoutines';
 import { transformRoutineDataDates } from '~/components/utilities/helperFunctions';
@@ -9,7 +9,7 @@ import { transformRoutineDataDates } from '~/components/utilities/helperFunction
 export const loader = async ({ request }: LoaderArgs) => {
   try {
     const userId = await requireUserId(request);
-    const routines = await getRoutines( userId);
+    const routines = await getAllRoutines( userId);
     return routines;
   } catch (error) {
     throw error

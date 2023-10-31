@@ -119,3 +119,13 @@ export async function deleteOutcomeById(outcomeId: Outcome["id"]) {
     throw error;
   }
 }
+
+export async function getAllOutcomesByDesireId(desireId: Desire['id']){
+  try{
+    const outcomes = await prisma.outcome.findMany({
+      where: { desireId },
+      orderBy: { sortOrder: "asc" },
+    })
+    return outcomes;
+  } catch (error) {throw error}
+}

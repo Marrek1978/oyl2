@@ -11,9 +11,9 @@ import { Calendar, momentLocalizer, Views, } from 'react-big-calendar'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 
 import type { ListAndToDos } from '~/types/listTypes'
-import type { RoutineAndToDos } from '~/types/routineTypes'
+import type { RoutineAndTasks } from '~/types/routineTypes'
 import type { ProjectWithListsAndRoutines } from '~/types/projectTypes';
-import type { ListToDo, RoutineToDo, ScheduledList } from '@prisma/client'
+import type { ToDo, Task, ScheduledList } from '@prisma/client'
 import type { EventInteractionArgs, DragFromOutsideItemArgs } from 'react-big-calendar/lib/addons/dragAndDrop'
 
 
@@ -23,12 +23,12 @@ const DragAndDropCalendar = withDragAndDrop(Calendar)
 interface SchedulerProps {
   scheduledLists: ScheduledList[] | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[];
   setScheduledLists: React.Dispatch<React.SetStateAction<ScheduledList[] | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[]>>;
-  draggedList: ListAndToDos | RoutineAndToDos | ProjectWithListsAndRoutines | undefined;
-  setDraggedList: React.Dispatch<React.SetStateAction<ListAndToDos | RoutineAndToDos | ProjectWithListsAndRoutines | undefined>>;
-  setSaveScheduledLists: React.Dispatch<React.SetStateAction<boolean>>;
-  // saveScheduledLists: boolean;
-  loadedToDos: ListAndToDos[];
-  loadedRoutines: RoutineAndToDos[];
+  draggedList: ListAndToDos | RoutineAndTasks | ProjectWithListsAndRoutines | undefined;
+  setDraggedList: React.Dispatch<React.SetStateAction<ListAndToDos | RoutineAndTasks | ProjectWithListsAndRoutines | undefined>>;
+  setIsSaveScheduledLists: React.Dispatch<React.SetStateAction<boolean>>;
+  isSaveScheduledLists: boolean;
+  // loadedToDos: ListAndToDos[];
+  // loadedRoutines: RoutineAndTasks[];
 }
 
 
@@ -38,10 +38,10 @@ function Scheduler({
   setScheduledLists,
   draggedList,
   setDraggedList,
-  setSaveScheduledLists,
-  // saveScheduledLists, 
-  loadedToDos,
-  loadedRoutines,
+  setIsSaveScheduledLists,
+  isSaveScheduledLists, 
+  // loadedToDos,
+  // loadedRoutines,
 }: SchedulerProps) {
 
   const defaultDate = useMemo(() => new Date(), [])
@@ -64,11 +64,11 @@ function Scheduler({
 
 
   const addListToScheduledList = useCallback((list: Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>): void => {
-    setSaveScheduledLists(true)
+    setIsSaveScheduledLists(true)
     setScheduledLists((prev) => {
       return [...prev, { ...list }]
     })
-  }, [setScheduledLists, setSaveScheduledLists])
+  }, [setScheduledLists, setIsSaveScheduledLists])
 
 
   const onDrdopFromOutside = useCallback(({ start: startDate, end: endDate }: DragFromOutsideItemArgs) => {
@@ -118,7 +118,7 @@ function Scheduler({
   const resizeEvent = useCallback((
     { event, start, end }: EventInteractionArgs<any>
   ): void => {
-    setSaveScheduledLists(true)
+    setIsSaveScheduledLists(true)
     setScheduledLists((prev) => {
       const existing = prev.find((ev) => ev.id === event.id)!
       const filtered = prev.filter((ev) => ev.id !== event.id)
@@ -126,7 +126,7 @@ function Scheduler({
       const newEnd = typeof end === 'string' ? new Date(end) : end;
       return [...filtered, { ...existing, start: newStart, end: newEnd }]
     })
-  }, [setScheduledLists, setSaveScheduledLists])
+  }, [setScheduledLists, setIsSaveScheduledLists])
 
 
   //? ***********   CUSTOM PROPS   ***************** */
@@ -189,29 +189,30 @@ function Scheduler({
 
   function handleToolTipAccessor(event: any) {
     const type = Object.keys(event.description)[0]
-    const { listId } = event
-    let loadedList: ListAndToDos[] | RoutineAndToDos[] = [];
-    let currentList: ListAndToDos[] | RoutineAndToDos[] | undefined;
-    let currentToDos: ListToDo[] | RoutineToDo[] | undefined;
+    // const { listId } = event
+    // let loadedList: ListAndToDos[] | RoutineAndTasks[] = [];
+    // let currentList: ListAndToDos[] | RoutineAndTasks[] | undefined;
+    // let currentToDos: ToDo[] | Task[] | undefined;
 
-    if (type === 'todos') {
-      loadedList = loadedToDos
-      currentList = loadedList?.filter((list: ListAndToDos) => list.id === listId);
-      currentList && (currentToDos = currentList[0]?.[type])
-    }
+    // if (type === 'todos') {
+    //   loadedList = loadedToDos
+    //   currentList = loadedList?.filter((list: ListAndToDos) => list.id === listId);
+    //   currentList && (currentToDos = currentList[0]?.[type])
+    // }
 
-    if (type === 'routineToDos') {
-      loadedList = loadedRoutines
-      currentList = loadedList?.filter((list: RoutineAndToDos) => list.id === listId);
-      currentList && (currentToDos = currentList[0]?.[type])
-    }
+    // if (type === 'RoutineAndTasks') {
+    //   loadedList = loadedRoutines
+    //   currentList = loadedList?.filter((list: RoutineAndTasks) => list.id === listId);
+    //   currentList && (currentToDos = currentList[0]?.[type])
+    // }
 
-    if (type === 'projectLists') {
-      const titles = event.description[type].map((list: ListAndToDos) => list.title)
-      return `\nLists:\n${titles.join('\n')}`
-    }
+    // if (type === 'projectLists') {
+    //   const titles = event.description[type].map((list: ListAndToDos) => list.title)
+    //   return `\nLists:\n${titles.join('\n')}`
+    // }
 
-    return `\nToDos:\n${currentToDos?.map((todo: any) => todo.body).join('\n')}`
+    return `Tool Tip Accessor ${type}`
+    // return `\nToDos:\n${currentToDos?.map((todo: any) => todo.body).join('\n')}`
   }
 
 

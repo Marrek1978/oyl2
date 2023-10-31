@@ -233,3 +233,31 @@ export const deleteDesire = async (desireId: DeleteDesire) => {
     throw error;
   }
 };
+
+export const getDesiresWithOutcomesListsRoutines = async (
+  userId: User["id"]
+) => {
+  try {
+    const result = await prisma.desire.findMany({
+      where: { userId },
+      orderBy: { sortOrder: "asc" },
+      include: {
+        outcomes: {
+          orderBy: { sortOrder: "asc" },
+          include: {
+            lists: {
+              orderBy: { sortOrder: "asc" },
+            },
+            routines: {
+              orderBy: { sortOrder: "asc" },
+            },
+          },
+        },
+      },
+    });
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};

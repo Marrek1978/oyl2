@@ -12,35 +12,21 @@ type Props = {
   size?: '12px' | '14px' | '16px';
   staticHeadingDaisyUIColorClass?: string;
   variableHeadingsDaisyUIColorClass?: string;
-
 }
 
 function TwoToneSubHeading({ staticHeading, variableHeadingsArray, size = '12px', staticHeadingDaisyUIColorClass = 'text-base-content/70', variableHeadingsDaisyUIColorClass = 'text-secondary/70' }: Props) {
-  const [isPlural, setIsPlural] = useState<boolean>(false);
-  const [variableArray, setvariableArray] = useState<string[]>([]);
-  const [variableHeading, setvariableHeading] = useState<JSX.Element>();
+
+
   const [staticComponent, setStaticComponent] = useState<JSX.Element>();
 
   const arrayLength = variableHeadingsArray?.length
-  const isPluralText = isPlural ? 's' : '';
+  const isPluralText = arrayLength > 1 ? 's' : '';
 
 
   useEffect(() => {
-    setStaticComponent(returnSubHeading(size, `${staticHeading}${isPluralText}: `))
-  }, [variableArray, size, staticHeading, isPluralText])
-
-
-  useEffect(() => {
-    if (arrayLength === 0) {
-      setStaticComponent(undefined)
-      return
-    }
-
-    if (arrayLength === 1) return setvariableHeading(returnSubHeading(size, variableHeadingsArray[0]))
-    setvariableArray(variableHeadingsArray as [])
-    setIsPlural(true)
-  }, [variableHeadingsArray, size, arrayLength])
-
+    if (arrayLength === 0) return setStaticComponent(undefined)
+    if (arrayLength >= 1) return setStaticComponent(returnSubHeading(size, `${staticHeading}${isPluralText}: `))
+  }, [size, staticHeading, isPluralText, arrayLength])
 
   return (
     <>
@@ -50,20 +36,17 @@ function TwoToneSubHeading({ staticHeading, variableHeadingsArray, size = '12px'
         </div>
 
         <div className='flex flex-wrap gap-x-2 font-semibold text-secondary/70 '>
-          {isPlural ? (
-            variableArray?.map((item, index) => {
-              const title = item
-              const id = uuidv4();
-              const placeComma = index < arrayLength - 1 ? ',' : ''
-              const string = `${title}${placeComma} `
-              return (
-                <div key={id}>
-                  {returnSubHeading(size, string)}
-                </div>
-              )
-            }))
-            : (<>{variableHeading}</>)
-          }
+          {variableHeadingsArray?.map((item, index) => {
+            const title = item
+            const id = uuidv4();
+            const placeComma = index < arrayLength - 1 ? ',' : ''
+            const string = `${title}${placeComma} `
+            return (
+              <div key={id}>
+                {returnSubHeading(size, string)}
+              </div>
+            )
+          })}
         </div>
       </div>
     </>
@@ -74,17 +57,17 @@ export default TwoToneSubHeading
 
 
 export const returnSubHeading = (size: string, title: string): JSX.Element => {
-  let variableComponent;
+  let component;
   switch (size) {
     case '14px':
-      variableComponent = <SubHeading14px text={title} />
+      component = <SubHeading14px text={title} />
       break;
     case '16px':
-      variableComponent = <SubHeading16px text={title} />
+      component = <SubHeading16px text={title} />
       break;
     default:
-      variableComponent = <SubHeading12px text={title} />
+      component = <SubHeading12px text={title} />
       break;
   }
-  return variableComponent
+  return component
 }

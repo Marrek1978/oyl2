@@ -181,6 +181,7 @@ model List {
 
   title String
   sortOrder Int @default(0)
+  isSpecialList Boolean @default(false)
 
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String?
@@ -214,6 +215,7 @@ model Routine {
 
   title String
   sortOrder Int @default(0)
+  isSpecialRoutine Boolean @default(false)
 
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String?
