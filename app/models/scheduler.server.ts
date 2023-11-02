@@ -1,62 +1,61 @@
 import { prisma } from "~/db.server";
-import type { Prisma, ScheduledList, User } from "@prisma/client";
+import type { Prisma, ScheduledItem, User } from "@prisma/client";
 
-export async function saveScheduledLists({
+export async function saveScheduledItems({
   userId,
-  ScheduledLists,
+  scheduledItems,
 }: {
   userId: User["id"];
-  ScheduledLists:
-    | ScheduledList[]
-    | Omit<ScheduledList, "createdAt" | "updatedAt" | "userId">[];
+  scheduledItems:
+    | ScheduledItem[]
+    | Omit<ScheduledItem, "createdAt" | "updatedAt" | "userId">[];
 }) {
   try {
-    const upsertScheduledLists = ScheduledLists.map(
-      (list): Promise<ScheduledList> => {
-        return prisma.scheduledList.upsert({
-          where: { id: list.id },
+    const upsertScheduledItems = scheduledItems.map(
+      (item): Promise<ScheduledItem> => {
+        return prisma.scheduledItem.upsert({
+          where: { id: item.id },
           create: {
-            listId: list.listId,
-            title: list.title,
-            start: list.start,
-            end: list.end,
-            isDraggable: list.isDraggable,
-            description: list.description as Prisma.InputJsonValue,
+            itemId: item.itemId,
+            title: item.title,
+            start: item.start,
+            end: item.end,
+            isDraggable: item.isDraggable,
+            description: item.description as Prisma.InputJsonValue,
             user: { connect: { id: userId } },
           },
           update: {
-            listId: list.listId,
-            title: list.title,
-            start: list.start,
-            end: list.end,
-            isDraggable: list.isDraggable,
-            description: list.description as Prisma.InputJsonValue,
+            itemId: item.itemId,
+            title: item.title,
+            start: item.start,
+            end: item.end,
+            isDraggable: item.isDraggable,
+            description: item.description as Prisma.InputJsonValue,
           },
         });
       }
     );
 
-    const results = await Promise.all(upsertScheduledLists);
+    const results = await Promise.all(upsertScheduledItems);
     return { results };
   } catch (error) {
     throw error;
   }
 }
 
-export async function getScheduledLists(userId: User["id"]) {
+export async function getScheduledItems(userId: User["id"]) {
   try {
-    const scheduledLists = await prisma.scheduledList.findMany({
+    return await prisma.scheduledItem.findMany({
       where: { userId: userId },
     });
-    return scheduledLists;
   } catch (error) {
     throw error;
   }
 }
 
-export async function deleteScheduledList({ id }: Pick<ScheduledList, "id">) {
+export async function deleteScheduledItem({ id }: Pick<ScheduledItem, "id">) {
   try {
-    const deleteResult = await prisma.scheduledList.delete({
+    const deleteResult = await prisma.scheduledItem.delete({
       where: { id },
     });
     return deleteResult;

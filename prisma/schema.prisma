@@ -23,7 +23,7 @@ model User {
   notes  Note[]
   values  Value[]
   desires  Desire[]
-  scheduledLists ScheduledList[]
+  scheduledItems ScheduledItem[]
   clarifyingQuestions ClarifyingQuestions[]
  
 }
@@ -137,12 +137,12 @@ model ClarifyingQuestions {
 }
 
 
-model ScheduledList {
+model ScheduledItem {
   id    String @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
-  listId String
+  itemId String
   title String
   isDraggable Boolean @default(true)
   start   DateTime

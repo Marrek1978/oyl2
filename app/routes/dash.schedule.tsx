@@ -1,13 +1,12 @@
 import { parse } from 'querystring'
 import { useFetcher, useLoaderData } from '@remix-run/react'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import type { LinksFunction } from '@remix-run/react/dist/routeModules'
 import { json, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
 
 import styleSheet from "~/styles/SchedulerCss.css";
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 
-import SolidBtn from '~/components/buttons/SolidBtn'
 import HeadingH2 from '~/components/titles/HeadingH2'
 import { requireUserId } from '~/models/session.server'
 // import Scheduler from '~/components/schedule/Scheduler'
@@ -15,19 +14,21 @@ import { getMiscListsAndTodos, getSpecialListsWithTodos } from '~/models/list.se
 import SubHeading16px from '~/components/titles/SubHeading16px'
 // import MiscellaneousLists from '~/components/schedule/MiscellaneousLists'
 // import ProjectsListAndDraggables from '~/components/schedule/ProjectsListAndDraggables'
-import { deleteScheduledList, getScheduledLists, saveScheduledLists } from '~/models/scheduler.server'
+import { deleteScheduledItem, getScheduledItems, saveScheduledItems } from '~/models/scheduler.server'
 // import { transformRoutineDataDates, transformToDoDataDates, transformScheduledListsDataDates, } from '~/components/utilities/helperFunctions'
 // import ListsAsDraggableItems from '~/components/schedule/ListsAsDraggableItems'
 // import SpecialLists from '~/components/schedule/SpecialLists'
 
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndTasks } from '~/types/routineTypes'
-import type { ScheduledList } from '@prisma/client'
-import type { ProjectWithListsAndRoutines } from '~/types/projectTypes'
+import type { ScheduledItem } from '@prisma/client'
 import { getDesiresWithOutcomesListsRoutines } from '~/models/desires.server'
 import { getMiscRoutinesWithTasks, getSpecialRoutinesWithTasks } from '~/models/routines.server'
 import Scheduler from '~/components/schedule/Scheduler'
 import DesiresAndOutcomesWithListsAndRoutinesAsDraggables from '~/components/schedule/OutcomesDesiresListsRoutinesDraggables'
+import MiscellaneousLists from '~/components/schedule/MiscellaneousLists'
+import BtnWithProps from '~/components/buttons/BtnWithProps'
+import type { OutcomeWithAll } from '~/types/outcomeTypes'
 
 
 //example from https://github.com/jquense/react-big-calendar/blob/master/stories/demos/exampleCode/dndOutsideSource.js
@@ -36,6 +37,9 @@ import DesiresAndOutcomesWithListsAndRoutinesAsDraggables from '~/components/sch
 //!  stop propgation to day view, so that it doesnt open the day view when clicking a day
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styleSheet }];
+
+export type DraggedItem = ListAndToDos | RoutineAndTasks | OutcomeWithAll | undefined
+
 
 export const loader = async ({ request }: LoaderArgs) => {
   try {
@@ -49,7 +53,7 @@ export const loader = async ({ request }: LoaderArgs) => {
     // const loadedToDos = await getAllListsAndTodos(userId); //! get all and filter on client
     // const loadedRoutines = await getAllRoutines(userId);//! get all and filter on client
     // const loadedOutcomes = await (userId);
-    const loadedScheduledLists = await getScheduledLists(userId)
+    const loadedScheduledLists = await getScheduledItems(userId)
     // return json({ loadedToDos, loadedRoutines, scheduledLists, loadedProjects });
     return {
       loadedDesiresWithOutcomesListsRoutines,
@@ -75,9 +79,9 @@ export const action = async ({ request }: ActionArgs) => {
     const userId = await requireUserId(request);
     const formBody = await request.text();
     const parsedBody = parse(formBody);
-    const ScheduledLists: ScheduledList[] | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[] = JSON.parse(parsedBody.scheduledListsString as string);
+    const scheduledItems: ScheduledItem[] | Omit<ScheduledItem, 'createdAt' | 'updatedAt' | 'userId'>[] = JSON.parse(parsedBody.scheduledListsString as string);
     try {
-      await saveScheduledLists({ userId, ScheduledLists })
+      await saveScheduledItems({ userId, scheduledItems })
     } catch (error) { throw error }
   }
 
@@ -86,7 +90,7 @@ export const action = async ({ request }: ActionArgs) => {
     const parsedBody = parse(formBody);
     const idToDelete = parsedBody.idToDelete as string
     try {
-      await deleteScheduledList({ id: idToDelete })
+      await deleteScheduledItem({ id: idToDelete })
       return json({ status: 'success' }, { status: 200 })
     } catch (error) { throw error }
   }
@@ -98,18 +102,18 @@ function Schedule() {
   const fetcher = useFetcher();
   const [currentTab, setCurrentTab] = useState<string>('outcomes')
   const [isSaveScheduledLists, setIsSaveScheduledLists] = useState<boolean>(false)   //  SaveButton
-  const [draggedList, setDraggedList] = useState<ListAndToDos | RoutineAndTasks | ProjectWithListsAndRoutines>()
-  const [scheduledLists, setScheduledLists] = useState<ScheduledList[] | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[]>([])
+  const [draggedItem, setDraggedItem] = useState<ListAndToDos | RoutineAndTasks | OutcomeWithAll | undefined>()
+  const [scheduledItems, setScheduledItems] = useState<ScheduledItem[] | Omit<ScheduledItem, 'createdAt' | 'updatedAt' | 'userId'>[]>([])
   //?  when added to the calendar, they should be converted to the event structure, with start and end dates, is draggable, all day, id
   //? loaded scheduled events will be of the correct format, and will be loaded from db
 
 
   const { loadedDesiresWithOutcomesListsRoutines,
-    // loadedMiscLists,
-    // loadedMiscRoutines,
+    loadedMiscLists,
+    loadedMiscRoutines,
     // loadedSpecialLists,
     // loadedSpecialRoutines,
-    // loadedScheduledLists
+    loadedScheduledLists
   } = useLoaderData()
   // console.log("🚀 ~ file: dash.schedule.tsx:109 ~ Schedule ~ loadedDesiresWithOutcomesListsRoutines:", loadedDesiresWithOutcomesListsRoutines)
   // console.log("🚀 ~ file: dash.schedule.tsx:99 ~ Schedule ~ specialRoutines:", specialRoutines)
@@ -126,15 +130,17 @@ function Schedule() {
   //! need to separate the lists and todos, and the routines, and then convert the dates
   //! need to assemble project data, and convert dates, associated routines and lists, -- needs new types
 
+  //! schedule save must be changed from on drop to a deep difference check, and then save on button click
+
   // const initialListsData = useLoaderData<typeof loader>();
   // const loadedScheduledLists: ScheduledList[] = useMemo(() => transformScheduledListsDataDates(initialListsData.scheduledLists), [initialListsData.scheduledLists])
-  // const thisWeeksScheduledLists = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledLists), [loadedScheduledLists])
+  const thisWeeksScheduledItems = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledLists), [loadedScheduledLists])
   // const loadedToDos: ListAndToDos[] = useMemo(() => transformToDoDataDates(initialListsData.loadedToDos), [initialListsData.loadedToDos]) //initialListsData.loadedToDos as ListAndToDos[
   // // const loadedProjects: Project[] = useMemo(() => transformProjectDataDates(initialListsData.loadedProjects), [initialListsData.loadedProjects]) //initialListsData.loadedProjects as Project[]
   // const loadedRoutines: RoutineAndTasks[] = useMemo(() => transformRoutineDataDates(initialListsData.loadedRoutines), [initialListsData.loadedRoutines]) //initialListsData.loadedRoutines as RoutineAndToDos[]
 
-  // const miscellaneousLists = loadedToDos.filter(list => (list.projectId === null && list.outcomeId === null))
-  // const miscellaneousRoutines = loadedRoutines.filter(routine => (routine.projectId === null && routine.outcomeId === null))
+  const miscLists = loadedMiscLists.filter((list: ListAndToDos) => (list.outcomeId === null))
+  const miscRoutines = loadedMiscRoutines.filter((routine: RoutineAndTasks) => (routine.outcomeId === null))
   // const projectsWithListsAndRoutines: ProjectWithListsAndRoutines[] = loadedProjects.map(project => {
   //   const projectLists = loadedToDos.filter(list => list.projectId === project.id)
   //   const projectRoutines = loadedRoutines.filter(routine => routine.projectId === project.id)
@@ -151,27 +157,26 @@ function Schedule() {
   // }, [thisWeeksScheduledLists])
 
 
-  const handleDragStart = useCallback((draggedItem: ListAndToDos | RoutineAndTasks) => {
-    setDraggedList(draggedItem)
-    console.log('draggedItem is ', draggedItem)
+  const handleDragStart = useCallback((item: DraggedItem) => {
+    setDraggedItem(item)
   }, [])
 
 
-  // useEffect(() => {
-  //   if (scheduledLists !== thisWeeksScheduledLists) {
-  //     console.log('scheduledLists !== loadedScheduledLists')
-  //     setSaveScheduledLists(true)
-  //   } else {
-  //     setSaveScheduledLists(false)
-  //   }
-  // }, [scheduledLists, thisWeeksScheduledLists])
+  useEffect(() => {
+    if (scheduledItems !== thisWeeksScheduledItems) {
+      console.log('scheduledLists !== loadedScheduledLists')
+      setIsSaveScheduledLists(true)
+    } else {
+      setIsSaveScheduledLists(false)
+    }
+  }, [scheduledItems, thisWeeksScheduledItems])
 
 
   const handleSaveScheduledLists = async () => {
-    const scheduledListsString = JSON.stringify(scheduledLists)
+    const scheduledItemsString = JSON.stringify(scheduledItems)
     try {
       fetcher.submit({
-        scheduledListsString
+        scheduledItemsString
       }, {
         method: 'POST',
         // action: '/dash/schedule',
@@ -202,7 +207,7 @@ function Schedule() {
           >Special Lists</div>
           <div className={`tab tab-lg tab-lifted ${currentTab === 'misc' ? 'tab-active' : ''}`} id='misc'
             onClick={handleTabsClick}
-          >Miscellaneous</div>
+          >Misc. Lists and Routines</div>
         </div>
       </div>
 
@@ -247,11 +252,11 @@ function Schedule() {
             <div>
               <HeadingH2 text='Miscellaneous Lists' />
               <div className='mt-4'>
-                {/* <MiscellaneousLists
+                <MiscellaneousLists
                   handleDragStart={handleDragStart}
-                  miscellaneousLists={miscellaneousLists}
-                  miscellaneousRoutines={miscellaneousRoutines}
-                /> */}
+                  miscLists={miscLists}
+                  miscRoutines={miscRoutines}
+                />
               </div>
             </div>
           </>
@@ -269,24 +274,25 @@ function Schedule() {
           </div>
 
           <div className='my-6'>
-            {isSaveScheduledLists &&
-              <SolidBtn
-                onClickFunction={handleSaveScheduledLists}
-                text='Save Changes to Schedule'
-              />
-            }
+            <BtnWithProps
+              btnPurpose='save'
+              btnType='button'
+              onClickFunction={handleSaveScheduledLists}
+              btnLabel='Save Changes to Schedule'
+              isBtnDisabled={!isSaveScheduledLists}
+            />
           </div>
 
 
           aasdfasdf
 
           <Scheduler
-            scheduledLists={scheduledLists}
-            setScheduledLists={setScheduledLists}
-            draggedList={draggedList}
-            setDraggedList={setDraggedList}
-            isSaveScheduledLists={isSaveScheduledLists}
-            setIsSaveScheduledLists={setIsSaveScheduledLists}
+            scheduledItems={scheduledItems}
+            setScheduledItems={setScheduledItems}
+            draggedItem={draggedItem}
+            setDraggedItem={setDraggedItem}
+            isSaveScheduledItems={isSaveScheduledLists}
+            setIsSaveScheduledItems={setIsSaveScheduledLists}
           // loadedToDos={loadedToDos}
           // loadedRoutines={loadedRoutines}
           />
@@ -305,45 +311,45 @@ export default Schedule
 
 ///*  into helper function doc... for loading schedueled Events from DB - remake for this week
 //  will have to change typing becuse input will change from .json file to db imports
-// function updateScheduledListsDatesToCurrentWeek(lists: ScheduledList[]): ScheduledList[] {
-//   const currentDate = new Date()
-//   const currentWeekDay = currentDate.getDay()
+function updateScheduledListsDatesToCurrentWeek(lists: ScheduledItem[]): ScheduledItem[] {
+  const currentDate = new Date()
+  const currentWeekDay = currentDate.getDay()
 
-//   //get monday of the current week
-//   const currentWeekMonday = new Date(
-//     currentDate.getFullYear(),
-//     currentDate.getMonth(),
-//     currentDate.getDate() - currentWeekDay + 1
-//   )
+  //get monday of the current week
+  const currentWeekMonday = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    currentDate.getDate() - currentWeekDay + 1
+  )
 
-//   return lists.map((list): ScheduledList => {
+  return lists.map((list): ScheduledItem => {
 
-//     if (!list.start || !list.end) {
-//       throw new Error('Event start and end times must be defined');
-//     }
-//     const start = new Date(list.start)
-//     const end = new Date(list.end)
+    if (!list.start || !list.end) {
+      throw new Error('Event start and end times must be defined');
+    }
+    const start = new Date(list.start)
+    const end = new Date(list.end)
 
-//     const day = start.getDay()
-//     const startHour = start.getHours()
-//     const startMinutes = start.getMinutes()
-//     const endHour = end.getHours()
-//     const endMinutes = end.getMinutes()
+    const day = start.getDay()
+    const startHour = start.getHours()
+    const startMinutes = start.getMinutes()
+    const endHour = end.getHours()
+    const endMinutes = end.getMinutes()
 
-//     //create the new start and end dates
-//     const newStart = new Date(currentWeekMonday)
-//     newStart.setDate(newStart.getDate() + day - 1)
-//     newStart.setHours(startHour, startMinutes, 0, 0)
+    //create the new start and end dates
+    const newStart = new Date(currentWeekMonday)
+    newStart.setDate(newStart.getDate() + day - 1)
+    newStart.setHours(startHour, startMinutes, 0, 0)
 
-//     const newEnd = new Date(newStart)
-//     newEnd.setHours(endHour, endMinutes, 0, 0)
+    const newEnd = new Date(newStart)
+    newEnd.setHours(endHour, endMinutes, 0, 0)
 
-//     //! this should not be needed for events loaded from db... prob have to convert dates.
+    //! this should not be needed for events loaded from db... prob have to convert dates.
 
-//     return {
-//       ...list,
-//       start: newStart,
-//       end: newEnd,
-//     }
-//   })
-// }
+    return {
+      ...list,
+      start: newStart,
+      end: newEnd,
+    }
+  })
+}

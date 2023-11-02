@@ -1,9 +1,9 @@
 
 import type { ListAndToDos } from '~/types/listTypes';
-import type { RoutineAndToDos } from '~/types/routineTypes';
+import type { RoutineAndTasks } from '~/types/routineTypes';
 
 type Props = {
-  list: ListAndToDos | RoutineAndToDos;
+  list: ListAndToDos | RoutineAndTasks;
   handleDragStart: (event: any) => void;
   style: string;
 }

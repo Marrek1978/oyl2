@@ -15,7 +15,6 @@ type Props = {
 }
 
 function DesiresAndOutcomesList({ desires, handleDesireSelection, handleOutcomeSelection, selectedDesire, selectedOutcome }: Props) {
-console.log("🚀 ~ file: DesiresAndOutcomesList.tsx:18 ~ selectedOutcome:", selectedOutcome)
 
   const DesireZero = ({ desire }: { desire: DesireWithOutcomesAndAll; }) => {
     return (
@@ -31,8 +30,6 @@ console.log("🚀 ~ file: DesiresAndOutcomesList.tsx:18 ~ selectedOutcome:", sel
       </div>
     );
   };
-
-
 
   const Desire = ({ desire, }: { desire: DesireWithOutcomesAndAll; }) => {
     return (
@@ -107,76 +104,3 @@ console.log("🚀 ~ file: DesiresAndOutcomesList.tsx:18 ~ selectedOutcome:", sel
 export default DesiresAndOutcomesList
 
 
-
-
-// const DesireZero = ({ desire, handleDesireSelection, selectedDesire, handleOutcomeSelection }:
-//   {
-//     desire: DesireWithOutcomesAndAll;
-//     handleDesireSelection: (id: string) => void;
-//     handleOutcomeSelection: (id: string) => void;
-//     selectedDesire: DesireWithOutcomesAndAll | undefined
-//   }) => {
-//   return (
-//     <div className='border-2 border-success'>
-//       <ListedDesire desire={desire} handleDesireSelection={handleDesireSelection} selectedDesire={selectedDesire} >
-//         <div className='p-0 block hover:bg-base-100'>
-//           <div className='text-success font-bold'>
-//             <SubHeading12px text={'Primary Desire'} />
-//           </div>
-//           {desire.title}
-//         </div>
-//       </ListedDesire>
-//     </div>
-//   );
-// };
-
-
-// const Desire = ({ desire, handleDesireSelection, selectedDesire }: { desire: DesireWithOutcomesAndAll; handleDesireSelection: (id: string) => void; selectedDesire: DesireWithOutcomesAndAll | undefined }) => {
-//   return (
-//     <ListedDesire desire={desire} handleDesireSelection={handleDesireSelection} selectedDesire={selectedDesire} >
-//       {desire.title}
-//     </ListedDesire>
-//   )
-// }
-
-// const ListedDesire = ({ children, desire, handleDesireSelection, selectedDesire }: { children: React.ReactNode; desire: DesireWithOutcomesAndAll; handleDesireSelection: (id: string) => void; selectedDesire: DesireWithOutcomesAndAll | undefined }) => {
-
-//   let outcomes: OutcomeWithAll[] = []
-//   const isSelectedDesire = desire?.id === selectedDesire?.id
-//   if (desire?.outcomes) {
-//     outcomes = desire?.outcomes
-//   }
-
-//   return (
-//     <div className={`
-//       scheduler-desiresList
-//       ${isSelectedDesire && 'bg-base-100'}
-//       `}
-//       onClick={() => handleDesireSelection(desire.id)}
-//     >
-//       {children}
-//       {isSelectedDesire && outcomes.length > 0 && <OutcomesList outcomes={outcomes} />}
-//     </div>
-//   )
-// }
-
-
-// const OutcomesList = ({ outcomes }: { outcomes: OutcomeWithAll[] }) => {
-
-//   return (
-//     <>
-//       <div className='w-full text-right'>
-//         {outcomes.map((outcome: OutcomeWithAll) => {
-//           const randomeId = uuid()
-//           return (
-//             <div key={randomeId}
-//               className='scheduler-outcomesList'
-//               onClick={handleOutcomeSelection}
-//             >{outcome.title}
-//             </div>
-//           )
-//         })}
-//       </div>
-//     </>
-//   )
-// }
