@@ -247,9 +247,19 @@ export const getDesiresWithOutcomesListsRoutines = async (
           include: {
             lists: {
               orderBy: { sortOrder: "asc" },
+              include: {
+                todos: {
+                  orderBy: { sortOrder: "asc" },
+                },
+              },
             },
             routines: {
               orderBy: { sortOrder: "asc" },
+              include: {
+                tasks: {
+                  orderBy: { sortOrder: "asc" },
+                },
+              },
             },
           },
         },

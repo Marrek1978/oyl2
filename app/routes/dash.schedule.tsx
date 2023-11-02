@@ -1,6 +1,6 @@
 import { parse } from 'querystring'
 import { useFetcher, useLoaderData } from '@remix-run/react'
-import { useEffect, useState, useMemo } from 'react'
+import { useState, useCallback } from 'react'
 import type { LinksFunction } from '@remix-run/react/dist/routeModules'
 import { json, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
 
@@ -27,6 +27,7 @@ import type { ProjectWithListsAndRoutines } from '~/types/projectTypes'
 import { getDesiresWithOutcomesListsRoutines } from '~/models/desires.server'
 import { getMiscRoutinesWithTasks, getSpecialRoutinesWithTasks } from '~/models/routines.server'
 import Scheduler from '~/components/schedule/Scheduler'
+import DesiresAndOutcomesWithListsAndRoutinesAsDraggables from '~/components/schedule/OutcomesDesiresListsRoutinesDraggables'
 
 
 //example from https://github.com/jquense/react-big-calendar/blob/master/stories/demos/exampleCode/dndOutsideSource.js
@@ -95,7 +96,7 @@ export const action = async ({ request }: ActionArgs) => {
 function Schedule() {
 
   const fetcher = useFetcher();
-  const [currentTab, setCurrentTab] = useState<string>('Outcomes')
+  const [currentTab, setCurrentTab] = useState<string>('outcomes')
   const [isSaveScheduledLists, setIsSaveScheduledLists] = useState<boolean>(false)   //  SaveButton
   const [draggedList, setDraggedList] = useState<ListAndToDos | RoutineAndTasks | ProjectWithListsAndRoutines>()
   const [scheduledLists, setScheduledLists] = useState<ScheduledList[] | Omit<ScheduledList, 'createdAt' | 'updatedAt' | 'userId'>[]>([])
@@ -104,11 +105,13 @@ function Schedule() {
 
 
   const { loadedDesiresWithOutcomesListsRoutines,
-    loadedMiscLists,
-    loadedMiscRoutines,
-    loadedSpecialLists,
-    loadedSpecialRoutines,
-    loadedScheduledLists } = useLoaderData()
+    // loadedMiscLists,
+    // loadedMiscRoutines,
+    // loadedSpecialLists,
+    // loadedSpecialRoutines,
+    // loadedScheduledLists
+  } = useLoaderData()
+  // console.log("🚀 ~ file: dash.schedule.tsx:109 ~ Schedule ~ loadedDesiresWithOutcomesListsRoutines:", loadedDesiresWithOutcomesListsRoutines)
   // console.log("🚀 ~ file: dash.schedule.tsx:99 ~ Schedule ~ specialRoutines:", specialRoutines)
   // console.log("🚀 ~ file: dash.schedule.tsx:99 ~ Schedule ~ specialLists:", specialLists)
   // console.log("🚀 ~ file: dash.schedule.tsx:99 ~ Schedule ~ desiresWithOutcomesListsRoutines:", desiresWithOutcomesListsRoutines)
@@ -148,10 +151,10 @@ function Schedule() {
   // }, [thisWeeksScheduledLists])
 
 
-  // const handleDragStart = useCallback((draggedItem: ListAndToDos | RoutineAndToDos) => {
-  //   setDraggedList(draggedItem)
-  //   console.log('draggedItem is ', draggedItem)
-  // }, [])
+  const handleDragStart = useCallback((draggedItem: ListAndToDos | RoutineAndTasks) => {
+    setDraggedList(draggedItem)
+    console.log('draggedItem is ', draggedItem)
+  }, [])
 
 
   // useEffect(() => {
@@ -191,9 +194,9 @@ function Schedule() {
 
       <div className='my-4'>
         <div className="tabs">
-          <div className={`tab tab-lg tab-lifted ${currentTab === 'projects' ? 'tab-active' : ''}`} id='projects'
+          <div className={`tab tab-lg tab-lifted ${currentTab === 'outcomes' ? 'tab-active' : ''}`} id='outcomes'
             onClick={handleTabsClick}
-          >Outcomes</div>
+          >Desires & Outcomes</div>
           <div className={`tab tab-lg tab-lifted ${currentTab === 'special' ? 'tab-active' : ''}`} id='special'
             onClick={handleTabsClick}
           >Special Lists</div>
@@ -205,11 +208,16 @@ function Schedule() {
 
 
       <section className='flex flex-wrap gap-12'>
-        {currentTab === 'projects' && (
+        {currentTab === 'outcomes' && (
           <>
             <div>
-              <HeadingH2 text='Outcomes' />
+              <HeadingH2 text='Desires & Outcomes' />
+
               <div className='mt-4'>
+                <DesiresAndOutcomesWithListsAndRoutinesAsDraggables
+                  OutcomesWithAll={loadedDesiresWithOutcomesListsRoutines}
+                  handleDragStart={handleDragStart}
+                />
                 {/* <ProjectsListAndDraggables
                   projectsWithListsAndRoutines={projectsWithListsAndRoutines}
                   handleDragStart={handleDragStart}
@@ -270,7 +278,7 @@ function Schedule() {
           </div>
 
 
-aasdfasdf
+          aasdfasdf
 
           <Scheduler
             scheduledLists={scheduledLists}
@@ -297,45 +305,45 @@ export default Schedule
 
 ///*  into helper function doc... for loading schedueled Events from DB - remake for this week
 //  will have to change typing becuse input will change from .json file to db imports
-function updateScheduledListsDatesToCurrentWeek(lists: ScheduledList[]): ScheduledList[] {
-  const currentDate = new Date()
-  const currentWeekDay = currentDate.getDay()
+// function updateScheduledListsDatesToCurrentWeek(lists: ScheduledList[]): ScheduledList[] {
+//   const currentDate = new Date()
+//   const currentWeekDay = currentDate.getDay()
 
-  //get monday of the current week
-  const currentWeekMonday = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    currentDate.getDate() - currentWeekDay + 1
-  )
+//   //get monday of the current week
+//   const currentWeekMonday = new Date(
+//     currentDate.getFullYear(),
+//     currentDate.getMonth(),
+//     currentDate.getDate() - currentWeekDay + 1
+//   )
 
-  return lists.map((list): ScheduledList => {
+//   return lists.map((list): ScheduledList => {
 
-    if (!list.start || !list.end) {
-      throw new Error('Event start and end times must be defined');
-    }
-    const start = new Date(list.start)
-    const end = new Date(list.end)
+//     if (!list.start || !list.end) {
+//       throw new Error('Event start and end times must be defined');
+//     }
+//     const start = new Date(list.start)
+//     const end = new Date(list.end)
 
-    const day = start.getDay()
-    const startHour = start.getHours()
-    const startMinutes = start.getMinutes()
-    const endHour = end.getHours()
-    const endMinutes = end.getMinutes()
+//     const day = start.getDay()
+//     const startHour = start.getHours()
+//     const startMinutes = start.getMinutes()
+//     const endHour = end.getHours()
+//     const endMinutes = end.getMinutes()
 
-    //create the new start and end dates
-    const newStart = new Date(currentWeekMonday)
-    newStart.setDate(newStart.getDate() + day - 1)
-    newStart.setHours(startHour, startMinutes, 0, 0)
+//     //create the new start and end dates
+//     const newStart = new Date(currentWeekMonday)
+//     newStart.setDate(newStart.getDate() + day - 1)
+//     newStart.setHours(startHour, startMinutes, 0, 0)
 
-    const newEnd = new Date(newStart)
-    newEnd.setHours(endHour, endMinutes, 0, 0)
+//     const newEnd = new Date(newStart)
+//     newEnd.setHours(endHour, endMinutes, 0, 0)
 
-    //! this should not be needed for events loaded from db... prob have to convert dates.
+//     //! this should not be needed for events loaded from db... prob have to convert dates.
 
-    return {
-      ...list,
-      start: newStart,
-      end: newEnd,
-    }
-  })
-}
+//     return {
+//       ...list,
+//       start: newStart,
+//       end: newEnd,
+//     }
+//   })
+// }

@@ -63,7 +63,7 @@ export function getAllRoutines(userId: User["id"]) {
           orderBy: { sortOrder: "asc" },
         },
       },
-      orderBy: { updatedAt: "desc" },
+      orderBy: { sortOrder: "asc" },
     });
     return result;
   } catch (error) {
@@ -214,22 +214,20 @@ export async function getMiscRoutinesWithTasks(userId: User["id"]) {
 }
 
 export async function getSpecialRoutinesWithTasks(userId: User["id"]) {
-try{
-  return prisma.routine.findMany({
-    where: { userId, isSpecialRoutine: true },
-    include: {
-      tasks: {
-        orderBy: { sortOrder: "asc" },
+  try {
+    return prisma.routine.findMany({
+      where: { userId, isSpecialRoutine: true },
+      include: {
+        tasks: {
+          orderBy: { sortOrder: "asc" },
+        },
       },
-    },
-    orderBy: { sortOrder: "asc" },
-  });
-} catch (error) {throw error}
-
+      orderBy: { sortOrder: "asc" },
+    });
+  } catch (error) {
+    throw error;
+  }
 }
-
-
-
 
 //! ******************* TASK CRUD *******************//
 //?  ------------------ COMPLETED TASKS ----------------- //

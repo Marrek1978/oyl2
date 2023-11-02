@@ -13,7 +13,7 @@ import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndTasks } from '~/types/routineTypes'
 import type { ProjectWithListsAndRoutines } from '~/types/projectTypes';
-import type { ToDo, Task, ScheduledList } from '@prisma/client'
+import type {  ScheduledList } from '@prisma/client'
 import type { EventInteractionArgs, DragFromOutsideItemArgs } from 'react-big-calendar/lib/addons/dragAndDrop'
 
 

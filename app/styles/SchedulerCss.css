@@ -22,6 +22,35 @@
   motion-reduce:transition-none;
 }
 
+.scheduler-desiresList {
+  @apply w-full cursor-pointer  
+  truncate overflow-ellipsis
+  capitalize
+  px-4 py-3 
+  text-left font-mont text-base font-medium text-base-content
+  outline-none transition-all 
+  duration-300 ease-linear hover:z-10 
+  hover:scale-105
+  hover:bg-base-100
+  hover:shadow-xl
+  motion-reduce:transition-none;
+}
+
+
+.scheduler-outcomesList {
+  @apply w-full cursor-pointer  
+  truncate overflow-ellipsis
+  capitalize
+  px-4 py-3 
+  text-right font-mont text-base font-medium text-base-content
+  outline-none transition-all 
+  duration-300 ease-linear hover:z-10 
+  hover:scale-105
+  hover:bg-primary/30
+  hover:shadow-xl
+  motion-reduce:transition-none;
+}
+
 .project-main-focus {
   @apply hover:font-bold;
 }

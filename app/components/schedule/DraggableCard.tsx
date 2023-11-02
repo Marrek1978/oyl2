@@ -1,20 +1,21 @@
 // import React from 'react'
 // import type { Routines } from '@prisma/client';
-import type { ListAndToDos, Todo } from '~/types/listTypes';
-import type { RoutineAndToDos, RoutineToDo } from '~/types/routineTypes';
+import type { Task, ToDo } from '@prisma/client';
+import type { ListAndToDos } from '~/types/listTypes';
+import type { RoutineAndTasks, RoutineToDo } from '~/types/routineTypes';
 
 interface DraggableCardProps {
-  list: RoutineAndToDos | ListAndToDos;
+  list: RoutineAndTasks | ListAndToDos;
   handleDragStart: (event: any) => void;
 }
 
 function DraggableCard({ list, handleDragStart }: DraggableCardProps) {
 
-  const typeOfList = (list: ListAndToDos | RoutineAndToDos): Todo[] | RoutineToDo[] => {
+  const typeOfList = (list: ListAndToDos | RoutineAndTasks): ToDo[] | Task[] => {
     if ('todos' in list) {
       return list.todos
-    } else if ('routineToDos' in list) {
-      return list.routineToDos
+    } else if ('tasks' in list) {
+      return list.tasks
     } else {
       return []
     }
@@ -57,7 +58,7 @@ function DraggableCard({ list, handleDragStart }: DraggableCardProps) {
         </div >
 
         < div className="mx-4 mt-2 h-16 " >
-          {ToDosArray.map((todoObj: Todo | RoutineToDo, index: number) => {
+          {ToDosArray.map((todoObj: ToDo | RoutineToDo, index: number) => {
             return (
               <div
                 key={index}
@@ -67,7 +68,7 @@ function DraggableCard({ list, handleDragStart }: DraggableCardProps) {
                     text-left 
                     text-base-content
                     `}>
-                <div className={`w-full  wrap truncate text-ellipsis	${todoObj.complete && 'line-through text-slate-300'}`} >
+                <div className={`w-full  wrap truncate text-ellipsis	${todoObj.isComplete && 'line-through text-slate-300'}`} >
                   {todoObj.body}
                 </div>
               </div>

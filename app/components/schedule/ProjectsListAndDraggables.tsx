@@ -4,7 +4,7 @@ import ProjectsList from './ProjectsList'
 import SelectedProject from './SelectedProject'
 
 import type { ListAndToDos } from '~/types/listTypes'
-import type { RoutineAndToDos } from '~/types/routineTypes'
+import type { RoutineAndTasks } from '~/types/routineTypes'
 import type { ProjectWithListsAndRoutines } from '~/types/projectTypes'
 
 
@@ -21,7 +21,7 @@ function ProjectsListAndDraggables({ projectsWithListsAndRoutines, handleDragSta
   const [isMainFocus, setIsMainFocus] = useState<boolean>(false)
   const [selectedProject, setSelectedProject] = useState<ProjectWithListsAndRoutines>()
   const [selectedProjectLists, setSelectedProjectLists] = useState<ListAndToDos[]>()
-  const [selectedProjectRoutines, setSelectedProjectRoutines] = useState<RoutineAndToDos[]>()
+  const [selectedProjectRoutines, setSelectedProjectRoutines] = useState<RoutineAndTasks[]>()
 
 
   // on initial load, set selectedProject to the project with sortOrder = 0

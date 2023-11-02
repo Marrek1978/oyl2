@@ -3,7 +3,7 @@ import Heading16px from '../titles/Heading16px';
 import DraggableListItem from './DraggableListItem';
 import SubHeading12px from '../titles/SubHeading12px';
 
-import type { RoutineAndToDos } from '~/types/routineTypes';
+import type { RoutineAndTasks } from '~/types/routineTypes';
 import type { ListAndToDos } from '~/types/listTypes';
 import type { ProjectWithListsAndRoutines } from '~/types/projectTypes'
 
@@ -11,7 +11,7 @@ type Props = {
   selectedProject: ProjectWithListsAndRoutines;
   handleDragStart: (event: any) => void;
   selectedProjectLists: ListAndToDos[] | undefined;
-  selectedProjectRoutines: RoutineAndToDos[] | undefined;
+  selectedProjectRoutines: RoutineAndTasks[] | undefined;
   isMainFocus: boolean;
 }
 
