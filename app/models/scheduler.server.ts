@@ -1,7 +1,7 @@
 import { prisma } from "~/db.server";
 import type { Prisma, ScheduledItem, User } from "@prisma/client";
 
-export async function saveScheduledItems({
+export async function createScheduledItems({
   userId,
   scheduledItems,
 }: {

@@ -1,20 +1,19 @@
 // import { parse } from 'querystring'
 import { format } from 'date-fns'
-import { useLoaderData } from '@remix-run/react'
-import { useEffect,  useMemo } from 'react'
+import { useLoaderData, useRouteLoaderData } from '@remix-run/react'
+import { useEffect, useMemo, useState } from 'react'
 import type { LinksFunction } from '@remix-run/react/dist/routeModules'
 import { json, type LoaderArgs } from '@remix-run/server-runtime'
 
 import styleSheet from "~/styles/SchedulerCss.css";
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 
-import { getProjects } from '~/models/project.server'
 import HeadingH2 from '~/components/titles/HeadingH2'
 import { requireUserId } from '~/models/session.server'
 import { getAllRoutines } from '~/models/routines.server'
 import { getAllListsAndTodos } from '~/models/list.server'
-import { getScheduledItems} from '~/models/scheduler.server'
-import { transformRoutineDataDates, transformToDoDataDates, transformScheduledListsDataDates } from '~/components/utilities/helperFunctions'
+import { getScheduledItems } from '~/models/scheduler.server'
+import { transformRoutineDataDates, transformToDoDataDates, transformScheduledListsDataDates, ArrayOfObjectsStrToDates } from '~/components/utilities/helperFunctions'
 
 import Today from '~/components/today/Today'
 import HeadingH3 from '~/components/titles/HeadingH3'
@@ -26,9 +25,10 @@ import DisplayImportantLists from '~/components/today/DisplayImportantLists'
 
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndTasks } from '~/types/routineTypes'
-import type {  ScheduledItem } from '@prisma/client'
+import type { ScheduledItem } from '@prisma/client'
+import DisplayCurrentEvent from '~/components/today/DisplayCurrentEvent'
 // import type { ProjectWithListsAndRoutines } from '~/types/projectTypes'
-import type { DesireWithOutcomes } from '~/types/desireTypes'
+// import type { DesireWithOutcomes } from '~/types/desireTypes'
 // import RoutinesDisplayToday from '~/components/routines/RoutinesDisplayToday'
 // import ListsDisplayToday from '~/components/list/ListsDisplayToday'
 
@@ -40,33 +40,36 @@ export const loader = async ({ request }: LoaderArgs) => {
     const userId = await requireUserId(request);
     const loadedLists = await getAllListsAndTodos(userId); //! get all and filter on client
     const loadedRoutines = await getAllRoutines(userId);//! get all and filter on client
-    const loadedProjects = await getProjects(userId);
-    const scheduledLists = await getScheduledItems(userId)
-    const loadedDesires: DesireWithOutcomes[] = await getDesiresAndOutcomes(userId)
-    return json({ loadedLists, loadedRoutines, scheduledLists, loadedProjects, loadedDesires });
+    const scheduledItems = await getScheduledItems(userId)
+    // const loadedDesires: DesireWithOutcomes[] = await getDesiresAndOutcomes(userId)
+    return ({ loadedLists, loadedRoutines, scheduledItems });
   } catch (error) {
     throw error
   }
 }
 
 
+//use memo???
 
 function TodayPage() {
 
-  // const [currentEvent, setCurrentEvent] = useState<ScheduledList | null>(null)
+  const [currentEvent, setCurrentEvent] = useState<ScheduledItem | null>(null)
   // const [clickedEvent, setClickedEvent] = useState<ScheduledList | null>(null)
 
   const currentDate = format(new Date(), 'EEE, MMMM d');
   // const currentTime = format(new Date(), 'HH:mm')
 
-  const initialListsData = useLoaderData<typeof loader>();
+  // const initialListsData = useLoaderData<typeof loader>();
 
-  const loadedScheduledLists: ScheduledItem[] = useMemo(() => transformScheduledListsDataDates(initialListsData.scheduledLists), [initialListsData.scheduledLists])
-  const thisWeeksScheduledLists = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledLists), [loadedScheduledLists])
-  const loadedLists: ListAndToDos[] = useMemo(() => transformToDoDataDates(initialListsData.loadedLists), [initialListsData.loadedLists]) //initialListsData.loadedToDos as ListAndToDos[
-  const loadedRoutines: RoutineAndTasks[] = useMemo(() => transformRoutineDataDates(initialListsData.loadedRoutines), [initialListsData.loadedRoutines]) //initialListsData.loadedRoutines as RoutineAndToDos[]
+  // const thisWeeksScheduledLists = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledLists), [loadedScheduledLists])
+  // const loadedLists: ListAndToDos[] = useMemo(() => transformToDoDataDates(initialListsData.loadedLists), [initialListsData.loadedLists]) //initialListsData.loadedToDos as ListAndToDos[
+  // const loadedRoutines: RoutineAndTasks[] = useMemo(() => transformRoutineDataDates(initialListsData.loadedRoutines), [initialListsData.loadedRoutines]) //initialListsData.loadedRoutines as RoutineAndToDos[]
   // const loadedDesires: DesireWithOutcomes[] = useMemo(() => transformDesireWithOutcomesDataDates(initialListsData.loadedDesires), [initialListsData.loadedDesires]) //initialListsData.loadedRoutines as RoutineAndToDos[]
-  
+
+  // const loadedScheduledItems: ScheduledItem[] = useMemo(() => transformScheduledListsDataDates(initialListsData.scheduledItems), [initialItemsData.scheduledItems])
+
+
+
   //?   change to DesiresWithOutcomesWithAll
 
   // const projectsWithListsAndRoutines: ProjectWithListsAndRoutines[] = loadedProjects.map(project => {
@@ -86,20 +89,22 @@ function TodayPage() {
   // const focusOutcome: Outcome | undefined = focusDesire?.outcomes[0]
   // const focusOutcomeId: string | undefined = focusOutcome?.id
 
-  const todaysEventList = useMemo(() => getTodaysEvents(thisWeeksScheduledLists), [thisWeeksScheduledLists])
-
+  // const todaysEventList = useMemo(() => getTodaysEvents(thisWeeksScheduledLists), [thisWeeksScheduledLists])
+  const todaysEventList = useGetTodaysItems()
+  console.log("🚀 ~ file: dash.today.tsx:93 ~ TodayPage ~ todaysEventList:", todaysEventList)
+  const allUserLists = useGetLoadedUsersLists()
 
   useEffect(() => {
     const invervalId = setInterval(() => {
-      // setCurrentEvent(getCurrentEvent(todaysEventList))
+      setCurrentEvent(getCurrentEvent(todaysEventList))
     }, (1000 * 60));
     return () => clearInterval(invervalId)
   })
 
 
-  useEffect(() => {
-    // setCurrentEvent(getCurrentEvent(todaysEventList))
-  }, [todaysEventList])
+  // useEffect(() => {
+  // setCurrentEvent(getCurrentEvent(todaysEventList))
+  // }, [todaysEventList])
 
 
   return (
@@ -190,32 +195,32 @@ function TodayPage() {
             </div>
 
             <div className='w-full'>
-              <DisplayImportantLists
+              {/* <DisplayImportantLists
                 loadedLists={loadedLists}
-              />
+              /> */}
             </div>
 
             <div className='flex flex-wrap gap-8 mt-8'>
               <div className='w-[400px]  ' >
                 <HeadingH2 text={`Today: ${currentDate}`} />
                 <Today
-                  scheduledLists={todaysEventList}
-                  loadedLists={loadedLists}
-                  loadedRoutines={loadedRoutines}
+                  scheduledItems={todaysEventList}
+                  loadedLists={allUserLists}
+                // loadedRoutines={allUserLists}
                 />
               </div>
 
               <div className='  border-2 border-red-600'>
                 <HeadingH2 text={`Current Time Block`} />
                 <div>
-                  {/* {currentEvent && (
-                    <DisplayCurrentEvent
-                      event={currentEvent}
-                      loadedLists={loadedLists}
-                      loadedRoutines={loadedRoutines}
-                      loadedProjects={loadedProjects}
-                    />
-                  )} */}
+                  {currentEvent && (
+                    // <DisplayCurrentEvent
+                    //   event={currentEvent}
+                    //   loadedLists={loadedLists}
+                    //   loadedRoutines={loadedRoutines}
+                    //   loadedOutcomeItems={loadedProjects}
+                    // />
+                  )}
                 </div>
               </div>
 
@@ -291,10 +296,58 @@ export function getTodaysEvents(lists: ScheduledItem[]): ScheduledItem[] {
   return todaysEvents
 }
 
-// const getCurrentEvent = (events: ScheduledList[]) => {
-//   const now = new Date()
-//   for (let event of events) {
-//     if (event.start <= now && event.end >= now) return event
-//   }
-//   return null
-// }
+const getCurrentEvent = (events: ScheduledItem[]) => {
+  const now = new Date()
+  for (let event of events) {
+    if (event.start <= now && event.end >= now) return event
+  }
+  return null
+}
+
+export const useGetTodaysLoaders = () => {
+  const path = 'routes/dash.today'
+  const loaderData = useRouteLoaderData(path);
+  return loaderData;
+};
+
+export const useGetLoadedScheduledItems = () => {
+  const [items, setItems] = useState<ScheduledItem[]>([])
+  const { scheduledItems } = useGetTodaysLoaders();
+
+  useEffect(() => {
+    if (!scheduledItems) return
+    const itemsWithProperDates = ArrayOfObjectsStrToDates({ items: scheduledItems, dateKeys: ['createdAt', 'updatedAt'] })
+    setItems(itemsWithProperDates)
+  }, [scheduledItems])
+
+  return items
+}
+
+
+export const useGetTodaysItems = () => {
+  const [todaysItems, setTodaysItems] = useState<ScheduledItem[]>([])
+  console.log("🚀 ~ file: dash.today.tsx:328 ~ useGetTodaysItems ~ todaysItems:", todaysItems)
+  const loadedScheduledItems = useGetLoadedScheduledItems()
+
+  useEffect(() => {
+    if (!loadedScheduledItems) return
+    const todaysItems = getTodaysEvents(loadedScheduledItems)
+    setTodaysItems(todaysItems)
+  }, [loadedScheduledItems])
+
+  return todaysItems
+}
+
+
+export const useGetLoadedUsersLists = () => {
+  const [lists, setLists] = useState<ScheduledItem[]>([])
+  const { loadedLists } = useGetTodaysLoaders();
+
+  useEffect(() => {
+    if (!loadedLists) return
+    const listsWithProperDates = ArrayOfObjectsStrToDates({ items: loadedLists, dateKeys: ['createdAt', 'updatedAt'] })
+    setLists(listsWithProperDates)
+  }, [loadedLists])
+
+  return loadedLists
+}

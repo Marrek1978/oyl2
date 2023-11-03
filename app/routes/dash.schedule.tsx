@@ -14,7 +14,7 @@ import { getMiscListsAndTodos, getSpecialListsWithTodos } from '~/models/list.se
 import SubHeading16px from '~/components/titles/SubHeading16px'
 // import MiscellaneousLists from '~/components/schedule/MiscellaneousLists'
 // import ProjectsListAndDraggables from '~/components/schedule/ProjectsListAndDraggables'
-import { deleteScheduledItem, getScheduledItems, saveScheduledItems } from '~/models/scheduler.server'
+import { deleteScheduledItem, getScheduledItems, createScheduledItems } from '~/models/scheduler.server'
 // import { transformRoutineDataDates, transformToDoDataDates, transformScheduledListsDataDates, } from '~/components/utilities/helperFunctions'
 // import ListsAsDraggableItems from '~/components/schedule/ListsAsDraggableItems'
 // import SpecialLists from '~/components/schedule/SpecialLists'
@@ -78,7 +78,7 @@ export const action = async ({ request }: ActionArgs) => {
     const parsedBody = parse(formBody);
     const scheduledItems: Item[] = JSON.parse(parsedBody.scheduledItemsString as string);
     try {
-      await saveScheduledItems({ userId, scheduledItems })
+      await createScheduledItems({ userId, scheduledItems })
     } catch (error) { throw error }
   }
 
@@ -301,7 +301,7 @@ export default Schedule
 
 ///*  into helper function doc... for loading schedueled Events from DB - remake for this week
 //  will have to change typing becuse input will change from .json file to db imports
-function updateScheduledListsDatesToCurrentWeek(items: ScheduledItem[]): ScheduledItem[] {
+export function updateScheduledListsDatesToCurrentWeek(items: ScheduledItem[]): ScheduledItem[] {
   const currentDate = new Date()
   const currentWeekDay = currentDate.getDay()
 

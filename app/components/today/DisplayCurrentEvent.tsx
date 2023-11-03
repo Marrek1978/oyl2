@@ -4,17 +4,17 @@ import TodosCompletedForm from '../forms/CompletedTodosForm'
 import RoutineTodosCompletedForm from '../forms/CompletedTasksForm'
 
 import type { ListAndToDos } from '~/types/listTypes'
-import type { RoutineAndToDos } from '~/types/routineTypes'
-import type { Project, ScheduledList } from '@prisma/client'
+import type { RoutineAndTasks } from '~/types/routineTypes'
+import type { ScheduledItem } from '@prisma/client'
 
 type Props = {
-  event: ScheduledList
+  event: ScheduledItem
   loadedLists: ListAndToDos[]
-  loadedRoutines: RoutineAndToDos[]
-  loadedProjects: Project[]
+  loadedRoutines: RoutineAndTasks[]
+  // loadedProjects: Project[]
 }
 
-function DisplayCurrentEvent({ event, loadedProjects, loadedRoutines, loadedLists }: Props) {
+function DisplayCurrentEvent({ event, loadedRoutines, loadedLists }: Props) {
 
   const [typeOfEvent, setTypeOfEvent] = useState<string>('')
   const [output, setOutput] = useState<JSX.Element>((<><div>Nothing is scheduled</div></>))

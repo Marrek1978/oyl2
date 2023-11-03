@@ -46,6 +46,7 @@ function Scheduler({
   const [eventToDelete, setEventToDelete] = useState<ScheduledItem | Omit<ScheduledItem, 'createdAt' | 'updatedAt' | 'userId'>>()
 
 
+  //? ***********   CUSTOM DragAndDropCalendar FUNCTIONS   ***************** */
   const dragFromOutsideItem = useCallback(() => {
     return (event: object) => {
       if (draggedItem !== undefined) return new Date();
