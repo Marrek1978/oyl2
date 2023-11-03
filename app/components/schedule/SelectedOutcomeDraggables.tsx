@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { v4 as uuid } from 'uuid';
 
 import Heading16px from '../titles/Heading16px';
 import DraggableListItem from './DraggableListItem';

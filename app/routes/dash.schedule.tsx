@@ -1,5 +1,5 @@
 import { parse } from 'querystring'
-import { useFetcher, useLoaderData } from '@remix-run/react'
+import { useFetcher, useLoaderData,  useRouteLoaderData } from '@remix-run/react'
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import type { LinksFunction } from '@remix-run/react/dist/routeModules'
 import { json, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
@@ -29,6 +29,8 @@ import DesiresAndOutcomesWithListsAndRoutinesAsDraggables from '~/components/sch
 import MiscellaneousLists from '~/components/schedule/MiscellaneousLists'
 import BtnWithProps from '~/components/buttons/BtnWithProps'
 import type { OutcomeWithAll } from '~/types/outcomeTypes'
+import { ArrayOfObjectsStrToDates } from '~/components/utilities/helperFunctions'
+import type { Item } from '~/types/itemTypes'
 
 
 //example from https://github.com/jquense/react-big-calendar/blob/master/stories/demos/exampleCode/dndOutsideSource.js
@@ -53,7 +55,7 @@ export const loader = async ({ request }: LoaderArgs) => {
     // const loadedToDos = await getAllListsAndTodos(userId); //! get all and filter on client
     // const loadedRoutines = await getAllRoutines(userId);//! get all and filter on client
     // const loadedOutcomes = await (userId);
-    const loadedScheduledLists = await getScheduledItems(userId)
+    const loadedScheduledItems = await getScheduledItems(userId)
     // return json({ loadedToDos, loadedRoutines, scheduledLists, loadedProjects });
     return {
       loadedDesiresWithOutcomesListsRoutines,
@@ -61,25 +63,20 @@ export const loader = async ({ request }: LoaderArgs) => {
       loadedMiscRoutines,
       loadedSpecialLists,
       loadedSpecialRoutines,
-      loadedScheduledLists
+      loadedScheduledItems
     }
   } catch (error) {
     throw error
   }
 }
 
-//!  how to delete a scheduled list ?
-
-//the id mis-matchihng is a problem
-//  each list requires a new id, so i need to create one on a drag
-// but i need to delete that ide and have the db create an id, which is used for storage and updating
 
 export const action = async ({ request }: ActionArgs) => {
   if (request.method === 'POST') {
     const userId = await requireUserId(request);
     const formBody = await request.text();
     const parsedBody = parse(formBody);
-    const scheduledItems: ScheduledItem[] | Omit<ScheduledItem, 'createdAt' | 'updatedAt' | 'userId'>[] = JSON.parse(parsedBody.scheduledListsString as string);
+    const scheduledItems: Item[] = JSON.parse(parsedBody.scheduledItemsString as string);
     try {
       await saveScheduledItems({ userId, scheduledItems })
     } catch (error) { throw error }
@@ -97,13 +94,14 @@ export const action = async ({ request }: ActionArgs) => {
   return null
 }
 
+
 function Schedule() {
 
   const fetcher = useFetcher();
   const [currentTab, setCurrentTab] = useState<string>('outcomes')
   const [isSaveScheduledLists, setIsSaveScheduledLists] = useState<boolean>(false)   //  SaveButton
   const [draggedItem, setDraggedItem] = useState<ListAndToDos | RoutineAndTasks | OutcomeWithAll | undefined>()
-  const [scheduledItems, setScheduledItems] = useState<ScheduledItem[] | Omit<ScheduledItem, 'createdAt' | 'updatedAt' | 'userId'>[]>([])
+  const [scheduledItems, setScheduledItems] = useState<Item[]>([])
   //?  when added to the calendar, they should be converted to the event structure, with start and end dates, is draggable, all day, id
   //? loaded scheduled events will be of the correct format, and will be loaded from db
 
@@ -113,7 +111,7 @@ function Schedule() {
     loadedMiscRoutines,
     // loadedSpecialLists,
     // loadedSpecialRoutines,
-    loadedScheduledLists
+    // loadedScheduledItems
   } = useLoaderData()
   // console.log("🚀 ~ file: dash.schedule.tsx:109 ~ Schedule ~ loadedDesiresWithOutcomesListsRoutines:", loadedDesiresWithOutcomesListsRoutines)
   // console.log("🚀 ~ file: dash.schedule.tsx:99 ~ Schedule ~ specialRoutines:", specialRoutines)
@@ -134,7 +132,9 @@ function Schedule() {
 
   // const initialListsData = useLoaderData<typeof loader>();
   // const loadedScheduledLists: ScheduledList[] = useMemo(() => transformScheduledListsDataDates(initialListsData.scheduledLists), [initialListsData.scheduledLists])
-  const thisWeeksScheduledItems = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledLists), [loadedScheduledLists])
+
+  const loadedScheduledItems: ScheduledItem[] = useGetLoadedScheduledItems()
+  const thisWeeksScheduledItems = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledItems), [loadedScheduledItems])
   // const loadedToDos: ListAndToDos[] = useMemo(() => transformToDoDataDates(initialListsData.loadedToDos), [initialListsData.loadedToDos]) //initialListsData.loadedToDos as ListAndToDos[
   // // const loadedProjects: Project[] = useMemo(() => transformProjectDataDates(initialListsData.loadedProjects), [initialListsData.loadedProjects]) //initialListsData.loadedProjects as Project[]
   // const loadedRoutines: RoutineAndTasks[] = useMemo(() => transformRoutineDataDates(initialListsData.loadedRoutines), [initialListsData.loadedRoutines]) //initialListsData.loadedRoutines as RoutineAndToDos[]
@@ -152,9 +152,9 @@ function Schedule() {
   // })
 
 
-  // useEffect(() => {
-  //   setScheduledLists(thisWeeksScheduledLists)
-  // }, [thisWeeksScheduledLists])
+  useEffect(() => {
+    setScheduledItems(thisWeeksScheduledItems)
+  }, [thisWeeksScheduledItems])
 
 
   const handleDragStart = useCallback((item: DraggedItem) => {
@@ -163,12 +163,7 @@ function Schedule() {
 
 
   useEffect(() => {
-    if (scheduledItems !== thisWeeksScheduledItems) {
-      console.log('scheduledLists !== loadedScheduledLists')
-      setIsSaveScheduledLists(true)
-    } else {
-      setIsSaveScheduledLists(false)
-    }
+    setIsSaveScheduledLists(!areArraysEqual(scheduledItems, thisWeeksScheduledItems))
   }, [scheduledItems, thisWeeksScheduledItems])
 
 
@@ -179,7 +174,6 @@ function Schedule() {
         scheduledItemsString
       }, {
         method: 'POST',
-        // action: '/dash/schedule',
       })
     } catch (error) { throw error }
     setIsSaveScheduledLists(false)
@@ -187,7 +181,6 @@ function Schedule() {
 
 
   const handleTabsClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    // console.log('handled tabs click', event.currentTarget.id)
     setCurrentTab(event.currentTarget.id)
   }
 
@@ -263,9 +256,6 @@ function Schedule() {
         )}
 
 
-
-
-
         <div className='flex-1'>
           <div className='mt-0'>
             <strong>
@@ -311,7 +301,7 @@ export default Schedule
 
 ///*  into helper function doc... for loading schedueled Events from DB - remake for this week
 //  will have to change typing becuse input will change from .json file to db imports
-function updateScheduledListsDatesToCurrentWeek(lists: ScheduledItem[]): ScheduledItem[] {
+function updateScheduledListsDatesToCurrentWeek(items: ScheduledItem[]): ScheduledItem[] {
   const currentDate = new Date()
   const currentWeekDay = currentDate.getDay()
 
@@ -322,13 +312,13 @@ function updateScheduledListsDatesToCurrentWeek(lists: ScheduledItem[]): Schedul
     currentDate.getDate() - currentWeekDay + 1
   )
 
-  return lists.map((list): ScheduledItem => {
+  return items.map((item): ScheduledItem => {
 
-    if (!list.start || !list.end) {
+    if (!item.start || !item.end) {
       throw new Error('Event start and end times must be defined');
     }
-    const start = new Date(list.start)
-    const end = new Date(list.end)
+    const start = new Date(item.start)
+    const end = new Date(item.end)
 
     const day = start.getDay()
     const startHour = start.getHours()
@@ -347,9 +337,54 @@ function updateScheduledListsDatesToCurrentWeek(lists: ScheduledItem[]): Schedul
     //! this should not be needed for events loaded from db... prob have to convert dates.
 
     return {
-      ...list,
+      ...item,
       start: newStart,
       end: newEnd,
     }
   })
+}
+
+
+function areArraysEqual(arr1: Item[], arr2: Item[]) {
+  console.log('arr1', arr1)
+  console.log("🚀 ~ file:  areArraysEqual ~ arr2:", arr2)
+  if (arr1.length !== arr2.length) return false
+  const sortedArr1: Item[] = arr1.sort((a, b) => a.id.localeCompare(b.id))
+  const sortedArr2: Item[] = arr2.sort((a, b) => a.id.localeCompare(b.id))
+  for (let i = 0; i < sortedArr1.length; i++) {
+    if (sortedArr1[i] !== sortedArr2[i]) return false
+  }
+  return true
+}
+
+
+
+
+// {
+//   loadedDesiresWithOutcomesListsRoutines,
+//   loadedMiscLists,
+//   loadedMiscRoutines,
+//   loadedSpecialLists,
+//   loadedSpecialRoutines,
+//   loadedScheduledItems
+// }
+
+export const useGetScheduleLoaders = () => {
+  const path = 'routes/dash.schedule'
+  const loaderData = useRouteLoaderData(path);
+  return loaderData;
+};
+
+
+export const useGetLoadedScheduledItems = () => {
+  const [items, setitems] = useState<ScheduledItem[]>([])
+  const { loadedScheduledItems } = useGetScheduleLoaders();
+
+  useEffect(() => {
+    if (!loadedScheduledItems) return
+    const itemsWithProperDates = ArrayOfObjectsStrToDates({ items: loadedScheduledItems, dateKeys: ['createdAt', 'updatedAt'] })
+    setitems(itemsWithProperDates)
+  }, [loadedScheduledItems])
+
+  return items
 }

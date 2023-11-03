@@ -48,7 +48,7 @@ export async function getScheduledItems(userId: User["id"]) {
     return await prisma.scheduledItem.findMany({
       where: { userId: userId },
     });
-  } catch (error) {
+  } catch (error) {  
     throw error;
   }
 }

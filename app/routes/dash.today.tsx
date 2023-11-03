@@ -13,7 +13,7 @@ import HeadingH2 from '~/components/titles/HeadingH2'
 import { requireUserId } from '~/models/session.server'
 import { getAllRoutines } from '~/models/routines.server'
 import { getAllListsAndTodos } from '~/models/list.server'
-import { getScheduledLists } from '~/models/scheduler.server'
+import { getScheduledItems} from '~/models/scheduler.server'
 import { transformRoutineDataDates, transformToDoDataDates, transformScheduledListsDataDates } from '~/components/utilities/helperFunctions'
 
 import Today from '~/components/today/Today'
@@ -26,7 +26,7 @@ import DisplayImportantLists from '~/components/today/DisplayImportantLists'
 
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndTasks } from '~/types/routineTypes'
-import type {  ScheduledList } from '@prisma/client'
+import type {  ScheduledItem } from '@prisma/client'
 // import type { ProjectWithListsAndRoutines } from '~/types/projectTypes'
 import type { DesireWithOutcomes } from '~/types/desireTypes'
 // import RoutinesDisplayToday from '~/components/routines/RoutinesDisplayToday'
@@ -41,7 +41,7 @@ export const loader = async ({ request }: LoaderArgs) => {
     const loadedLists = await getAllListsAndTodos(userId); //! get all and filter on client
     const loadedRoutines = await getAllRoutines(userId);//! get all and filter on client
     const loadedProjects = await getProjects(userId);
-    const scheduledLists = await getScheduledLists(userId)
+    const scheduledLists = await getScheduledItems(userId)
     const loadedDesires: DesireWithOutcomes[] = await getDesiresAndOutcomes(userId)
     return json({ loadedLists, loadedRoutines, scheduledLists, loadedProjects, loadedDesires });
   } catch (error) {
@@ -61,7 +61,7 @@ function TodayPage() {
 
   const initialListsData = useLoaderData<typeof loader>();
 
-  const loadedScheduledLists: ScheduledList[] = useMemo(() => transformScheduledListsDataDates(initialListsData.scheduledLists), [initialListsData.scheduledLists])
+  const loadedScheduledLists: ScheduledItem[] = useMemo(() => transformScheduledListsDataDates(initialListsData.scheduledLists), [initialListsData.scheduledLists])
   const thisWeeksScheduledLists = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledLists), [loadedScheduledLists])
   const loadedLists: ListAndToDos[] = useMemo(() => transformToDoDataDates(initialListsData.loadedLists), [initialListsData.loadedLists]) //initialListsData.loadedToDos as ListAndToDos[
   const loadedRoutines: RoutineAndTasks[] = useMemo(() => transformRoutineDataDates(initialListsData.loadedRoutines), [initialListsData.loadedRoutines]) //initialListsData.loadedRoutines as RoutineAndToDos[]
@@ -238,7 +238,7 @@ export default TodayPage
 
 ///*  into helper function doc??... for loading schedueled Events from DB - remake for this week
 //  will have to change typing becuse input will change from .json file to db imports
-function updateScheduledListsDatesToCurrentWeek(lists: ScheduledList[]): ScheduledList[] {
+function updateScheduledListsDatesToCurrentWeek(lists: ScheduledItem[]): ScheduledItem[] {
   const currentDate = new Date()
   const currentWeekDay = currentDate.getDay()
 
@@ -249,7 +249,7 @@ function updateScheduledListsDatesToCurrentWeek(lists: ScheduledList[]): Schedul
     currentDate.getDate() - currentWeekDay + 1
   )
 
-  return lists.map((list): ScheduledList => {
+  return lists.map((list): ScheduledItem => {
 
     if (!list.start || !list.end) {
       throw new Error('Event start and end times must be defined');
@@ -281,8 +281,8 @@ function updateScheduledListsDatesToCurrentWeek(lists: ScheduledList[]): Schedul
   })
 }
 
-export function getTodaysEvents(lists: ScheduledList[]): ScheduledList[] {
-  const updatedEventsToCurrentWeek: ScheduledList[] = updateScheduledListsDatesToCurrentWeek(lists)
+export function getTodaysEvents(lists: ScheduledItem[]): ScheduledItem[] {
+  const updatedEventsToCurrentWeek: ScheduledItem[] = updateScheduledListsDatesToCurrentWeek(lists)
   const currentDayOfTheWeek = new Date().getDay()
   const todaysEvents = updatedEventsToCurrentWeek.filter(event => {
     const eventDay = event.start?.getDay()
