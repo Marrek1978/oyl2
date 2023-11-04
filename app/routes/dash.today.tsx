@@ -1,9 +1,9 @@
 // import { parse } from 'querystring'
 import { format } from 'date-fns'
-import { useLoaderData, useRouteLoaderData } from '@remix-run/react'
-import { useEffect, useMemo, useState } from 'react'
+import { useRouteLoaderData } from '@remix-run/react'
+import { useEffect, useState } from 'react'
 import type { LinksFunction } from '@remix-run/react/dist/routeModules'
-import { json, type LoaderArgs } from '@remix-run/server-runtime'
+import { type LoaderArgs } from '@remix-run/server-runtime'
 
 import styleSheet from "~/styles/SchedulerCss.css";
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
@@ -13,24 +13,22 @@ import { requireUserId } from '~/models/session.server'
 import { getAllRoutines } from '~/models/routines.server'
 import { getAllListsAndTodos } from '~/models/list.server'
 import { getScheduledItems } from '~/models/scheduler.server'
-import { transformRoutineDataDates, transformToDoDataDates, transformScheduledListsDataDates, ArrayOfObjectsStrToDates } from '~/components/utilities/helperFunctions'
+import { ArrayOfObjectsStrToDates, ObjectStrToDates } from '~/components/utilities/helperFunctions'
 
 import Today from '~/components/today/Today'
 import HeadingH3 from '~/components/titles/HeadingH3'
 import HeadingH5 from '~/components/titles/HeadingH5'
-import { getDesiresAndOutcomes } from '~/models/desires.server'
+import { getDesiresAndOutcomesWithLists } from '~/models/desires.server'
 import SubHeading14px from '~/components/titles/SubHeading14px'
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
-import DisplayImportantLists from '~/components/today/DisplayImportantLists'
 
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndTasks } from '~/types/routineTypes'
 import type { ScheduledItem } from '@prisma/client'
 import DisplayCurrentEvent from '~/components/today/DisplayCurrentEvent'
-// import type { ProjectWithListsAndRoutines } from '~/types/projectTypes'
-// import type { DesireWithOutcomes } from '~/types/desireTypes'
-// import RoutinesDisplayToday from '~/components/routines/RoutinesDisplayToday'
-// import ListsDisplayToday from '~/components/list/ListsDisplayToday'
+import type { OutcomeWithLists, OutcomeWithListsWithStrDates } from '~/types/outcomeTypes'
+import type { DesireWithOutcomesAndListsWithStrDates } from '~/types/desireTypes'
+
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styleSheet }];
@@ -41,8 +39,8 @@ export const loader = async ({ request }: LoaderArgs) => {
     const loadedLists = await getAllListsAndTodos(userId); //! get all and filter on client
     const loadedRoutines = await getAllRoutines(userId);//! get all and filter on client
     const scheduledItems = await getScheduledItems(userId)
-    // const loadedDesires: DesireWithOutcomes[] = await getDesiresAndOutcomes(userId)
-    return ({ loadedLists, loadedRoutines, scheduledItems });
+    const loadedDesiresWithOutcomes = await getDesiresAndOutcomesWithLists(userId)
+    return ({ loadedLists, loadedRoutines, scheduledItems, loadedDesiresWithOutcomes });
   } catch (error) {
     throw error
   }
@@ -59,30 +57,6 @@ function TodayPage() {
   const currentDate = format(new Date(), 'EEE, MMMM d');
   // const currentTime = format(new Date(), 'HH:mm')
 
-  // const initialListsData = useLoaderData<typeof loader>();
-
-  // const thisWeeksScheduledLists = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledLists), [loadedScheduledLists])
-  // const loadedLists: ListAndToDos[] = useMemo(() => transformToDoDataDates(initialListsData.loadedLists), [initialListsData.loadedLists]) //initialListsData.loadedToDos as ListAndToDos[
-  // const loadedRoutines: RoutineAndTasks[] = useMemo(() => transformRoutineDataDates(initialListsData.loadedRoutines), [initialListsData.loadedRoutines]) //initialListsData.loadedRoutines as RoutineAndToDos[]
-  // const loadedDesires: DesireWithOutcomes[] = useMemo(() => transformDesireWithOutcomesDataDates(initialListsData.loadedDesires), [initialListsData.loadedDesires]) //initialListsData.loadedRoutines as RoutineAndToDos[]
-
-  // const loadedScheduledItems: ScheduledItem[] = useMemo(() => transformScheduledListsDataDates(initialListsData.scheduledItems), [initialItemsData.scheduledItems])
-
-
-
-  //?   change to DesiresWithOutcomesWithAll
-
-  // const projectsWithListsAndRoutines: ProjectWithListsAndRoutines[] = loadedProjects.map(project => {
-  //   const projectLists = loadedLists.filter(list => list.projectId === project.id)
-  //   const projectRoutines = loadedRoutines.filter(routine => routine.projectId === project.id)
-  //   return {
-  //     ...project,
-  //     lists: projectLists,
-  //     routines: projectRoutines
-  //   }
-  // })
-
-
   // const focusProject: ProjectWithListsAndRoutines = projectsWithListsAndRoutines[0]
   // const focusDesireId: string | null = focusProject?.desireId as string;
   // const focusDesire: DesireWithOutcomes | undefined = loadedDesires?.find((desire) => (desire.id === focusDesireId))
@@ -91,20 +65,17 @@ function TodayPage() {
 
   // const todaysEventList = useMemo(() => getTodaysEvents(thisWeeksScheduledLists), [thisWeeksScheduledLists])
   const todaysEventList = useGetTodaysItems()
-  console.log("🚀 ~ file: dash.today.tsx:93 ~ TodayPage ~ todaysEventList:", todaysEventList)
-  const allUserLists = useGetLoadedUsersLists()
+  const allUserLists: ListAndToDos[] = useGetLoadedUsersLists()
+  const allUserRoutines: RoutineAndTasks[] = useGetLoadedUsersRoutines()
+  const allUserOutcomes: OutcomeWithLists[] = useGetLoadedUsersOutcome()
+
 
   useEffect(() => {
-    const invervalId = setInterval(() => {
-      setCurrentEvent(getCurrentEvent(todaysEventList))
-    }, (1000 * 60));
-    return () => clearInterval(invervalId)
-  })
-
-
-  // useEffect(() => {
-  // setCurrentEvent(getCurrentEvent(todaysEventList))
-  // }, [todaysEventList])
+    const updateCurrentEvent = () => setCurrentEvent(getCurrentEvent(todaysEventList));
+    const intervalId = setInterval(updateCurrentEvent, 1000 * 60);
+    updateCurrentEvent();
+    return () => clearInterval(intervalId);
+  }, [todaysEventList]);
 
 
   return (
@@ -206,7 +177,7 @@ function TodayPage() {
                 <Today
                   scheduledItems={todaysEventList}
                   loadedLists={allUserLists}
-                // loadedRoutines={allUserLists}
+                  loadedRoutines={allUserRoutines}
                 />
               </div>
 
@@ -214,12 +185,11 @@ function TodayPage() {
                 <HeadingH2 text={`Current Time Block`} />
                 <div>
                   {currentEvent && (
-                    // <DisplayCurrentEvent
-                    //   event={currentEvent}
-                    //   loadedLists={loadedLists}
-                    //   loadedRoutines={loadedRoutines}
-                    //   loadedOutcomeItems={loadedProjects}
-                    // />
+                    <DisplayCurrentEvent
+                      event={currentEvent}
+                      loadedLists={allUserLists}
+                      loadedRoutines={allUserRoutines}
+                      loadedOutcome={allUserOutcomes} />
                   )}
                 </div>
               </div>
@@ -231,7 +201,7 @@ function TodayPage() {
           </div>
 
         </BasicTextAreaBG>
-      </article>
+      </article >
     </>
   )
 }
@@ -326,7 +296,6 @@ export const useGetLoadedScheduledItems = () => {
 
 export const useGetTodaysItems = () => {
   const [todaysItems, setTodaysItems] = useState<ScheduledItem[]>([])
-  console.log("🚀 ~ file: dash.today.tsx:328 ~ useGetTodaysItems ~ todaysItems:", todaysItems)
   const loadedScheduledItems = useGetLoadedScheduledItems()
 
   useEffect(() => {
@@ -339,8 +308,8 @@ export const useGetTodaysItems = () => {
 }
 
 
-export const useGetLoadedUsersLists = () => {
-  const [lists, setLists] = useState<ScheduledItem[]>([])
+export const useGetLoadedUsersLists = (): ListAndToDos[] => {
+  const [lists, setLists] = useState<ListAndToDos[]>([])
   const { loadedLists } = useGetTodaysLoaders();
 
   useEffect(() => {
@@ -349,5 +318,52 @@ export const useGetLoadedUsersLists = () => {
     setLists(listsWithProperDates)
   }, [loadedLists])
 
-  return loadedLists
+  return lists
+}
+
+
+export const useGetLoadedUsersRoutines = (): RoutineAndTasks[] => {
+  const [routines, setRoutines] = useState<RoutineAndTasks[]>([])
+  const { loadedRoutines } = useGetTodaysLoaders();
+
+  useEffect(() => {
+    if (!loadedRoutines) return
+    const routinesWithProperDates = ArrayOfObjectsStrToDates({ items: loadedRoutines, dateKeys: ['createdAt', 'updatedAt'] })
+    setRoutines(routinesWithProperDates)
+  }, [loadedRoutines])
+
+  return routines
+}
+
+
+export const useGetLoadedUsersOutcome = (): OutcomeWithLists[] => {
+  const [outcomes, setOutcomes] = useState<OutcomeWithLists[]>([])
+  const { loadedDesiresWithOutcomes }: { loadedDesiresWithOutcomes: DesireWithOutcomesAndListsWithStrDates[] } = useGetTodaysLoaders();
+
+  useEffect(() => {
+    if (!loadedDesiresWithOutcomes) return
+    const outcomesWithListsArray: OutcomeWithLists[] = loadedDesiresWithOutcomes.flatMap((desire) => {
+      let desireOutcomesWithLists: OutcomeWithListsWithStrDates[] = desire.outcomes
+
+      if (desireOutcomesWithLists && desireOutcomesWithLists.length > 0) {
+        return desireOutcomesWithLists.map((outcome) => {
+          const outcomeWithProperDates: OutcomeWithLists = ObjectStrToDates({ item: outcome, dateKeys: ['createdAt', 'updatedAt'] })
+          let listsWithProperDates: ListAndToDos[] = [];
+          if (outcomeWithProperDates.lists && outcomeWithProperDates.lists.length > 0) {
+            listsWithProperDates = ArrayOfObjectsStrToDates({ items: outcomeWithProperDates.lists, dateKeys: ['createdAt', 'updatedAt'] })
+              .map(list => ({ ...list }));  // Add empty todos array to each list
+          }
+
+          return {
+            ...outcomeWithProperDates,   // This will spread the outcome properties
+            lists: listsWithProperDates  // This will add the lists property
+          };
+        })
+      }
+      return []
+    })
+    setOutcomes(outcomesWithListsArray)
+  }, [loadedDesiresWithOutcomes])
+
+  return outcomes
 }

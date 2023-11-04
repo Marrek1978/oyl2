@@ -188,7 +188,6 @@ function Scheduler({
   function handleToolTipAccessor(event: any) {
     const type = Object.keys(event.description)[0]
     // const { listId } = event
-    console.log("🚀 ~ file: Scheduler.tsx:189 ~ handleToolTipAccessor ~ event:", event)
     // let loadedList: ListAndToDos[] | RoutineAndTasks[] = [];
     // let currentList: ListAndToDos[] | RoutineAndTasks[] | undefined;
     // let currentToDos: ToDo[] | Task[] | undefined;

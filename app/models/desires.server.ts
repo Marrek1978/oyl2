@@ -269,6 +269,33 @@ export const getDesiresAndOutcomes = async (userId: User["id"]) => {
   }
 };
 
+export const getDesiresAndOutcomesWithLists = async (userId: User["id"]) => {
+  try {
+    const result = await prisma.desire.findMany({
+      where: { userId },
+      include: {
+        outcomes: {
+          orderBy: { sortOrder: "asc" },
+          include: {
+            lists: {
+              orderBy: { sortOrder: "asc" },
+              include: {
+                todos: {
+                  orderBy: { sortOrder: "asc" },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getDesiresWithOutcomesListsRoutines = async (
   userId: User["id"]
 ) => {

@@ -1,6 +1,6 @@
 import type { Outcome } from "@prisma/client";
 import type { HabitsWithStrDates } from "./habitsType";
-import type { ListAndToDos, ListWithStrDates } from "~/types/listTypes";
+import type { ListAndToDos, ListAndTodosWithStrDates, ListWithStrDates } from "~/types/listTypes";
 import type { SavingsWithStrDates } from "~/types/savingsType";
 import type {
   RoutineAndTasks,
@@ -19,6 +19,10 @@ export type OutcomeWithStringDates = Omit<
   updatedAt: string;
 };
 
+export type OutcomeWithListsWithStrDates = OutcomeWithStringDates & {
+  lists: ListAndTodosWithStrDates[];
+};
+
 export type OutcomeWithAllWithStringDates = OutcomeWithStringDates & {
   milestoneGroup: MilestoneGroupsWithStrDates[];
 } & { lists: ListWithStrDates[] } & { routines: RoutineWithStrDates[] } & {
@@ -28,3 +32,6 @@ export type OutcomeWithAllWithStringDates = OutcomeWithStringDates & {
 export type OutcomeWithAll = Outcome & { lists: ListAndToDos[] } & {
   routines: RoutineAndTasks[];
 };
+
+
+export type OutcomeWithLists = Outcome & { lists: ListAndToDos[] } 

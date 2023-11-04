@@ -19,7 +19,7 @@ const DragAndDropCalendar = withDragAndDrop(Calendar)
 interface SchedulerProps {
   scheduledItems: ScheduledItem[];
   loadedLists: ListAndToDos[];
-  loadedRoutines?: RoutineAndTasks[];
+  loadedRoutines: RoutineAndTasks[];
 }
 
 
@@ -101,11 +101,11 @@ function Scheduler({
       currentItem && (currentItemToDos = currentItem[0]?.[type])
     }
 
-    // if (type === 'tasks') {
-    //   loadedItem = loadedRoutines
-    //   currentItem = loadedItem?.filter((item: RoutineAndTasks) => item.id === listId);
-    //   currentItem && (currentItemToDos = currentItem[0]?.[type])
-    // }
+    if (type === 'tasks') {
+      currentItem = loadedRoutines
+      currentItem = currentItem?.filter((item: RoutineAndTasks) => item.id === listId);
+      currentItem && (currentItemToDos = currentItem[0]?.[type])
+    }
 
     if (type === 'outcome') {
       const titles = event.description[type].map((list: ListAndToDos) => list.title)

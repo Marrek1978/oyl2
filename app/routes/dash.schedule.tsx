@@ -113,43 +113,20 @@ function Schedule() {
     // loadedSpecialRoutines,
     // loadedScheduledItems
   } = useLoaderData()
-  // console.log("🚀 ~ file: dash.schedule.tsx:109 ~ Schedule ~ loadedDesiresWithOutcomesListsRoutines:", loadedDesiresWithOutcomesListsRoutines)
-  // console.log("🚀 ~ file: dash.schedule.tsx:99 ~ Schedule ~ specialRoutines:", specialRoutines)
-  // console.log("🚀 ~ file: dash.schedule.tsx:99 ~ Schedule ~ specialLists:", specialLists)
-  // console.log("🚀 ~ file: dash.schedule.tsx:99 ~ Schedule ~ desiresWithOutcomesListsRoutines:", desiresWithOutcomesListsRoutines)
-  // console.log("🚀 ~ file: dash.schedule.tsx:99 ~ Schedule ~ miscRoutines:", miscRoutines)
-  // console.log("🚀 ~ file: dash.schedule.tsx:99 ~ Schedule ~ miscLists:", miscLists)
+  
   //! completed = strikethrough
-
   //!  load and place appointments
   //!  load and place due dates
-
   //! make all memoized functions, and move to helper functions doc?  
-  //! need to separate the lists and todos, and the routines, and then convert the dates
-  //! need to assemble project data, and convert dates, associated routines and lists, -- needs new types
 
-  //! schedule save must be changed from on drop to a deep difference check, and then save on button click
-
-  // const initialListsData = useLoaderData<typeof loader>();
-  // const loadedScheduledLists: ScheduledList[] = useMemo(() => transformScheduledListsDataDates(initialListsData.scheduledLists), [initialListsData.scheduledLists])
 
   const loadedScheduledItems: ScheduledItem[] = useGetLoadedScheduledItems()
   const thisWeeksScheduledItems = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledItems), [loadedScheduledItems])
   // const loadedToDos: ListAndToDos[] = useMemo(() => transformToDoDataDates(initialListsData.loadedToDos), [initialListsData.loadedToDos]) //initialListsData.loadedToDos as ListAndToDos[
-  // // const loadedProjects: Project[] = useMemo(() => transformProjectDataDates(initialListsData.loadedProjects), [initialListsData.loadedProjects]) //initialListsData.loadedProjects as Project[]
   // const loadedRoutines: RoutineAndTasks[] = useMemo(() => transformRoutineDataDates(initialListsData.loadedRoutines), [initialListsData.loadedRoutines]) //initialListsData.loadedRoutines as RoutineAndToDos[]
 
   const miscLists = loadedMiscLists.filter((list: ListAndToDos) => (list.outcomeId === null))
   const miscRoutines = loadedMiscRoutines.filter((routine: RoutineAndTasks) => (routine.outcomeId === null))
-  // const projectsWithListsAndRoutines: ProjectWithListsAndRoutines[] = loadedProjects.map(project => {
-  //   const projectLists = loadedToDos.filter(list => list.projectId === project.id)
-  //   const projectRoutines = loadedRoutines.filter(routine => routine.projectId === project.id)
-  //   return {
-  //     ...project,
-  //     lists: projectLists,
-  //     routines: projectRoutines
-  //   }
-  // })
 
 
   useEffect(() => {
@@ -274,8 +251,6 @@ function Schedule() {
           </div>
 
 
-          aasdfasdf
-
           <Scheduler
             scheduledItems={scheduledItems}
             setScheduledItems={setScheduledItems}
@@ -346,8 +321,6 @@ export function updateScheduledListsDatesToCurrentWeek(items: ScheduledItem[]): 
 
 
 function areArraysEqual(arr1: Item[], arr2: Item[]) {
-  console.log('arr1', arr1)
-  console.log("🚀 ~ file:  areArraysEqual ~ arr2:", arr2)
   if (arr1.length !== arr2.length) return false
   const sortedArr1: Item[] = arr1.sort((a, b) => a.id.localeCompare(b.id))
   const sortedArr2: Item[] = arr2.sort((a, b) => a.id.localeCompare(b.id))

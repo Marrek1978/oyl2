@@ -1,16 +1,19 @@
 import type { ValueWithStringDates } from "./valueTypes";
-import type { OutcomeWithAll, OutcomeWithStringDates } from "./outcomeTypes";
+import type {
+  OutcomeWithAll,
+  OutcomeWithAllWithStringDates,
+  OutcomeWithListsWithStrDates,
+  OutcomeWithStringDates,
+} from "./outcomeTypes";
 import type { Desire, Outcome, Value } from "@prisma/client";
+import type { ListAndToDos} from "./listTypes";
+
 
 export type DesireValues = { desireValues: { value: Value }[] };
 export type DesireWithValues = Desire & { desireValues: { value: Value }[] };
 export type DesireWithOutcomes = Desire & { outcomes: Outcome[] };
 
-export type DesireWithValuesAndOutcomes = Desire & {
-  desireValues: { value: Value }[];
-} & { outcomes: Outcome[] };
-
-//string dates
+//? string dates
 export type DesireWithStringDates = Omit<Desire, "createdAt" | "updatedAt"> & {
   createdAt: string;
   updatedAt: string;
@@ -33,6 +36,14 @@ export type DesireWithValuesAndOutcomesWithStringDates =
     outcomes: OutcomeWithStringDates[];
   };
 
+export type DesireWithOutcomesAndAllWithStrDates = DesireWithStringDates & {
+  outcomes: OutcomeWithAllWithStringDates[];
+};
+
+export type DesireWithOutcomesAndListsWithStrDates = DesireWithStringDates & {
+  outcomes: OutcomeWithListsWithStrDates[]
+};
+
 export interface validationErrorsTypes {
   title?: Desire["title"];
   description?: Desire["description"];
@@ -40,4 +51,12 @@ export interface validationErrorsTypes {
 
 export type DesireWithOutcomesAndAll = Desire & {
   outcomes: OutcomeWithAll[];
+};
+
+export type DesireWithValuesAndOutcomes = Desire & {
+  desireValues: { value: Value }[];
+} & { outcomes: Outcome[] };
+
+export type DesireWithOutcomesAndLists = Desire & {
+  outcomes: Outcome[] & { lists: ListAndToDos[] };
 };

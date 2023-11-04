@@ -10,6 +10,7 @@ type UpdateOutcome = Omit<
   "createdAt" | "updatedAt" | "sortOrder" | "complete" | "desireId"
 >;
 
+
 export async function createOutcome(outcome: CreateOutcome) {
   console.log("🚀 ~ file: outcome.server.ts:14 ~ createOutcome ~ outcome:", outcome)
   
@@ -31,34 +32,7 @@ export async function createOutcome(outcome: CreateOutcome) {
   }
 }
 
-export async function updateOutcome(outcome: UpdateOutcome) {
-  try {
-    const updatedOutcome = await prisma.outcome.update({
-      where: { id: outcome.id },
-      data: {
-        title: outcome.title,
-        description: outcome.description,
-        vision: outcome.vision,
-      },
-    });
 
-    return { updatedOutcome };
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function getOutcomesByDesireId(desireId: Desire["id"]) {
-  try {
-    const outcomes = await prisma.outcome.findMany({
-      where: { desireId },
-      orderBy: { sortOrder: "asc" },
-    });
-    return outcomes;
-  } catch (error) {
-    throw error;
-  }
-}
 
 export async function getOutcomeByOutcomeId(outcomeId: Outcome["id"]) {
   try {
@@ -71,7 +45,18 @@ export async function getOutcomeByOutcomeId(outcomeId: Outcome["id"]) {
   }
 }
 
- 
+
+export async function getOutcomesByDesireId(desireId: Desire["id"]) {
+  try {
+    const outcomes = await prisma.outcome.findMany({
+      where: { desireId },
+      orderBy: { sortOrder: "asc" },
+    });
+    return outcomes;
+  } catch (error) {
+    throw error;
+  }
+}
 
 
 export async function getOutcomeWithMilestonesListsRoutinesHabitsSavingsById(
@@ -93,6 +78,36 @@ export async function getOutcomeWithMilestonesListsRoutinesHabitsSavingsById(
     throw error;
   }
 }
+
+export async function getAllOutcomesByDesireId(desireId: Desire['id']){
+  try{
+    const outcomes = await prisma.outcome.findMany({
+      where: { desireId },
+      orderBy: { sortOrder: "asc" },
+    })
+    return outcomes;
+  } catch (error) {throw error}
+}
+
+
+export async function updateOutcome(outcome: UpdateOutcome) {
+  try {
+    const updatedOutcome = await prisma.outcome.update({
+      where: { id: outcome.id },
+      data: {
+        title: outcome.title,
+        description: outcome.description,
+        vision: outcome.vision,
+      },
+    });
+
+    return { updatedOutcome };
+  } catch (error) {
+    throw error;
+  }
+}
+
+
 
 export async function updateOutcomesOrder(outcomes: Outcome[]) {
   try {
@@ -120,12 +135,3 @@ export async function deleteOutcomeById(outcomeId: Outcome["id"]) {
   }
 }
 
-export async function getAllOutcomesByDesireId(desireId: Desire['id']){
-  try{
-    const outcomes = await prisma.outcome.findMany({
-      where: { desireId },
-      orderBy: { sortOrder: "asc" },
-    })
-    return outcomes;
-  } catch (error) {throw error}
-}
