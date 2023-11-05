@@ -10,7 +10,7 @@ import DndAndFormFlex from '~/components/baseContainers/DndAndFormFlex'
 import { getRoutinesByOutcomeId, updateRoutinesOrder } from '~/models/routines.server';
 import { ArrayOfObjectsStrToDates, ObjectStrToDates } from '~/components/utilities/helperFunctions';
 
-import type { List, Routine } from '@prisma/client';
+import type {  Routine } from '@prisma/client';
 import type { RoutineAndTasks, RoutineAndTasksWithStrDates } from '~/types/routineTypes';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
@@ -19,8 +19,8 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   if (!outcomeId) throw new Error('No outcomeId in URL')
 
   try {
-    const loaderLists = await getRoutinesByOutcomeId(userId, outcomeId)
-    return loaderLists
+    const loaderRoutines = await getRoutinesByOutcomeId(userId, outcomeId)
+    return loaderRoutines
   } catch (error) { return error }
 }
 
@@ -112,7 +112,7 @@ export const useGetRoutinesWithTasks = (): RoutineAndTasks[] => {
 }
 
 
-export const useGetRoutinesOnly = (): List[] => {
+export const useGetRoutinesOnly = (): Routine[] => {
   const [routines, setRoutines] = useState<Routine[]>([])
   const loadedRoutines: RoutineAndTasksWithStrDates[] = useGetLoaderData({})
 

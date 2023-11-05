@@ -26,8 +26,8 @@ function DndSortableList({ id, title }: Props) {
   };
 
   useEffect(() => {
-    if (!params.listId) return setIsCurrentList(false)
-    setIsCurrentList(params.listId === id)
+    if (!params.routineId) return setIsCurrentList(false)
+    setIsCurrentList(params.routineId === id)
   }, [params, id])
 
 

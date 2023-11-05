@@ -18,6 +18,8 @@ type Props = {
 }
 
 const DndLists = ({ passedLists }: Props) => {
+
+  console.log('DndLists')
   const params = useParams()
   const { desireId, outcomeId } = params
   const matches = useMatches();
@@ -63,7 +65,6 @@ const DndLists = ({ passedLists }: Props) => {
         sortableArray={lists}
         isVertical={true}
       >
-
         <div className='mt-8'>
           <DndInfo />
         </div>

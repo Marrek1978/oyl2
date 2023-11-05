@@ -4,5 +4,6 @@ export type SortableWithTitleAndDesc<T extends { id: string, sortOrder: number, 
 
 export type HasSortOrder = {
   sortOrder: any;
+  id:string;
   [key: string]: any;
 };

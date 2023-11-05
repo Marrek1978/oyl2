@@ -32,7 +32,7 @@ const SideNav = () => {
 
 
           <li className="">
-            <NavLink to='/dash/alllists' >
+            <NavLink to='/dash/listsandroutines' >
               <span>Lists & Routines</span>
             </NavLink>
           </li>

@@ -36,7 +36,7 @@ function TodoLists({ lists, headingSize = 'H1', headingText = 'To Do Lists', lin
               text='Create New To-Do List'
               onClickFunction={() => { }}
               icon={EditIcon}
-              color='text-primary'
+              textColorDaisyUI='primary'
             />
           </Link>
         </div>
