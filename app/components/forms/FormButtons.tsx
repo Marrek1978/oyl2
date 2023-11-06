@@ -97,7 +97,6 @@ function FormButtons({
 
 }: Props) {
 
-
   function renderDeleteButton() {
     const btn = (
       <BtnWithProps

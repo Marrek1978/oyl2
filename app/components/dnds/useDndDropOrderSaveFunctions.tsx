@@ -70,7 +70,6 @@ function useDndDropOrderSaveFunctions<T extends HasSortOrder>({
 
 
   const setItemsArrayInProperOrder = useCallback((sortableArray: T[]) => {
-    
     const isInOrder = inOrder(sortableArray)
     if (isInOrder) return setSortableArray(sortableArray)
     //else

@@ -26,9 +26,11 @@ interface TodosListFormProps {
   list?: ListAndToDos;
   isNew?: boolean
   nextSortOrder?: number
+  isNewInModal?: boolean
+  isShowDeleteBtn?: boolean
 }
 
-function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
+function ListForm({ list, isNew = true, nextSortOrder, isNewInModal = false, isShowDeleteBtn = true }: TodosListFormProps) {
 
   const params = useParams()
   const fetcher = useFetcher()
@@ -53,6 +55,8 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
 
   const saveBtnTxt = useSaveBtnText(isNew, isIdle, 'To-Do List')
   const headerTxt = useMemo(() => headerText(isNew, 'To-Do List', list?.title || ''), [isNew, list?.title])
+
+  const isShowCloseBtn = isNewInModal === true ? true : !isNew
 
 
   useEffect(() => {
@@ -236,7 +240,6 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
                 </div>
               </div>
 
-
               <BtnWithProps
                 btnPurpose={'save'}
                 isOutlined={true}
@@ -244,6 +247,7 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
                 icon={ArrowIcon45deg}
                 isBtnDisabled={!isAddable}
                 onClickFunction={handleAddTodoToList}
+
               />
             </div>
 
@@ -281,18 +285,18 @@ function ListForm({ list, isNew = true, nextSortOrder }: TodosListFormProps) {
             </div>
           </div>
 
-          {!isNew && (
 
-            <FormButtons
-              isShowSaveBtn={false}
-              isNew={isNew}
-              isShowCloseBtn={!isNew}
-              saveBtnOnClickFunction={isNew ? handleSave : handleEdits}
-              saveBtnType={'button'}
-              deleteBtnText={'Delete List'}
-              flexXGap={'12'}
-            />
-          )}
+          <FormButtons
+            isShowSaveBtn={false}
+            isNew={isNew}
+            isShowCloseBtn={isShowCloseBtn}
+            saveBtnOnClickFunction={isNew ? handleSave : handleEdits}
+            saveBtnType={'button'}
+            deleteBtnText={'Delete List'}
+            flexXGap={'12'}
+            isShowDeleteBtn={isShowDeleteBtn}
+
+          />
         </Form >
       </BasicFormAreaBG >
 

@@ -26,6 +26,8 @@ function CompletedTodosForm({ list }: TodosCompletedFormProps) {
   const [isDisableAllBtns, setIsDisableAllBtns] = useState<boolean>(false)
   const [isACompletedToDo, setIsACompletedToDo] = useState<boolean>(false)
 
+  const isDeleteBtnDisabled = list.isSpecialList === true
+
 
   useEffect(() => {
     matches.find((match => match.id === 'routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.lists.$listId'))
@@ -103,6 +105,7 @@ function CompletedTodosForm({ list }: TodosCompletedFormProps) {
             isShowCloseBtn={isShowCloseBtn}
             deleteBtnText='Delete List'
             deleteBtnLink='edit/delete'
+            isShowDeleteBtn={!isDeleteBtnDisabled}
           />
 
         </div>

@@ -9,7 +9,7 @@ import { getAllListsAndTodos } from '~/models/list.server';
 import BtnWithProps from '~/components/buttons/BtnWithProps';
 import SubHeading14px from '~/components/titles/SubHeading14px';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
-import DisplayListsWithHoverToDos from '~/components/list/DisplayListsWithHoverToDos';
+import DisplayListDisplayToDosOnHover from '~/components/list/DisplayListDisplayToDosOnHover';
 import { ArrayOfObjectsStrToDates, ObjectStrToDates } from '~/components/utilities/helperFunctions';
 
 
@@ -34,6 +34,7 @@ function ListsPage() {
 
   const miscLists = useGetMiscLists();
   const miscRoutines = useGetMiscRoutines()
+  const specialLists = useGetSpecialLists()
 
   return (
     <>
@@ -43,11 +44,11 @@ function ListsPage() {
 
 
           {/* //??   ***************    MISC LISTS *********************** */}
-          <div className='flex flex-wrap gap-x-24'>
-            <div className='flex-1 basis-96 max-w-sm'>
+          <div className='flex flex-wrap gap-y-12 gap-x-16 '>
+            <div className='flex-1 min-w-[350px]  max-w-md'>
               <HeadingH2 text='Miscellaneous Lists' />
               <div className='max-w-max mt-2'>
-                <Link to='misclists'>
+                <Link to='lists?type=misc'>
                   <BtnWithProps
                     btnPurpose={'goto'}
                     btnLabel={'Re-order Misc Lists'}
@@ -57,7 +58,7 @@ function ListsPage() {
                 </Link>
               </div>
               <div className='max-w-max mt-0'>
-                <Link to='misclists/new'>
+                <Link to='lists/new'>
                   <BtnWithProps
                     btnPurpose={'goto'}
                     btnLabel={'Create New Misc List'}
@@ -69,14 +70,14 @@ function ListsPage() {
               <div className='mt-4 '>
                 <SubHeading14px text='Misc. Lists' />
               </div>
-              <DisplayListsWithHoverToDos lists={miscLists} />
+              <DisplayListDisplayToDosOnHover lists={miscLists}  />
             </div>
 
 
-            <div className='flex-1  basis-96'>
+            <div className='flex-1 min-w-[350px]  max-w-md'>
               <HeadingH2 text='Miscellaneous Routines' />
               <div className='max-w-max mt-2'>
-                <Link to='misclists'>
+                <Link to='routines'>
                   <BtnWithProps
                     btnPurpose={'goto'}
                     btnLabel={'Re-order Misc Lists'}
@@ -87,7 +88,7 @@ function ListsPage() {
               </div>
               <div className='max-w-max mt-0'>
 
-                <Link to='misclists/new'>
+                <Link to='routines/new'>
                   <BtnWithProps
                     btnPurpose={'goto'}
                     btnLabel={'Create New Misc Routine'}
@@ -99,20 +100,20 @@ function ListsPage() {
               <div className='mt-4 '>
                 <SubHeading14px text='Misc. Routines' />
               </div>
-              <DisplayListsWithHoverToDos lists={miscRoutines} />
+              <DisplayListDisplayToDosOnHover lists={miscRoutines}  />
             </div>
           </div>
 
 
           {/* //??   ***************    SPECIAL LISTS *********************** */}
-          <div>special lists - grocery,  purchases, yard work, house work - 
+          <div>special lists - grocery,  purchases, yard work, house work -
             others ppl can access these lists
           </div>
-          <div className='flex flex-wrap gap-x-24'>
+          <div className='flex flex-wrap gap-y-12 gap-x-16 '>
             <div className='flex-1 basis-96 max-w-sm'>
               <HeadingH2 text='Special Lists' />
               <div className='max-w-max mt-2'>
-                <Link to='speciallists'>
+                <Link to='lists?type=special'>
                   <BtnWithProps
                     btnPurpose={'goto'}
                     btnLabel={'Re-order Misc Lists'}
@@ -125,7 +126,7 @@ function ListsPage() {
               <div className='mt-4 '>
                 <SubHeading14px text='Special Lists' />
               </div>
-              <DisplayListsWithHoverToDos lists={miscLists} />
+              <DisplayListDisplayToDosOnHover lists={specialLists}   />
             </div>
 
 
@@ -144,7 +145,7 @@ function ListsPage() {
               <div className='mt-4 '>
                 <SubHeading14px text='Special Routines' />
               </div>
-              <DisplayListsWithHoverToDos lists={miscRoutines} />
+              <DisplayListDisplayToDosOnHover lists={miscRoutines}   />
             </div>
           </div>
 
@@ -177,7 +178,7 @@ export const useGetMiscLists = (): ListAndToDos[] => {
   useEffect(() => {
     if (!allUserLists) return;
     const miscListsWithStrDates: ListAndTodosWithStrDates[] = allUserLists.filter((list: ListAndTodosWithStrDates) => list.outcomeId === null && list.isSpecialList === false)
-    const miscListsWithProperDates: ListAndToDos[] = changeListDatesAndSortOrders(miscListsWithStrDates)
+    const miscListsWithProperDates: ListAndToDos[] = ChangeListArrayDates(miscListsWithStrDates)
     setLists(miscListsWithProperDates)
   }, [allUserLists])
   return lists;
@@ -191,14 +192,32 @@ export const useGetSpecialLists = (): ListAndToDos[] => {
   useEffect(() => {
     if (!allUserLists) return;
     const miscSpecialListsWithStrDates: ListAndTodosWithStrDates[] = allUserLists.filter((list: ListAndTodosWithStrDates) => list.outcomeId === null && list.isSpecialList === true)
-    const miscListsWithProperDates: ListAndToDos[] = changeListDatesAndSortOrders(miscSpecialListsWithStrDates)
+    const miscListsWithProperDates: ListAndToDos[] = ChangeListArrayDates(miscSpecialListsWithStrDates)
     setLists(miscListsWithProperDates)
   }, [allUserLists])
   return lists;
 }
 
+export const useGetMiscRoutines = (): RoutineAndTasks[] => {
+  const { allUserRoutines } = useGetLoaders();//{ allUserLists, allUserRoutines };
+  const [routines, setRoutines] = useState<RoutineAndTasks[]>([]);
 
-export const changeListDatesAndSortOrders = <T extends HasSortOrder>(filteredLists: T[], type = 'list') => {
+  useEffect(() => {
+    if (!allUserRoutines) return;
+    const miscRoutinesWithStrDates: RoutineAndTasksWithStrDates[] = allUserRoutines.filter((routine: RoutineAndTasksWithStrDates) => routine.outcomeId === null && routine.isSpecialRoutine === false)
+    const miscRoutinesWithProperDates: RoutineAndTasks[] = ChangeListArrayDates(miscRoutinesWithStrDates)
+    setRoutines(miscRoutinesWithProperDates)
+  }, [allUserRoutines])
+
+  return routines;
+}
+
+
+
+
+
+
+export const ChangeListArrayDates = <T extends HasSortOrder>(filteredLists: T[], type = 'list') => {
   const itemType = type === 'list'
     ? 'todos'
     : type === 'routine' ? 'tasks'
@@ -212,26 +231,7 @@ export const changeListDatesAndSortOrders = <T extends HasSortOrder>(filteredLis
     const listWithProperDates = ObjectStrToDates({ item: list, dateKeys: ['createdAt', 'updatedAt'] })
     let listItemsWithProperDates: T[] = []
     listItemsWithProperDates = ArrayOfObjectsStrToDates({ items: list[itemType], dateKeys: dateKeysArray })
+
     return { ...listWithProperDates, todos: listItemsWithProperDates }
   })
 }
-
-
-
-
-
-export const useGetMiscRoutines = (): RoutineAndTasks[] => {
-  const { allUserRoutines } = useGetLoaders();//{ allUserLists, allUserRoutines };
-  const [routines, setRoutines] = useState<RoutineAndTasks[]>([]);
-
-  useEffect(() => {
-    if (!allUserRoutines) return;
-    const miscRoutinesWithStrDates: RoutineAndTasksWithStrDates[] = allUserRoutines.filter((routine: RoutineAndTasksWithStrDates) => routine.outcomeId === null && routine.isSpecialRoutine === false)
-    const miscRoutinesWithProperDates: RoutineAndTasks[] = changeListDatesAndSortOrders(miscRoutinesWithStrDates)
-    setRoutines(miscRoutinesWithProperDates)
-  }, [allUserRoutines])
-
-  return routines;
-}
-
-

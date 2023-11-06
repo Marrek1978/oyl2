@@ -15,7 +15,7 @@ type Props = {
 }
 
 
-function DisplayListsWithHoverToDos({ lists }: Props) {
+function DisplayListDisplayToDosOnHover({ lists }: Props) {
   const [orderedLists, setOrderedLists] = useState<ListAndToDos[] | RoutineAndTasks[]>([])
 
   const inOrder = useIsInOrder()
@@ -62,7 +62,7 @@ function DisplayListsWithHoverToDos({ lists }: Props) {
         {orderedLists.map((list) => {
           const listTitle = list.title
           const listId = list.id
-          const linkDestination = `list/${listId}`
+          const linkDestination = `lists/${listId}`
           const linkText = 'View List'
 
           return (
@@ -92,5 +92,5 @@ function DisplayListsWithHoverToDos({ lists }: Props) {
   )
 }
 
-export default DisplayListsWithHoverToDos
+export default DisplayListDisplayToDosOnHover
 
