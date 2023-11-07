@@ -45,12 +45,19 @@ export const action = async ({ request }: ActionArgs) => {
   throw new Error('Invalid action method in Update List Page');
 }
 
-
-
-
-function MiscListPage() {
+function ListPage() {
   const list = useGetCurrentList()
   const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: list, itemType: 'To-Do List' })
+
+  useEffect(() => {
+    const miscOrSpecial: 'misc' | 'special' = list?.isSpecialList === false ? 'misc' : 'special'
+    // Retrieve from session storage
+    const type = sessionStorage.getItem('lastListType');
+    if (!type || type !== miscOrSpecial) {
+      sessionStorage.setItem('lastListType', miscOrSpecial);
+    }
+  }, [list]);
+
 
   return (
     <>
@@ -71,7 +78,7 @@ function MiscListPage() {
   )
 }
 
-export default MiscListPage
+export default ListPage
 
 
 

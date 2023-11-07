@@ -34,21 +34,25 @@ export function createRoutineAndTasks({
 }: Pick<Routine, "title" | "sortOrder"> & { userId: User["id"] } & {
   tasks: CreationTask[];
 } & { outcomeId?: Routine["outcomeId"] }) {
-  try {
-    const result = prisma.routine.create({
-      data: {
-        title,
-        sortOrder,
-        userId,
-        outcomeId,
-        tasks: {
-          createMany: {
-            data: tasks,
-          },
-        },
+  const data: any = {
+    title,
+    sortOrder,
+    userId,
+    tasks: {
+      createMany: {
+        data: tasks,
       },
+    },
+  };
+
+  if (outcomeId) {
+    data.outcomeId = outcomeId;
+  }
+
+  try {
+    return prisma.routine.create({
+      data,
     });
-    return result;
   } catch (error) {
     throw error;
   }

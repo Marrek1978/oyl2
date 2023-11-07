@@ -14,9 +14,11 @@ import type { HasSortOrder } from '~/types/genericDndArrayTypes'
 
 interface Props<T extends HasSortOrder> {
   listItems: T[]
+  listType?: string | null
+  listOrRoutine?: 'List' | 'Routine'
 }
 
-function DndItemsForm<T extends HasSortOrder>({ listItems }: Props<T>) {
+function DndItemsForm<T extends HasSortOrder>({ listItems, listType = 'misc', listOrRoutine = 'List' }: Props<T>) {
 
   const fetcher = useFetcher();
   const [lists, setLists] = useState<T[]>(listItems);
@@ -34,8 +36,8 @@ function DndItemsForm<T extends HasSortOrder>({ listItems }: Props<T>) {
 
   return (
     <>
-      <BasicFormAreaBG h2Text='Re-Order Misc. Lists'>
-        <div className="form-control gap-y-6 p-8">
+      <BasicFormAreaBG h2Text={`Re-Order ${listType} ${listOrRoutine}s `}>
+        <div className="form-control  p-8">
           <DndInfo />
           <DndAndSortableContexts
             handleDragEnd={handleDragEnd}
@@ -56,7 +58,9 @@ function DndItemsForm<T extends HasSortOrder>({ listItems }: Props<T>) {
             </div>
           </DndAndSortableContexts>
 
-          <FormButtons isShowSaveBtn={false} />
+          <div className='mt-6'>
+            <FormButtons isShowSaveBtn={false} />
+          </div>
         </div>
       </BasicFormAreaBG>
 

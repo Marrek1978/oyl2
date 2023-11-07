@@ -47,6 +47,7 @@ export async function createList({
 }: Pick<List, "title"> & { userId: User["id"] } & { todos: CreateTodo[] } & {
   outcomeId?: List["outcomeId"];
 } & { sortOrder?: List["sortOrder"] }) {
+ 
   const data: any = {
     title,
     userId,

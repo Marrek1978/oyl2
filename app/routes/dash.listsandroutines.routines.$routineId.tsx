@@ -4,15 +4,16 @@ import { Outlet, useParams } from '@remix-run/react'
 import type { ActionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
-import CompletedTasksForm from '~/components/forms/CompletedTasksForm'
+import CompletedTasksForm from '~/components/forms/CompletedTasksForm';
+import { ChangeListArrayDates, useGetLoaders, } from './dash.listsandroutines';
 import { reorderCompletedTasks, updateCompletedTasks } from '~/models/routines.server';
 import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect'
-import { useGetRoutinesWithTasks } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.routines'
 
-import type { RoutineAndTasks } from '~/types/routineTypes';
+import type { RoutineAndTasks, RoutineAndTasksWithStrDates } from '~/types/routineTypes';
 
 
 export const action = async ({ request }: ActionArgs) => {
+
 
   if (request.method === 'POST') {
     const formBody = await request.text();
@@ -34,16 +35,28 @@ export const action = async ({ request }: ActionArgs) => {
     } catch (error) { throw error }
     return null
   }
- 
+
 
   throw new Error('Invalid action method in Update List Page');
 }
 
 
-function SpecificList() {
 
+
+function RoutinePage() {
   const routine = useGetCurrentRoutine()
   const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: routine, itemType: 'Routine' })
+
+  
+  useEffect(() => {
+    const miscOrSpecial: 'misc' | 'special' = routine?.isSpecialRoutine === false ? 'misc' : 'special'
+    // Retrieve from session storage
+    const type = sessionStorage.getItem('lastListType');
+    if (!type || type !== miscOrSpecial) {
+      sessionStorage.setItem('lastListType', miscOrSpecial);
+    }
+  }, [routine]);
+
 
   return (
     <>
@@ -54,31 +67,35 @@ function SpecificList() {
         </Modal>
       )}
       {routine && (
-        <div className='max-w-xl'>
-          <CompletedTasksForm routine={routine} />
-        </div>
+        <Modal zIndex={20}>
+          <div className='max-w-xl'>
+            <CompletedTasksForm routine={routine} />
+          </div>
+        </Modal>
+
       )}
     </>
   )
 }
 
-export default SpecificList
+export default RoutinePage
+
 
 
 
 export const useGetCurrentRoutine = (): RoutineAndTasks | undefined | null => {
-  const loadedRoutinesAndTasks: RoutineAndTasks[] | undefined = useGetRoutinesWithTasks()
+  const { allUserRoutines } = useGetLoaders()
   const params = useParams()
   const [routine, setRoutine] = useState<RoutineAndTasks | null>()
 
   useEffect(() => {
     const { routineId } = params
-    if (!loadedRoutinesAndTasks || loadedRoutinesAndTasks === undefined || loadedRoutinesAndTasks.length === 0) return
-    const thisRoutine = loadedRoutinesAndTasks.find(routine => routine.id === routineId)
-    if (!thisRoutine || thisRoutine === undefined) return setRoutine(null)
-    setRoutine(thisRoutine)
-
-  }, [loadedRoutinesAndTasks, params])
+    if (!allUserRoutines || allUserRoutines === undefined || allUserRoutines.length === 0) return
+    const RoutineWithStrDates: RoutineAndTasksWithStrDates = allUserRoutines.find((routine: RoutineAndTasksWithStrDates) => routine.id === routineId)
+    if (!RoutineWithStrDates || RoutineWithStrDates === undefined) return setRoutine(null)
+    const routineWithProperDates = ChangeListArrayDates([RoutineWithStrDates])
+    setRoutine(routineWithProperDates[0])
+  }, [allUserRoutines, params])
 
   return routine;
 }

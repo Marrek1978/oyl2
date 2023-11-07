@@ -12,15 +12,17 @@ import type { RoutineAndTasks } from '~/types/routineTypes'
 
 type Props = {
   lists: ListAndToDos[] | RoutineAndTasks[]
+  listType?: 'list' | 'routine'
 }
 
 
-function DisplayListDisplayToDosOnHover({ lists }: Props) {
+function DisplayListDisplayToDosOnHover({ lists, listType='list' }: Props) {
   const [orderedLists, setOrderedLists] = useState<ListAndToDos[] | RoutineAndTasks[]>([])
 
   const inOrder = useIsInOrder()
   const setSortOrderToNewIndex = useSetSortOrderToNewIndex();
 
+  const listTypeURL = listType === 'list' ? 'lists' : 'routines'
 
   useEffect(() => {
     if (!lists) return
@@ -62,8 +64,8 @@ function DisplayListDisplayToDosOnHover({ lists }: Props) {
         {orderedLists.map((list) => {
           const listTitle = list.title
           const listId = list.id
-          const linkDestination = `lists/${listId}`
-          const linkText = 'View List'
+          const linkDestination = `${listTypeURL}/${listId}`
+          const linkText =`View ${listType}`
 
           return (
             < div key={listId} className="mt-0 capitalize relative group" >

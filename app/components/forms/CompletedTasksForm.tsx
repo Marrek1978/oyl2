@@ -61,6 +61,7 @@ function CompletedTasksForm({ routine }: CompletedTasksFormProps) {
             isShowCloseBtn={isShowCloseBtn}
             deleteBtnText='Delete Routine'
             deleteBtnLink='edit/delete'
+            isShowDeleteBtn={false}
           />
         </div>
       </BasicFormAreaBG>

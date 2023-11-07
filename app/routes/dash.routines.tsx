@@ -19,12 +19,12 @@ export const loader = async ({ request }: LoaderArgs) => {
 
 function RoutinesPage() {
   const initialData = useLoaderData<typeof loader>();
-  const allRoutines = transformRoutineDataDates(initialData);
+  // const allRoutines = transformRoutineDataDates(initialData);
 
   return (
     <>
       <Outlet />
-      <AllRoutines routines={allRoutines} />
+      {/* <AllRoutines routines={allRoutines} /> */}
     </>
   )
 }

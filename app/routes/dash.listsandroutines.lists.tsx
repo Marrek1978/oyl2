@@ -28,33 +28,38 @@ export const action = async ({ request }: ActionArgs) => {
 }
 
 
-function MiscListsOrderPage() {
+function ListsOrderPage() {
 
   const [searchParams] = useSearchParams();
   const miscLists = useGetMiscLists()
   const specialLists = useGetSpecialLists()
-  const [lists, setLists] = useState<Array<ListAndToDos | RoutineAndTasks>>([])
+  const [lists, setLists] = useState<Array<ListAndToDos | RoutineAndTasks>>()
+  const [listType, setListType] = useState<string | null>('misc')
 
 
+  //when new search param.... set list type
   useEffect(() => {
-    const type = searchParams.get('type')
-    if(!type) return
-    if (type === 'misc') setLists(miscLists as Array<ListAndToDos | RoutineAndTasks>)
-    if (type === 'special') setLists(specialLists as Array<ListAndToDos | RoutineAndTasks>)
-    sessionStorage.setItem('lastListType', type);
-  }, [searchParams, miscLists, specialLists])
+    const searchParamType = searchParams.get('type')
+    if (!searchParamType) return
+    if (searchParamType === 'misc') setListType('misc')
+    if (searchParamType === 'special') setListType('special')
+  }, [searchParams])
 
 
+  //when list type changes... set lists and storage
   useEffect(() => {
-    let type = searchParams.get('type');
-    if (!type) {
-      // Retrieve from session storage
-      type = sessionStorage.getItem('lastListType');
-      if (type) {
-        setLists(type === 'misc' ? miscLists : specialLists);
-      }
-    }
-  },[miscLists, specialLists, searchParams]);
+    if (!listType) return
+    if (listType === 'misc') setLists(miscLists as Array<ListAndToDos | RoutineAndTasks>)
+    if (listType === 'special') setLists(specialLists as Array<ListAndToDos | RoutineAndTasks>)
+    sessionStorage.setItem('lastListType', listType);
+  }, [miscLists, specialLists, listType])
+
+
+  //  no liset type?  get from storage... if list type... set lists
+  useEffect(() => {
+    if (!listType) setListType(sessionStorage.getItem('lastListType'))
+    if (listType) setLists(listType === 'misc' ? miscLists : specialLists)
+  }, [miscLists, specialLists, listType]);
 
 
   return (
@@ -62,11 +67,11 @@ function MiscListsOrderPage() {
       <Outlet />
       <Modal zIndex={10}>
         {lists && (
-          <DndItemsForm listItems={lists} />
+          <DndItemsForm listItems={lists} listType={listType} listOrRoutine={'List'} />
         )}
       </Modal>
     </>
   )
 }
 
-export default MiscListsOrderPage
+export default ListsOrderPage

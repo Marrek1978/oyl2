@@ -25,9 +25,11 @@ interface RoutinesFormProps {
   routine?: RoutineAndTasks
   isNew?: boolean
   nextSortOrder?: number
+  isNewInModal?: boolean
+  isShowDeleteBtn?: boolean
 }
 
-function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps) {
+function RoutineForm({ routine, isNew = true, nextSortOrder, isNewInModal = false, isShowDeleteBtn = true }: RoutinesFormProps) {
   const params = useParams()
   const fetcher = useFetcher();
 
@@ -49,6 +51,8 @@ function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps
 
   const saveBtnTxt = useSaveBtnText(isNew, isIdle, 'Routine')
   const headerTxt = useMemo(() => headerText(isNew, 'Routine', routine?.title || ''), [isNew, routine?.title])
+
+  const isShowCloseBtn = isNewInModal === true ? true : !isNew
 
 
   useEffect(() => {
@@ -225,17 +229,16 @@ function RoutineForm({ routine, isNew = true, nextSortOrder }: RoutinesFormProps
             </div>
           </div>
 
-          {!isNew && (
             <FormButtons
               isShowSaveBtn={false}
               isNew={isNew}
-              isShowCloseBtn={!isNew}
+              isShowCloseBtn={isShowCloseBtn}
               saveBtnOnClickFunction={isNew ? handleSave : handleEdit}
               saveBtnType={'button'}
               deleteBtnText={'Delete Routine'}
               flexXGap={'12'}
+              isShowDeleteBtn={isShowDeleteBtn}
             />
-          )}
 
         </Form>
       </BasicFormAreaBG>
