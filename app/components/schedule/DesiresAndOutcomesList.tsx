@@ -66,10 +66,8 @@ function DesiresAndOutcomesList({ desires, handleDesireSelection, handleOutcomeS
       <>
         <div className='w-full text-right'>
           {outcomes.map((outcome: OutcomeWithAll) => {
-            console.log('in map')
             const randomeId = uuid()
             const isSelectedOutcome = outcome?.id === selectedOutcome?.id
-            console.log("🚀 ~ file: DesiresAndOutcomesList.tsx:74 ~ {outcomes.map ~ isSelectedOutcome:", isSelectedOutcome)
             return (
               <div key={randomeId}
                 className={`scheduler-outcomesList ${isSelectedOutcome && 'bg-info/40'} `}
@@ -87,7 +85,6 @@ function DesiresAndOutcomesList({ desires, handleDesireSelection, handleOutcomeS
   return (
     <>
       <div className="menu w-56 p-0 [&_li>*]:rounded-none">
-
         {desires?.map((desire, index) =>
           desire.sortOrder === 0 ? (
             <DesireZero key={desire.id} desire={desire} />

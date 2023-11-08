@@ -6,14 +6,13 @@ import type { RoutineAndTasks } from '~/types/routineTypes';
 
 type Props = {
   handleDragStart: (event: any) => void;
-  miscLists: ListAndToDos[] | undefined;
-  miscRoutines: RoutineAndTasks[] | undefined;
+  listsArray: ListAndToDos[] | undefined;
+  routinesArray: RoutineAndTasks[] | undefined;
 }
 
-function MiscellaneousLists({ handleDragStart, miscLists, miscRoutines }: Props) {
-
-  const hasLists = miscLists && miscLists.length > 0
-  const hasRoutines = miscRoutines && miscRoutines.length > 0
+function DraggableListsOrRoutines({ handleDragStart, listsArray, routinesArray }: Props) {
+  const hasLists = listsArray && listsArray.length > 0
+  const hasRoutines = routinesArray && routinesArray.length > 0
 
 
   const routineStyle = `misc-draggable-routine`
@@ -29,7 +28,7 @@ function MiscellaneousLists({ handleDragStart, miscLists, miscRoutines }: Props)
           </div>
 
           {hasRoutines ?
-            miscRoutines?.map(routine => (
+            routinesArray?.map(routine => (
               <DraggableListItem
                 key={routine.id}
                 list={routine}
@@ -45,7 +44,7 @@ function MiscellaneousLists({ handleDragStart, miscLists, miscRoutines }: Props)
           </div>
 
           {hasLists ?
-            miscLists?.map(list => (
+            listsArray?.map(list => (
               <DraggableListItem
                 key={list.id}
                 list={list}
@@ -59,4 +58,4 @@ function MiscellaneousLists({ handleDragStart, miscLists, miscRoutines }: Props)
   )
 }
 
-export default MiscellaneousLists
+export default DraggableListsOrRoutines

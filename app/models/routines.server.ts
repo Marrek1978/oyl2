@@ -233,6 +233,26 @@ export async function getSpecialRoutinesWithTasks(userId: User["id"]) {
   }
 }
 
+
+export function getAllMiscAndSpecialRoutines(userId: User["id"]) {
+  try {
+    return prisma.routine.findMany({
+      where: { userId , outcomeId:null},
+      include: {
+        tasks: {
+          orderBy: { sortOrder: "asc" },
+        },
+      },
+      orderBy: { sortOrder: "desc" },
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+
+
 //! ******************* TASK CRUD *******************//
 //?  ------------------ COMPLETED TASKS ----------------- //
 //updateCompletedTasks

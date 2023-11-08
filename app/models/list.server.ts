@@ -88,6 +88,23 @@ export function getAllListsAndTodos(userId: User["id"]) {
   }
 }
 
+
+export function getAllMiscAndSpecialLists(userId: User["id"]) {
+  try {
+    return prisma.list.findMany({
+      where: { userId , outcomeId:null},
+      include: {
+        todos: {
+          orderBy: { sortOrder: "asc" },
+        },
+      },
+      orderBy: { sortOrder: "desc" },
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function updateListAndTodos({
   id,
   title,
