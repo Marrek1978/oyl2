@@ -9,8 +9,8 @@ import { requireUserId } from '~/models/session.server'
 import { getDesireById } from '~/models/desires.server'
 import BtnWithProps from '~/components/buttons/BtnWithProps'
 import SubHeading14px from '~/components/titles/SubHeading14px'
-import H2WithProsePara from '~/components/text/H2WithProsePara'
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
+import ThreeParaFlex from '~/components/baseContainers/ThreeParaFlex'
 import TwoToneSubHeading from '~/components/titles/TwoToneSubHeading'
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
 import { ObjectStrToDates } from '~/components/utilities/helperFunctions'
@@ -98,39 +98,27 @@ function OutcomePage() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 mt-1  text-base-content/50">
-            <TwoToneSubHeading
-              staticHeading='Serves the Desire'
-              variableHeadingsArray={[desireTitle]}
-              size='14px'
-            />
-          </div>
+          <TwoToneSubHeading
+            staticHeading='Serves the Desire'
+            variableHeadingsArray={[desireTitle]}
+            size='14px'
+          />
         </section>
 
         <article className='w-full flex flex-col gap-y-12'>
           <section>
             {/* //?  PARAGRAPHS  */}
-            <div className='flex flex-wrap gap-12 mt-8'>
-              {/* //?  THE DESIRED OUTCOME  */}
-              <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max '>
-                <H2WithProsePara
-                  title={'The Desired Outcome'}
-                  paragraph={description || ''}
-                />
-              </div>
-
-              {/* //?  THE IDEAL SITUATION  */}
-              <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max   '>
-                <H2WithProsePara
-                  title={'The Vision'}
-                  paragraph={vision}
-                />
-              </div>
-            </div>
+            <ThreeParaFlex 
+              title1={'The Desired Outcome'} 
+              textParagraph1={description || ''}   
+              title2={'The Vision'}
+              textParagraph2={vision || ''}           
+              
+              />
+      
           </section>
 
           <section className='w-full flex flex-col gap-y-6'>
-
             <div className=' grid grid-cols-[250px,_100px] items-baseline'>
               <SubHeading14px text={'Milestones'} />
               <Link to='milestonegroups'>

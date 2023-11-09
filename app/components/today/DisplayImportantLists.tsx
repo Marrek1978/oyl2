@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import type { ListAndToDos } from '~/types/listTypes'
 import TimeCriticalTodoListCard from '../list/timeCritical/TimeCriticalTodoListCard'
 
-import type { List, ListToDo } from '@prisma/client'
+import type { List, ToDo } from '@prisma/client'
 
 type Props = {
   loadedLists: ListAndToDos[]
@@ -13,12 +13,12 @@ type Props = {
 export type ToDosWithListInfo = {
   listTitle: List['title'];
   listId: List['id'];
-  projectId: List['projectId'];
   outcomeId: List['outcomeId'];
-  todos: ListToDo[];
+  todos: ToDo[];
 }
 
 function DisplayImportantLists({ loadedLists }: Props) {
+console.log("🚀 ~ file: DisplayImportantLists.tsx:21 ~ DisplayImportantLists ~ loadedLists:", loadedLists)
 
   const [urgentToDosWithListInfo, setUrgentToDosWithListInfo] = useState<ToDosWithListInfo[]>()
   const [pastDueToDosWithListInfo, setPastDueToDosWithListInfo] = useState<ToDosWithListInfo[]>()
@@ -125,8 +125,8 @@ export function getTimeCriticalTodosWithListInfoObj({ listsWithToDos, operator =
   const ToDosWithListInfo = listsWithToDos.map(list => {
     const ToDosArray = list.todos.filter(todo => {
       if (importance) {
-        if (importance === 'urgent') return todo.urgent === true;
-        if (importance === 'important') return todo.important === true;
+        if (importance === 'urgent') return todo.isUrgent === true;
+        if (importance === 'important') return todo.isImportant === true;
       } else {
         if (!todo.dueDate) return false
         if (operator === '>') return format(todo.dueDate, 'yyyy-MM-dd') > formattedNow;
@@ -140,7 +140,6 @@ export function getTimeCriticalTodosWithListInfoObj({ listsWithToDos, operator =
     const ToDosWithListInfoObject: ToDosWithListInfo = {
       listTitle: list.title,
       listId: list.id,
-      projectId: list.projectId || null,
       outcomeId: list.outcomeId || null,
       todos: ToDosArray,
     }

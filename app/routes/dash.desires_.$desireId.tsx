@@ -8,7 +8,6 @@ import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
 import TwoToneSubHeading from '~/components/titles/TwoToneSubHeading';
 import { getDesireWithValuesAndOutcomes } from '~/models/desires.server';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
-import H2WithLinkAndProsePara from '~/components/text/H2WithLinkAndProsePara';
 import AllOutcomesDisplay from '~/components/desires/outcomes/AllOutcomesDisplay';
 import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
 import { DesireCurrentDefaultText, DesireIdealPlaceholderText } from '~/components/utilities/PlaceHolderTexts';
@@ -16,6 +15,7 @@ import { ArrayOfObjectsStrToDates, ObjectStrToDates, varsForPluralText } from '~
 
 import type { Desire, Outcome, Value } from '@prisma/client';
 import type { DesireWithValuesAndOutcomes, DesireWithValuesAndOutcomesWithStringDates } from '~/types/desireTypes';
+import ThreeParaFlex from '~/components/baseContainers/ThreeParaFlex';
 
 
 export const loader = async ({ request, params }: LoaderArgs) => {
@@ -80,38 +80,54 @@ function DesirePage() {
           </div>
 
 
+
+          <ThreeParaFlex
+            title1={'The Desire'}
+            linkDestination1={'editDetails'}
+            linkText1={'Edit Desire Description'}
+            textParagraph1={description || ''}
+            title2={'The Current Situation'}
+            linkDestination2={'editCurrent'}
+            textParagraph2={'Edit Current Situation'}
+            linkText2={current?.length ? current : DesireCurrentDefaultText}
+            title3={'The Ideal Scenario'}
+            linkDestination3={'editIdeal'}
+            linkText3={'Edit Ideal Scenario'}
+            textParagraph3={ideal?.length ? ideal : DesireIdealPlaceholderText}
+          />
+
           {/* //?  PARAGRAPHS  */}
           <div className='flex flex-wrap gap-12 mt-8'>
 
             {/* //?  THE DESIRE  */}
-            <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max '>
+            {/* <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max '>
               <H2WithLinkAndProsePara
                 title={'The Desire'}
                 linkDestination={'editDetails'}
                 linkText={'Edit Desire Description'}
                 paragraph={description || ''}
               />
-            </div>
+            </div> */}
 
             {/* //?  THE CURRENT SITUATION  */}
-            <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max   '>
+            {/* <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max   '>
               <H2WithLinkAndProsePara
                 title={'The Current Situation'}
                 linkDestination={'editCurrent'}
                 linkText={'Edit Current Situation'}
                 paragraph={current?.length ? current : DesireCurrentDefaultText}
               />
-            </div>
+            </div> */}
 
             {/* //?  THE IDEAL SITUATION  */}
-            <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max   '>
+            {/* <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max   '>
               <H2WithLinkAndProsePara
                 title={'The Ideal Scenario'}
                 linkDestination={'editIdeal'}
                 linkText={'Edit Ideal Scenario'}
                 paragraph={ideal?.length ? ideal : DesireIdealPlaceholderText}
               />
-            </div>
+            </div> */}
 
           </div>
           {/* //?  OUTCOMES  */}
@@ -155,9 +171,9 @@ export const useGetLoaderData = ({ path = `routes/dash.desires_.$desireId` }: ge
 export const useGetSpecificDesireWithValuesAndOutcomes = ({ path = `routes/dash.desires_.$desireId` } = {} as getLoaderDataProps): DesireWithValuesAndOutcomes | undefined | null => {
   const [desire, setDesire] = useState<DesireWithValuesAndOutcomes | undefined | null>()
   const desiresWithStrDates: DesireWithValuesAndOutcomesWithStringDates | undefined | null = useGetLoaderData({ path })
- 
- 
- 
+
+
+
   useEffect(() => {
     if (desiresWithStrDates === undefined) return
     if (desiresWithStrDates === null) return setDesire(null)
@@ -188,7 +204,7 @@ export const useGetSpecificDesireWithValuesAndOutcomes = ({ path = `routes/dash.
     setDesire(objWithProperDates)
   }, [desiresWithStrDates])
 
-  
+
   return desire
 }
 

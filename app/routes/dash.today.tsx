@@ -27,7 +27,11 @@ import type { RoutineAndTasks } from '~/types/routineTypes'
 import type { ScheduledItem } from '@prisma/client'
 import DisplayCurrentEvent from '~/components/today/DisplayCurrentEvent'
 import type { OutcomeWithLists, OutcomeWithListsWithStrDates } from '~/types/outcomeTypes'
-import type { DesireWithOutcomesAndListsWithStrDates } from '~/types/desireTypes'
+import type { DesireWithOutcomesAndListsWithStrDates, DesireWithStringDates } from '~/types/desireTypes'
+import TwoToneSubHeading from '~/components/titles/TwoToneSubHeading'
+import ThreeParaFlex from '~/components/baseContainers/ThreeParaFlex'
+import DisplayImportantLists from '~/components/today/DisplayImportantLists'
+import { ChangeListArrayDates } from './dash.listsandroutines'
 
 
 export const links: LinksFunction = () => [
@@ -52,22 +56,13 @@ export const loader = async ({ request }: LoaderArgs) => {
 function TodayPage() {
 
   const [currentEvent, setCurrentEvent] = useState<ScheduledItem | null>(null)
-  // const [clickedEvent, setClickedEvent] = useState<ScheduledList | null>(null)
 
   const currentDate = format(new Date(), 'EEE, MMMM d');
-  // const currentTime = format(new Date(), 'HH:mm')
 
-  // const focusProject: ProjectWithListsAndRoutines = projectsWithListsAndRoutines[0]
-  // const focusDesireId: string | null = focusProject?.desireId as string;
-  // const focusDesire: DesireWithOutcomes | undefined = loadedDesires?.find((desire) => (desire.id === focusDesireId))
-  // const focusOutcome: Outcome | undefined = focusDesire?.outcomes[0]
-  // const focusOutcomeId: string | undefined = focusOutcome?.id
-
-  // const todaysEventList = useMemo(() => getTodaysEvents(thisWeeksScheduledLists), [thisWeeksScheduledLists])
   const todaysEventList = useGetTodaysItems()
   const allUserLists: ListAndToDos[] = useGetLoadedUsersLists()
   const allUserRoutines: RoutineAndTasks[] = useGetLoadedUsersRoutines()
-  const allUserOutcomes: OutcomeWithLists[] = useGetLoadedUsersOutcome()
+  const allUserOutcomes: OutcomeWithLists[] = useGetLoadedUserOutcomes()
 
 
   useEffect(() => {
@@ -78,35 +73,83 @@ function TodayPage() {
   }, [todaysEventList]);
 
 
+  const { mainDesire, mainOutcome } = useGetMainFocus()
+  console.log("🚀 ~ file: dash.today.tsx:73 ~ TodayPage ~ mainOutcome:", mainOutcome)
+  console.log("🚀 ~ file: dash.today.tsx:73 ~ TodayPage ~ mainDesire:", mainDesire)
+
+
   return (
     <>
       <article>
 
         <BasicTextAreaBG pageTitle={'Main Focus Today'} >
           <div className='flex flex-wrap flex-col gap-8 w-full  '>
+            <div className='mt-8 w-full bg-base-300'>
+              TimeLIne
+            </div>
+
             <div>
-              <div className='text-base-content'>
-                {/* <HeadingH1 text={focusOutcome?.title || ''} /> */}
+              <TwoToneSubHeading
+                staticHeading='Outcome to Focus On'
+                variableHeadingsArray={[mainOutcome?.title || '']}
+                size='14px'
+              />
+              <TwoToneSubHeading
+                staticHeading='For Desire'
+                variableHeadingsArray={[mainDesire?.title || '']}
+                size='14px'
+              />
+            </div>
+
+
+            <ThreeParaFlex
+              title1={"Outcome's Vision"}
+              textParagraph1={mainOutcome?.vision || ''}
+              // linkDestination1={'editDetails'}
+              // linkText1={'Edit Desire Description'}
+              title2={"Desire's Vision"}
+              textParagraph2={mainDesire?.ideal || ''}
+              // linkDestination2={'editCurrent'}
+              // linkText2={current?.length ? current : DesireCurrentDefaultText}
+              title3={"Life's Vision"}
+              textParagraph3={'vision here'}
+            // linkDestination3={'editIdeal'}
+            // linkText3={'Edit Ideal Scenario'}
+            />
+
+
+            <div className='w-full'>
+              <DisplayImportantLists
+                loadedLists={allUserLists}
+              />
+            </div>
+
+            <div className='flex flex-wrap gap-8 mt-8'>
+              <div className='w-[400px]  ' >
+                <HeadingH2 text={`Today: ${currentDate}`} />
+                <Today
+                  scheduledItems={todaysEventList}
+                  loadedLists={allUserLists}
+                  loadedRoutines={allUserRoutines}
+                />
               </div>
 
-              <div className="flex gap-4 text-base-content/70">
-                <div  >
-                  <SubHeading14px text={'Project #1 : '} />
-                </div>
-                <div className='text-secondary/70'>
-                  {/* <SubHeading14px text={focusProject.title} /> */}
-                </div>
-              </div>
-
-              <div className="flex gap-4 text-base-content/70">
-                <div  >
-                  <SubHeading14px text={'For Desire : '} />
-                </div>
-                <div className='text-secondary/70'>
-                  {/* <SubHeading14px text={focusDesire?.title || ''} /> */}
+              <div className='  border-2 border-red-600'>
+                <HeadingH2 text={`Current Time Block`} />
+                <div>
+                  {currentEvent && (
+                    <DisplayCurrentEvent
+                      event={currentEvent}
+                      loadedLists={allUserLists}
+                      loadedRoutines={allUserRoutines}
+                      loadedOutcome={allUserOutcomes} />
+                  )}
                 </div>
               </div>
             </div>
+
+
+            remake the outcome page here?
 
             <div className='flex flex-col gap-y-8 w-full '>
               <div className='flex flex-wrap gap-8 justify-between w-full'>
@@ -147,59 +190,9 @@ function TodayPage() {
                     </div>
                   </div>
                 </div>
-
-                <div className=' flex flex-wrap gap-8 flex-1 w-full justify-end  '>
-                  <div className='w-prose max-w-prose'>
-                    <HeadingH2 text="Outcome's Vision" />
-                    {/* <TextProseWidth text={focusOutcome?.vision || ''} /> */}
-                  </div>
-                  <div className='w-prose max-w-prose'>
-                    <HeadingH2 text="Desire's Vision" />
-                    {/* <TextProseWidth text={focusDesire?.ideal || ''} /> */}
-                  </div>
-                  <div className='w-prose max-w-prose'>
-                    <HeadingH2 text="Life's Vision" />
-                    {/* <TextProseWidth text={focusDesire?.ideal || ''} /> */}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className='w-full'>
-              {/* <DisplayImportantLists
-                loadedLists={loadedLists}
-              /> */}
-            </div>
-
-            <div className='flex flex-wrap gap-8 mt-8'>
-              <div className='w-[400px]  ' >
-                <HeadingH2 text={`Today: ${currentDate}`} />
-                <Today
-                  scheduledItems={todaysEventList}
-                  loadedLists={allUserLists}
-                  loadedRoutines={allUserRoutines}
-                />
-              </div>
-
-              <div className='  border-2 border-red-600'>
-                <HeadingH2 text={`Current Time Block`} />
-                <div>
-                  {currentEvent && (
-                    <DisplayCurrentEvent
-                      event={currentEvent}
-                      loadedLists={allUserLists}
-                      loadedRoutines={allUserRoutines}
-                      loadedOutcome={allUserOutcomes} />
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <HeadingH2 text={`appointments`} />
               </div>
             </div>
           </div>
-
         </BasicTextAreaBG>
       </article >
     </>
@@ -314,7 +307,7 @@ export const useGetLoadedUsersLists = (): ListAndToDos[] => {
 
   useEffect(() => {
     if (!loadedLists) return
-    const listsWithProperDates = ArrayOfObjectsStrToDates({ items: loadedLists, dateKeys: ['createdAt', 'updatedAt'] })
+    const listsWithProperDates = ChangeListArrayDates(loadedLists)
     setLists(listsWithProperDates)
   }, [loadedLists])
 
@@ -336,7 +329,7 @@ export const useGetLoadedUsersRoutines = (): RoutineAndTasks[] => {
 }
 
 
-export const useGetLoadedUsersOutcome = (): OutcomeWithLists[] => {
+export const useGetLoadedUserOutcomes = (): OutcomeWithLists[] => {
   const [outcomes, setOutcomes] = useState<OutcomeWithLists[]>([])
   const { loadedDesiresWithOutcomes }: { loadedDesiresWithOutcomes: DesireWithOutcomesAndListsWithStrDates[] } = useGetTodaysLoaders();
 
@@ -366,4 +359,26 @@ export const useGetLoadedUsersOutcome = (): OutcomeWithLists[] => {
   }, [loadedDesiresWithOutcomes])
 
   return outcomes
+}
+
+
+export const useGetMainFocus = () => {
+  const { loadedDesiresWithOutcomes }: { loadedDesiresWithOutcomes: DesireWithOutcomesAndListsWithStrDates[] } = useGetTodaysLoaders();
+  const [mainDesire, setMainDesire] = useState<DesireWithStringDates | null>(null)
+  const [mainOutcome, setMainOutcome] = useState<OutcomeWithListsWithStrDates | null>(null)
+
+  useEffect(() => {
+    if (!loadedDesiresWithOutcomes) return
+
+    const desireZero = loadedDesiresWithOutcomes.find((desire) => (desire.sortOrder === 0))
+    if (!desireZero) return
+    const { outcomes, ...desire } = desireZero
+    setMainDesire(desire)
+
+    const outcomeZero = desireZero.outcomes.find((outcome) => (outcome.sortOrder === 0))
+    if (!outcomeZero) return
+    setMainOutcome(outcomeZero)
+  }, [loadedDesiresWithOutcomes])
+
+  return { mainDesire, mainOutcome }
 }

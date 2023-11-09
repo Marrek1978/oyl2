@@ -16,7 +16,7 @@ interface TodoListsProps {
   linkText?: string
 }
 
-function TodoLists({ lists, headingSize = 'H1', headingText = 'To Do Lists', linkText='new' }: TodoListsProps) {
+function TodoLists({ lists, headingSize = 'H1', headingText = 'To Do Lists', linkText = 'new' }: TodoListsProps) {
 
   let heading =
     headingSize === 'H1' ? (
@@ -43,10 +43,11 @@ function TodoLists({ lists, headingSize = 'H1', headingText = 'To Do Lists', lin
 
         <div className='flex flex-wrap gap-4 mt-8  '>
           {lists?.map((list: ListAndToDos) => (
-            <ListCardV2
-              key={list.id}
-              listItem={list}
-            />
+            <div key={list.id} className='flex-1-1-[300px]'>
+              <ListCardV2
+                list={list}
+              />
+            </div>
           ))}
         </div>
       </article>

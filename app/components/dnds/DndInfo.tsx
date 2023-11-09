@@ -16,7 +16,7 @@ function DndInfo() {
   return (
     <>
       <div className=" flex justify-end items-center    w-full">
-        <div className='relative '>
+        <div className='relative cursor-pointer '>
           <TextBtnGuideLine
             text={"DnD"}
             type='button'

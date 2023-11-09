@@ -4,13 +4,17 @@ import TextProseWidth from './TextProseWidth'
 
 interface H2WithLinkAndProseParaProps {
   title: string;
-  linkDestination: string;
+  linkDestination?: string;
   linkText: string;
   paragraph: string;
   isTextBtn?: boolean;
 }
 
 function H2WithLinkAndProsePara({ title, linkDestination, linkText, paragraph, isTextBtn=true }: H2WithLinkAndProseParaProps) {
+  
+  
+  
+  
   return (
     <>
       <div className='  '>

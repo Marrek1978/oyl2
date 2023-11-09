@@ -4,22 +4,22 @@ import ListCardBg from './ListCardBg';
 import ListCardToDoItem from './todos/ListCardToDoItem';
 
 import type { ListAndToDos } from '~/types/listTypes';
-import type { ListToDo } from '@prisma/client';
+import type { ToDo } from '@prisma/client';
 import { useLocation } from '@remix-run/react';
 
 interface ListCardProps {
-  listItem: ListAndToDos;
+  list: ListAndToDos;
 
 }
 
 
-const ListCardV2: React.FC<ListCardProps> = ({ listItem }) => {
+const ListCardV2: React.FC<ListCardProps> = ({ list }) => {
 
   const location = useLocation()
 
-  const listTitle = listItem.title
-  const todosArray: ListToDo[] = listItem.todos
-  const id = listItem.id
+  const listTitle = list.title
+  const todosArray: ToDo[] = list.todos
+  const id = list.id
 
   let relativeUrl =  location.pathname === '/dash/lists' ? `${id}` :  `lists/${id}`
 

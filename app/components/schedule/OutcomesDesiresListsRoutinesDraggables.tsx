@@ -52,7 +52,7 @@ function DesiresAndOutcomesWithListsAndRoutinesAsDraggables({ OutcomesWithAll, h
 
   return (
     <>
-      <div className='flex gap-8'>
+      <div className='flex gap-4 my-4'>
 
         <DesiresAndOutcomesList
           desires={desires}

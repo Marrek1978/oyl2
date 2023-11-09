@@ -8,6 +8,7 @@ import { json, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtim
 import styleSheet from "~/styles/SchedulerCss.css";
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 
+import DndInfo from '~/components/dnds/DndInfo'
 import HeadingH2 from '~/components/titles/HeadingH2'
 import Scheduler from '~/components/schedule/Scheduler'
 import { requireUserId } from '~/models/session.server'
@@ -23,9 +24,9 @@ import { deleteScheduledItem, getScheduledItems, createScheduledItems } from '~/
 import DesiresAndOutcomesWithListsAndRoutinesAsDraggables from '~/components/schedule/OutcomesDesiresListsRoutinesDraggables'
 
 import type { Item } from '~/types/itemTypes'
+import type { ListAndToDos } from '~/types/listTypes'
 import type { OutcomeWithAll } from '~/types/outcomeTypes'
-import type { RoutineAndTasks, RoutineAndTasksWithStrDates } from '~/types/routineTypes'
-import type { ListAndToDos, ListAndTodosWithStrDates } from '~/types/listTypes'
+import type { RoutineAndTasks } from '~/types/routineTypes'
 
 
 //example from https://github.com/jquense/react-big-calendar/blob/master/stories/demos/exampleCode/dndOutsideSource.js
@@ -86,7 +87,7 @@ function Schedule() {
 
   const fetcher = useFetcher();
   const [currentTab, setCurrentTab] = useState<string>('outcomes')
-  const [isSaveScheduledLists, setIsSaveScheduledLists] = useState<boolean>(false)   //  SaveButton
+  const [isSaveSchedule, setIsSaveSchedule] = useState<boolean>(false)   //  SaveButton
   const [draggedItem, setDraggedItem] = useState<ListAndToDos | RoutineAndTasks | OutcomeWithAll | undefined>()
   const [scheduledItems, setScheduledItems] = useState<Item[]>([])
   //?  when added to the calendar, they should be converted to the event structure, with start and end dates, is draggable, all day, id
@@ -101,8 +102,8 @@ function Schedule() {
   const loadedScheduledItems: ScheduledItem[] = useGetLoadedScheduledItems()
   const thisWeeksScheduledItems = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledItems), [loadedScheduledItems])
 
-  const { miscLists, specialLists } = useGetLoadedLists()
-  const { miscRoutines, specialRoutines } = useGetLoadedRoutines()
+  const { miscLists, specialLists } = useGetLoadedMiscAndSpecialLists()
+  const { miscRoutines, specialRoutines } = useGetLoadedMiscAndSpecialRoutines()
   const loadedOutcomes: any = useGetLoadedOutcomes()
 
   useEffect(() => {
@@ -116,11 +117,11 @@ function Schedule() {
 
 
   useEffect(() => {
-    setIsSaveScheduledLists(!areArraysEqual(scheduledItems, thisWeeksScheduledItems))
+    setIsSaveSchedule(!areArraysEqual(scheduledItems, thisWeeksScheduledItems))
   }, [scheduledItems, thisWeeksScheduledItems])
 
 
-  const handleSaveScheduledLists = async () => {
+  const handleSaveSchedule = async () => {
     const scheduledItemsString = JSON.stringify(scheduledItems)
     try {
       fetcher.submit({
@@ -129,7 +130,7 @@ function Schedule() {
         method: 'POST',
       })
     } catch (error) { throw error }
-    setIsSaveScheduledLists(false)
+    setIsSaveSchedule(false)
   }
 
 
@@ -140,20 +141,23 @@ function Schedule() {
 
   return (
     <>
-
       <SubHeading16px text='Schedule' />
+
+      <div className='mt-6'>
+        <HeadingH2 text='Draggable Lists and Routines' />
+      </div>
 
       <div className='my-4'>
         <div className="tabs">
           <div className={`tab tab-lg tab-lifted ${currentTab === 'outcomes' ? 'tab-active' : ''}`} id='outcomes'
             onClick={handleTabsClick}
-          >Desires & Outcomes</div>
+          > Outcomes</div>
           <div className={`tab tab-lg tab-lifted ${currentTab === 'special' ? 'tab-active' : ''}`} id='special'
             onClick={handleTabsClick}
-          >Special Lists</div>
+          >Special</div>
           <div className={`tab tab-lg tab-lifted ${currentTab === 'misc' ? 'tab-active' : ''}`} id='misc'
             onClick={handleTabsClick}
-          >Misc. Lists and Routines</div>
+          >Miscellaneous</div>
         </div>
       </div>
 
@@ -162,8 +166,8 @@ function Schedule() {
         {currentTab === 'outcomes' && (
           <>
             <div>
-              <HeadingH2 text='Desires & Outcomes' />
-
+              <HeadingH2 text='Lists and Routines by Desire and  Outcome' />
+              <DndInfo />
               <div className='mt-4'>
                 <DesiresAndOutcomesWithListsAndRoutinesAsDraggables
                   OutcomesWithAll={loadedOutcomes}
@@ -178,7 +182,8 @@ function Schedule() {
         {currentTab === 'special' && (
           <>
             <div>
-              <HeadingH2 text='Special Lists' />
+              <HeadingH2 text='Special Lists and Routines' />
+              <DndInfo />
               <div className='mt-4'>
                 <DraggableListsOrRoutines
                   handleDragStart={handleDragStart}
@@ -193,7 +198,8 @@ function Schedule() {
         {currentTab === 'misc' && (
           <>
             <div>
-              <HeadingH2 text='Miscellaneous Lists' />
+              <HeadingH2 text='Miscellaneous Lists and Routines' />
+              <DndInfo />
               <div className='mt-4'>
                 <DraggableListsOrRoutines
                   handleDragStart={handleDragStart}
@@ -217,9 +223,9 @@ function Schedule() {
             <BtnWithProps
               btnPurpose='save'
               btnType='button'
-              onClickFunction={handleSaveScheduledLists}
+              onClickFunction={handleSaveSchedule}
               btnLabel='Save Changes to Schedule'
-              isBtnDisabled={!isSaveScheduledLists}
+              isBtnDisabled={!isSaveSchedule}
             />
           </div>
 
@@ -229,10 +235,11 @@ function Schedule() {
             setScheduledItems={setScheduledItems}
             draggedItem={draggedItem}
             setDraggedItem={setDraggedItem}
-            isSaveScheduledItems={isSaveScheduledLists}
-            setIsSaveScheduledItems={setIsSaveScheduledLists}
-          // loadedToDos={loadedToDos}
-          // loadedRoutines={loadedRoutines}
+            isSaveScheduledItems={isSaveSchedule}
+            setIsSaveScheduledItems={setIsSaveSchedule}
+          // loadedMiscAndSpecialToDos={loadedToDos}
+          // loadedMiscAndSpecialRoutines={loadedRoutines}
+          // outcomesWithLists={outcomesWithLists}
           />
 
         </div>
@@ -334,55 +341,75 @@ export const useGetLoadedScheduledItems = () => {
 }
 
 
-export const useGetLoadedLists = () => {
-  const [miscLists, setMiscLists] = useState<ListAndToDos[]>([])
-  const [specialLists, setSpecialLists] = useState<ListAndToDos[]>([])
+export const useGetLoadedLists = (): ListAndToDos[] => {
+  const [miscAndSpecialLists, setMiscAndSpecialLists] = useState<ListAndToDos[]>([])
   const { loadedMiscAndSpecialLists } = useGetScheduleLoaders();
 
   useEffect(() => {
     if (!loadedMiscAndSpecialLists) return
-    const loadedMiscLists: ListAndTodosWithStrDates[] = loadedMiscAndSpecialLists.filter((list: ListAndTodosWithStrDates) => (list.isSpecialList === false))
-    const miscListsWithProperDates: ListAndToDos[] = ChangeListArrayDates(loadedMiscLists)
-    setMiscLists(miscListsWithProperDates)
-
-    const loadedSpecialLists: ListAndTodosWithStrDates[] = loadedMiscAndSpecialLists.filter((list: ListAndTodosWithStrDates) => (list.isSpecialList === true))
-    const specialListsWithProperDates: ListAndToDos[] = ChangeListArrayDates(loadedSpecialLists)
-    setSpecialLists(specialListsWithProperDates)
+    const miscAndSpecialListsWithProperDates: ListAndToDos[] = ChangeListArrayDates(loadedMiscAndSpecialLists)
+    setMiscAndSpecialLists(miscAndSpecialListsWithProperDates)
   }, [loadedMiscAndSpecialLists])
+
+  return miscAndSpecialLists
+}
+
+type ReturnMiscAndSpecialListsType = {
+  miscLists: ListAndToDos[]
+  specialLists: ListAndToDos[]
+}
+
+export const useGetLoadedMiscAndSpecialLists = (): ReturnMiscAndSpecialListsType => {
+  const [miscLists, setMiscLists] = useState<ListAndToDos[]>([])
+  const [specialLists, setSpecialLists] = useState<ListAndToDos[]>([])
+  const miscAndSpecialLists = useGetLoadedLists();
+
+  useEffect(() => {
+    if (!miscAndSpecialLists) return
+    const miscListsWithProperDates: ListAndToDos[] = miscAndSpecialLists.filter((list: ListAndToDos) => (list.isSpecialList === false))
+    setMiscLists(miscListsWithProperDates)
+    const specialListsWithProperDates: ListAndToDos[] = miscAndSpecialLists.filter((list: ListAndToDos) => (list.isSpecialList === true))
+    setSpecialLists(specialListsWithProperDates)
+  }, [miscAndSpecialLists])
 
   return { miscLists, specialLists }
 }
 
 
-
-export const useGetLoadedRoutines = () => {
-  const [miscRoutines, setMiscRoutines] = useState<RoutineAndTasks[]>([])
-  const [specialRoutines, setSpecialRoutines] = useState<RoutineAndTasks[]>([])
+export const useGetLoadedRoutines = (): RoutineAndTasks[] => {
+  const [miscAndSpecialRoutines, setmiscAndSpecialRoutines] = useState<RoutineAndTasks[]>([])
   const { loadedMiscAndSpecialRoutines } = useGetScheduleLoaders();
 
   useEffect(() => {
     if (!loadedMiscAndSpecialRoutines) return
-    const loadedMiscRoutines: RoutineAndTasksWithStrDates[] = loadedMiscAndSpecialRoutines.filter((routine: RoutineAndTasksWithStrDates) => (routine.isSpecialRoutine === false))
-    const miscRoutinesWithProperDates: RoutineAndTasks[] = ChangeListArrayDates(loadedMiscRoutines)
+    const miscAndSpecialRoutinesWithProperDates: RoutineAndTasks[] = ChangeListArrayDates(loadedMiscAndSpecialRoutines)
+    setmiscAndSpecialRoutines(miscAndSpecialRoutinesWithProperDates)
+  }, [loadedMiscAndSpecialRoutines])
+
+  return miscAndSpecialRoutines
+}
+
+
+export const useGetLoadedMiscAndSpecialRoutines = () => {
+  const [miscRoutines, setMiscRoutines] = useState<RoutineAndTasks[]>([])
+  const [specialRoutines, setSpecialRoutines] = useState<RoutineAndTasks[]>([])
+  const miscAndSpecialRoutines: RoutineAndTasks[] = useGetLoadedRoutines();
+
+  useEffect(() => {
+    if (!miscAndSpecialRoutines) return
+    const miscRoutinesWithProperDates: RoutineAndTasks[] = miscAndSpecialRoutines.filter((routine: RoutineAndTasks) => (routine.isSpecialRoutine === false))
     setMiscRoutines(miscRoutinesWithProperDates)
 
-    const loadedSpecialRoutines: RoutineAndTasksWithStrDates[] = loadedMiscAndSpecialRoutines.filter((routine: RoutineAndTasksWithStrDates) => (routine.isSpecialRoutine === true))
-    const specialRoutinesWithProperDates: RoutineAndTasks[] = ChangeListArrayDates(loadedSpecialRoutines)
+    const specialRoutinesWithProperDates: RoutineAndTasks[] = miscAndSpecialRoutines.filter((routine: RoutineAndTasks) => (routine.isSpecialRoutine === true))
     setSpecialRoutines(specialRoutinesWithProperDates)
-  }, [loadedMiscAndSpecialRoutines])
+  }, [miscAndSpecialRoutines])
 
   return { miscRoutines, specialRoutines }
 }
 
 
-
-
 export const useGetLoadedOutcomes = () => {
-
-  //loadedDesiresWithOutcomesListsRoutines
-
   const { loadedDesiresWithOutcomesListsRoutines } = useGetScheduleLoaders();
-
   return loadedDesiresWithOutcomesListsRoutines
 }
 

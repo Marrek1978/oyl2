@@ -2,10 +2,10 @@ import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { ToDoItemStylesNoBg } from '~/styles/ToDoItemStyles';
 
-import type { ListToDo } from '@prisma/client';
+import type { ToDo } from '@prisma/client';
 
 type Props = {
-  todoObject: ListToDo;
+  todoObject: ToDo;
 }
 
 function ListCardToDoItem({ todoObject }: Props) {
@@ -24,13 +24,13 @@ function ListCardToDoItem({ todoObject }: Props) {
       `}>
         <div className={`
           wrap truncate text-ellipsis 	
-          ${todoObject.complete && 'line-through text-slate-300'}
+          ${todoObject.isComplete && 'line-through text-slate-300'}
         `} >
           {todoObject.body}
         </div>
 
         {todoObject.dueDate && (
-          <div className={` text-xs font-medium text-base-content/60 self-center ${todoObject.complete && 'line-through text-slate-300'}`}>
+          <div className={` text-xs font-medium text-base-content/60 self-center ${todoObject.isComplete && 'line-through text-slate-300'}`}>
             {format(new Date(todoObject.dueDate), 'EEE, MMM d', { locale: enUS })}
           </div>
         )}

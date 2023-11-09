@@ -80,7 +80,6 @@ function SelectedOutcomeDraggables({ selectedOutcome, handleDragStart, isMainFoc
             />
           )
         })}
-
       </div>
     </>
   )

@@ -4,23 +4,29 @@ import { useEffect, useState } from 'react'
 import useIsInOrder from '../dnds/useInOrder'
 import BtnWithProps from '../buttons/BtnWithProps'
 import Heading16pxWithLink from '../titles/Heading16pxWithLink'
+import ListRoutineCard from '../baseContainers/ListRoutineCard'
 import useSetSortOrderToNewIndex from '../dnds/useSetSortOrderToNewIndex'
 
-import type { Task, ToDo } from '@prisma/client'
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndTasks } from '~/types/routineTypes'
 
 type Props = {
   lists: ListAndToDos[] | RoutineAndTasks[]
-  listType?: 'list' | 'routine'
+  listType?: 'list' | 'routine' | 'filtered'
 }
 
 
-function DisplayListDisplayToDosOnHover({ lists, listType='list' }: Props) {
-  const [orderedLists, setOrderedLists] = useState<ListAndToDos[] | RoutineAndTasks[]>([])
+//take in 3 types of lists
+// display list 
+//display items on hover with styling
+// links to list or routine... requires defininng url
+
+
+function DisplayListsOrRoutines({ lists, listType = 'list' }: Props) {
 
   const inOrder = useIsInOrder()
   const setSortOrderToNewIndex = useSetSortOrderToNewIndex();
+  const [orderedLists, setOrderedLists] = useState<ListAndToDos[] | RoutineAndTasks[]>([])
 
   const listTypeURL = listType === 'list' ? 'lists' : 'routines'
 
@@ -30,42 +36,21 @@ function DisplayListDisplayToDosOnHover({ lists, listType='list' }: Props) {
     if (isInOrder) setOrderedLists(lists)
 
     const reOrderedItemsArray = setSortOrderToNewIndex(lists)
-    setOrderedLists(reOrderedItemsArray as ListAndToDos[] | RoutineAndTasks[])
-  }, [lists, inOrder, setSortOrderToNewIndex])
 
+    if (listTypeURL === 'lists') setOrderedLists(reOrderedItemsArray as ListAndToDos[])
+    if (listTypeURL === 'routines') setOrderedLists(reOrderedItemsArray as | RoutineAndTasks[])
+  }, [lists, inOrder, setSortOrderToNewIndex, listTypeURL])
 
-  const CustomComponent = ({ listId }: { listId: string }) => {
-    const itemProperty = 'todos' in lists[0] ? 'todos' : 'tasks'
-    const list: (ListAndToDos | RoutineAndTasks | undefined) = lists.find(list => list.id === listId)
-    if (!list) return null;
-
-    const items = itemProperty === 'todos'
-      ? (list as ListAndToDos)[itemProperty]
-      : (list as RoutineAndTasks)[itemProperty];
-
-    return (
-      <div className=' absolute top-0 left-0  bg-white border-2 border-blue-500 w-56 h-56 text-base-content'>
-        {items?.map((item: ToDo | Task) => {
-          return (
-            <div key={item.id}>
-              <div className='mt-1'>{item.body}</div>
-            </div>
-          )
-        })}
-      </div>
-    )
-  }
 
 
   return (
     <>
-
       <div className='mt-2 max-w-sm'>
         {orderedLists.map((list) => {
           const listTitle = list.title
           const listId = list.id
           const linkDestination = `${listTypeURL}/${listId}`
-          const linkText =`View ${listType}`
+          const linkText = `View ${listType}`
 
           return (
             < div key={listId} className="mt-0 capitalize relative group" >
@@ -74,7 +59,7 @@ function DisplayListDisplayToDosOnHover({ lists, listType='list' }: Props) {
                 >
                   <Heading16pxWithLink text={listTitle} />
                   <div className="hidden group-hover:block z-10">
-                    <CustomComponent listId={listId} />
+                    <ListRoutineCard list={list} />
                   </div>
                 </div>
                 <Link to={linkDestination} className='justify-end self-baseline  '>
@@ -94,5 +79,5 @@ function DisplayListDisplayToDosOnHover({ lists, listType='list' }: Props) {
   )
 }
 
-export default DisplayListDisplayToDosOnHover
+export default DisplayListsOrRoutines
 

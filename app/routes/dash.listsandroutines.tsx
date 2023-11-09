@@ -9,14 +9,12 @@ import { getAllListsAndTodos } from '~/models/list.server';
 import BtnWithProps from '~/components/buttons/BtnWithProps';
 import SubHeading14px from '~/components/titles/SubHeading14px';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
-import DisplayListDisplayToDosOnHover from '~/components/list/DisplayListDisplayToDosOnHover';
 import { ArrayOfObjectsStrToDates, ObjectStrToDates } from '~/components/utilities/helperFunctions';
-
 
 import type { HasSortOrder } from '~/types/genericDndArrayTypes';
 import type { ListAndToDos, ListAndTodosWithStrDates } from '~/types/listTypes';
 import type { RoutineAndTasks, RoutineAndTasksWithStrDates } from '~/types/routineTypes';
-
+import DisplayListsOrRoutines from '~/components/list/DisplayListsOrRoutines';
 
 
 export const loader = async ({ request }: LoaderArgs) => {
@@ -44,10 +42,12 @@ function ListsPage() {
         <div className='flex flex-col mt-6 gap-y-12 w-full'>
 
           {/* //??   ***************    MISCELLANEOUS   *********************** */}
-          <div className='flex flex-wrap gap-y-12 gap-x-16 '>
+          <div className='flex flex-wrap gap-y-12 gap-x-16'>
             <div className='flex-1 min-w-[350px]  max-w-sm'>
-              <HeadingH2 text='Miscellaneous Lists' />
-              <div className='max-w-max mt-2'>
+              <div className='text-base-content/70'>
+                <HeadingH2 text='Miscellaneous Lists' />
+              </div>
+              <div className='flex justify-end'>
                 {miscLists.length > 0 && (
                   <Link to='lists?type=misc'>
                     <BtnWithProps
@@ -59,7 +59,7 @@ function ListsPage() {
                   </Link>
                 )}
               </div>
-              <div className='max-w-max mt-0'>
+              <div className='flex justify-end'>
                 <Link to='lists/new'>
                   <BtnWithProps
                     btnPurpose={'goto'}
@@ -69,16 +69,18 @@ function ListsPage() {
                   />
                 </Link>
               </div>
-              <div className='mt-4 '>
+              <div className='mt-4 text-success'>
                 <SubHeading14px text='Misc. Lists' />
               </div>
-              <DisplayListDisplayToDosOnHover lists={miscLists} />
+              <div className='mt-4'>
+                <DisplayListsOrRoutines lists={miscLists} />
+              </div>
             </div>
 
 
             <div className='flex-1 min-w-[350px]  max-w-sm'>
               <HeadingH2 text='Miscellaneous Routines' />
-              <div className='max-w-max mt-2'>
+              <div className='flex justify-end'>
                 {miscRoutines.length > 0 && (
                   <Link to='routines?type=misc'>
                     <BtnWithProps
@@ -90,8 +92,8 @@ function ListsPage() {
                   </Link>
                 )}
               </div>
-              <div className='max-w-max mt-0'>
 
+              <div className='flex justify-end'>
                 <Link to='routines/new'>
                   <BtnWithProps
                     btnPurpose={'goto'}
@@ -104,7 +106,7 @@ function ListsPage() {
               <div className='mt-4 '>
                 <SubHeading14px text='Misc. Routines' />
               </div>
-              <DisplayListDisplayToDosOnHover lists={miscRoutines} listType={'routine'} />
+              <DisplayListsOrRoutines lists={miscRoutines} listType={'routine'} />
             </div>
           </div>
 
@@ -114,7 +116,7 @@ function ListsPage() {
 
             <div className='flex-1 min-w-[350px]  max-w-sm'>
               <HeadingH2 text='Special Lists' />
-              <div className='max-w-max mt-2'>
+              <div className='   flex justify-end'>
                 <Link to='lists?type=special'>
                   <BtnWithProps
                     btnPurpose={'goto'}
@@ -128,13 +130,13 @@ function ListsPage() {
               <div className='mt-4 '>
                 <SubHeading14px text='Special Lists' />
               </div>
-              <DisplayListDisplayToDosOnHover lists={specialLists} />
+              <DisplayListsOrRoutines lists={specialLists} />
             </div>
 
 
             <div className='flex-1 min-w-[350px]  max-w-sm'>
               <HeadingH2 text='Special Routines' />
-              <div className='max-w-max mt-2'>
+              <div className='flex justify-end'>
                 <Link to='routines?type=special'>
                   <BtnWithProps
                     btnPurpose={'goto'}
@@ -147,7 +149,7 @@ function ListsPage() {
               <div className='mt-4 '>
                 <SubHeading14px text='Special Routines' />
               </div>
-              <DisplayListDisplayToDosOnHover lists={specialRoutines} listType={'routine'} />
+              <DisplayListsOrRoutines lists={specialRoutines} listType={'routine'} />
             </div>
           </div>
 
@@ -186,11 +188,10 @@ export const useGetMiscLists = (): ListAndToDos[] => {
 export const useGetMiscRoutines = (): RoutineAndTasks[] => {
   const { allUserRoutines } = useGetLoaders();//{ allUserLists, allUserRoutines };
   const [routines, setRoutines] = useState<RoutineAndTasks[]>([]);
-
   useEffect(() => {
     if (!allUserRoutines) return;
     const miscRoutinesWithStrDates: RoutineAndTasksWithStrDates[] = allUserRoutines.filter((routine: RoutineAndTasksWithStrDates) => routine.outcomeId === null && routine.isSpecialRoutine === false)
-    const miscRoutinesWithProperDates: RoutineAndTasks[] = ChangeListArrayDates(miscRoutinesWithStrDates)
+    const miscRoutinesWithProperDates: RoutineAndTasks[] = ChangeListArrayDates(miscRoutinesWithStrDates, 'routine')
     setRoutines(miscRoutinesWithProperDates)
   }, [allUserRoutines])
 
@@ -217,9 +218,9 @@ export const useGetSpecialRoutines = (): RoutineAndTasks[] => {
 
   useEffect(() => {
     if (!allUserRoutines) return;
-    const miscRoutinesWithStrDates: RoutineAndTasksWithStrDates[] = allUserRoutines.filter((routine: RoutineAndTasksWithStrDates) => routine.outcomeId === null && routine.isSpecialRoutine === true)
-    const miscRoutinesWithProperDates: RoutineAndTasks[] = ChangeListArrayDates(miscRoutinesWithStrDates)
-    setRoutines(miscRoutinesWithProperDates)
+    const specialRoutinesWithStrDates: RoutineAndTasksWithStrDates[] = allUserRoutines.filter((routine: RoutineAndTasksWithStrDates) => routine.outcomeId === null && routine.isSpecialRoutine === true)
+    const specialRoutinesWithProperDates: RoutineAndTasks[] = ChangeListArrayDates(specialRoutinesWithStrDates, 'routine')
+    setRoutines(specialRoutinesWithProperDates)
   }, [allUserRoutines])
 
   return routines;

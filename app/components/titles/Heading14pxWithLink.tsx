@@ -1,19 +1,20 @@
-import React from 'react'
 import Heading14px from './Heading14px';
 import { Link } from '@remix-run/react';
 import TextBtn from '../buttons/TextBtn';
 import { EditIcon } from '../utilities/icons';
 
+import type { DaisyUIColor } from '~/types/CSSTypes';
+
 interface Props {
   title: string;
   linkDestination: string;
-  linkColor?: string;
+  textColorDaisyUI?: DaisyUIColor;
   linkText?: string;
   date?: Date | null;
 }
 
 
-function Heading14pxWithLink({ title, linkDestination, linkColor = 'text-primary', linkText = 'Edit', date }: Props) {
+function Heading14pxWithLink({ title, linkDestination, textColorDaisyUI = 'primary', linkText = 'Edit', date }: Props) {
   return (
     <>
       <div className="w-full flex justify-between items-baseline gap-x-4">
@@ -26,7 +27,7 @@ function Heading14pxWithLink({ title, linkDestination, linkColor = 'text-primary
             text={linkText}
             onClickFunction={() => { }}
             icon={EditIcon}
-            color={linkColor}
+            textColorDaisyUI={textColorDaisyUI}
           />
         </Link>
       </div>

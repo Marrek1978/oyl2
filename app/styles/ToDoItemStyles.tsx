@@ -1,7 +1,7 @@
-import type { Todo } from '~/types/listTypes';
+import type { ToDo } from '@prisma/client';
 
 interface ToDoItemStylesProps {
-  todo: Todo;
+  todo: ToDo  ;
 }
 
 export function ToDoItemStyles({ todo }: ToDoItemStylesProps) {
