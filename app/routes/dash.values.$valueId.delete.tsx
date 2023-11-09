@@ -36,6 +36,7 @@ function DeleteValuePage() {
 
   useFormDeletedToastAndRedirect({ redirectTo: '/dash/values', message: 'Value was deleted' })
 
+
   return (
     <>
       <Modal onClose={() => { }} zIndex={20}>

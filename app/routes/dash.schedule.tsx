@@ -1,9 +1,9 @@
 import { parse } from 'querystring'
 import type { ScheduledItem } from '@prisma/client'
-import { useFetcher, useRouteLoaderData } from '@remix-run/react'
+import { Outlet, useFetcher, useRouteLoaderData } from '@remix-run/react'
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import type { LinksFunction } from '@remix-run/react/dist/routeModules'
-import { json, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
+import { type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
 
 import styleSheet from "~/styles/SchedulerCss.css";
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
@@ -20,13 +20,14 @@ import { getAllMiscAndSpecialRoutines } from '~/models/routines.server'
 import { getDesiresWithOutcomesListsRoutines } from '~/models/desires.server'
 import { ArrayOfObjectsStrToDates } from '~/components/utilities/helperFunctions'
 import DraggableListsOrRoutines from '~/components/schedule/DraggableListsOrRoutines'
-import { deleteScheduledItem, getScheduledItems, createScheduledItems } from '~/models/scheduler.server'
+import { getScheduledItems, createScheduledItems } from '~/models/scheduler.server'
 import DesiresAndOutcomesWithListsAndRoutinesAsDraggables from '~/components/schedule/OutcomesDesiresListsRoutinesDraggables'
 
 import type { Item } from '~/types/itemTypes'
 import type { ListAndToDos } from '~/types/listTypes'
 import type { OutcomeWithAll } from '~/types/outcomeTypes'
 import type { RoutineAndTasks } from '~/types/routineTypes'
+import type { AllDraggedItems } from '~/types/schedulerTypes'
 
 
 //example from https://github.com/jquense/react-big-calendar/blob/master/stories/demos/exampleCode/dndOutsideSource.js
@@ -64,21 +65,12 @@ export const action = async ({ request }: ActionArgs) => {
     const userId = await requireUserId(request);
     const formBody = await request.text();
     const parsedBody = parse(formBody);
-    const scheduledItems: Item[] = JSON.parse(parsedBody.scheduledItemsString as string);
+    const scheduleItems: Item[] = JSON.parse(parsedBody.scheduleItemsString as string);
     try {
-      await createScheduledItems({ userId, scheduledItems })
+      await createScheduledItems({ userId, scheduleItems })
     } catch (error) { throw error }
   }
-
-  if (request.method === 'DELETE') {
-    const formBody = await request.text();
-    const parsedBody = parse(formBody);
-    const idToDelete = parsedBody.idToDelete as string
-    try {
-      await deleteScheduledItem({ id: idToDelete })
-      return json({ status: 'success' }, { status: 200 })
-    } catch (error) { throw error }
-  }
+ 
   return null
 }
 
@@ -88,8 +80,8 @@ function Schedule() {
   const fetcher = useFetcher();
   const [currentTab, setCurrentTab] = useState<string>('outcomes')
   const [isSaveSchedule, setIsSaveSchedule] = useState<boolean>(false)   //  SaveButton
-  const [draggedItem, setDraggedItem] = useState<ListAndToDos | RoutineAndTasks | OutcomeWithAll | undefined>()
-  const [scheduledItems, setScheduledItems] = useState<Item[]>([])
+  const [draggedItem, setDraggedItem] = useState<AllDraggedItems>()
+  const [scheduleItems, setScheduleItems] = useState<Item[]>([])
   //?  when added to the calendar, they should be converted to the event structure, with start and end dates, is draggable, all day, id
   //? loaded scheduled events will be of the correct format, and will be loaded from db
 
@@ -99,15 +91,16 @@ function Schedule() {
   //! make all memoized functions, and move to helper functions doc?  
 
 
+
   const loadedScheduledItems: ScheduledItem[] = useGetLoadedScheduledItems()
   const thisWeeksScheduledItems = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledItems), [loadedScheduledItems])
 
   const { miscLists, specialLists } = useGetLoadedMiscAndSpecialLists()
   const { miscRoutines, specialRoutines } = useGetLoadedMiscAndSpecialRoutines()
-  const loadedOutcomes: any = useGetLoadedOutcomes()
+  const loadedOutcomes: any = useGetLoadedDesiresWithAll()
 
   useEffect(() => {
-    setScheduledItems(thisWeeksScheduledItems)
+    setScheduleItems(thisWeeksScheduledItems)
   }, [thisWeeksScheduledItems])
 
 
@@ -117,15 +110,15 @@ function Schedule() {
 
 
   useEffect(() => {
-    setIsSaveSchedule(!areArraysEqual(scheduledItems, thisWeeksScheduledItems))
-  }, [scheduledItems, thisWeeksScheduledItems])
+    setIsSaveSchedule(!areArraysEqual(scheduleItems, thisWeeksScheduledItems))
+  }, [scheduleItems, thisWeeksScheduledItems])
 
 
   const handleSaveSchedule = async () => {
-    const scheduledItemsString = JSON.stringify(scheduledItems)
+    const scheduleItemsString = JSON.stringify(scheduleItems)
     try {
       fetcher.submit({
-        scheduledItemsString
+        scheduleItemsString
       }, {
         method: 'POST',
       })
@@ -141,6 +134,7 @@ function Schedule() {
 
   return (
     <>
+      <Outlet />
       <SubHeading16px text='Schedule' />
 
       <div className='mt-6'>
@@ -231,15 +225,12 @@ function Schedule() {
 
 
           <Scheduler
-            scheduledItems={scheduledItems}
-            setScheduledItems={setScheduledItems}
+            scheduleItems={scheduleItems}
+            setScheduleItems={setScheduleItems}
             draggedItem={draggedItem}
             setDraggedItem={setDraggedItem}
             isSaveScheduledItems={isSaveSchedule}
             setIsSaveScheduledItems={setIsSaveSchedule}
-          // loadedMiscAndSpecialToDos={loadedToDos}
-          // loadedMiscAndSpecialRoutines={loadedRoutines}
-          // outcomesWithLists={outcomesWithLists}
           />
 
         </div>
@@ -309,15 +300,6 @@ function areArraysEqual(arr1: Item[], arr2: Item[]) {
   }
   return true
 }
-
-
-
-// {
-//   loadedDesiresWithOutcomesListsRoutines,
-//   loadedMiscAndSpecialLists,
-//   loadedScheduledItems,
-//   loadedMiscAndSpecialRoutines
-// }
 
 
 export const useGetScheduleLoaders = () => {
@@ -408,7 +390,7 @@ export const useGetLoadedMiscAndSpecialRoutines = () => {
 }
 
 
-export const useGetLoadedOutcomes = () => {
+export const useGetLoadedDesiresWithAll = () => {
   const { loadedDesiresWithOutcomesListsRoutines } = useGetScheduleLoaders();
   return loadedDesiresWithOutcomesListsRoutines
 }

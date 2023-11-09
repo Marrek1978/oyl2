@@ -9,7 +9,7 @@ interface AreYouSureDeleteModalProps {
 }
 
 function AreYouSureDeleteModal({ item, title, id }: AreYouSureDeleteModalProps) {
-
+  
   const { isIdle } = useGetNavigationState()
 
   return (

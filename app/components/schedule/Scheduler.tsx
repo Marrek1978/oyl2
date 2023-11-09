@@ -1,32 +1,32 @@
 import moment from 'moment'
 import { v4 as uuidv4 } from 'uuid';
-import React, { useCallback, useMemo, useState } from 'react'
+import { useNavigate } from '@remix-run/react';
+import type {  Task, ToDo, } from '@prisma/client';
+import React, { useCallback, useMemo, } from 'react'
+import { Calendar, momentLocalizer, Views, } from 'react-big-calendar'
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 
-import Modal from '~/components/modals/Modal'
-import SuccessMessage from '~/components/modals/SuccessMessage'
-import DeleteEventModal from '~/components/modals/DeleteEventModal'
-import { Calendar, momentLocalizer, Views, } from 'react-big-calendar'
-import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
-import { useGetLoadedLists, useGetLoadedOutcomes, useGetLoadedRoutines } from '~/routes/dash.schedule';
+import { useGetLoadedDesiresWithAll, useGetLoadedLists, useGetLoadedRoutines } from '~/routes/dash.schedule';
 
 import type { ListAndToDos } from '~/types/listTypes'
-import type { OutcomeWithAll } from '~/types/outcomeTypes';
 import type { RoutineAndTasks } from '~/types/routineTypes'
-import type { ScheduledItem, Task, ToDo } from '@prisma/client';
-import type { DesireWithOutcomesAndLists } from '~/types/desireTypes';
-import type { EventInteractionArgs, DragFromOutsideItemArgs } from 'react-big-calendar/lib/addons/dragAndDrop'
+import type { OutcomeWithAll, OutcomeWithAllWithStringDates } from '~/types/outcomeTypes';
+import type { DesireWithOutcomesAndAll, DesireWithOutcomesAndAllWithStrDates } from '~/types/desireTypes';
+import type { DragFromOutsideItemArgs, EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop'
+import type { AllDraggedItems, AllScheduleItems, DroppedItem, ScheduleItemNotYetSaved } from '~/types/schedulerTypes';
+
 
 const localizer = momentLocalizer(moment)
 const DragAndDropCalendar = withDragAndDrop(Calendar)
 
 
 interface SchedulerProps {
-  scheduledItems: ScheduledItem[] | Omit<ScheduledItem, 'createdAt' | 'updatedAt' | 'userId'>[];
-  setScheduledItems: React.Dispatch<React.SetStateAction<ScheduledItem[] | Omit<ScheduledItem, 'createdAt' | 'updatedAt' | 'userId'>[]>>;
-  draggedItem: ListAndToDos | RoutineAndTasks | OutcomeWithAll | undefined;
-  setDraggedItem: React.Dispatch<React.SetStateAction<ListAndToDos | RoutineAndTasks | OutcomeWithAll | undefined>>;
+  scheduleItems: AllScheduleItems[];
+  setScheduleItems: React.Dispatch<React.SetStateAction<AllScheduleItems[]>>;
+  draggedItem: AllDraggedItems;
+  setDraggedItem: React.Dispatch<React.SetStateAction<AllDraggedItems>>;
   setIsSaveScheduledItems: React.Dispatch<React.SetStateAction<boolean>>;
   isSaveScheduledItems?: boolean;
 }
@@ -34,23 +34,26 @@ interface SchedulerProps {
 
 
 function Scheduler({
-  scheduledItems,
-  setScheduledItems,
+  scheduleItems,
+  setScheduleItems,
   draggedItem,
   setDraggedItem,
   setIsSaveScheduledItems,
   isSaveScheduledItems,
 }: SchedulerProps) {
 
+  let navigate = useNavigate();
+
   const defaultDate = useMemo(() => new Date(), [])
-  const [deleteEventBool, setDeleteEventBool] = useState<boolean>(false)
-  const [successMessage, setSuccessMessage] = useState('');
-  const [eventToDelete, setEventToDelete] = useState<ScheduledItem | Omit<ScheduledItem, 'createdAt' | 'updatedAt' | 'userId'>>()
+  const desiresAndAll = useGetLoadedDesiresWithAll()
+  const mainFocusOutcomeId = useGetMainFocusOutcomeId(desiresAndAll);
 
-  const miscAndScheduledLists = useGetLoadedLists()
-  const miscAndScheduledRoutines = useGetLoadedRoutines()
-  const desiresAndOutcomesAndLists = useGetLoadedOutcomes()
+  const miscAndSpecialLists = useGetLoadedLists()
+  const miscAndSpecialRoutines = useGetLoadedRoutines()
+  const desiresAndOutcomesAndLists = useGetLoadedDesiresWithAll()
 
+
+  
   //? ***********   CUSTOM DragAndDropCalendar FUNCTIONS   ***************** */
   const dragFromOutsideItem = useCallback(() => {
     return (event: object) => {
@@ -66,25 +69,34 @@ function Scheduler({
     }, [])
 
 
-  const addNewItemToSchedule = useCallback((list: Omit<ScheduledItem, 'createdAt' | 'updatedAt' | 'userId'>): void => {
+  const addNewItemToSchedule = useCallback((list: ScheduleItemNotYetSaved): void => {
     setIsSaveScheduledItems(true)
-    setScheduledItems((prev) => {
+    setScheduleItems((prev) => {
       return [...prev, { ...list }]
     })
-  }, [setScheduledItems, setIsSaveScheduledItems])
+  }, [setScheduleItems, setIsSaveScheduledItems])
 
 
   const onDrdopFromOutside = useCallback(({ start: startDate, end: endDate }: DragFromOutsideItemArgs) => {
     if (draggedItem === undefined) return
     const start = typeof startDate === 'string' ? new Date(startDate) : startDate;
     const end = typeof endDate === 'string' ? new Date(endDate) : endDate;
-    let description = {};
-    'todos' in draggedItem && (description = { listId: draggedItem.id })
-    'tasks' in draggedItem && (description = { routineId: draggedItem.id })
-    'lists' in draggedItem && (description = { outcomeId: draggedItem.id })
-    console.log("🚀 ~ file: Scheduler.tsx:85 ~ onDrdopFromOutside ~ draggedItem:", draggedItem)
 
-    const droppedItem: Omit<ScheduledItem, 'createdAt' | 'updatedAt' | 'userId' | 'description' & { description: string }> = {
+    let description = {};
+    if ('desireId' in draggedItem) {
+      const isMainFocus = draggedItem.id === mainFocusOutcomeId;
+      (description = { type: 'timeblock', isMainFocus: isMainFocus, desireId: draggedItem.desireId, outcomeId: draggedItem.id })
+    }
+    if ('outcomeId' in draggedItem && draggedItem.outcomeId !== null) {
+      const isMainFocus = draggedItem.outcomeId === mainFocusOutcomeId;
+      if ('todos' in draggedItem) { (description = { type: 'outcome', isMainFocus: isMainFocus, subType: 'list', outcomeId: draggedItem.outcomeId, itemId: draggedItem.id }) }
+      if ('tasks' in draggedItem) { (description = { type: 'outcome', isMainFocus: isMainFocus, subType: 'routine', outcomeId: draggedItem.outcomeId, itemId: draggedItem.id }) }
+    }
+
+    'outcomeId' in draggedItem && draggedItem.outcomeId === null && 'todos' in draggedItem && (description = { type: 'list', listId: draggedItem.id })
+    'outcomeId' in draggedItem && draggedItem.outcomeId === null && 'tasks' in draggedItem && (description = { type: 'routine', routineId: draggedItem.id })
+
+    const droppedItem: DroppedItem = {
       id: uuidv4(),
       itemId: draggedItem.id,
       title: draggedItem.title,
@@ -96,35 +108,35 @@ function Scheduler({
 
     setDraggedItem(undefined)
     addNewItemToSchedule(droppedItem)
-  }, [draggedItem, setDraggedItem, addNewItemToSchedule])
+  }, [draggedItem, setDraggedItem, addNewItemToSchedule, mainFocusOutcomeId])
 
 
   const moveEvent = useCallback(({ event, start, end, isAllDay: droppedOnAllDaySlot = false }: EventInteractionArgs<any>): void => {
     const { allDay } = event
     if (!allDay && droppedOnAllDaySlot) event.allDay = true
 
-    setScheduledItems((prev) => {
+    setScheduleItems((prev) => {
       const existing = prev.find((ev) => ev.id === event.id)!
       const filtered = prev.filter((ev) => ev.id !== event.id)
       const newStart = typeof start === 'string' ? new Date(start) : start;
       const newEnd = typeof end === 'string' ? new Date(end) : end;
       return [...filtered, { ...existing, start: newStart, end: newEnd, allDay, id: existing.id, title: existing.title }]
     })
-  }, [setScheduledItems])
+  }, [setScheduleItems])
 
 
   const resizeEvent = useCallback((
     { event, start, end }: EventInteractionArgs<any>
   ): void => {
     setIsSaveScheduledItems(true)
-    setScheduledItems((prev) => {
+    setScheduleItems((prev) => {
       const existing = prev.find((ev) => ev.id === event.id)!
       const filtered = prev.filter((ev) => ev.id !== event.id)
       const newStart = typeof start === 'string' ? new Date(start) : start;
       const newEnd = typeof end === 'string' ? new Date(end) : end;
       return [...filtered, { ...existing, start: newStart, end: newEnd }]
     })
-  }, [setScheduledItems, setIsSaveScheduledItems])
+  }, [setScheduleItems, setIsSaveScheduledItems])
 
 
   //? ***********   CUSTOM PROPS   ***************** */
@@ -145,6 +157,10 @@ function Scheduler({
 
   //  could get todos from description : listId?  access it here to display todos?
   function CustomEvent({ event: innerEvent, title }: any) {
+    //!description is available on innerEvent
+    //add Timeblock, List, Routine, Outcome, Desire
+    // color coding here
+    console.log("🚀 ~ file: Scheduler.tsx:162 ~ CustomEvent ~ event:", innerEvent)
     return (
       <>
         {title && (
@@ -168,6 +184,7 @@ function Scheduler({
     (event: object) => {
       // console.log('in event prop getter and event is ', event)
       // make bg based on descripton type
+      //! condidional classnames here?
       return { className: 'bg-primary-content text-base-content' }  // colors scheduled events
     }, [])
 
@@ -181,47 +198,78 @@ function Scheduler({
     event: any,
     e: React.SyntheticEvent<HTMLElement, Event>
   ) {
-    setDeleteEventBool(true)
-    setEventToDelete(event as ScheduledItem | Omit<ScheduledItem, 'createdAt' | 'updatedAt' | 'userId'>)
+    if (event.id.includes('-')) {
+      setScheduleItems((prev) => {
+        const filtered = prev.filter((ev) => ev.id !== event.id)
+        return [...filtered]
+      })
+    } else {
+      navigate(`/dash/schedule/${event.id}`, { state: { scheduleItemsState: scheduleItems } });
+    }
   }
 
 
   function handleToolTipAccessor(event: any) {
-    const type = Object.keys(event.description)[0]
-    const { itemId } = event
+    const description = event.description
+    console.log("🚀 ~ file: Scheduler.tsx:216 ~ handleToolTipAccessor ~ description:", description)
+    const type = description.type
+    let toolTipHeaderText = 'To-Dos'
+    let outcomeName: string;
 
-    let typeText = 'To-Dos'
-
-    let loadedLists: ListAndToDos[] | RoutineAndTasks[] | DesireWithOutcomesAndLists[] = [];
+    let loadedLists: ListAndToDos[] | RoutineAndTasks[] | DesireWithOutcomesAndAll[] = [];
     let currentList: ListAndToDos[] | RoutineAndTasks[] | undefined;
     let currentToDos: ToDo[] | Task[] | undefined;
 
-    if (type === 'listId') {
-      loadedLists = miscAndScheduledLists as ListAndToDos[]
-      currentList = loadedLists?.filter((list: ListAndToDos) => list.id === itemId)
+    if (type === 'list') {
+      loadedLists = miscAndSpecialLists as ListAndToDos[]
+      currentList = loadedLists?.filter((list: ListAndToDos) => list.id === description.listId) as ListAndToDos[]
       currentList && (currentToDos = currentList[0]?.['todos'])
     }
 
-    if (type === 'routineId') {
-      loadedLists = miscAndScheduledRoutines as RoutineAndTasks[]
-      currentList = loadedLists?.filter((routine: RoutineAndTasks) => routine.id === itemId)
+    if (type === 'routine') {
+      loadedLists = miscAndSpecialRoutines as RoutineAndTasks[]
+      currentList = loadedLists?.filter((list: RoutineAndTasks) => list.id === description.routineId) as RoutineAndTasks[]
       currentList && (currentToDos = currentList[0]?.['tasks'])
-      typeText = 'Tasks'
+      toolTipHeaderText = 'Tasks'
     }
 
-    if (type === 'outcomeId') {
-      loadedLists = desiresAndOutcomesAndLists as DesireWithOutcomesAndLists[]
-      const currentOutcome = desiresAndOutcomesAndLists.reduce((foundItem: any, desire: any) => {
-        return foundItem || desire.outcomes.find((outcome: any) => outcome.id === itemId)
-      }, null)
-      const outcomeTitle = currentOutcome?.title
-      const desireTitle = desiresAndOutcomesAndLists.find((desire: any) => desire.id === currentOutcome.desireId)?.title
-      const listsAndTodos = currentOutcome.lists
+    if (type === 'outcome') {
+      loadedLists = desiresAndOutcomesAndLists as DesireWithOutcomesAndAll[]
 
-      return `\nOutcome: ${outcomeTitle}` +
-        `\nfor Desire: ${desireTitle}` +
+      if (description.subType === 'list') {
+        const outcome = loadedLists?.flatMap((desire) =>
+          desire.outcomes.filter((outcome) => outcome.id === description.outcomeId));
+        const list = outcome[0].lists.filter((list) => list.id === description.itemId) as ListAndToDos[]
+        currentList = list
+        currentList && (currentToDos = currentList[0]?.['todos'])
+        outcomeName = outcome[0].title
+        toolTipHeaderText = `To-Dos\nfor Outcome: ${outcomeName}`
+      }
+
+      if (description.subType === 'routine') {
+        const outcome = loadedLists?.flatMap((desire) =>
+          desire.outcomes.filter((outcome) => outcome.id === description.outcomeId));
+        const routine = outcome[0].routines.filter((routine) => routine.id === description.itemId) as RoutineAndTasks[]
+        currentList = routine
+        currentList && (currentToDos = currentList[0]?.['tasks'])
+        outcomeName = outcome[0].title
+        toolTipHeaderText = `Tasks\nfor Outcome: ${outcomeName}`
+      }
+
+      return `\n${toolTipHeaderText}: \n  ${currentToDos?.map((todo: any) => todo.body).join('\n  ')} `
+    }
+
+    if (type === 'timeblock') {
+      loadedLists = desiresAndAll as DesireWithOutcomesAndAll[]
+      const outcome = loadedLists?.flatMap((desire) =>
+      desire.outcomes.filter((outcome) => outcome.id === description.outcomeId)) as OutcomeWithAll[]
+      outcomeName = outcome[0].title
+      currentList = outcome[0].lists
+      toolTipHeaderText=`Timeblock for Outcome: \n${outcomeName}`
+     
+      return `\n${toolTipHeaderText}:` +
         `\nTo-Do Lists` +
-        ` ${listsAndTodos?.map((todo: any) => {
+        ` ${currentList?.map((todo: any) => {
           const listTitle = todo.title
           const todos = todo.todos.map((todo: any) => {
             return (`${todo.body}`)
@@ -229,39 +277,21 @@ function Scheduler({
           return (`\n  ${listTitle}\n      ${todos}`)
         }).join('')}  `
     }
-    return `\n${typeText}: \n${currentToDos?.map((todo: any) => todo.body).join('\n')} `
+
+    return `\n${toolTipHeaderText}: \n  ${currentToDos?.map((todo: any) => todo.body).join('\n  ')} `
   }
 
 
 
   return (
     <>
-      {successMessage && (
-        <Modal onClose={() => { }} zIndex={30}>
-          {successMessage}Yolo
-          <SuccessMessage
-            text='List was removed from Schedule'
-          />
-        </Modal>)
-      }
-
-      {deleteEventBool && eventToDelete && (
-        <Modal onClose={() => { }} zIndex={20}>
-          <DeleteEventModal
-            event={eventToDelete}
-            setDeleteEventBool={setDeleteEventBool}
-            setScheduledLists={setScheduledItems}
-            setSuccessMessage={setSuccessMessage}
-          />
-        </Modal>
-      )}
 
       <div className="h-[600px]">
         <DragAndDropCalendar
           defaultDate={defaultDate}
           defaultView={Views.WEEK}
           dragFromOutsideItem={dragFromOutsideItem}
-          events={scheduledItems}
+          events={scheduleItems}
           localizer={localizer}
           onDropFromOutside={onDrdopFromOutside}
           onDragOver={customOnDragOver}
@@ -292,4 +322,12 @@ function Scheduler({
 export default Scheduler
 
 
+function useGetMainFocusOutcomeId(desiresAndAllArray: DesireWithOutcomesAndAllWithStrDates[]) {
+  return useMemo(() => {
+    const desireZero = desiresAndAllArray.find((desire: DesireWithOutcomesAndAllWithStrDates) => desire.sortOrder === 0);
+    if (!desireZero) return '';
+    const outcomeZero = desireZero.outcomes.find((outcome: OutcomeWithAllWithStringDates) => outcome.sortOrder === 0);
+    return outcomeZero ? outcomeZero.id : '';
+  }, [desiresAndAllArray]);
+}
 

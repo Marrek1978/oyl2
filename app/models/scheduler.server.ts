@@ -3,15 +3,15 @@ import type { Prisma, ScheduledItem, User } from "@prisma/client";
 
 export async function createScheduledItems({
   userId,
-  scheduledItems,
+  scheduleItems,
 }: {
   userId: User["id"];
-  scheduledItems:
+  scheduleItems:
     | ScheduledItem[]
     | Omit<ScheduledItem, "createdAt" | "updatedAt" | "userId">[];
 }) {
   try {
-    const upsertScheduledItems = scheduledItems.map(
+    const upsertScheduledItems = scheduleItems.map(
       (item): Promise<ScheduledItem> => {
         return prisma.scheduledItem.upsert({
           where: { id: item.id },
@@ -53,7 +53,7 @@ export async function getScheduledItems(userId: User["id"]) {
   }
 }
 
-export async function deleteScheduledItem({ id }: Pick<ScheduledItem, "id">) {
+export async function deleteScheduledItem(id: string) {
   try {
     const deleteResult = await prisma.scheduledItem.delete({
       where: { id },

@@ -8,12 +8,11 @@ interface FormDeleteProps {
   message?: string;
 }
 
-function useFormDeletedToastAndRedirect({ redirectTo='/dash/values', message= 'Value was delted'}: FormDeleteProps = {}) {
+function useFormDeletedToastAndRedirect({ redirectTo, message= 'Value was delted'}: FormDeleteProps = {}) {
 
   const actionData = useActionData()
   const navigate = useNavigate()
   const isDeleted = actionData === 'deleted'
-  console.log("🚀 ~ file:  ~ isDeleted:", isDeleted)
   
 
   useEffect(() => {
@@ -27,7 +26,7 @@ function useFormDeletedToastAndRedirect({ redirectTo='/dash/values', message= 'V
         },
       })
 
-      navigate(redirectTo)
+      if (redirectTo) navigate(redirectTo)
     }
   }, [isDeleted, navigate, redirectTo,  message])
 }
