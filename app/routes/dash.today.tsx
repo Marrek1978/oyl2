@@ -1,37 +1,35 @@
 // import { parse } from 'querystring'
 import { format } from 'date-fns'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouteLoaderData } from '@remix-run/react'
-import { useEffect, useState } from 'react'
-import type { LinksFunction } from '@remix-run/react/dist/routeModules'
 import { type LoaderArgs } from '@remix-run/server-runtime'
+import type { LinksFunction } from '@remix-run/react/dist/routeModules'
 
 import styleSheet from "~/styles/SchedulerCss.css";
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 
-import HeadingH2 from '~/components/titles/HeadingH2'
-import { requireUserId } from '~/models/session.server'
-import { getAllRoutines } from '~/models/routines.server'
-import { getAllListsAndTodos } from '~/models/list.server'
-import { getScheduledItems } from '~/models/scheduler.server'
-import { ArrayOfObjectsStrToDates, ObjectStrToDates } from '~/components/utilities/helperFunctions'
-
 import Today from '~/components/today/Today'
+import HeadingH2 from '~/components/titles/HeadingH2'
 import HeadingH3 from '~/components/titles/HeadingH3'
 import HeadingH5 from '~/components/titles/HeadingH5'
-import { getDesiresAndOutcomesWithLists } from '~/models/desires.server'
+import { requireUserId } from '~/models/session.server'
+import { getScheduledItems } from '~/models/scheduler.server'
 import SubHeading14px from '~/components/titles/SubHeading14px'
-import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
-
-import type { ListAndToDos } from '~/types/listTypes'
-import type { RoutineAndTasks } from '~/types/routineTypes'
-import type { ScheduledItem } from '@prisma/client'
-import DisplayCurrentEvent from '~/components/today/DisplayCurrentEvent'
-import type { OutcomeWithLists, OutcomeWithListsWithStrDates } from '~/types/outcomeTypes'
-import type { DesireWithOutcomesAndListsWithStrDates, DesireWithStringDates } from '~/types/desireTypes'
+import { getAllMiscAndSpecialLists } from '~/models/list.server'
 import TwoToneSubHeading from '~/components/titles/TwoToneSubHeading'
 import ThreeParaFlex from '~/components/baseContainers/ThreeParaFlex'
+import { getAllMiscAndSpecialRoutines } from '~/models/routines.server'
+import DisplayCurrentEvent from '~/components/today/DisplayCurrentEvent'
+import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
 import DisplayImportantLists from '~/components/today/DisplayImportantLists'
-import { ChangeListArrayDates } from './dash.listsandroutines'
+import { getDesiresWithOutcomesListsRoutines } from '~/models/desires.server'
+import { updateScheduledListsDatesToCurrentWeek, useGetLoadedDesiresWithAll, useGetLoadedLists, useGetLoadedRoutines, useGetLoadedScheduledItems } from './dash.schedule'
+
+import type { ScheduledItem } from '@prisma/client'
+import type { ListAndToDos } from '~/types/listTypes'
+import type { RoutineAndTasks } from '~/types/routineTypes'
+import type { OutcomeWithListsWithStrDates } from '~/types/outcomeTypes'
+import type { DesireWithOutcomesAndAll, DesireWithOutcomesAndListsWithStrDates, DesireWithStringDates } from '~/types/desireTypes'
 
 
 export const links: LinksFunction = () => [
@@ -40,42 +38,64 @@ export const links: LinksFunction = () => [
 export const loader = async ({ request }: LoaderArgs) => {
   try {
     const userId = await requireUserId(request);
-    const loadedLists = await getAllListsAndTodos(userId); //! get all and filter on client
-    const loadedRoutines = await getAllRoutines(userId);//! get all and filter on client
-    const scheduledItems = await getScheduledItems(userId)
-    const loadedDesiresWithOutcomes = await getDesiresAndOutcomesWithLists(userId)
-    return ({ loadedLists, loadedRoutines, scheduledItems, loadedDesiresWithOutcomes });
+    const loadedScheduledItems = await getScheduledItems(userId)
+    const loadedMiscAndSpecialLists = await getAllMiscAndSpecialLists(userId);
+    const loadedMiscAndSpecialRoutines = await getAllMiscAndSpecialRoutines(userId);
+    const loadedDesiresWithOutcomesListsRoutines = await getDesiresWithOutcomesListsRoutines(userId);
+
+    return {
+      loadedDesiresWithOutcomesListsRoutines,
+      loadedMiscAndSpecialLists,
+      loadedScheduledItems,
+      loadedMiscAndSpecialRoutines
+    }
   } catch (error) {
     throw error
   }
 }
 
 
+const path = 'routes/dash.today'
+
+
 //use memo???
 
 function TodayPage() {
 
-  const [currentEvent, setCurrentEvent] = useState<ScheduledItem | null>(null)
-
+  const [todaysEventList, setTodaysEventList] = useState<ScheduledItem[]>()
+  const [currentEvent, setCurrentEvent] = useState<ScheduledItem>()
+  console.log("🚀 ~ file: dash.today.tsx:67 ~ TodayPage ~ currentEvent:", currentEvent)
   const currentDate = format(new Date(), 'EEE, MMMM d');
 
-  const todaysEventList = useGetTodaysItems()
-  const allUserLists: ListAndToDos[] = useGetLoadedUsersLists()
-  const allUserRoutines: RoutineAndTasks[] = useGetLoadedUsersRoutines()
-  const allUserOutcomes: OutcomeWithLists[] = useGetLoadedUserOutcomes()
+  const todaysScheduledEventList = useGetTodaysItems()
+  const miscAndSpecialLists: ListAndToDos[] = useGetLoadedLists(path)
+  const miscAndSpecialRoutines: RoutineAndTasks[] = useGetLoadedRoutines(path)
+  const desiresAndAll: DesireWithOutcomesAndAll[] = useGetLoadedDesiresWithAll(path)
 
 
   useEffect(() => {
-    const updateCurrentEvent = () => setCurrentEvent(getCurrentEvent(todaysEventList));
-    const intervalId = setInterval(updateCurrentEvent, 1000 * 60);
-    updateCurrentEvent();
-    return () => clearInterval(intervalId);
-  }, [todaysEventList]);
+    if (!todaysScheduledEventList) return
+    setTodaysEventList(todaysScheduledEventList)
+  }, [todaysScheduledEventList])
+
+
+  useEffect(() => {
+    if (!todaysEventList || todaysEventList.length === 0) return
+    const newCurrentEvent = GetCurrentEvent(todaysEventList)
+
+    setCurrentEvent((prev) => {
+      if (prev?.id === newCurrentEvent?.id) return prev
+      return newCurrentEvent
+
+    })
+    // const updateCurrentEvent = () => setCurrentEvent(GetCurrentEvent(todaysEventList));
+    // const intervalId = setInterval(updateCurrentEvent, 1000 * 60);
+    // updateCurrentEvent();
+    // return () => clearInterval(intervalId);
+  }, [todaysEventList,]);
 
 
   const { mainDesire, mainOutcome } = useGetMainFocus()
-  console.log("🚀 ~ file: dash.today.tsx:73 ~ TodayPage ~ mainOutcome:", mainOutcome)
-  console.log("🚀 ~ file: dash.today.tsx:73 ~ TodayPage ~ mainDesire:", mainDesire)
 
 
   return (
@@ -120,7 +140,7 @@ function TodayPage() {
 
             <div className='w-full'>
               <DisplayImportantLists
-                loadedLists={allUserLists}
+                loadedLists={miscAndSpecialLists}
               />
             </div>
 
@@ -129,8 +149,9 @@ function TodayPage() {
                 <HeadingH2 text={`Today: ${currentDate}`} />
                 <Today
                   scheduledItems={todaysEventList}
-                  loadedLists={allUserLists}
-                  loadedRoutines={allUserRoutines}
+                  miscAndSpecialLists={miscAndSpecialLists}
+                  miscAndSpecialRoutines={miscAndSpecialRoutines}
+                  desiresAndAll={desiresAndAll}
                 />
               </div>
 
@@ -140,9 +161,10 @@ function TodayPage() {
                   {currentEvent && (
                     <DisplayCurrentEvent
                       event={currentEvent}
-                      loadedLists={allUserLists}
-                      loadedRoutines={allUserRoutines}
-                      loadedOutcome={allUserOutcomes} />
+                      loadedLists={miscAndSpecialLists}
+                      loadedRoutines={miscAndSpecialRoutines}
+                      loadedDesiresAndAll={desiresAndAll}
+                    />
                   )}
                 </div>
               </div>
@@ -206,48 +228,48 @@ export default TodayPage
 
 ///*  into helper function doc??... for loading schedueled Events from DB - remake for this week
 //  will have to change typing becuse input will change from .json file to db imports
-function updateScheduledListsDatesToCurrentWeek(lists: ScheduledItem[]): ScheduledItem[] {
-  const currentDate = new Date()
-  const currentWeekDay = currentDate.getDay()
+// function updateScheduledListsDatesToCurrentWeek(lists: ScheduledItem[]): ScheduledItem[] {
+//   const currentDate = new Date()
+//   const currentWeekDay = currentDate.getDay()
 
-  //get monday of the current week
-  const currentWeekMonday = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    currentDate.getDate() - currentWeekDay + 1
-  )
+//   //get monday of the current week
+//   const currentWeekMonday = new Date(
+//     currentDate.getFullYear(),
+//     currentDate.getMonth(),
+//     currentDate.getDate() - currentWeekDay + 1
+//   )
 
-  return lists.map((list): ScheduledItem => {
+//   return lists.map((list): ScheduledItem => {
 
-    if (!list.start || !list.end) {
-      throw new Error('Event start and end times must be defined');
-    }
-    const start = new Date(list.start)
-    const end = new Date(list.end)
+//     if (!list.start || !list.end) {
+//       throw new Error('Event start and end times must be defined');
+//     }
+//     const start = new Date(list.start)
+//     const end = new Date(list.end)
 
-    const day = start.getDay()
-    const startHour = start.getHours()
-    const startMinutes = start.getMinutes()
-    const endHour = end.getHours()
-    const endMinutes = end.getMinutes()
+//     const day = start.getDay()
+//     const startHour = start.getHours()
+//     const startMinutes = start.getMinutes()
+//     const endHour = end.getHours()
+//     const endMinutes = end.getMinutes()
 
-    //create the new start and end dates
-    const newStart = new Date(currentWeekMonday)
-    newStart.setDate(newStart.getDate() + day - 1)
-    newStart.setHours(startHour, startMinutes, 0, 0)
+//     //create the new start and end dates
+//     const newStart = new Date(currentWeekMonday)
+//     newStart.setDate(newStart.getDate() + day - 1)
+//     newStart.setHours(startHour, startMinutes, 0, 0)
 
-    const newEnd = new Date(newStart)
-    newEnd.setHours(endHour, endMinutes, 0, 0)
+//     const newEnd = new Date(newStart)
+//     newEnd.setHours(endHour, endMinutes, 0, 0)
 
-    //! this should not be needed for events loaded from db... prob have to convert dates.
+//     //! this should not be needed for events loaded from db... prob have to convert dates.
 
-    return {
-      ...list,
-      start: newStart,
-      end: newEnd,
-    }
-  })
-}
+//     return {
+//       ...list,
+//       start: newStart,
+//       end: newEnd,
+//     }
+//   })
+// }
 
 export function getTodaysEvents(lists: ScheduledItem[]): ScheduledItem[] {
   const updatedEventsToCurrentWeek: ScheduledItem[] = updateScheduledListsDatesToCurrentWeek(lists)
@@ -259,38 +281,24 @@ export function getTodaysEvents(lists: ScheduledItem[]): ScheduledItem[] {
   return todaysEvents
 }
 
-const getCurrentEvent = (events: ScheduledItem[]) => {
+function GetCurrentEvent(events: ScheduledItem[]) {
   const now = new Date()
-  for (let event of events) {
-    if (event.start <= now && event.end >= now) return event
-  }
-  return null
+  const currentEvent = events.find(event => (event.start <= now && event.end >= now))
+  return currentEvent
 }
 
+
+
+
 export const useGetTodaysLoaders = () => {
-  const path = 'routes/dash.today'
   const loaderData = useRouteLoaderData(path);
   return loaderData;
 };
 
-export const useGetLoadedScheduledItems = () => {
-  const [items, setItems] = useState<ScheduledItem[]>([])
-  const { scheduledItems } = useGetTodaysLoaders();
-
-  useEffect(() => {
-    if (!scheduledItems) return
-    const itemsWithProperDates = ArrayOfObjectsStrToDates({ items: scheduledItems, dateKeys: ['createdAt', 'updatedAt'] })
-    setItems(itemsWithProperDates)
-  }, [scheduledItems])
-
-  return items
-}
-
 
 export const useGetTodaysItems = () => {
   const [todaysItems, setTodaysItems] = useState<ScheduledItem[]>([])
-  const loadedScheduledItems = useGetLoadedScheduledItems()
-
+  const loadedScheduledItems = useGetLoadedScheduledItems(path)
   useEffect(() => {
     if (!loadedScheduledItems) return
     const todaysItems = getTodaysEvents(loadedScheduledItems)
@@ -301,71 +309,71 @@ export const useGetTodaysItems = () => {
 }
 
 
-export const useGetLoadedUsersLists = (): ListAndToDos[] => {
-  const [lists, setLists] = useState<ListAndToDos[]>([])
-  const { loadedLists } = useGetTodaysLoaders();
+// export const useGetLoadedUsersLists = (): ListAndToDos[] => {
+//   const [lists, setLists] = useState<ListAndToDos[]>([])
+//   const { loadedLists } = useGetTodaysLoaders();
 
-  useEffect(() => {
-    if (!loadedLists) return
-    const listsWithProperDates = ChangeListArrayDates(loadedLists)
-    setLists(listsWithProperDates)
-  }, [loadedLists])
+//   useEffect(() => {
+//     if (!loadedLists) return
+//     const listsWithProperDates = ChangeListArrayDates(loadedLists)
+//     setLists(listsWithProperDates)
+//   }, [loadedLists])
 
-  return lists
-}
-
-
-export const useGetLoadedUsersRoutines = (): RoutineAndTasks[] => {
-  const [routines, setRoutines] = useState<RoutineAndTasks[]>([])
-  const { loadedRoutines } = useGetTodaysLoaders();
-
-  useEffect(() => {
-    if (!loadedRoutines) return
-    const routinesWithProperDates = ArrayOfObjectsStrToDates({ items: loadedRoutines, dateKeys: ['createdAt', 'updatedAt'] })
-    setRoutines(routinesWithProperDates)
-  }, [loadedRoutines])
-
-  return routines
-}
+//   return lists
+// }
 
 
-export const useGetLoadedUserOutcomes = (): OutcomeWithLists[] => {
-  const [outcomes, setOutcomes] = useState<OutcomeWithLists[]>([])
-  const { loadedDesiresWithOutcomes }: { loadedDesiresWithOutcomes: DesireWithOutcomesAndListsWithStrDates[] } = useGetTodaysLoaders();
+// export const useGetLoadedUsersRoutines = (): RoutineAndTasks[] => {
+//   const [routines, setRoutines] = useState<RoutineAndTasks[]>([])
+//   const { loadedRoutines } = useGetTodaysLoaders();
 
-  useEffect(() => {
-    if (!loadedDesiresWithOutcomes) return
-    const outcomesWithListsArray: OutcomeWithLists[] = loadedDesiresWithOutcomes.flatMap((desire) => {
-      let desireOutcomesWithLists: OutcomeWithListsWithStrDates[] = desire.outcomes
+//   useEffect(() => {
+//     if (!loadedRoutines) return
+//     const routinesWithProperDates = ArrayOfObjectsStrToDates({ items: loadedRoutines, dateKeys: ['createdAt', 'updatedAt'] })
+//     setRoutines(routinesWithProperDates)
+//   }, [loadedRoutines])
 
-      if (desireOutcomesWithLists && desireOutcomesWithLists.length > 0) {
-        return desireOutcomesWithLists.map((outcome) => {
-          const outcomeWithProperDates: OutcomeWithLists = ObjectStrToDates({ item: outcome, dateKeys: ['createdAt', 'updatedAt'] })
-          let listsWithProperDates: ListAndToDos[] = [];
-          if (outcomeWithProperDates.lists && outcomeWithProperDates.lists.length > 0) {
-            listsWithProperDates = ArrayOfObjectsStrToDates({ items: outcomeWithProperDates.lists, dateKeys: ['createdAt', 'updatedAt'] })
-              .map(list => ({ ...list }));  // Add empty todos array to each list
-          }
+//   return routines
+// }
 
-          return {
-            ...outcomeWithProperDates,   // This will spread the outcome properties
-            lists: listsWithProperDates  // This will add the lists property
-          };
-        })
-      }
-      return []
-    })
-    setOutcomes(outcomesWithListsArray)
-  }, [loadedDesiresWithOutcomes])
 
-  return outcomes
-}
+// export const useGetLoadedUserOutcomes = (): OutcomeWithLists[] => {
+//   const [outcomes, setOutcomes] = useState<OutcomeWithLists[]>([])
+//   const { loadedDesiresWithOutcomes }: { loadedDesiresWithOutcomes: DesireWithOutcomesAndListsWithStrDates[] } = useGetTodaysLoaders();
+
+//   useEffect(() => {
+//     if (!loadedDesiresWithOutcomes) return
+//     const outcomesWithListsArray: OutcomeWithLists[] = loadedDesiresWithOutcomes.flatMap((desire) => {
+//       let desireOutcomesWithLists: OutcomeWithListsWithStrDates[] = desire.outcomes
+
+//       if (desireOutcomesWithLists && desireOutcomesWithLists.length > 0) {
+//         return desireOutcomesWithLists.map((outcome) => {
+//           const outcomeWithProperDates: OutcomeWithLists = ObjectStrToDates({ item: outcome, dateKeys: ['createdAt', 'updatedAt'] })
+//           let listsWithProperDates: ListAndToDos[] = [];
+//           if (outcomeWithProperDates.lists && outcomeWithProperDates.lists.length > 0) {
+//             listsWithProperDates = ArrayOfObjectsStrToDates({ items: outcomeWithProperDates.lists, dateKeys: ['createdAt', 'updatedAt'] })
+//               .map(list => ({ ...list }));  // Add empty todos array to each list
+//           }
+
+//           return {
+//             ...outcomeWithProperDates,   // This will spread the outcome properties
+//             lists: listsWithProperDates  // This will add the lists property
+//           };
+//         })
+//       }
+//       return []
+//     })
+//     setOutcomes(outcomesWithListsArray)
+//   }, [loadedDesiresWithOutcomes])
+
+//   return outcomes
+// }
 
 
 export const useGetMainFocus = () => {
-  const { loadedDesiresWithOutcomes }: { loadedDesiresWithOutcomes: DesireWithOutcomesAndListsWithStrDates[] } = useGetTodaysLoaders();
   const [mainDesire, setMainDesire] = useState<DesireWithStringDates | null>(null)
   const [mainOutcome, setMainOutcome] = useState<OutcomeWithListsWithStrDates | null>(null)
+  const { loadedDesiresWithOutcomes }: { loadedDesiresWithOutcomes: DesireWithOutcomesAndListsWithStrDates[] } = useGetTodaysLoaders();
 
   useEffect(() => {
     if (!loadedDesiresWithOutcomes) return

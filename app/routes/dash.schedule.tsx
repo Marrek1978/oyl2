@@ -44,15 +44,15 @@ export const loader = async ({ request }: LoaderArgs) => {
   try {
     const userId = await requireUserId(request);
     const loadedScheduledItems = await getScheduledItems(userId)
-    const loadedDesiresWithOutcomesListsRoutines = await getDesiresWithOutcomesListsRoutines(userId);
     const loadedMiscAndSpecialLists = await getAllMiscAndSpecialLists(userId);
     const loadedMiscAndSpecialRoutines = await getAllMiscAndSpecialRoutines(userId);
-
+    const loadedDesiresWithOutcomesListsRoutines = await getDesiresWithOutcomesListsRoutines(userId);
+    
     return {
-      loadedDesiresWithOutcomesListsRoutines,
-      loadedMiscAndSpecialLists,
       loadedScheduledItems,
-      loadedMiscAndSpecialRoutines
+      loadedMiscAndSpecialLists,
+      loadedMiscAndSpecialRoutines,
+      loadedDesiresWithOutcomesListsRoutines,
     }
   } catch (error) {
     throw error
@@ -70,7 +70,7 @@ export const action = async ({ request }: ActionArgs) => {
       await createScheduledItems({ userId, scheduleItems })
     } catch (error) { throw error }
   }
- 
+
   return null
 }
 
@@ -95,9 +95,9 @@ function Schedule() {
   const loadedScheduledItems: ScheduledItem[] = useGetLoadedScheduledItems()
   const thisWeeksScheduledItems = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledItems), [loadedScheduledItems])
 
+  const loadedOutcomes: any = useGetLoadedDesiresWithAll()
   const { miscLists, specialLists } = useGetLoadedMiscAndSpecialLists()
   const { miscRoutines, specialRoutines } = useGetLoadedMiscAndSpecialRoutines()
-  const loadedOutcomes: any = useGetLoadedDesiresWithAll()
 
   useEffect(() => {
     setScheduleItems(thisWeeksScheduledItems)
@@ -229,7 +229,6 @@ function Schedule() {
             setScheduleItems={setScheduleItems}
             draggedItem={draggedItem}
             setDraggedItem={setDraggedItem}
-            isSaveScheduledItems={isSaveSchedule}
             setIsSaveScheduledItems={setIsSaveSchedule}
           />
 
@@ -301,17 +300,28 @@ function areArraysEqual(arr1: Item[], arr2: Item[]) {
   return true
 }
 
+//?? *****************************************************************************
 
-export const useGetScheduleLoaders = () => {
-  const path = 'routes/dash.schedule'
+//useGetScheduleLoaders
+//  --> useGetLoadedScheduledItems
+//  --> useGetLoadedLists
+//      --> useGetLoadedMiscAndSpecialLists
+//  --> useGetLoadedRoutines
+//      --> useGetLoadedMiscAndSpecialRoutines
+//  --> useGetLoadedDesiresWithAll
+
+ 
+
+export const useGetScheduleLoaders = (path: string = 'routes/dash.schedule') => {
   const loaderData = useRouteLoaderData(path);
   return loaderData;
 };
 
 
-export const useGetLoadedScheduledItems = () => {
+export const useGetLoadedScheduledItems = (path?: string) => {
+
   const [items, setitems] = useState<ScheduledItem[]>([])
-  const { loadedScheduledItems } = useGetScheduleLoaders();
+  const { loadedScheduledItems } = useGetScheduleLoaders(path);
 
   useEffect(() => {
     if (!loadedScheduledItems) return
@@ -323,9 +333,9 @@ export const useGetLoadedScheduledItems = () => {
 }
 
 
-export const useGetLoadedLists = (): ListAndToDos[] => {
+export const useGetLoadedLists = (path?: string): ListAndToDos[] => {
   const [miscAndSpecialLists, setMiscAndSpecialLists] = useState<ListAndToDos[]>([])
-  const { loadedMiscAndSpecialLists } = useGetScheduleLoaders();
+  const { loadedMiscAndSpecialLists } = useGetScheduleLoaders(path);
 
   useEffect(() => {
     if (!loadedMiscAndSpecialLists) return
@@ -358,9 +368,9 @@ export const useGetLoadedMiscAndSpecialLists = (): ReturnMiscAndSpecialListsType
 }
 
 
-export const useGetLoadedRoutines = (): RoutineAndTasks[] => {
+export const useGetLoadedRoutines = (path?: string): RoutineAndTasks[] => {
   const [miscAndSpecialRoutines, setmiscAndSpecialRoutines] = useState<RoutineAndTasks[]>([])
-  const { loadedMiscAndSpecialRoutines } = useGetScheduleLoaders();
+  const { loadedMiscAndSpecialRoutines } = useGetScheduleLoaders(path);
 
   useEffect(() => {
     if (!loadedMiscAndSpecialRoutines) return
@@ -390,8 +400,8 @@ export const useGetLoadedMiscAndSpecialRoutines = () => {
 }
 
 
-export const useGetLoadedDesiresWithAll = () => {
-  const { loadedDesiresWithOutcomesListsRoutines } = useGetScheduleLoaders();
+export const useGetLoadedDesiresWithAll = (path?: string) => {
+  const { loadedDesiresWithOutcomesListsRoutines } = useGetScheduleLoaders(path);
   return loadedDesiresWithOutcomesListsRoutines
 }
 

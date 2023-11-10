@@ -1,36 +1,38 @@
 import moment from 'moment'
 import { format } from 'date-fns';
-// import { v4 as uuidv4 } from 'uuid';
 import React, { useCallback, useMemo } from 'react'
 
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 
+import { CreateToolTip } from '../schedule/Scheduler';
 import { Calendar, momentLocalizer, Views, } from 'react-big-calendar'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 
+import type { ScheduledItem } from '@prisma/client'
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndTasks } from '~/types/routineTypes'
-import type { ToDo, Task, ScheduledItem } from '@prisma/client'
+import type { DesireWithOutcomesAndAll } from '~/types/desireTypes';
 
 
 const localizer = momentLocalizer(moment)
 const DragAndDropCalendar = withDragAndDrop(Calendar)
 
 interface SchedulerProps {
-  scheduledItems: ScheduledItem[];
-  loadedLists: ListAndToDos[];
-  loadedRoutines: RoutineAndTasks[];
+  scheduledItems: ScheduledItem[] | undefined;
+  miscAndSpecialLists: ListAndToDos[];
+  miscAndSpecialRoutines: RoutineAndTasks[];
+  desiresAndAll: DesireWithOutcomesAndAll[]
 }
 
 
 function Scheduler({
   scheduledItems,
-  loadedLists,
-  loadedRoutines,
+  miscAndSpecialLists,
+  miscAndSpecialRoutines,
+  desiresAndAll
 }: SchedulerProps) {
 
   const defaultDate = useMemo(() => format(new Date(), 'yyyy-MM-dd'), [])
-
 
   //? ***********   CUSTOM PROPS   ***************** */
   const dayPropGetter = useCallback((date: Date) => {
@@ -90,54 +92,14 @@ function Scheduler({
 
 
   function handleToolTipAccessor(event: any) {
-    const type = Object.keys(event.description)[0]
-    const { listId } = event
-    // let loadedItem: ListAndToDos[] | RoutineAndTasks[] = [];
-    let currentItem: ListAndToDos[] | RoutineAndTasks[] | undefined;
-    let currentItemToDos: ToDo[] | Task[] | undefined;
-
-    if (type === 'todos') {
-      currentItem = loadedLists?.filter((list: ListAndToDos) => list.id === listId);
-      currentItem && (currentItemToDos = currentItem[0]?.[type])
-    }
-
-    if (type === 'tasks') {
-      currentItem = loadedRoutines
-      currentItem = currentItem?.filter((item: RoutineAndTasks) => item.id === listId);
-      currentItem && (currentItemToDos = currentItem[0]?.[type])
-    }
-
-    if (type === 'outcome') {
-      const titles = event.description[type].map((list: ListAndToDos) => list.title)
-      return `\nLists:\n${titles.join('\n')}`
-    }
-
-    return `\nToDos:\n${currentItemToDos?.map((todo: any) => todo.body).join('\n')}`
+    return CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutines, desiresAndAll })
   }
 
 
 
   return (
     <>
-      {/* {successMessage && (
-        <Modal onClose={() => { }} zIndex={30}>
-          {successMessage}Yolo
-          <SuccessMessage
-            text='List was removed from Schedule'
-          />
-        </Modal>)
-      } */}
-
-      {/* {deleteEventBool && eventToDelete && (
-        <Modal onClose={() => { }} zIndex={20}>
-          <DeleteEventModal
-            event={eventToDelete}
-            setDeleteEventBool={setDeleteEventBool}
-            setScheduledLists={setScheduledLists}
-            setSuccessMessage={setSuccessMessage}
-          />
-        </Modal>
-      )} */}
+ 
 
       <div className="h-[600px]">
         <DragAndDropCalendar

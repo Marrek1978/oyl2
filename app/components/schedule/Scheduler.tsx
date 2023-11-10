@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from '@remix-run/react';
-import type {  Task, ToDo, } from '@prisma/client';
+import type { Task, ToDo, } from '@prisma/client';
 import React, { useCallback, useMemo, } from 'react'
 import { Calendar, momentLocalizer, Views, } from 'react-big-calendar'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
@@ -28,7 +28,6 @@ interface SchedulerProps {
   draggedItem: AllDraggedItems;
   setDraggedItem: React.Dispatch<React.SetStateAction<AllDraggedItems>>;
   setIsSaveScheduledItems: React.Dispatch<React.SetStateAction<boolean>>;
-  isSaveScheduledItems?: boolean;
 }
 
 
@@ -39,21 +38,19 @@ function Scheduler({
   draggedItem,
   setDraggedItem,
   setIsSaveScheduledItems,
-  isSaveScheduledItems,
 }: SchedulerProps) {
 
   let navigate = useNavigate();
 
   const defaultDate = useMemo(() => new Date(), [])
-  const desiresAndAll = useGetLoadedDesiresWithAll()
-  const mainFocusOutcomeId = useGetMainFocusOutcomeId(desiresAndAll);
 
   const miscAndSpecialLists = useGetLoadedLists()
+  const desiresAndAll = useGetLoadedDesiresWithAll()
   const miscAndSpecialRoutines = useGetLoadedRoutines()
-  const desiresAndOutcomesAndLists = useGetLoadedDesiresWithAll()
+  const mainFocusOutcomeId = useGetMainFocusOutcomeId(desiresAndAll);
 
 
-  
+
   //? ***********   CUSTOM DragAndDropCalendar FUNCTIONS   ***************** */
   const dragFromOutsideItem = useCallback(() => {
     return (event: object) => {
@@ -160,7 +157,6 @@ function Scheduler({
     //!description is available on innerEvent
     //add Timeblock, List, Routine, Outcome, Desire
     // color coding here
-    console.log("🚀 ~ file: Scheduler.tsx:162 ~ CustomEvent ~ event:", innerEvent)
     return (
       <>
         {title && (
@@ -210,77 +206,8 @@ function Scheduler({
 
 
   function handleToolTipAccessor(event: any) {
-    const description = event.description
-    console.log("🚀 ~ file: Scheduler.tsx:216 ~ handleToolTipAccessor ~ description:", description)
-    const type = description.type
-    let toolTipHeaderText = 'To-Dos'
-    let outcomeName: string;
-
-    let loadedLists: ListAndToDos[] | RoutineAndTasks[] | DesireWithOutcomesAndAll[] = [];
-    let currentList: ListAndToDos[] | RoutineAndTasks[] | undefined;
-    let currentToDos: ToDo[] | Task[] | undefined;
-
-    if (type === 'list') {
-      loadedLists = miscAndSpecialLists as ListAndToDos[]
-      currentList = loadedLists?.filter((list: ListAndToDos) => list.id === description.listId) as ListAndToDos[]
-      currentList && (currentToDos = currentList[0]?.['todos'])
-    }
-
-    if (type === 'routine') {
-      loadedLists = miscAndSpecialRoutines as RoutineAndTasks[]
-      currentList = loadedLists?.filter((list: RoutineAndTasks) => list.id === description.routineId) as RoutineAndTasks[]
-      currentList && (currentToDos = currentList[0]?.['tasks'])
-      toolTipHeaderText = 'Tasks'
-    }
-
-    if (type === 'outcome') {
-      loadedLists = desiresAndOutcomesAndLists as DesireWithOutcomesAndAll[]
-
-      if (description.subType === 'list') {
-        const outcome = loadedLists?.flatMap((desire) =>
-          desire.outcomes.filter((outcome) => outcome.id === description.outcomeId));
-        const list = outcome[0].lists.filter((list) => list.id === description.itemId) as ListAndToDos[]
-        currentList = list
-        currentList && (currentToDos = currentList[0]?.['todos'])
-        outcomeName = outcome[0].title
-        toolTipHeaderText = `To-Dos\nfor Outcome: ${outcomeName}`
-      }
-
-      if (description.subType === 'routine') {
-        const outcome = loadedLists?.flatMap((desire) =>
-          desire.outcomes.filter((outcome) => outcome.id === description.outcomeId));
-        const routine = outcome[0].routines.filter((routine) => routine.id === description.itemId) as RoutineAndTasks[]
-        currentList = routine
-        currentList && (currentToDos = currentList[0]?.['tasks'])
-        outcomeName = outcome[0].title
-        toolTipHeaderText = `Tasks\nfor Outcome: ${outcomeName}`
-      }
-
-      return `\n${toolTipHeaderText}: \n  ${currentToDos?.map((todo: any) => todo.body).join('\n  ')} `
-    }
-
-    if (type === 'timeblock') {
-      loadedLists = desiresAndAll as DesireWithOutcomesAndAll[]
-      const outcome = loadedLists?.flatMap((desire) =>
-      desire.outcomes.filter((outcome) => outcome.id === description.outcomeId)) as OutcomeWithAll[]
-      outcomeName = outcome[0].title
-      currentList = outcome[0].lists
-      toolTipHeaderText=`Timeblock for Outcome: \n${outcomeName}`
-     
-      return `\n${toolTipHeaderText}:` +
-        `\nTo-Do Lists` +
-        ` ${currentList?.map((todo: any) => {
-          const listTitle = todo.title
-          const todos = todo.todos.map((todo: any) => {
-            return (`${todo.body}`)
-          })
-          return (`\n  ${listTitle}\n      ${todos}`)
-        }).join('')}  `
-    }
-
-    return `\n${toolTipHeaderText}: \n  ${currentToDos?.map((todo: any) => todo.body).join('\n  ')} `
+    return CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutines, desiresAndAll })
   }
-
 
 
   return (
@@ -331,3 +258,89 @@ function useGetMainFocusOutcomeId(desiresAndAllArray: DesireWithOutcomesAndAllWi
   }, [desiresAndAllArray]);
 }
 
+
+interface ToolTipType {
+  event: any;
+  miscAndSpecialLists: ListAndToDos[];
+  miscAndSpecialRoutines: RoutineAndTasks[];
+  desiresAndAll: DesireWithOutcomesAndAll[];
+}
+
+
+
+export function CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutines, desiresAndAll }: ToolTipType) {
+  const description = event.description
+  const type = description.type
+  let toolTipHeaderText = ''
+  let outcomeName: string;
+
+  let loadedLists: ListAndToDos[] | RoutineAndTasks[] | DesireWithOutcomesAndAll[] = [];
+  let currentList: ListAndToDos[] | RoutineAndTasks[] | undefined;
+  let currentToDos: ToDo[] | Task[] | undefined;
+  let itemTitle: string = '';
+
+  if (type === 'list') {
+    loadedLists = miscAndSpecialLists as ListAndToDos[]
+    currentList = loadedLists?.filter((list: ListAndToDos) => list.id === description.listId) as ListAndToDos[]
+    currentList && (currentToDos = currentList[0]?.['todos'])
+    itemTitle = currentList[0]?.['title']
+    toolTipHeaderText = `List: ${itemTitle} \nTo-Dos`
+  }
+
+  if (type === 'routine') {
+    loadedLists = miscAndSpecialRoutines as RoutineAndTasks[]
+    currentList = loadedLists?.filter((list: RoutineAndTasks) => list.id === description.routineId) as RoutineAndTasks[]
+    currentList && (currentToDos = currentList[0]?.['tasks'])
+    itemTitle = currentList[0]?.['title']
+    toolTipHeaderText = `Routine: ${itemTitle} \nTasks`
+  }
+
+  if (type === 'outcome') {
+    loadedLists = desiresAndAll as DesireWithOutcomesAndAll[]
+
+    if (description.subType === 'list') {
+      const outcome = loadedLists?.flatMap((desire) =>
+        desire.outcomes.filter((outcome) => outcome.id === description.outcomeId));
+      const list = outcome[0].lists.filter((list) => list.id === description.itemId) as ListAndToDos[]
+      currentList = list
+      currentList && (currentToDos = currentList[0]?.['todos'])
+      outcomeName = outcome[0].title
+      itemTitle = currentList[0]?.['title']
+      toolTipHeaderText = `${outcomeName}\nList: ${itemTitle}\nTo-Dos`
+    }
+
+    if (description.subType === 'routine') {
+      const outcome = loadedLists?.flatMap((desire) =>
+        desire.outcomes.filter((outcome) => outcome.id === description.outcomeId));
+      const routine = outcome[0].routines.filter((routine) => routine.id === description.itemId) as RoutineAndTasks[]
+      currentList = routine
+      currentList && (currentToDos = currentList[0]?.['tasks'])
+      outcomeName = outcome[0].title
+      itemTitle = currentList[0]?.['title']
+      toolTipHeaderText = `${outcomeName}\nRoutine: ${itemTitle}\nTasks`
+    }
+
+    return `\n${toolTipHeaderText}: \n  ${currentToDos?.map((todo: any) => todo.body).join('\n  ')} `
+  }
+
+  if (type === 'timeblock') {
+    loadedLists = desiresAndAll as DesireWithOutcomesAndAll[]
+    const outcome = loadedLists?.flatMap((desire) =>
+      desire.outcomes.filter((outcome) => outcome.id === description.outcomeId)) as OutcomeWithAll[]
+    outcomeName = outcome[0].title
+    currentList = outcome[0].lists
+    toolTipHeaderText = `Timeblock for: \n${outcomeName}`
+
+    return `\n${toolTipHeaderText}:` +
+      `\nTo-Do Lists` +
+      ` ${currentList?.map((todo: any) => {
+        const listTitle = todo.title
+        const todos = todo.todos.map((todo: any) => {
+          return (`${todo.body}`)
+        })
+        return (`\n  ${listTitle}\n      ${todos}`)
+      }).join('')}  `
+  }
+
+  return `\n${toolTipHeaderText}: \n  ${currentToDos?.map((todo: any) => todo.body).join('\n  ')} `
+}

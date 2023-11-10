@@ -3,66 +3,77 @@ import { useEffect, useState } from 'react'
 import TodosCompletedForm from '../forms/CompletedTodosForm'
 import RoutineTodosCompletedForm from '../forms/CompletedTasksForm'
 
+import type { ScheduledItem } from '@prisma/client'
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndTasks } from '~/types/routineTypes'
-import type { ScheduledItem } from '@prisma/client'
-import type { OutcomeWithLists } from '~/types/outcomeTypes'
+import type { DesireWithOutcomesAndAll } from '~/types/desireTypes'
+import type { DraggedItemDescription } from '~/types/schedulerTypes'
+
 
 type Props = {
   event: ScheduledItem
   loadedLists: ListAndToDos[]
   loadedRoutines: RoutineAndTasks[]
-  loadedOutcome: OutcomeWithLists[]
+  loadedDesiresAndAll: DesireWithOutcomesAndAll[]
 }
 
-function DisplayCurrentEvent({ event, loadedRoutines, loadedLists }: Props) {
+function DisplayCurrentEvent({ event, loadedRoutines, loadedLists, loadedDesiresAndAll }: Props) {
+  console.log("🚀 ~ file: DisplayCurrentEvent.tsx:20 ~ DisplayCurrentEvent ~ event:", event)
 
-  const [typeOfEvent, setTypeOfEvent] = useState<string>('')
-  const [output, setOutput] = useState<JSX.Element>((<><div>Nothing is scheduled</div></>))
+  const [type, setType] = useState<string>()
+  const [output, setOutput] = useState<JSX.Element>()
 
+  const description = event.description as DraggedItemDescription
 
+  // This would be correct
   useEffect(() => {
-    if (!event) return
-    if (event.description === null) return
-
-    const type = Object.keys(event.description)[0]
-    if (type !== typeOfEvent) {
-      setTypeOfEvent(type)
+    if (typeof description === 'object' && description !== null && 'type' in description) {
+      setType(description.type)
     }
-
-  }, [event, typeOfEvent])
-
+  }, [description])
 
 
-  useEffect(() => {
 
-    console.log('in useEffect and typeOfEvent is: ', typeOfEvent)
-    if (typeOfEvent === 'listId') {
-      const toDosList = loadedLists.find((loadedList) => loadedList.id === event.itemId)
-      if (toDosList === undefined) return
-      const result = (<><div> < TodosCompletedForm list={toDosList} /></div></>)
-      setOutput(result)
-      return 
-    }
 
-    if (typeOfEvent === 'routineId') {
-      const routine = loadedRoutines.find((loadedRoutine) => loadedRoutine.id === event.itemId)
-      if (routine === undefined) return
-      const result = (<><div> < RoutineTodosCompletedForm routine={routine} /></div></>)
-      setOutput(result)
-      return 
-    }
+  if (type === 'list') {
+    const toDosList = loadedLists.find((loadedList) => loadedList.id === event.itemId)
+    if (toDosList === undefined) return
+    const result = (<><div> < TodosCompletedForm list={toDosList} /></div></>)
+    setOutput(result)
+  }
+  // if (type === 'routine') { }
+  // if (type === 'outcome') {
+  //   if (description.subType === 'list') { }
+  //   if (description.subType === 'routine') { }
+  // }
+  // if (type === 'timeblock') {}
 
-    if (typeOfEvent === 'outcomeId') {
-      const result = (<><div>Outcome Time Block</div></>)
-      setOutput(result)
-      return 
-      // sort listAndDotos[] by sortOrder
-      // display list of lists
-      // display completed checkbox form for clicked list
-    }
+  // console.log('in useEffect and typeOfEvent is: ', typeOfEvent)
+  // if (typeOfEvent === 'listId') {
+  //   const toDosList = loadedLists.find((loadedList) => loadedList.id === event.itemId)
+  //   if (toDosList === undefined) return
+  //   const result = (<><div> < TodosCompletedForm list={toDosList} /></div></>)
+  //   setOutput(result)
+  //   return
+  // }
 
-  }, [typeOfEvent, event, loadedLists, loadedRoutines])
+  // if (typeOfEvent === 'routineId') {
+  //   const routine = loadedRoutines.find((loadedRoutine) => loadedRoutine.id === event.itemId)
+  //   if (routine === undefined) return
+  //   const result = (<><div> < RoutineTodosCompletedForm routine={routine} /></div></>)
+  //   setOutput(result)
+  //   return
+  // }
+
+  // if (typeOfEvent === 'outcomeId') {
+  //   const result = (<><div>Outcome Time Block</div></>)
+  //   setOutput(result)
+  //   return
+  // sort listAndDotos[] by sortOrder
+  // display list of lists
+  // display completed checkbox form for clicked list
+  // }
+
 
 
   return (
