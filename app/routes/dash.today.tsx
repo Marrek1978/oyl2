@@ -1,6 +1,6 @@
 // import { parse } from 'querystring'
 import { format } from 'date-fns'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouteLoaderData } from '@remix-run/react'
 import { type LoaderArgs } from '@remix-run/server-runtime'
 import type { LinksFunction } from '@remix-run/react/dist/routeModules'
@@ -62,37 +62,36 @@ const path = 'routes/dash.today'
 
 function TodayPage() {
 
-  const [todaysEventList, setTodaysEventList] = useState<ScheduledItem[]>()
-  const [currentEvent, setCurrentEvent] = useState<ScheduledItem>()
-  console.log("🚀 ~ file: dash.today.tsx:67 ~ TodayPage ~ currentEvent:", currentEvent)
   const currentDate = format(new Date(), 'EEE, MMMM d');
+  const [currentEvent, setCurrentEvent] = useState<ScheduledItem>()
+  const [todaysEventList, setTodaysEventList] = useState<ScheduledItem[]>()
 
   const todaysScheduledEventList = useGetTodaysItems()
   const miscAndSpecialLists: ListAndToDos[] = useGetLoadedLists(path)
   const miscAndSpecialRoutines: RoutineAndTasks[] = useGetLoadedRoutines(path)
   const desiresAndAll: DesireWithOutcomesAndAll[] = useGetLoadedDesiresWithAll(path)
 
-
   useEffect(() => {
     if (!todaysScheduledEventList) return
     setTodaysEventList(todaysScheduledEventList)
   }, [todaysScheduledEventList])
 
+  const updateCurrentEvent = () => {
+    if (!todaysEventList || todaysEventList.length === 0) return
+    console.log('updating')
+    setCurrentEvent(GetCurrentEvent(todaysEventList))
+  }
 
   useEffect(() => {
     if (!todaysEventList || todaysEventList.length === 0) return
-    const newCurrentEvent = GetCurrentEvent(todaysEventList)
+    setCurrentEvent(GetCurrentEvent(todaysEventList))
+  }, [todaysEventList])
 
-    setCurrentEvent((prev) => {
-      if (prev?.id === newCurrentEvent?.id) return prev
-      return newCurrentEvent
-
-    })
-    // const updateCurrentEvent = () => setCurrentEvent(GetCurrentEvent(todaysEventList));
-    // const intervalId = setInterval(updateCurrentEvent, 1000 * 60);
-    // updateCurrentEvent();
-    // return () => clearInterval(intervalId);
-  }, [todaysEventList,]);
+  useEffect(() => {
+    if (!todaysEventList || todaysEventList.length === 0) return
+    const intervalId = setInterval(updateCurrentEvent, 1000 * 120);
+    return () => clearInterval(intervalId);
+  },);
 
 
   const { mainDesire, mainOutcome } = useGetMainFocus()
@@ -155,7 +154,7 @@ function TodayPage() {
                 />
               </div>
 
-              <div className='  border-2 border-red-600'>
+              <div className='  '>
                 <HeadingH2 text={`Current Time Block`} />
                 <div>
                   {currentEvent && (
@@ -225,52 +224,6 @@ function TodayPage() {
 export default TodayPage
 
 
-
-///*  into helper function doc??... for loading schedueled Events from DB - remake for this week
-//  will have to change typing becuse input will change from .json file to db imports
-// function updateScheduledListsDatesToCurrentWeek(lists: ScheduledItem[]): ScheduledItem[] {
-//   const currentDate = new Date()
-//   const currentWeekDay = currentDate.getDay()
-
-//   //get monday of the current week
-//   const currentWeekMonday = new Date(
-//     currentDate.getFullYear(),
-//     currentDate.getMonth(),
-//     currentDate.getDate() - currentWeekDay + 1
-//   )
-
-//   return lists.map((list): ScheduledItem => {
-
-//     if (!list.start || !list.end) {
-//       throw new Error('Event start and end times must be defined');
-//     }
-//     const start = new Date(list.start)
-//     const end = new Date(list.end)
-
-//     const day = start.getDay()
-//     const startHour = start.getHours()
-//     const startMinutes = start.getMinutes()
-//     const endHour = end.getHours()
-//     const endMinutes = end.getMinutes()
-
-//     //create the new start and end dates
-//     const newStart = new Date(currentWeekMonday)
-//     newStart.setDate(newStart.getDate() + day - 1)
-//     newStart.setHours(startHour, startMinutes, 0, 0)
-
-//     const newEnd = new Date(newStart)
-//     newEnd.setHours(endHour, endMinutes, 0, 0)
-
-//     //! this should not be needed for events loaded from db... prob have to convert dates.
-
-//     return {
-//       ...list,
-//       start: newStart,
-//       end: newEnd,
-//     }
-//   })
-// }
-
 export function getTodaysEvents(lists: ScheduledItem[]): ScheduledItem[] {
   const updatedEventsToCurrentWeek: ScheduledItem[] = updateScheduledListsDatesToCurrentWeek(lists)
   const currentDayOfTheWeek = new Date().getDay()
@@ -288,8 +241,6 @@ function GetCurrentEvent(events: ScheduledItem[]) {
 }
 
 
-
-
 export const useGetTodaysLoaders = () => {
   const loaderData = useRouteLoaderData(path);
   return loaderData;
@@ -299,6 +250,7 @@ export const useGetTodaysLoaders = () => {
 export const useGetTodaysItems = () => {
   const [todaysItems, setTodaysItems] = useState<ScheduledItem[]>([])
   const loadedScheduledItems = useGetLoadedScheduledItems(path)
+
   useEffect(() => {
     if (!loadedScheduledItems) return
     const todaysItems = getTodaysEvents(loadedScheduledItems)
@@ -309,67 +261,6 @@ export const useGetTodaysItems = () => {
 }
 
 
-// export const useGetLoadedUsersLists = (): ListAndToDos[] => {
-//   const [lists, setLists] = useState<ListAndToDos[]>([])
-//   const { loadedLists } = useGetTodaysLoaders();
-
-//   useEffect(() => {
-//     if (!loadedLists) return
-//     const listsWithProperDates = ChangeListArrayDates(loadedLists)
-//     setLists(listsWithProperDates)
-//   }, [loadedLists])
-
-//   return lists
-// }
-
-
-// export const useGetLoadedUsersRoutines = (): RoutineAndTasks[] => {
-//   const [routines, setRoutines] = useState<RoutineAndTasks[]>([])
-//   const { loadedRoutines } = useGetTodaysLoaders();
-
-//   useEffect(() => {
-//     if (!loadedRoutines) return
-//     const routinesWithProperDates = ArrayOfObjectsStrToDates({ items: loadedRoutines, dateKeys: ['createdAt', 'updatedAt'] })
-//     setRoutines(routinesWithProperDates)
-//   }, [loadedRoutines])
-
-//   return routines
-// }
-
-
-// export const useGetLoadedUserOutcomes = (): OutcomeWithLists[] => {
-//   const [outcomes, setOutcomes] = useState<OutcomeWithLists[]>([])
-//   const { loadedDesiresWithOutcomes }: { loadedDesiresWithOutcomes: DesireWithOutcomesAndListsWithStrDates[] } = useGetTodaysLoaders();
-
-//   useEffect(() => {
-//     if (!loadedDesiresWithOutcomes) return
-//     const outcomesWithListsArray: OutcomeWithLists[] = loadedDesiresWithOutcomes.flatMap((desire) => {
-//       let desireOutcomesWithLists: OutcomeWithListsWithStrDates[] = desire.outcomes
-
-//       if (desireOutcomesWithLists && desireOutcomesWithLists.length > 0) {
-//         return desireOutcomesWithLists.map((outcome) => {
-//           const outcomeWithProperDates: OutcomeWithLists = ObjectStrToDates({ item: outcome, dateKeys: ['createdAt', 'updatedAt'] })
-//           let listsWithProperDates: ListAndToDos[] = [];
-//           if (outcomeWithProperDates.lists && outcomeWithProperDates.lists.length > 0) {
-//             listsWithProperDates = ArrayOfObjectsStrToDates({ items: outcomeWithProperDates.lists, dateKeys: ['createdAt', 'updatedAt'] })
-//               .map(list => ({ ...list }));  // Add empty todos array to each list
-//           }
-
-//           return {
-//             ...outcomeWithProperDates,   // This will spread the outcome properties
-//             lists: listsWithProperDates  // This will add the lists property
-//           };
-//         })
-//       }
-//       return []
-//     })
-//     setOutcomes(outcomesWithListsArray)
-//   }, [loadedDesiresWithOutcomes])
-
-//   return outcomes
-// }
-
-
 export const useGetMainFocus = () => {
   const [mainDesire, setMainDesire] = useState<DesireWithStringDates | null>(null)
   const [mainOutcome, setMainOutcome] = useState<OutcomeWithListsWithStrDates | null>(null)
@@ -377,12 +268,10 @@ export const useGetMainFocus = () => {
 
   useEffect(() => {
     if (!loadedDesiresWithOutcomes) return
-
     const desireZero = loadedDesiresWithOutcomes.find((desire) => (desire.sortOrder === 0))
     if (!desireZero) return
     const { outcomes, ...desire } = desireZero
     setMainDesire(desire)
-
     const outcomeZero = desireZero.outcomes.find((outcome) => (outcome.sortOrder === 0))
     if (!outcomeZero) return
     setMainOutcome(outcomeZero)
