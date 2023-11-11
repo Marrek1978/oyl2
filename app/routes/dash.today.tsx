@@ -100,7 +100,7 @@ function TodayPage() {
   return (
     <>
       <article>
-
+adsadsfadfadsfadadsfdasadadsf
         <BasicTextAreaBG pageTitle={'Main Focus Today'} >
           <div className='flex flex-wrap flex-col gap-8 w-full  '>
             <div className='mt-8 w-full bg-base-300'>
