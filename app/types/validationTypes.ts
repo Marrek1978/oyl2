@@ -1,4 +1,4 @@
-export interface validationErrorTypes {
-  title?:string;
-  description?: string;
+export interface ValidationErrorTypes {
+  email?: string;
+  password?: string;
 }

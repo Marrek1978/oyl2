@@ -72,7 +72,7 @@ function ClarifyingQuestionsDisplay({ questions }: ClarifyingQuestionsDisplayPro
                       text='Edit'
                       onClickFunction={() => { }}
                       icon={EditIcon}
-                      color='primary'
+                      textColorDaisyUI='primary'
                     />
                   </Link>
                 </div>
@@ -102,7 +102,7 @@ function ClarifyingQuestionsDisplay({ questions }: ClarifyingQuestionsDisplayPro
                       text='Edit'
                       onClickFunction={() => { }}
                       icon={EditIcon}
-                      color='primary'
+                      textColorDaisyUI='primary'
                     />
                   </Link>
                 </div>

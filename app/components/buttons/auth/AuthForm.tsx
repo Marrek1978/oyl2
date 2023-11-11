@@ -3,11 +3,14 @@ import { Form, Link, useActionData, useNavigation, useSearchParams } from '@remi
 import SolidBtn from '../SolidBtn'
 import { SignUp, LoginIcon } from '~/components/utilities/icons';
 
+import type { ValidationErrorTypes } from '~/types/validationTypes';
+
 const AuthForm = () => {
 
   const [searchParams] = useSearchParams();
   const navigation = useNavigation();
-  const validationErrors = useActionData();
+  const validationErrors: ValidationErrorTypes | undefined = useActionData();
+  console.log("🚀 ~ file: AuthForm.tsx:13 ~ AuthForm ~ validationErrors:", validationErrors)
 
   const authMode = searchParams.get('mode') || 'login';
   const submitBtnText = authMode === 'login' ? 'Log In' : 'Sign Up';
@@ -42,14 +45,14 @@ const AuthForm = () => {
                     name="email"
                     type="email"
                     autoComplete="email"
-                    aria-invalid={validationErrors?.errors?.email ? true : undefined}
+                    aria-invalid={validationErrors?.email ? true : undefined}
                     aria-describedby="email-error"
                     placeholder="john@example.com"
                     className="input input-bordered w-full max-w-xs rounded-none"
                   />
-                  {validationErrors?.errors?.email ? (
+                  {validationErrors?.email ? (
                     <div className="pt-1 text-red-700" id="email-error">
-                      {validationErrors.errors.email}
+                      {validationErrors.email}
                     </div>
                   ) : null}
                 </div>
@@ -65,14 +68,14 @@ const AuthForm = () => {
                       name="password"
                       type="password"
                       autoComplete="current-password"
-                      aria-invalid={validationErrors?.errors?.password ? true : undefined}
+                      aria-invalid={validationErrors?.password ? true : undefined}
                       aria-describedby="password-error"
                       className="input input-bordered w-full max-w-xs rounded-none"
                       placeholder="******"
                     />
-                    {validationErrors?.errors?.password ? (
+                    {validationErrors?.password ? (
                       <div className="pt-1 text-red-700" id="password-error">
-                        {validationErrors.errors.password}
+                        {validationErrors.password}
                       </div>
                     ) : null}
                   </div>
@@ -109,7 +112,7 @@ const AuthForm = () => {
                   </div>
                 </div>
               </Form>
-              
+
             </div>
           </div>
         </div>

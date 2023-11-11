@@ -1,15 +1,17 @@
 import { Form, Link, useActionData, useMatches } from '@remix-run/react'
-import { EditIcon } from '../utilities/icons';
+
 import TextBtn from '../buttons/TextBtn';
 import HeadingH1 from '../titles/HeadingH1';
+import { EditIcon } from '../utilities/icons';
+
+import type { ClarifyingQuestions } from '@prisma/client';
 
 function TimeLeft() {
 
-  const maxAgeError = useActionData()
-
   const matches = useMatches();
-  const questions = matches.find(match => match.id === 'routes/dash.clarity')?.data
-  const retrievedMaxAge = questions[0]?.maxAge | 65
+  const maxAgeError:string | undefined  = useActionData()
+  const questions: ClarifyingQuestions[] = matches.find(match => match.id === 'routes/dash.clarity')?.data as ClarifyingQuestions[]
+  const retrievedMaxAge = questions[0].maxAge !== null ? questions[0].maxAge : 65
 
   const bDay = new Date(questions[0]?.birthDate ?? '1980-01-01' as string)
   const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
@@ -33,7 +35,7 @@ function TimeLeft() {
             text='Edit'
             onClickFunction={() => { }}
             icon={EditIcon}
-            color='primary'
+            textColorDaisyUI='primary'
           />
         </Link>
       </div>

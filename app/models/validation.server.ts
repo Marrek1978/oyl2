@@ -1,4 +1,3 @@
-// import { json } from "@remix-run/node";
 
 interface LoginCredentialsProps {
   email: string | null;
@@ -42,22 +41,22 @@ interface ValuesProps{
 }
 
 
-// export function validateValuesInput(input: ValuesProps) {
+export function validateValuesInput(input: ValuesProps) {
 
-//   let validationErrors: ValuesProps = {
-//     title: null,
-//     description: null,
-//   };
+  let validationErrors: ValuesProps = {
+    title: null,
+    description: null,
+  };
 
-//   if (!input.title) {
-//     validationErrors.title = 'Please enter a value title.'
-//   }
+  if (!input.title) {
+    validationErrors.title = 'Please enter a value title.'
+  }
 
-//   if (!input.description) {
-//     validationErrors.description = 'Please enter a value description.'
-//   }
+  if (!input.description) {
+    validationErrors.description = 'Please enter a value description.'
+  }
 
-//   if (validationErrors.title || validationErrors.description) {
-//     throw validationErrors;
-//   }
-// }
+  if (validationErrors.title || validationErrors.description) {
+    throw validationErrors;
+  }
+}
