@@ -5,10 +5,11 @@ import HeadingH1 from '~/components/titles/HeadingH1';
 import { EditIcon } from '~/components/utilities/icons';
 import OutcomeDisplay from '~/components/desires/outcomes/OutcomeDisplay';
 
-import type { DesireOutcome } from '@prisma/client';
+import type { Outcome } from '@prisma/client';
+
 
 interface SpecificOutcomeDisplayProps {
-  outcomes: DesireOutcome[];
+  outcomes: Outcome[];
   plural: string;
   title: string;
 }
@@ -40,7 +41,7 @@ function AllOutcomesDisplay({ outcomes, plural, title }: SpecificOutcomeDisplayP
 
       {/* //? DESCRIPTION AND LIST OF MILESTOONES */}
       <div className='  mt-6'>
-        {outcomes?.map((outcome: DesireOutcome) => {
+        {outcomes?.map((outcome: Outcome) => {
           return (
             <OutcomeDisplay
               key={outcome.id}

@@ -1,10 +1,10 @@
 import Heading20px from '~/components/titles/Heading20px';
 
-import type { DesireOutcome } from '@prisma/client';
+import type {  Outcome } from '@prisma/client';
 
 
 interface OutcomeDisplayProps {
-  outcome: DesireOutcome;
+  outcome: Outcome;
 }
 
 
@@ -17,7 +17,6 @@ function OutcomeDisplay({ outcome }: OutcomeDisplayProps) {
         <div className=' text-base-content max-w-prose'>
           <Heading20px text={outcome.title} />
         </div>
-        {/* <div className='max-h-12 overflow-hidden max-w-prose para-color '>{outcome.description}</div> */}
       </div>
     </>
   )
