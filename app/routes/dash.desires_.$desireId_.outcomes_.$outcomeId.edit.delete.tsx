@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { type ActionArgs } from '@remix-run/server-runtime';
+import { type ActionFunctionArgs } from '@remix-run/server-runtime';
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
 
 import Modal from '~/components/modals/Modal'
@@ -11,7 +11,7 @@ import useFormDeletedToastAndRedirect from '~/components/utilities/useFormDelete
 import { useParams } from '@remix-run/react';
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const outcomeData = Object.fromEntries(formData);
   const outcomeId = outcomeData.rowId as string

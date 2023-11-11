@@ -1,7 +1,7 @@
 import { parse } from 'querystring';
 import { Outlet } from '@remix-run/react';
 import { useEffect, useState } from 'react'
-import { redirect, type ActionArgs } from '@remix-run/server-runtime';
+import { redirect, type ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import ListForm from '~/components/forms/ListForm'
@@ -13,7 +13,7 @@ import { useGetCurrentList } from './dash.listsandroutines.lists.$listId';
 import type { ListAndToDos } from '~/types/listTypes'
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const userId = await requireUserId(request);
   const formBody = await request.text();
   const parsedBody = parse(formBody);

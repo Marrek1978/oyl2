@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { createUser, verifyLogin } from "~/models/user.server";
 import { getUserId } from "~/models/session.server";
@@ -7,13 +7,13 @@ import AuthForm from "~/components/buttons/auth/AuthForm";
 // import { ca } from "date-fns/locale";
 import { validateCredentials } from "~/models/validation.server";
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserId(request);
   if (userId) return redirect("/dashboard");
   return null;
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
 
   console.log('in login action')
   //return errors - will be caught by component's 
@@ -60,7 +60,7 @@ export const action = async ({ request }: ActionArgs) => {
    return redirect('/dashboard')
 };
 
-export const meta: V2_MetaFunction = () => [{ title: "Login" }];
+export const meta: MetaFunction = () => [{ title: "Login" }];
 
 export default function Index() {
   // const [searchParams] = useSearchParams();

@@ -1,4 +1,4 @@
-import type { ActionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs } from "@remix-run/node";
 import { Outlet, useMatches, useParams } from '@remix-run/react';
 
 import Modal from '~/components/modals/Modal';
@@ -10,7 +10,7 @@ import { parse } from "querystring";
 
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   if (request.method === 'POST') {
     const formBody = await request.text();
     const parsedBody = parse(formBody);

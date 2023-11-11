@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useActionData } from '@remix-run/react';
-import { type ActionArgs, redirect } from '@remix-run/server-runtime';
+import { type ActionFunctionArgs, redirect } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal';
 import DesiresIdealForm from '~/components/forms/DesiresIdealForm';
@@ -13,7 +13,7 @@ import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes';
 
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const desireData = Object.fromEntries(formData);
   const { rowId, ideal } = desireData as { rowId: string, ideal: string }

@@ -1,4 +1,4 @@
-import type { LoaderArgs } from '@remix-run/server-runtime';
+import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { Link, Outlet, isRouteErrorResponse, useRouteError } from '@remix-run/react';
 
 import { Toaster } from 'sonner';
@@ -9,7 +9,7 @@ import { requireUserId } from '~/models/session.server';
 import { ListProvider } from '~/components/list/ListContext';
 
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   try {
     await requireUserId(request);
     return null;

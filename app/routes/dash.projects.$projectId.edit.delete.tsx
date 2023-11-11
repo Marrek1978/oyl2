@@ -6,10 +6,10 @@ import Modal from '~/components/modals/Modal'
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal'
 
 import type { Project } from '@prisma/client'
-import type { ActionArgs } from '@remix-run/server-runtime'
+import type { ActionFunctionArgs } from '@remix-run/server-runtime'
 import { deleteProjectById } from '~/models/project.server'
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const projectData = Object.fromEntries(formData);
   const projectId = projectData.rowId as string

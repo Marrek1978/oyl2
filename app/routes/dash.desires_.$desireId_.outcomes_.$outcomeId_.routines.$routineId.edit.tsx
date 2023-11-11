@@ -1,7 +1,7 @@
 import { parse } from 'querystring'
 import { Outlet } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import { redirect, type ActionArgs } from '@remix-run/server-runtime';
+import { redirect, type ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import { requireUserId } from '~/models/session.server'
@@ -12,7 +12,7 @@ import { useGetCurrentRoutine } from './dash.desires_.$desireId_.outcomes_.$outc
 
 import type { RoutineAndTasks } from '~/types/routineTypes';
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const userId = await requireUserId(request);
   const formBody = await request.text();
   const parsedBody = parse(formBody);

@@ -10,10 +10,10 @@ import MilestoneForm from '~/components/forms/milestones/MilestoneForm';
 import { createMilestone, updateMilestonesOrder } from '~/models/milestone.server';
 import { getMilestoneGroupAndItsMilesonesById, getMilestoneGroupById } from '~/models/milestoneGroup.server';
 
-import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime';
+import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/server-runtime';
 import type { MilestoneGroupsWithMilestonesWithStringDates } from '~/types/milestoneTypes';
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   await requireUserId(request);
   const { milestoneGroupId } = params;
@@ -28,7 +28,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 }
 
 
-export const action = async ({ request, params }: ActionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   //sort order
   if (request.method === 'PUT') {
     const array = await request.text();

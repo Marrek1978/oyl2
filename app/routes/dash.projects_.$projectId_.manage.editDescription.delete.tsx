@@ -5,9 +5,9 @@ import Modal from '~/components/modals/Modal'
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal'
 
 import { deleteProjectById } from '~/models/project.server'
-import type { ActionArgs } from '@remix-run/server-runtime'
+import type { ActionFunctionArgs } from '@remix-run/server-runtime'
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const projectData = Object.fromEntries(formData);
   const projectId = projectData.rowId as string

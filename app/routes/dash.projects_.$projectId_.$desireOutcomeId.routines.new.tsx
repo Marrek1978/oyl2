@@ -1,4 +1,4 @@
-import type { ActionArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 import { parse } from 'querystring';
 import React from 'react'
 import RoutinesForm from '~/components/forms/RoutineForm'
@@ -6,7 +6,7 @@ import Modal from '~/components/modals/Modal'
 import { createRoutineAndTasks } from '~/models/routines.server';
 import { requireUserId } from '~/models/session.server';
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
 
   try {
     const userId = await requireUserId(request);

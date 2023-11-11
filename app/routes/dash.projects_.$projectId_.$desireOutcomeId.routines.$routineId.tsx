@@ -6,10 +6,10 @@ import RoutineTodosCompletedForm from '~/components/forms/CompletedTasksForm';
 import { reorderCompletedTasks, updateCompletedTasks } from '~/models/routines.server';
 
 import type { RoutineAndTasks } from '~/types/routineTypes';
-import type { ActionArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (request.method === 'POST') {
     const formBody = await request.text();

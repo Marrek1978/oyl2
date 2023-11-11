@@ -1,6 +1,6 @@
 import { parse } from 'querystring';
 import { Outlet, useMatches, useParams } from '@remix-run/react';
-import { redirect, type ActionArgs } from '@remix-run/server-runtime';
+import { redirect, type ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import TodosListForm from '~/components/forms/ListForm';
@@ -8,7 +8,7 @@ import { updateListAndTodos } from '~/models/list.server';
 
 import type { ListAndToDos } from '~/types/listTypes';
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formBody = await request.text();
   const parsedBody = parse(formBody);
   const editedListObject = JSON.parse(parsedBody.editedListString as string);

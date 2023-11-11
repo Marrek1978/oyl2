@@ -1,5 +1,5 @@
 import { Outlet, useLoaderData } from '@remix-run/react'
-import { redirect, type LoaderArgs, type ActionArgs } from '@remix-run/server-runtime';
+import { redirect, type LoaderFunctionArgs, type ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import { requireUserId } from '~/models/session.server';
 import {  getClarifyingQuestions, upsertMaxAge} from '~/models/clarifying.server';
@@ -9,7 +9,7 @@ import ClarifyingQuestionsDisplay from '~/components/clarifyingQuestions/Clarify
 import type { ClarifyingQuestionsWithStringDates } from '~/types/clarityTypes';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   let userId = await requireUserId(request);
   try {
     let questions = await getClarifyingQuestions(userId);
@@ -18,7 +18,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 };
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
 
   const userId = await requireUserId(request)
   const formData = await request.formData()

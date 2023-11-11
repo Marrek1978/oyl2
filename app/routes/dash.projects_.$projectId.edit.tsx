@@ -1,5 +1,5 @@
 import { useLoaderData, useMatches } from '@remix-run/react'
-import { redirect, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
+import { redirect, type ActionFunctionArgs, type LoaderFunctionArgs } from '@remix-run/server-runtime'
 
 import Modal from '~/components/modals/Modal'
 import { requireUserId } from '~/models/session.server'
@@ -9,7 +9,7 @@ import { getProjects, updateProjectDetails } from '~/models/project.server'
 import type { ProjectValidationErrorsTypes } from '~/types/projectTypes'
 
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   let userId = await requireUserId(request);
   try {
     const projects = await getProjects(userId)
@@ -17,7 +17,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   } catch (error) { throw error }
 }
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
 
   const userId = await requireUserId(request)
   const formData = await request.formData()

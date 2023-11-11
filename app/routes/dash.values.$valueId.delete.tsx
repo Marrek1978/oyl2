@@ -7,10 +7,10 @@ import { deleteValue } from '~/models/values.server';
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
 import useFormDeletedToastAndRedirect from '~/components/utilities/useFormDeletedToast';
 
-import type { ActionArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const valueData = Object.fromEntries(formData);
   const id = valueData.rowId as string

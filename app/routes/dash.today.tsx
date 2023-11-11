@@ -2,7 +2,7 @@
 import { format } from 'date-fns'
 import { useEffect, useState } from 'react'
 import { useRouteLoaderData } from '@remix-run/react'
-import { type LoaderArgs } from '@remix-run/server-runtime'
+import { type LoaderFunctionArgs } from '@remix-run/server-runtime'
 import type { LinksFunction } from '@remix-run/react/dist/routeModules'
 
 import styleSheet from "~/styles/SchedulerCss.css";
@@ -35,7 +35,7 @@ import type { DesireWithOutcomesAndAll, DesireWithOutcomesAndListsWithStrDates, 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styleSheet }];
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   try {
     const userId = await requireUserId(request);
     const loadedScheduledItems = await getScheduledItems(userId)

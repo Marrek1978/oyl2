@@ -1,7 +1,7 @@
 import { parse } from 'querystring'
 import { useEffect, useState } from 'react';
 import { Outlet, useParams } from '@remix-run/react'
-import type { ActionArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import { updateMilestoneCompleted, updateMilestonesOrder } from '~/models/milestone.server'
@@ -12,7 +12,7 @@ import { useGetAllMilestoneGroupsForOutcome } from './dash.desires_.$desireId_.o
 import type { MilestoneGroupsWithMilestones } from '~/types/milestoneTypes';
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (request.method === 'PUT') {
     const formBody = await request.text();

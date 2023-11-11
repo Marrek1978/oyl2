@@ -1,5 +1,5 @@
 import { parse } from 'querystring';
-import type { ActionArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal';
 import { requireUserId } from '~/models/session.server';
@@ -8,7 +8,7 @@ import { createRoutineAndTasks } from '~/models/routines.server';
 import { useGetMiscRoutines } from '~/routes/dash.listsandroutines';
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (request.method === 'POST') {
     const userId = await requireUserId(request);

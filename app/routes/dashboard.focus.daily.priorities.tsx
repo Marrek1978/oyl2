@@ -1,5 +1,5 @@
 import { Outlet, useLoaderData } from '@remix-run/react';
-import { redirect, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
+import { redirect, type ActionFunctionArgs, type LoaderFunctionArgs } from '@remix-run/server-runtime'
 import React from 'react'
 import { deleteCompletedToDosFromList, deleteCompletedToDosFromPriorityList, getToDosWhere, getToDosWhereDueDate } from '~/models/list.server';
 import { requireUserId } from '~/models/session.server';
@@ -10,7 +10,7 @@ import DashPrioritiesChBoxModal from '~/components/modals/DashPrioritiesChBoxMod
 
 
 //loader
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
   //load urgent todos
   const urgentTodos = await getToDosWhere({ userId }, { urgent: true, complete: false });
@@ -20,7 +20,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   return { urgentTodos, importantTodos, dueDateTodos }
 }
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   await requireUserId(request);
 
   const formData = await request.formData();

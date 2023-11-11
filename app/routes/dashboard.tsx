@@ -1,5 +1,5 @@
 import { Outlet } from '@remix-run/react'
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 // import { LinksFunction } from '@remix-run/node';
 // import React from 'react'
 import { requireUserId } from '~/models/session.server';
@@ -10,7 +10,7 @@ import SideNav from '~/components/nav/SideNav';
 import { ListProvider } from '~/components/list/ListContext';
 
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   console.log('in dashboard loader')
   
   const userId = await requireUserId(request);

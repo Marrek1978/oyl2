@@ -1,6 +1,6 @@
 import { parse } from 'querystring';
 import { useEffect, useState } from 'react';
-import { type ActionArgs } from '@remix-run/server-runtime';
+import { type ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal';
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
@@ -9,7 +9,7 @@ import { useGetCurrentRoutine } from './dash.listsandroutines.routines.$routineI
 import useFormDeletedToastAndRedirect from '~/components/utilities/useFormDeletedToast';
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formBody = await request.text();
   const parsedBody = parse(formBody);
   const taskId = parsedBody.rowId as string

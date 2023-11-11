@@ -1,6 +1,6 @@
 import { parse } from 'querystring';
 import { useMatches, useParams } from '@remix-run/react';
-import { type ActionArgs, redirect } from '@remix-run/server-runtime';
+import { type ActionFunctionArgs, redirect } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import { deleteRoutine } from '~/models/routines.server';
@@ -8,7 +8,7 @@ import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
 
 import type { RoutineAndToDos } from '~/types/routineTypes';
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formBody = await request.text();
   const parsedBody = parse(formBody);
   const routineId = parsedBody.rowId as string

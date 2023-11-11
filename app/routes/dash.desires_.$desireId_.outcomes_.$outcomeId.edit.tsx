@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Outlet, useParams } from '@remix-run/react'
-import { redirect, type ActionArgs } from '@remix-run/server-runtime';
+import { redirect, type ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import { updateOutcome } from '~/models/outcome.server';
@@ -10,7 +10,7 @@ import { useGetOutcomeOnlyWithProperDates } from './dash.desires_.$desireId_.out
 import type { Outcome } from '@prisma/client'
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const outcomeData = Object.fromEntries(formData);
 

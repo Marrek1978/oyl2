@@ -1,11 +1,11 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/server-runtime'
 import React from 'react'
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   return null
 }
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   return null
 }
 

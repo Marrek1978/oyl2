@@ -7,11 +7,11 @@
 // import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
 // import ProjectTasksForOutcome from '~/components/projects/ProjectTasksForOutcome'
 
-// import type { LoaderArgs } from '@remix-run/server-runtime'
+// import type { LoaderFunctionArgs } from '@remix-run/server-runtime'
 // // import { getProjectDesiredOutcomeListsAndToDos } from '~/models/list.server'
 // import { getProjectDesiredOutcomeRoutinesWithToDos } from '~/models/routines.server'
 
-// // export const loader = async ({ request, params }: LoaderArgs) => {
+// // export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 // //   let userId = await requireUserId(request);
 // //   // const projectId = params.projectId!
 // //   const outcomeId = params.desireOutcomeId!

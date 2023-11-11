@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { json } from "@remix-run/node";
-import type { LoaderArgs } from '@remix-run/node';
+import type { LoaderFunctionArgs } from '@remix-run/node';
 import { getUserId } from "~/models/session.server";
 import { Link, useLoaderData, Form } from "@remix-run/react";
 
@@ -9,7 +9,7 @@ import { useTheme } from '~/styles/ThemeContext';
 import OutlinedBtn from '../buttons/OutlinedBtn';
 import { LogoutIcon, MoonIcon, SunIcon } from '~/components/utilities/icons';
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   let userId = await getUserId(request);
   return json({ userId });
 };

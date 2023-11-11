@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Outlet, useParams } from '@remix-run/react'
-import { redirect, type ActionArgs } from '@remix-run/server-runtime'
+import { redirect, type ActionFunctionArgs } from '@remix-run/server-runtime'
 
 import Modal from '~/components/modals/Modal'
 import { updateValue } from '~/models/values.server'
@@ -11,7 +11,7 @@ import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdA
 import type { Value } from '@prisma/client';
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const valueData = Object.fromEntries(formData);
 

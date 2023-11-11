@@ -13,12 +13,12 @@ import DndMilestoneGroups from "~/components/dnds/milestoneGroups/DndMilestoneGr
 import { getMilestoneGroupsByOutcomeId, createMilestoneGroup, updateGroupsOrder } from '~/models/milestoneGroup.server';
 
 import type { Milestone } from "@prisma/client";
-import type { LoaderArgs, ActionArgs } from '@remix-run/server-runtime';
+import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/server-runtime';
 import type { MilestoneGroupsWithMilestones, MilestoneGroupsWithMilestonesWithStringDates } from "~/types/milestoneTypes";
 
 
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   await requireUserId(request);
   const { outcomeId } = params;
   if (!outcomeId) return redirect('../..')
@@ -32,7 +32,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 };
 
 
-export const action = async ({ request, params }: ActionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   if (request.method === 'PUT') {
     const formBody = await request.text();

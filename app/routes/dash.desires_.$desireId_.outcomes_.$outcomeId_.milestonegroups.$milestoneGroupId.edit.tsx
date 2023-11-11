@@ -2,7 +2,7 @@ import { parse } from 'querystring';
 import { Outlet } from '@remix-run/react';
 import { redirect } from '@remix-run/node';
 import { useEffect, useState } from 'react';
-import type { LoaderArgs } from '@remix-run/node';
+import type { LoaderFunctionArgs } from '@remix-run/node';
 
 import Modal from '~/components/modals/Modal'
 import { updateMilestoneGroupById } from '~/models/milestoneGroup.server';
@@ -13,7 +13,7 @@ import type { MilestoneGroup } from '@prisma/client';
 import type { UpdateMilestoneGroup } from '~/types/milestoneTypes';
 
 
-export const action = async ({ request, params }: LoaderArgs) => {
+export const action = async ({ request, params }: LoaderFunctionArgs) => {
   const formBody = await request.text();
   const parsedBody = parse(formBody);
   const milestoneGroupData: UpdateMilestoneGroup = {

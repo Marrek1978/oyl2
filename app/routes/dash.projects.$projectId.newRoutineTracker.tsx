@@ -1,8 +1,8 @@
-import type { ActionArgs } from '@remix-run/server-runtime'
+import type { ActionFunctionArgs } from '@remix-run/server-runtime'
 import React from 'react'
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   return null
 }
 export default function NewRoutineTrackerForProjectPage() {

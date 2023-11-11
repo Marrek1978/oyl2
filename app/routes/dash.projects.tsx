@@ -1,5 +1,5 @@
 import { parse } from 'querystring';
-import { type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime';
+import { type ActionFunctionArgs, type LoaderFunctionArgs } from '@remix-run/server-runtime';
 
 import { getDesires } from '~/models/desires.server';
 import { requireUserId } from '~/models/session.server';
@@ -7,7 +7,7 @@ import DndProjects from '~/components/dnds/projects/DndProjects';
 import { getProjects, updateProjectsSortOrder } from '~/models/project.server';
 import DndPlus800OutletFlex from '~/components/baseContainers/DndPlus800OutletFlex';
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   let userId = await requireUserId(request);
   try {
     const desires = await getDesires(userId)
@@ -16,7 +16,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   } catch (error) { throw error }
 }
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formBody = await request.text();
   const parsedBody = parse(formBody);
   const projects = JSON.parse(parsedBody.projectString as string);

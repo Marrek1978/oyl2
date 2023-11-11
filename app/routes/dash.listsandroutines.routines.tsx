@@ -1,7 +1,7 @@
 import { parse } from 'querystring';
 import { useEffect, useState } from 'react';
 import { Outlet, useSearchParams, } from '@remix-run/react';
-import type { ActionArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal';
 import { updateRoutinesOrder } from '~/models/routines.server';
@@ -12,7 +12,7 @@ import type { ListAndToDos } from '~/types/listTypes';
 import type { RoutineAndTasks } from '~/types/routineTypes';
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   if (request.method === 'PUT') {
     const formBody = await request.text();
     const parsedBody = parse(formBody);

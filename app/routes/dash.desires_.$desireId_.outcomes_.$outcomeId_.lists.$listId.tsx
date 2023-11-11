@@ -1,7 +1,7 @@
 import { parse } from 'querystring'
 import { useEffect, useState } from 'react'
 import { Outlet, useParams } from '@remix-run/react'
-import type { ActionArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import CompletedTodosForm from '~/components/forms/CompletedTodosForm'
@@ -12,7 +12,7 @@ import { deleteCompletedToDosFromList, reorderCompletedToDos, updateCompletedTod
 import type { ListAndToDos } from '~/types/listTypes'
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (request.method === 'POST') {
     const formBody = await request.text();

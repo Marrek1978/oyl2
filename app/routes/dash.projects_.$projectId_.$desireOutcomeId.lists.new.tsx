@@ -5,9 +5,9 @@
 // import { createListAndTodos } from '~/models/list.server';
 // import TodosListForm from '~/components/forms/ListForm'
 
-// import type { ActionArgs } from '@remix-run/server-runtime';
+// import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
-// export const action = async ({ request }: ActionArgs) => {
+// export const action = async ({ request }: ActionFunctionArgs) => {
 //   const userId = await requireUserId(request);
 //   const formBody = await request.text();
 //   const parsedBody = parse(formBody);

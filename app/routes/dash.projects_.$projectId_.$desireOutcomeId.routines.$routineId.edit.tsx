@@ -6,9 +6,9 @@ import RoutinesForm from '~/components/forms/RoutineForm';
 import type { RoutineAndTasks } from '~/types/routineTypes';
 import { updateRoutineAndTasks } from '~/models/routines.server';
 
-import {type ActionArgs, redirect } from '@remix-run/server-runtime';
+import {type ActionFunctionArgs, redirect } from '@remix-run/server-runtime';
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formBody = await request.text();
   const parsedBody = parse(formBody);
   const editedRoutineObject = JSON.parse(parsedBody.editedRoutineString as string);

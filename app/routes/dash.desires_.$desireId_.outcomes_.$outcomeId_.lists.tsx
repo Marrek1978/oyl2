@@ -1,6 +1,6 @@
 import { parse } from 'querystring';
 import { useEffect, useState } from 'react';
-import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { Outlet, useParams, useRouteLoaderData } from '@remix-run/react'
 
 import DndLists from '~/components/dnds/lists/DndLists';
@@ -13,7 +13,7 @@ import { ArrayOfObjectsStrToDates, ObjectStrToDates } from '~/components/utiliti
 import type { List } from '@prisma/client';
 import type { ListAndToDos, ListAndTodosWithStrDates } from '~/types/listTypes';
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request)
   const { outcomeId } = params
   if (!outcomeId) throw new Error('No outcomeId in URL')
@@ -25,7 +25,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 }
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   if (request.method === 'PUT') {
     const formBody = await request.text();
     const parsedBody = parse(formBody);

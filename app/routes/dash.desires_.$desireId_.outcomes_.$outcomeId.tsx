@@ -1,7 +1,7 @@
 import { parse } from 'querystring'
 import { useEffect, useState } from 'react'
 import { useRouteLoaderData, Outlet, Link } from '@remix-run/react'
-import { redirect, type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
+import { redirect, type ActionFunctionArgs, type LoaderFunctionArgs } from '@remix-run/server-runtime'
 
 import Modal from '~/components/modals/Modal'
 import HeadingH1 from '~/components/titles/HeadingH1'
@@ -22,7 +22,7 @@ import type { OutcomeWithAllWithStringDates } from '~/types/outcomeTypes'
 import type { DesireWithStringDates, validationErrorsTypes } from '~/types/desireTypes'
 
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   let userId = await requireUserId(request);
   const { desireId, outcomeId } = params
   if (!desireId) throw new Error('No desireId in params')
@@ -39,7 +39,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formBody = await request.text();
   const outcomeData = JSON.parse(parse(formBody).outcomeString as string);
 

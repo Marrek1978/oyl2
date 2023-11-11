@@ -1,12 +1,12 @@
 import { useMatches, useParams } from '@remix-run/react';
-import { type ActionArgs, redirect } from '@remix-run/server-runtime'
+import { type ActionFunctionArgs, redirect } from '@remix-run/server-runtime'
 
 import Modal from '~/components/modals/Modal';
 import ClarityQuestionsEditModal from '~/components/modals/ClarityQuestionsEditModal';
 import { upsertClarifyingQuestions } from '~/models/clarifying.server';
 import { requireUserId } from '~/models/session.server';
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
 
   const userId = await requireUserId(request)
   const formData = await request.formData()

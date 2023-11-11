@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useActionData, } from '@remix-run/react';
-import { type ActionArgs, redirect } from '@remix-run/server-runtime';
+import { type ActionFunctionArgs, redirect } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal';
 import useServerMessages from '~/components/modals/useServerMessages';
@@ -12,7 +12,7 @@ import { useGetSpecificDesireWithValuesAndOutcomes } from './dash.desires_.$desi
 import type { Desire } from '@prisma/client';
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const desireData = Object.fromEntries(formData);
   const { rowId, currentSituation } = desireData as { rowId: string, currentSituation: string }

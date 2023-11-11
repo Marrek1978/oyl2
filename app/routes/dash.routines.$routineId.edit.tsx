@@ -1,6 +1,6 @@
 import { parse } from 'querystring';
 import { Outlet, useMatches, useParams } from '@remix-run/react';
-import { redirect, type ActionArgs } from '@remix-run/server-runtime';
+import { redirect, type ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal';
 import RoutinesForm from '~/components/forms/RoutineForm';
@@ -9,7 +9,7 @@ import { updateRoutineAndTasks } from '~/models/routines.server';
 import type { RoutineAndTasks } from '~/types/routineTypes';
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formBody = await request.text();
   const parsedBody = parse(formBody);
   const editedRoutineObject = JSON.parse(parsedBody.editedRoutineString as string);

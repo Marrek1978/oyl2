@@ -1,5 +1,5 @@
 import { Outlet, useLoaderData } from '@remix-run/react';
-import { redirect, type ActionArgs, type LoaderFunction, type LoaderArgs } from '@remix-run/server-runtime';
+import { redirect, type ActionFunctionArgs, type LoaderFunction, type LoaderFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import ProjectsForm from '~/components/forms/ProjectsForm'
@@ -10,7 +10,7 @@ import { getProjectById, getProjects, updateProjectDetails } from '~/models/proj
 import type { Project } from '@prisma/client';
 import type { ProjectValidationErrorsTypes } from '~/types/projectTypes';
 
-export const loader: LoaderFunction = async ({ request, params }: LoaderArgs) => {
+export const loader: LoaderFunction = async ({ request, params }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
   const projectId = params.projectId!;   // const project = getProjectById(params.projectId, userId)
   try {
@@ -26,7 +26,7 @@ export const loader: LoaderFunction = async ({ request, params }: LoaderArgs) =>
   } catch (error) { throw error }
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const userId = await requireUserId(request)
   const formData = await request.formData()
   const projectData = Object.fromEntries(formData);

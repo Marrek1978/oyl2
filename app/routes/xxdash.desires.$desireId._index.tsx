@@ -1,13 +1,13 @@
 import { useRouteLoaderData } from '@remix-run/react';
 import { updateDesire } from '~/models/desires.server';
-import type {ActionArgs } from '@remix-run/server-runtime';
+import type {ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import DesiresForm from '~/components/forms/DesiresForm'
 
 import type { validationErrorsTypes } from '~/types/desireTypes';
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
 
   const formData = await request.formData()
   const desireData = Object.fromEntries(formData);

@@ -1,5 +1,5 @@
 import { useRouteLoaderData } from '@remix-run/react'
-import { type ActionArgs } from '@remix-run/server-runtime'
+import { type ActionFunctionArgs } from '@remix-run/server-runtime'
 
 import { createProject } from '~/models/project.server'
 import { requireUserId } from '~/models/session.server'
@@ -7,7 +7,7 @@ import ProjectsForm from '~/components/forms/ProjectsForm'
 
 import type { ProjectValidationErrorsTypes } from '~/types/projectTypes'
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const userId = await requireUserId(request)
   const formData = await request.formData()
   const projectData = Object.fromEntries(formData);

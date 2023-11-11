@@ -3,7 +3,7 @@ import type { ScheduledItem } from '@prisma/client'
 import { Outlet, useFetcher, useRouteLoaderData } from '@remix-run/react'
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import type { LinksFunction } from '@remix-run/react/dist/routeModules'
-import { type ActionArgs, type LoaderArgs } from '@remix-run/server-runtime'
+import { type ActionFunctionArgs, type LoaderFunctionArgs } from '@remix-run/server-runtime'
 
 import styleSheet from "~/styles/SchedulerCss.css";
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
@@ -40,7 +40,7 @@ export const links: LinksFunction = () => [
 export type DraggedItem = ListAndToDos | RoutineAndTasks | OutcomeWithAll | undefined
 
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   try {
     const userId = await requireUserId(request);
     const loadedScheduledItems = await getScheduledItems(userId)
@@ -60,7 +60,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 }
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   if (request.method === 'POST') {
     const userId = await requireUserId(request);
     const formBody = await request.text();

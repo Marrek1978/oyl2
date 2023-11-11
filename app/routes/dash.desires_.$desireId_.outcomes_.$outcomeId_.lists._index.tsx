@@ -1,5 +1,5 @@
 import { parse } from 'querystring';
-import type { ActionArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import { createList } from '~/models/list.server';
 import ListForm from '~/components/forms/ListForm'
@@ -7,7 +7,7 @@ import { requireUserId } from '~/models/session.server';
 import { useGetListsArrayLength } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.lists';
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (request.method === 'POST') {
     const userId = await requireUserId(request);

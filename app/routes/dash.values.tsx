@@ -1,7 +1,7 @@
 import { parse } from 'querystring';
 import { useEffect, useState } from 'react';
 import { Outlet, useRouteLoaderData } from '@remix-run/react';
-import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/server-runtime';
 
 import ValueForm from '~/components/forms/ValueForm';
 import { requireUserId } from '~/models/session.server';
@@ -14,7 +14,7 @@ import type { Value } from '@prisma/client';
 import type { ValueWithStringDates } from '~/types/valueTypes';
 
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   let userId = await requireUserId(request);
   try {
     let values: Value[] = await getValues(userId);
@@ -22,7 +22,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   } catch (error) { throw error }
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   if (request.method === 'PUT') {
     const formBody = await request.text();
     const parsedBody = parse(formBody);

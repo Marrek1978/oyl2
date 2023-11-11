@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { LoaderArgs } from '@remix-run/node';
+import type { LoaderFunctionArgs } from '@remix-run/node';
 import { Outlet, useRouteLoaderData } from '@remix-run/react';
 
 import Modal from '~/components/modals/Modal';
@@ -18,7 +18,7 @@ import type { DesireWithValuesAndOutcomes, DesireWithValuesAndOutcomesWithString
 import ThreeParaFlex from '~/components/baseContainers/ThreeParaFlex';
 
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { desireId } = params
   if (!desireId) throw new Error('No desireId in params')
   try {

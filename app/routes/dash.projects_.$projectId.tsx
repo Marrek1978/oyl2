@@ -8,9 +8,9 @@ import ProjectDisplay from '~/components/projects/ProjectDisplay'
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
 
 import type { Desire } from '@prisma/client'
-import type { LoaderArgs } from '@remix-run/server-runtime'
+import type { LoaderFunctionArgs } from '@remix-run/server-runtime'
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   let userId = await requireUserId(request);
   const projectId = params.projectId!
   try {

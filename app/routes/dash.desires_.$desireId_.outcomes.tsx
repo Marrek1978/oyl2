@@ -1,7 +1,7 @@
 import { parse } from 'querystring';
 import { Outlet } from '@remix-run/react';
 import { useEffect, useState } from 'react';
-import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/server-runtime';
 
 import { requireUserId } from '~/models/session.server';
 import OutcomesForm from '~/components/forms/OutcomesForm';
@@ -14,7 +14,7 @@ import { useGetSpecificDesireWithValuesAndOutcomes } from './dash.desires_.$desi
 
 import type { Outcome } from '@prisma/client';
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { desireId } = params
   if (!desireId) throw new Error('No desireId in params')
   try {
@@ -25,7 +25,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (request.method === 'PUT') {
     const formBody = await request.text();

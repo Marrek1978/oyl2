@@ -11,12 +11,12 @@ import SubHeading14px from '~/components/titles/SubHeading14px';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 
 // import type { Desire, Project } from '@prisma/client';
-import type { LoaderArgs, LoaderFunction } from '@remix-run/server-runtime';
+import type { LoaderFunctionArgs, LoaderFunction } from '@remix-run/server-runtime';
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
 
 
 
-export const loader: LoaderFunction = async ({ request, params }: LoaderArgs) => {
+export const loader: LoaderFunction = async ({ request, params }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
   const projectId = params.projectId!;   // const project = getProjectById(params.projectId, userId)
   try {

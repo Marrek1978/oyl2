@@ -10,11 +10,11 @@ import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdA
 import { useGetMilestoneGroupWithMilestones } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId';
 
 import type { Milestone } from '@prisma/client';
-import type { LoaderArgs } from '@remix-run/node';
+import type { LoaderFunctionArgs } from '@remix-run/node';
 import type { MilestoneGroupsWithMilestones } from '~/types/milestoneTypes';
 
 
-export const action = async ({ request, params }: LoaderArgs) => {
+export const action = async ({ request, params }: LoaderFunctionArgs) => {
   const requestString = await request.text();
   const milestoneData = JSON.parse(parse(requestString).milestoneString as string);
   try {

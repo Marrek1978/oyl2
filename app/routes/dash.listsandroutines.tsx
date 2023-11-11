@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { LoaderArgs } from '@remix-run/server-runtime';
+import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { Link, Outlet, useRouteLoaderData } from '@remix-run/react';
 
 import HeadingH2 from '~/components/titles/HeadingH2';
@@ -17,7 +17,7 @@ import type { RoutineAndTasks, RoutineAndTasksWithStrDates } from '~/types/routi
 import DisplayListsOrRoutines from '~/components/list/DisplayListsOrRoutines';
 
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   try {
     const userId = await requireUserId(request);
     const allUserLists = await getAllListsAndTodos(userId)

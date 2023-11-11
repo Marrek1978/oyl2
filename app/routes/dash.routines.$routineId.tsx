@@ -1,5 +1,5 @@
 import { parse } from 'querystring';
-import type { ActionArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 import { Outlet, useMatches, useParams } from '@remix-run/react'
 
 import Modal from '~/components/modals/Modal'
@@ -8,7 +8,7 @@ import { reorderCompletedTasks, updateCompletedTasks } from '~/models/routines.s
 
 import type { RoutineAndTasks } from '~/types/routineTypes';
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (request.method === 'POST') {
     const formBody = await request.text();

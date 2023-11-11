@@ -1,5 +1,5 @@
 import { useMatches, useParams } from '@remix-run/react';
-import { redirect, type ActionArgs } from '@remix-run/server-runtime';
+import { redirect, type ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import ProjectsForm from '~/components/forms/ProjectsForm'
@@ -9,7 +9,7 @@ import { updateProjectDetails } from '~/models/project.server';
 import type { Project } from '@prisma/client';
 import type { ProjectValidationErrorsTypes } from '~/types/projectTypes';
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const userId = await requireUserId(request)
   const formData = await request.formData()
   const projectData = Object.fromEntries(formData);

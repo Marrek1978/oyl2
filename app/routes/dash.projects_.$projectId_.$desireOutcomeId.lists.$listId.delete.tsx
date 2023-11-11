@@ -1,6 +1,6 @@
 import { parse } from 'querystring';
 import { useMatches, useParams } from '@remix-run/react';
-import { type ActionArgs, redirect } from '@remix-run/server-runtime';
+import { type ActionFunctionArgs, redirect } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal';
 import { deleteList } from '~/models/list.server';
@@ -9,7 +9,7 @@ import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
 import type { ListAndToDos } from '~/types/listTypes';
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formBody = await request.text();
   const parsedBody = parse(formBody);
   const listId = parsedBody.rowId as string

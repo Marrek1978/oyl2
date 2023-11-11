@@ -1,7 +1,7 @@
 import { parse } from 'querystring';
 import { useEffect, useState } from 'react';
 import { useParams } from '@remix-run/react';
-import type { ActionArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import { deleteMilestoneGroupById } from '~/models/milestoneGroup.server';
@@ -10,7 +10,7 @@ import useFormDeletedToastAndRedirect from '~/components/utilities/useFormDelete
 import { useGetMilestoneGroup } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId.edit';
 
 
-export const action = async ({ request, params }: ActionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   const formBody = await request.text();
   const parsedBody = parse(formBody);
   const id = parsedBody.rowId as string

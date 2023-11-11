@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useParams, } from '@remix-run/react';
-import type { ActionArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import { deleteScheduledItem } from '~/models/scheduler.server';
@@ -10,7 +10,7 @@ import useFormDeletedToastAndRedirect from '~/components/utilities/useFormDelete
 import type { ScheduledItem } from '@prisma/client';
 
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const itemData = Object.fromEntries(formData);
   const id = itemData.rowId as string
