@@ -1,8 +1,10 @@
 import { Form, Link, useActionData } from '@remix-run/react'
-import React from 'react'
-import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue'
+
 import { closeIcon, dbIcon } from '../utilities/icons'
-import type { ClarifyingQuestionsWithStringDates } from '~/types/clarityTypes';
+import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue'
+
+import type { ValidationErrorTypes } from '~/types/validationTypes';
+import type  { ClarifyingQuestionsWithStringDates } from '~/types/clarityTypes';
 
 
 interface ClarityQuestionsEditModalProps {
@@ -12,7 +14,7 @@ interface ClarityQuestionsEditModalProps {
 
 function ClarityQuestionsEditModal({ questionName, questions }: ClarityQuestionsEditModalProps) {
 
-  const validationErrors = useActionData()
+  const validationErrors = useActionData() as ValidationErrorTypes
 
   const textObj: { [key: string]: string } = {
     'birthDate': 'Enter Your Birthday',

@@ -60,7 +60,7 @@ export function createRoutineAndTasks({
 
 export function getAllRoutines(userId: User["id"]) {
   try {
-    const result = prisma.routine.findMany({
+     return prisma.routine.findMany({
       where: { userId },
       include: {
         tasks: {
@@ -69,7 +69,7 @@ export function getAllRoutines(userId: User["id"]) {
       },
       orderBy: { sortOrder: "asc" },
     });
-    return result;
+    
   } catch (error) {
     throw error;
   }

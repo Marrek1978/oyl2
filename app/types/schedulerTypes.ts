@@ -9,6 +9,12 @@ export type ScheduleItemNotYetSaved = Omit<
   "createdAt" | "updatedAt" | "userId"
 >;
 export type AllScheduleItems = ScheduledItem | ScheduleItemNotYetSaved;
+
+export type ScheduledItemWithStrDates = Omit<ScheduledItem, "createdAt" | "updatedAt"> & {
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type AllDraggedItems =
   | ListAndToDos
   | RoutineAndTasks

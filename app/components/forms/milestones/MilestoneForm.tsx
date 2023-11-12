@@ -193,9 +193,9 @@ function MilestoneForm({ milestone, isNew = true, milestoneArrayLength, }: Props
             <div className='w-[50%] flex justify-start'>
               <div className='flex flex-col gap-y-0 w-full'>
                 <ToggleWithLabelAndGuideLineLink
-                  text='Completed?'
+                  guidelineTitle='Completed?'
                   guideline={CoreValueStatement}
-                  title='Milestone Description'
+                  text='Milestone Description'
                   checkedState={isCompleted}
                   handleCheckedState={handleIsCompleted}
                 />

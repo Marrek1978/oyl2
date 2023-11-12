@@ -1,6 +1,6 @@
-import type { DesiresClarifyingQuestions } from "@prisma/client";
+import type { ClarifyingQuestions } from "@prisma/client";
 
-export type ClarifyingQuestionsWithStringDates = DesiresClarifyingQuestions & { birthDate: string, createdAt: string, updatedAt: string }
+export type ClarifyingQuestionsWithStringDates = ClarifyingQuestions & { birthDate: string, createdAt: string, updatedAt: string }
 
 
  

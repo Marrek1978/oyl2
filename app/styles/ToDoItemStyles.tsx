@@ -1,10 +1,11 @@
 import type { ToDo } from '@prisma/client';
+import type { CreationTodo } from '~/types/listTypes';
 
 interface ToDoItemStylesProps {
-  todo: ToDo  ;
+  todo: CreationTodo | ToDo  ;
 }
 
-export function ToDoItemStyles({ todo }: ToDoItemStylesProps) {
+export function ToDoItemStyles( {todo}: ToDoItemStylesProps) {
   return (
     todo['isUrgent']
       ? 'text-accent-focus bg-accent-content'

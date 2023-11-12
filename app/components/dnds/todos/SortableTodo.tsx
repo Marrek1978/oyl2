@@ -7,18 +7,19 @@ import { EditIcon, trashIcon } from '~/components/utilities/icons';
 import OutlinedIconOnlyBtn from '~/components/buttons/OutlinedIconOnlyBtn';
 
 import type { CreationTodo } from '~/types/listTypes';
+import type { ToDo } from "@prisma/client";
 
 
 interface SortableItemProps {
   id: string,
-  todo: CreationTodo  
+  todo: CreationTodo | ToDo
   removeTodo: (todoIndex: string) => void;
   handleOpenEditModal: (todoIndex: string) => void;
 }
 
 function SortableToDo({ id, todo, removeTodo, handleOpenEditModal }: SortableItemProps) {
   const formattedDate = formatDate(todo['dueDate']);
-  const priorityStyling = ToDoItemStyles({ todo })
+  const priorityStyling = ToDoItemStyles({todo})
 
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: id });

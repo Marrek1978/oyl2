@@ -5,6 +5,7 @@ import { Outlet, useRouteLoaderData } from '@remix-run/react';
 import Modal from '~/components/modals/Modal';
 import HeadingH1 from '~/components/titles/HeadingH1';
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
+import ThreeParaFlex from '~/components/baseContainers/ThreeParaFlex';
 import TwoToneSubHeading from '~/components/titles/TwoToneSubHeading';
 import { getDesireWithValuesAndOutcomes } from '~/models/desires.server';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
@@ -15,15 +16,14 @@ import { ArrayOfObjectsStrToDates, ObjectStrToDates, varsForPluralText } from '~
 
 import type { Desire, Outcome, Value } from '@prisma/client';
 import type { DesireWithValuesAndOutcomes, DesireWithValuesAndOutcomesWithStringDates } from '~/types/desireTypes';
-import ThreeParaFlex from '~/components/baseContainers/ThreeParaFlex';
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { desireId } = params
   if (!desireId) throw new Error('No desireId in params')
   try {
-    const desiresWithValuesOutcomes = await getDesireWithValuesAndOutcomes(desireId);
-    return desiresWithValuesOutcomes || null
+    const desireWithValuesOutcomes = await getDesireWithValuesAndOutcomes(desireId);
+    return desireWithValuesOutcomes
   } catch (error) { throw error }
 };
 
@@ -33,7 +33,7 @@ function DesirePage() {
   const [values, setValues] = useState<Value[]>([]);
   const [outcomes, setOutcomes] = useState<Outcome[]>([]);
   const [desire, setDesire] = useState<DesireWithValuesAndOutcomes | undefined | null>()
-  const loadedDesire: DesireWithValuesAndOutcomes | undefined | null = useGetSpecificDesireWithValuesAndOutcomes();
+  const loadedDesire: DesireWithValuesAndOutcomes | null = useGetSpecificDesireWithValuesAndOutcomes();
 
   useEffect(() => {
     if (loadedDesire === null) return setDesire(null)
@@ -96,40 +96,6 @@ function DesirePage() {
             textParagraph3={ideal?.length ? ideal : DesireIdealPlaceholderText}
           />
 
-          {/* //?  PARAGRAPHS  */}
-          <div className='flex flex-wrap gap-12 mt-8'>
-
-            {/* //?  THE DESIRE  */}
-            {/* <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max '>
-              <H2WithLinkAndProsePara
-                title={'The Desire'}
-                linkDestination={'editDetails'}
-                linkText={'Edit Desire Description'}
-                paragraph={description || ''}
-              />
-            </div> */}
-
-            {/* //?  THE CURRENT SITUATION  */}
-            {/* <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max   '>
-              <H2WithLinkAndProsePara
-                title={'The Current Situation'}
-                linkDestination={'editCurrent'}
-                linkText={'Edit Current Situation'}
-                paragraph={current?.length ? current : DesireCurrentDefaultText}
-              />
-            </div> */}
-
-            {/* //?  THE IDEAL SITUATION  */}
-            {/* <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max   '>
-              <H2WithLinkAndProsePara
-                title={'The Ideal Scenario'}
-                linkDestination={'editIdeal'}
-                linkText={'Edit Ideal Scenario'}
-                paragraph={ideal?.length ? ideal : DesireIdealPlaceholderText}
-              />
-            </div> */}
-
-          </div>
           {/* //?  OUTCOMES  */}
           <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max  mt-12 '>
             <AllOutcomesDisplay
@@ -148,36 +114,30 @@ function DesirePage() {
 export default DesirePage
 
 
-interface getLoaderDataProps {
-  path?: string | undefined;
-}
+const path: string = `routes/dash.desires_.$desireId`
 
-
-
-export const useGetLoaderData = ({ path = `routes/dash.desires_.$desireId` }: getLoaderDataProps): DesireWithValuesAndOutcomesWithStringDates | undefined | null => {
+export const useGetLoaderData = (): DesireWithValuesAndOutcomesWithStringDates | null => {
   const loaderData = useRouteLoaderData(path)
-  const [desiresWithStrDates, setDesiresWithStrDates] = useState<DesireWithValuesAndOutcomesWithStringDates | null>()
+  const [desire, setDesire] = useState<DesireWithValuesAndOutcomesWithStringDates | null>(null)
 
   useEffect(() => {
-    if (loaderData === undefined) return
-    if (loaderData === null) return setDesiresWithStrDates(null)
-    const desiresWithValuesAndOutcomesStrDates = loaderData
-    if (desiresWithValuesAndOutcomesStrDates) setDesiresWithStrDates(desiresWithValuesAndOutcomesStrDates)
+    if (loaderData === undefined || loaderData === null) return setDesire(null)
+    const desireWithStrDates = loaderData as DesireWithValuesAndOutcomesWithStringDates
+    setDesire(desireWithStrDates)
   }, [loaderData])
 
-  return desiresWithStrDates
+  return desire
 }
 
-export const useGetSpecificDesireWithValuesAndOutcomes = ({ path = `routes/dash.desires_.$desireId` } = {} as getLoaderDataProps): DesireWithValuesAndOutcomes | undefined | null => {
-  const [desire, setDesire] = useState<DesireWithValuesAndOutcomes | undefined | null>()
-  const desiresWithStrDates: DesireWithValuesAndOutcomesWithStringDates | undefined | null = useGetLoaderData({ path })
-
-
+export const useGetSpecificDesireWithValuesAndOutcomes = (): DesireWithValuesAndOutcomes => {
+  const [desire, setDesire] = useState<DesireWithValuesAndOutcomes>()
+  const loadedData = useGetLoaderData()
 
   useEffect(() => {
-    if (desiresWithStrDates === undefined) return
-    if (desiresWithStrDates === null) return setDesire(null)
-    const { desireValues, outcomes, ...desire } = desiresWithStrDates
+    if (loadedData === undefined || loadedData === null) return
+    const data = loadedData as DesireWithValuesAndOutcomesWithStringDates
+    // console.log("🚀 ~ file: dash.desires_.$desireId.tsx:174 ~ useEffect ~ data:", data)
+    const { desireValues, outcomes, ...desire } = data
     let desireWithProperDates: Desire
     let outcomesWithProperDates: Outcome[] = []
     let desireValuesWithProperDates: { value: Value }[] = []
@@ -202,10 +162,9 @@ export const useGetSpecificDesireWithValuesAndOutcomes = ({ path = `routes/dash.
       outcomes: outcomesWithProperDates
     }
     setDesire(objWithProperDates)
-  }, [desiresWithStrDates])
+  }, [loadedData])
 
-
-  return desire
+  return desire || {} as DesireWithValuesAndOutcomes
 }
 
 

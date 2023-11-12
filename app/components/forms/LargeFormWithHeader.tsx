@@ -1,5 +1,5 @@
 import React from 'react'
-import GetHeaderBgColor from './GetHeaderBgColor';
+import { GetHeaderBgColor } from '~/components/forms/GetHeaderBgColor';
 
 interface FormProps {
   children: React.ReactNode;

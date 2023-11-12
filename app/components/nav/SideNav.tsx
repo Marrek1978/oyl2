@@ -69,11 +69,7 @@ const SideNav = () => {
           </li>
 
 
-          {/* <li className="">
-            <NavLink to='/dash/projects'  >
-              <span>Projects</span>
-            </NavLink>
-          </li> */}
+      
 
 
           <li className="relative">

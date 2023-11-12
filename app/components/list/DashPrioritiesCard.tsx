@@ -1,18 +1,19 @@
 import React from 'react'
-import type {  Todo } from '~/types/listTypes' // adjust the path according to your project structure
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { ToDoItemStylesNoBg } from '../../styles/ToDoItemStyles';
 import LabelCardHeader from '../LabelCardHeader';
 
+import type { ToDo } from '@prisma/client';
+
 // need to open a modal, from route    
 interface DashPrioritiesCardProps {
   title: string;
-  todos:Todo[];
+  todos:ToDo[];
   htmlFor: string;
   onOpenFunction: () => void;
   setPriorityModalTitle: (title:string | null) => void;
-  setPriorityModalTodos: (todos:Todo[] | null) => void;
+  setPriorityModalTodos: (todos:ToDo[] | null) => void;
   headerColor?:string;
   textColor?:string;
   labelHoverColor?:string;
@@ -89,12 +90,12 @@ const DashPrioritiesCard: React.FC<DashPrioritiesCardProps> = ({
                     text-left 
                    ${priorityStyling}
                     `}>
-                <div className={`w-3/5 wrap truncate text-ellipsis	${todoObj.complete && 'line-through text-slate-300'}`} >
+                <div className={`w-3/5 wrap truncate text-ellipsis	${todoObj.isComplete && 'line-through text-slate-300'}`} >
                   {todoObj.body}
                 </div>
 
                 {todoObj.dueDate && (
-                  <div className={`text-xs font-medium text-slate-400 self-center ${todoObj.complete && 'line-through text-slate-300'}`}>
+                  <div className={`text-xs font-medium text-slate-400 self-center ${todoObj.isComplete && 'line-through text-slate-300'}`}>
                     {format(new Date(todoObj.dueDate), 'EEE, MMM d', { locale: enUS })}
                   </div>
                 )}

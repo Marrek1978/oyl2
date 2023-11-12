@@ -7,6 +7,7 @@ import { deleteValue } from '~/models/values.server';
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
 import useFormDeletedToastAndRedirect from '~/components/utilities/useFormDeletedToast';
 
+import type { Value } from '@prisma/client';
 import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 
@@ -26,16 +27,14 @@ function DeleteValuePage() {
   const [title, setTitle] = useState<string>('')
 
   const valueId = params.valueId as string
-  const { value } = useGetSpecificValue(valueId)
+  const value = useGetSpecificValue(valueId) as Value
 
   useEffect(() => {
     if (!value) return
     setTitle(value.title)
   }, [value])
 
-
   useFormDeletedToastAndRedirect({ redirectTo: '/dash/values', message: 'Value was deleted' })
-
 
   return (
     <>

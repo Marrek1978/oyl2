@@ -29,7 +29,6 @@ function ListRoutineCard({ list }: Props) {
 
   useEffect(() => {
     if (!list || list === undefined || list === null) return
-    console.log("🚀 ~ file: ListRoutineCard useEffect ~ list:", list)
     if ('id' in list && 'todos' in list) {
       setTitle(list.title);
       setActionItems(list.todos as ActionItem[]);

@@ -44,7 +44,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 function ClarityPage() {
 
-  const questions = useLoaderData<ClarifyingQuestionsWithStringDates[]>();
+  const questions = useLoaderData() as ClarifyingQuestionsWithStringDates[]
 
   return (
     <>

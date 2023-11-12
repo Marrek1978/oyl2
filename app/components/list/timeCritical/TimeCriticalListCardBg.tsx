@@ -34,7 +34,7 @@ function TimeCriticalTodoListCardBg({ children, title, maxWidthTailWindSize = 'm
         <Heading14pxWithLink
           title={title?.toLocaleString() || ''}
           linkDestination={linkUrl}
-          linkColor={'text-info'}
+          textColorDaisyUI={'info'}
           linkText={'OPEN'}
         />
       </div>

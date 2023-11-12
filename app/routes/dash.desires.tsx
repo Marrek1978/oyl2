@@ -1,7 +1,7 @@
 import { parse } from 'querystring';
 import { useEffect, useState } from 'react';
+import { Outlet, useRouteLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/server-runtime';
-import { Outlet, useNavigate, useParams, useRouteLoaderData } from '@remix-run/react';
 
 import { getValues } from '~/models/values.server';
 import { requireUserId } from '~/models/session.server';
@@ -13,7 +13,7 @@ import { createDesire, getDesires, updateDesiresOrder } from '~/models/desires.s
 
 import type { Value } from '@prisma/client';
 import type { ValueWithStringDates } from '~/types/valueTypes';
-import type { DesireWithValues, DesireWithValuesAndOutcomes, DesireWithValuesAndOutcomesWithStringDates, DesireWithValuesWithStringDates } from '~/types/desireTypes';
+import type { DesireWithValues, DesireWithValuesWithStringDates } from '~/types/desireTypes';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   let userId = await requireUserId(request);
@@ -97,71 +97,83 @@ export default DesiresPage
 
 
 //?????????????????????????????????  CUSTOM HOOKS  ?????????????
+// return { desiresWithValues, allUserValues }
 
-export const useGetLoaderData = () => {
-  const path = 'routes/dash.desires'
-  const { desiresWithValues, allUserValues } = useRouteLoaderData(path)
+interface DataWithStrDates {
+  allUserValues: ValueWithStringDates[];
+  desiresWithValues: DesireWithValuesWithStringDates[];
+}
 
-  const [allUserValuesStrDates, setAllUserValuesStrDates] = useState<ValueWithStringDates[]>()
-  const [desiresWithValuesStrDates, setDesiresWithValuesStrDates] = useState<DesireWithValuesWithStringDates[]>()
+
+const path = 'routes/dash.desires'
+
+export const useGetLoaderData = (): DataWithStrDates => {
+  const loadedData = useRouteLoaderData(path)
+  const [allUserValues, setAllUserValues] = useState<ValueWithStringDates[]>([])
+  const [desiresWithValues, setDesiresWithValues] = useState<DesireWithValuesWithStringDates[]>([])
 
   useEffect(() => {
-    if (allUserValues) setAllUserValuesStrDates(allUserValues)
-    if (desiresWithValues) setDesiresWithValuesStrDates(desiresWithValues)
-  }, [allUserValues, desiresWithValues])
+    if (!loadedData || loadedData === undefined) return
+    const data = loadedData as DataWithStrDates
 
-  return { allUserValuesStrDates, desiresWithValuesStrDates }
+    const allUserValuesWithStrDates = data.allUserValues as ValueWithStringDates[]
+    if (allUserValuesWithStrDates) setAllUserValues(allUserValuesWithStrDates)
+
+    const desiresWithValuesWithStrDates = data.desiresWithValues as DesireWithValuesWithStringDates[]
+    if (desiresWithValuesWithStrDates) setDesiresWithValues(desiresWithValuesWithStrDates)
+  }, [loadedData])
+
+  return { allUserValues, desiresWithValues }
 }
 
 
 
-export const useGetUserAllValues = (): Value[] | undefined => {
-  const [values, setValues] = useState<Value[]>()
-  const { allUserValuesStrDates } = useGetLoaderData()
+export const useGetUserAllValues = (): Value[] => {
+  const [values, setValues] = useState<Value[]>([])
+  const { allUserValues } = useGetLoaderData() as DataWithStrDates
 
   useEffect(() => {
-    if (!allUserValuesStrDates) return
-    const valuesWithProperDates: Value[] = ArrayOfObjectsStrToDates({ items: allUserValuesStrDates, dateKeys: ['createdAt', 'updatedAt'] })
+    if (!allUserValues) return
+    const valuesWithProperDates: Value[] = ArrayOfObjectsStrToDates({ items: allUserValues, dateKeys: ['createdAt', 'updatedAt'] }) as Value[]
     setValues(valuesWithProperDates)
-  }, [allUserValuesStrDates])
+  }, [allUserValues])
 
   return values
 }
 
 
-export const useGetDesiresArrayLength = (): number | undefined => {
-  const { desiresWithValuesStrDates } = useGetLoaderData()
-  const [desiresLength, setDesiresLength] = useState<number>()
+export const useGetDesiresArrayLength = (): number   => {
+  const { desiresWithValues } = useGetLoaderData() 
+  const [desiresLength, setDesiresLength] = useState<number>(0)
 
   useEffect(() => {
-    if (!desiresWithValuesStrDates) return setDesiresLength(0)
-    setDesiresLength(desiresWithValuesStrDates.length)
-  }, [desiresWithValuesStrDates])
+    if (!desiresWithValues) return setDesiresLength(0)
+    setDesiresLength(desiresWithValues.length)
+  }, [desiresWithValues])
 
   return desiresLength
 }
 
 
-export const useGetAllDesiresWithValues = (): DesireWithValues[] | undefined => {
-  const { desiresWithValuesStrDates } = useGetLoaderData()
-  const [desires, setDesires] = useState<DesireWithValues[]>()
-
+export const useGetAllDesiresWithValues = (): DesireWithValues[] => {
+  const { desiresWithValues } = useGetLoaderData() 
+  const [desires, setDesires] = useState<DesireWithValues[]>([])
   useEffect(() => {
-    if (!desiresWithValuesStrDates) return
-    const desiresWithProperDates: DesireWithValues[] = ArrayOfObjectsStrToDates({ items: desiresWithValuesStrDates, dateKeys: ['createdAt', 'updatedAt'] })
+    if (!desiresWithValues) return
+    const desiresWithProperDates: DesireWithValues[] = ArrayOfObjectsStrToDates({ items: desiresWithValues, dateKeys: ['createdAt', 'updatedAt'] }) as DesireWithValues[]
     setDesires(desiresWithProperDates)
-  }, [desiresWithValuesStrDates])
+  }, [desiresWithValues])
 
   return desires
 }
 
 
 
-export const useGetAllUnServerdValues = (): Value[] | undefined => {
-  const [unservedValues, setUnservedValues] = useState<Value[]>()
-  const [allServedUserValues, setAllServedUserValues] = useState<Value[]>()
-  const allUserValues: Value[] | undefined = useGetUserAllValues()
-  const allDesiresWithValues: DesireWithValues[] | undefined = useGetAllDesiresWithValues()
+export const useGetAllUnServerdValues = (): Value[] => {
+  const [unservedValues, setUnservedValues] = useState<Value[]>([])
+  const [allServedUserValues, setAllServedUserValues] = useState<Value[]>([])
+  const allUserValues: Value[] = useGetUserAllValues()
+  const allDesiresWithValues: DesireWithValues[] = useGetAllDesiresWithValues()
 
   useEffect(() => {
     if (!allDesiresWithValues) return
@@ -182,13 +194,10 @@ export const useGetAllUnServerdValues = (): Value[] | undefined => {
 }
 
 
-
-
 export type HasId = {
   id: string;
   [key: string]: any;
 };
-
 
 
 export const getDifferenceBetweenObjArraysById = <T extends HasId>(largerObjArr: any, smallerObjArr: any[]): T[] => {
@@ -212,118 +221,119 @@ export const isObjInObjArrayById = <T extends HasId>(obj: T, objArray: T[]): boo
 
 
 
-export const useGetDesireWithValuesAndOutcomes = () => {
-  const params = useParams();
-  const path = 'routes/dash.desires'
-  const navigate = useNavigate();
-  const loaderData = useRouteLoaderData(path);
-  const [desire, setDesire] = useState<DesireWithValuesAndOutcomes>();
+// loader  return { desiresWithValues, allUserValues }
 
-  useEffect(() => {
-    const desiresWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates[] = loaderData?.desiresWithValuesOutcomes;
-    const currentDesireWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates | undefined = desiresWithValuesOutcomesStrDates.find((desire: DesireWithValuesAndOutcomesWithStringDates) => desire.id === params.desireId);
+// export const useGetDesireWithValuesAndOutcomes = () => {
+//   const params = useParams();
+//   const navigate = useNavigate();
+//   const loaderData = useRouteLoaderData(path);
+//   const [desire, setDesire] = useState<DesireWithValuesAndOutcomes>();
 
-    if (currentDesireWithValuesOutcomesStrDates !== undefined) {
-      const currentDesire: DesireWithValuesAndOutcomes = transformCurrentDesireValueOutcomeDates(currentDesireWithValuesOutcomesStrDates);
-      setDesire(currentDesire);
-    } else {
-      navigate('/dash/desires');
-      return
-    }
-  }, [loaderData, params.desireId, navigate]);
+//   useEffect(() => {
+//     const desiresWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates[] = loaderData?.desiresWithValues;
+//     const currentDesireWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates | undefined = desiresWithValuesOutcomesStrDates.find((desire: DesireWithValuesAndOutcomesWithStringDates) => desire.id === params.desireId);
 
-  return desire;
-};
+//     if (currentDesireWithValuesOutcomesStrDates !== undefined) {
+//       const currentDesire: DesireWithValuesAndOutcomes = transformCurrentDesireValueOutcomeDates(currentDesireWithValuesOutcomesStrDates);
+//       setDesire(currentDesire);
+//     } else {
+//       navigate('/dash/desires');
+//       return
+//     }
+//   }, [loaderData, params.desireId, navigate]);
 
-
-export const useGetAllDesiresWithValuesAndOutcomes = (): DesireWithValuesAndOutcomes[] | undefined => {
-  const navigate = useNavigate();
-  const path = 'routes/dash.desires'
-  const loaderData = useRouteLoaderData(path);
-  const [desires, setDesires] = useState<DesireWithValuesAndOutcomes[]>();
-
-  useEffect(() => {
-    const desiresWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates[] = loaderData?.desiresWithValuesOutcomes;
-
-    if (desiresWithValuesOutcomesStrDates !== undefined) {
-      const currentDesires: DesireWithValuesAndOutcomes[] = transformDesiresValueOutcomeDates(desiresWithValuesOutcomesStrDates);
-      setDesires(currentDesires);
-    } else {
-      navigate('/dash/desires');
-      return
-    }
-  }, [loaderData, navigate]);
-
-  return desires;
-};
+//   return desire;
+// };
 
 
-export function transformDesiresValueOutcomeDates(desiresWithValuesOutcomes: DesireWithValuesAndOutcomesWithStringDates[]): DesireWithValuesAndOutcomes[] {
-  const desires = desiresWithValuesOutcomes.map((desire: DesireWithValuesAndOutcomesWithStringDates) => {
-    const outcomes = desire.outcomes.sort((a, b) => a.sortOrder - b.sortOrder)
-    const values = desire.desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
-    let outcomesWithProperDates = []
-    let valuesWithProperDates = []
+// export const useGetAllDesiresWithValuesAndOutcomes = (): DesireWithValuesAndOutcomes[] | undefined => {
+//   const navigate = useNavigate();
+//   const path = 'routes/dash.desires'
+//   const loaderData = useRouteLoaderData(path);
+//   const [desires, setDesires] = useState<DesireWithValuesAndOutcomes[]>();
 
-    if (outcomes.length > 0) {
-      outcomesWithProperDates = outcomes.map((outcome: any) => ({
-        ...outcome,
-        createdAt: new Date(outcome.createdAt!),
-        updatedAt: new Date(outcome.updatedAt!),
-      }))
-    }
+//   useEffect(() => {
+//     const desiresWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates[] = loaderData?.desiresWithValuesOutcomes;
 
-    if (values.length > 0) {
-      valuesWithProperDates = values.map((value: any) => ({
-        ...value,
-        createdAt: new Date(value.createdAt!),
-        updatedAt: new Date(value.updatedAt!),
-      }))
-    }
+//     if (desiresWithValuesOutcomesStrDates !== undefined) {
+//       const currentDesires: DesireWithValuesAndOutcomes[] = transformDesiresValueOutcomeDates(desiresWithValuesOutcomesStrDates);
+//       setDesires(currentDesires);
+//     } else {
+//       navigate('/dash/desires');
+//       return
+//     }
+//   }, [loaderData, navigate]);
 
-    return ({
-      ...desire,
-      createdAt: new Date(desire.createdAt!),
-      updatedAt: new Date(desire.updatedAt!),
-      outcomes: outcomesWithProperDates,
-      desireValues: valuesWithProperDates
-    })
-  })
-
-  return desires
-}
+//   return desires;
+// };
 
 
-export function transformCurrentDesireValueOutcomeDates(desiresWithValuesOutcomes: DesireWithValuesAndOutcomesWithStringDates): DesireWithValuesAndOutcomes {
-  const desire = desiresWithValuesOutcomes
-  const outcomes = desire.outcomes.sort((a, b) => a.sortOrder - b.sortOrder)
-  const values = desire.desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
-  let outcomesWithProperDates = []
-  let valuesWithProperDates = []
+// export function transformDesiresValueOutcomeDates(desiresWithValuesOutcomes: DesireWithValuesAndOutcomesWithStringDates[]): DesireWithValuesAndOutcomes[] {
+//   const desires = desiresWithValuesOutcomes.map((desire: DesireWithValuesAndOutcomesWithStringDates) => {
+//     const outcomes = desire.outcomes.sort((a, b) => a.sortOrder - b.sortOrder)
+//     const values = desire.desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
+//     let outcomesWithProperDates = []
+//     let valuesWithProperDates = []
 
-  if (outcomes.length > 0) {
-    outcomesWithProperDates = outcomes.map((outcome: any) => ({
-      ...outcome,
-      createdAt: new Date(outcome.createdAt!),
-      updatedAt: new Date(outcome.updatedAt!),
-    }))
-  }
+//     if (outcomes.length > 0) {
+//       outcomesWithProperDates = outcomes.map((outcome: any) => ({
+//         ...outcome,
+//         createdAt: new Date(outcome.createdAt!),
+//         updatedAt: new Date(outcome.updatedAt!),
+//       }))
+//     }
 
-  if (values.length > 0) {
-    valuesWithProperDates = values.map((value: any) => ({
-      ...value,
-      createdAt: new Date(value.createdAt!),
-      updatedAt: new Date(value.updatedAt!),
-    }))
-  }
+//     if (values.length > 0) {
+//       valuesWithProperDates = values.map((value: any) => ({
+//         ...value,
+//         createdAt: new Date(value.createdAt!),
+//         updatedAt: new Date(value.updatedAt!),
+//       }))
+//     }
 
-  const transformedDesire: DesireWithValuesAndOutcomes = ({
-    ...desire,
-    createdAt: new Date(desire.createdAt!),
-    updatedAt: new Date(desire.updatedAt!),
-    outcomes: outcomesWithProperDates,
-    desireValues: valuesWithProperDates
-  })
+//     return ({
+//       ...desire,
+//       createdAt: new Date(desire.createdAt!),
+//       updatedAt: new Date(desire.updatedAt!),
+//       outcomes: outcomesWithProperDates,
+//       desireValues: valuesWithProperDates
+//     })
+//   })
 
-  return transformedDesire
-}
+//   return desires
+// }
+
+
+// export function transformCurrentDesireValueOutcomeDates(desiresWithValuesOutcomes: DesireWithValuesAndOutcomesWithStringDates): DesireWithValuesAndOutcomes {
+//   const desire = desiresWithValuesOutcomes
+//   const outcomes = desire.outcomes.sort((a, b) => a.sortOrder - b.sortOrder)
+//   const values = desire.desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
+//   let outcomesWithProperDates = []
+//   let valuesWithProperDates = []
+
+//   if (outcomes.length > 0) {
+//     outcomesWithProperDates = outcomes.map((outcome: any) => ({
+//       ...outcome,
+//       createdAt: new Date(outcome.createdAt!),
+//       updatedAt: new Date(outcome.updatedAt!),
+//     }))
+//   }
+
+//   if (values.length > 0) {
+//     valuesWithProperDates = values.map((value: any) => ({
+//       ...value,
+//       createdAt: new Date(value.createdAt!),
+//       updatedAt: new Date(value.updatedAt!),
+//     }))
+//   }
+
+//   const transformedDesire: DesireWithValuesAndOutcomes = ({
+//     ...desire,
+//     createdAt: new Date(desire.createdAt!),
+//     updatedAt: new Date(desire.updatedAt!),
+//     outcomes: outcomesWithProperDates,
+//     desireValues: valuesWithProperDates
+//   })
+
+//   return transformedDesire
+// }

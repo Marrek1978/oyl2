@@ -81,7 +81,7 @@ export function getAllListsAndTodos(userId: User["id"]) {
           orderBy: { sortOrder: "asc" },
         },
       },
-      orderBy: { sortOrder: "desc" },
+      orderBy: { sortOrder: "asc" },
     });
   } catch (error) {
     throw error;

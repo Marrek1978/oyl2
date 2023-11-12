@@ -14,9 +14,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const formBody = await request.text();
     const parsedBody = parse(formBody);
     const id = parsedBody.routineToDoId as string;
-    const complete = JSON.parse(parsedBody.completeString as string);
+    const isComplete = JSON.parse(parsedBody.completeString as string);
     try {
-      await updateCompletedTasks({ id, complete });
+      await updateCompletedTasks({ id, isComplete });
       return 'success'
     } catch (error) { throw error }
   }

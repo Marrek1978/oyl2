@@ -1,22 +1,23 @@
 import { useEffect } from 'react'
-import { json } from "@remix-run/node";
 import type { LoaderFunctionArgs } from '@remix-run/node';
-import { getUserId } from "~/models/session.server";
 import { Link, useLoaderData, Form } from "@remix-run/react";
 
 import { themeChange } from 'theme-change'
 import { useTheme } from '~/styles/ThemeContext';
 import OutlinedBtn from '../buttons/OutlinedBtn';
+import { getUser } from "~/models/session.server";
 import { LogoutIcon, MoonIcon, SunIcon } from '~/components/utilities/icons';
+import type { User } from '@prisma/client';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  let userId = await getUserId(request);
-  return json({ userId });
+  let user = await getUser(request);
+  return user;
 };
 
 
 function Navbar() {
-  const { user } = useLoaderData();
+  const loadedData = useLoaderData()
+  const user = loadedData as User
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === 'night';  //checks theme var , is true if 'winter' is selected
 
@@ -25,7 +26,7 @@ function Navbar() {
     // 👆 false parameter is required for react project
   }, [])
 
-   const darkBackground = isDark ? 'bg-base-100' : 'bg-base-content'
+  const darkBackground = isDark ? 'bg-base-100' : 'bg-base-content'
 
   return (
     <>
@@ -50,8 +51,8 @@ function Navbar() {
           <div className='max-h-4 flex gap-8'>
             {user && (<span className=' text-md font-poppins font-normal '> Hi, {user.name} </span>)}
             <button onClick={toggleTheme} className="btn btn-ghost text-warning ">
-             { isDark ? SunIcon : MoonIcon}
-             {/* {isDark ? faSun : MoonIcon} */}
+              {isDark ? SunIcon : MoonIcon}
+              {/* {isDark ? faSun : MoonIcon} */}
               <span className="ml-2">{isDark ? 'Light Mode' : 'Dark Mode'}</span>
             </button>
           </div>

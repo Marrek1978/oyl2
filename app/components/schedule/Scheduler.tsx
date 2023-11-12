@@ -12,10 +12,11 @@ import { useGetLoadedDesiresWithAll, useGetLoadedLists, useGetLoadedRoutines } f
 
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndTasks } from '~/types/routineTypes'
-import type { OutcomeWithAllWithStringDates } from '~/types/outcomeTypes';
-import type { DesireWithOutcomesAndAll, DesireWithOutcomesAndAllWithStrDates } from '~/types/desireTypes';
+import type { OutcomeWithAll,  } from '~/types/outcomeTypes';
+import type { DesireWithOutcomesAndAll } from '~/types/desireTypes';
 import type { DragFromOutsideItemArgs, EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop'
 import type { AllDraggedItems, AllScheduleItems, DroppedItem, ScheduleItemNotYetSaved } from '~/types/schedulerTypes';
+import { ArrayOfObjectsStrToDates } from '../utilities/helperFunctions';
 
 
 const localizer = momentLocalizer(moment)
@@ -48,7 +49,6 @@ function Scheduler({
   const desiresAndAll = useGetLoadedDesiresWithAll()
   const miscAndSpecialRoutines = useGetLoadedRoutines()
   const mainFocusOutcomeId = useGetMainFocusOutcomeId(desiresAndAll);
-
 
 
   //? ***********   CUSTOM DragAndDropCalendar FUNCTIONS   ***************** */
@@ -249,11 +249,12 @@ function Scheduler({
 export default Scheduler
 
 
-function useGetMainFocusOutcomeId(desiresAndAllArray: DesireWithOutcomesAndAllWithStrDates[]) {
+function useGetMainFocusOutcomeId(desiresAndAllArray: DesireWithOutcomesAndAll[]):string {
   return useMemo(() => {
-    const desireZero = desiresAndAllArray.find((desire: DesireWithOutcomesAndAllWithStrDates) => desire.sortOrder === 0);
+    const desireZero = desiresAndAllArray.find((desire: DesireWithOutcomesAndAll) => desire.sortOrder === 0);
     if (!desireZero) return '';
-    const outcomeZero = desireZero.outcomes.find((outcome: OutcomeWithAllWithStringDates) => outcome.sortOrder === 0);
+    const outcomes = ArrayOfObjectsStrToDates({ items: desireZero.outcomes, dateKeys: ['createdAt', 'updatedAt'] }) as OutcomeWithAll[]
+    const outcomeZero = outcomes.find((outcome: OutcomeWithAll ) => outcome.sortOrder === 0);
     return outcomeZero ? outcomeZero.id : '';
   }, [desiresAndAllArray]);
 }
@@ -275,8 +276,8 @@ export function CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutin
   let outcomeName: string;
 
   // let loadedLists: ListAndToDos[] | RoutineAndTasks[] | DesireWithOutcomesAndAll[] = [];
-  let currentList: ListAndToDos[] | RoutineAndTasks[] | undefined;
-  let currentToDos: ToDo[] | Task[] | undefined;
+  let currentList: ListAndToDos[] | RoutineAndTasks[]  ;
+  let currentToDos: ToDo[] | Task[] = [];
   let itemTitle: string = '';
 
   if (type === 'list') {

@@ -13,7 +13,6 @@ import HeadingH2 from '~/components/titles/HeadingH2'
 import Scheduler from '~/components/schedule/Scheduler'
 import { requireUserId } from '~/models/session.server'
 import BtnWithProps from '~/components/buttons/BtnWithProps'
-import { ChangeListArrayDates } from './dash.listsandroutines'
 import { getAllMiscAndSpecialLists } from '~/models/list.server'
 import SubHeading16px from '~/components/titles/SubHeading16px'
 import { getAllMiscAndSpecialRoutines } from '~/models/routines.server'
@@ -24,10 +23,11 @@ import { getScheduledItems, createScheduledItems } from '~/models/scheduler.serv
 import DesiresAndOutcomesWithListsAndRoutinesAsDraggables from '~/components/schedule/OutcomesDesiresListsRoutinesDraggables'
 
 import type { Item } from '~/types/itemTypes'
-import type { ListAndToDos } from '~/types/listTypes'
+import type { ListAndToDos, ListAndTodosWithStrDates } from '~/types/listTypes'
 import type { OutcomeWithAll } from '~/types/outcomeTypes'
-import type { RoutineAndTasks } from '~/types/routineTypes'
-import type { AllDraggedItems } from '~/types/schedulerTypes'
+import type { RoutineAndTasks, RoutineAndTasksWithStrDates } from '~/types/routineTypes'
+import type { AllDraggedItems, ScheduledItemWithStrDates } from '~/types/schedulerTypes'
+import type { DesireWithOutcomesAndAll, DesireWithOutcomesAndAllWithStrDates } from '~/types/desireTypes'
 
 
 //example from https://github.com/jquense/react-big-calendar/blob/master/stories/demos/exampleCode/dndOutsideSource.js
@@ -47,13 +47,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     const loadedMiscAndSpecialLists = await getAllMiscAndSpecialLists(userId);
     const loadedMiscAndSpecialRoutines = await getAllMiscAndSpecialRoutines(userId);
     const loadedDesiresWithOutcomesListsRoutines = await getDesiresWithOutcomesListsRoutines(userId);
-    
-    return {
+
+    const result = {
       loadedScheduledItems,
       loadedMiscAndSpecialLists,
       loadedMiscAndSpecialRoutines,
       loadedDesiresWithOutcomesListsRoutines,
     }
+    return result
   } catch (error) {
     throw error
   }
@@ -90,14 +91,15 @@ function Schedule() {
   //!  load and place due dates
   //! make all memoized functions, and move to helper functions doc?  
 
-
-
-  const loadedScheduledItems: ScheduledItem[] = useGetLoadedScheduledItems()
+  const loadedScheduledItems = useGetLoadedScheduledItems()
   const thisWeeksScheduledItems = useMemo(() => updateScheduledListsDatesToCurrentWeek(loadedScheduledItems), [loadedScheduledItems])
 
   const loadedOutcomes: any = useGetLoadedDesiresWithAll()
   const { miscLists, specialLists } = useGetLoadedMiscAndSpecialLists()
   const { miscRoutines, specialRoutines } = useGetLoadedMiscAndSpecialRoutines()
+
+
+
 
   useEffect(() => {
     setScheduleItems(thisWeeksScheduledItems)
@@ -247,6 +249,7 @@ export default Schedule
 ///*  into helper function doc... for loading schedueled Events from DB - remake for this week
 //  will have to change typing becuse input will change from .json file to db imports
 export function updateScheduledListsDatesToCurrentWeek(items: ScheduledItem[]): ScheduledItem[] {
+
   const currentDate = new Date()
   const currentWeekDay = currentDate.getDay()
 
@@ -257,7 +260,7 @@ export function updateScheduledListsDatesToCurrentWeek(items: ScheduledItem[]): 
     currentDate.getDate() - currentWeekDay + 1
   )
 
-  return items.map((item): ScheduledItem => {
+  return items?.map((item): ScheduledItem => {
 
     if (!item.start || !item.end) {
       throw new Error('Event start and end times must be defined');
@@ -310,41 +313,52 @@ function areArraysEqual(arr1: Item[], arr2: Item[]) {
 //      --> useGetLoadedMiscAndSpecialRoutines
 //  --> useGetLoadedDesiresWithAll
 
+
+interface ScheduledLoadersDataWithStrDates {
+  loadedScheduledItems: ScheduledItemWithStrDates[]
+  loadedMiscAndSpecialLists: ListAndTodosWithStrDates[];
+  loadedMiscAndSpecialRoutines: RoutineAndTasksWithStrDates[];
+  loadedDesiresWithOutcomesListsRoutines: DesireWithOutcomesAndAllWithStrDates[];
+}
+
  
 
-export const useGetScheduleLoaders = (path: string = 'routes/dash.schedule') => {
-  const loaderData = useRouteLoaderData(path);
-  return loaderData;
-};
+export const GetLoaderData = (path: string = 'routes/dash.schedule') => {
+  return useRouteLoaderData(path);
+}
 
 
-export const useGetLoadedScheduledItems = (path?: string) => {
-
-  const [items, setitems] = useState<ScheduledItem[]>([])
-  const { loadedScheduledItems } = useGetScheduleLoaders(path);
+export const useGetLoadedScheduledItems = (path?: string):ScheduledItem[] => {
+  const [scheduledItems, setScheduledItems] = useState<ScheduledItem[]>([])
+  const loadedData = GetLoaderData(path);  // all string dates
 
   useEffect(() => {
-    if (!loadedScheduledItems) return
-    const itemsWithProperDates = ArrayOfObjectsStrToDates({ items: loadedScheduledItems, dateKeys: ['createdAt', 'updatedAt'] })
-    setitems(itemsWithProperDates)
-  }, [loadedScheduledItems])
+    if (loadedData === undefined || loadedData === null) return
+    const data = loadedData as ScheduledLoadersDataWithStrDates
+    const loadedScheduledItems = data.loadedScheduledItems
+    const itemsWithProperDates = ArrayOfObjectsStrToDates({ items: loadedScheduledItems, dateKeys: ['createdAt', 'updatedAt', 'start', 'end'] })
+    setScheduledItems(itemsWithProperDates)
+  }, [loadedData])
 
-  return items
+  return scheduledItems
 }
 
 
 export const useGetLoadedLists = (path?: string): ListAndToDos[] => {
   const [miscAndSpecialLists, setMiscAndSpecialLists] = useState<ListAndToDos[]>([])
-  const { loadedMiscAndSpecialLists } = useGetScheduleLoaders(path);
+  const loadedData = GetLoaderData(path);
 
   useEffect(() => {
-    if (!loadedMiscAndSpecialLists) return
-    const miscAndSpecialListsWithProperDates: ListAndToDos[] = ChangeListArrayDates(loadedMiscAndSpecialLists)
-    setMiscAndSpecialLists(miscAndSpecialListsWithProperDates)
-  }, [loadedMiscAndSpecialLists])
+    if (loadedData === undefined || loadedData === null) return
+    const data = loadedData as ScheduledLoadersDataWithStrDates
+    const loadedScheduledItems = data.loadedMiscAndSpecialLists
+    const itemsWithProperDates = ArrayOfObjectsStrToDates({ items: loadedScheduledItems, dateKeys: ['createdAt', 'updatedAt'] })
+    setMiscAndSpecialLists(itemsWithProperDates)
+  }, [loadedData])
 
   return miscAndSpecialLists
 }
+
 
 type ReturnMiscAndSpecialListsType = {
   miscLists: ListAndToDos[]
@@ -369,23 +383,25 @@ export const useGetLoadedMiscAndSpecialLists = (): ReturnMiscAndSpecialListsType
 
 
 export const useGetLoadedRoutines = (path?: string): RoutineAndTasks[] => {
-  const [miscAndSpecialRoutines, setmiscAndSpecialRoutines] = useState<RoutineAndTasks[]>([])
-  const { loadedMiscAndSpecialRoutines } = useGetScheduleLoaders(path);
+  const [miscAndSpecialRoutines, setMiscAndSpecialRoutines] = useState<RoutineAndTasks[]>([])
+  const loadedData = GetLoaderData(path);
 
   useEffect(() => {
-    if (!loadedMiscAndSpecialRoutines) return
-    const miscAndSpecialRoutinesWithProperDates: RoutineAndTasks[] = ChangeListArrayDates(loadedMiscAndSpecialRoutines)
-    setmiscAndSpecialRoutines(miscAndSpecialRoutinesWithProperDates)
-  }, [loadedMiscAndSpecialRoutines])
+    if (loadedData === undefined || loadedData === null) return
+    const data = loadedData as ScheduledLoadersDataWithStrDates
+    const loadedScheduledItems = data.loadedMiscAndSpecialRoutines
+    const itemsWithProperDates = ArrayOfObjectsStrToDates({ items: loadedScheduledItems, dateKeys: ['createdAt', 'updatedAt'] })
+    setMiscAndSpecialRoutines(itemsWithProperDates)
+  }, [loadedData])
 
   return miscAndSpecialRoutines
 }
 
 
-export const useGetLoadedMiscAndSpecialRoutines = () => {
+export const useGetLoadedMiscAndSpecialRoutines = (): { miscRoutines: RoutineAndTasks[], specialRoutines: RoutineAndTasks[] } => {
   const [miscRoutines, setMiscRoutines] = useState<RoutineAndTasks[]>([])
   const [specialRoutines, setSpecialRoutines] = useState<RoutineAndTasks[]>([])
-  const miscAndSpecialRoutines: RoutineAndTasks[] = useGetLoadedRoutines();
+  const miscAndSpecialRoutines = useGetLoadedRoutines();
 
   useEffect(() => {
     if (!miscAndSpecialRoutines) return
@@ -400,9 +416,19 @@ export const useGetLoadedMiscAndSpecialRoutines = () => {
 }
 
 
-export const useGetLoadedDesiresWithAll = (path?: string) => {
-  const { loadedDesiresWithOutcomesListsRoutines } = useGetScheduleLoaders(path);
-  return loadedDesiresWithOutcomesListsRoutines
+export const useGetLoadedDesiresWithAll = (path?: string): DesireWithOutcomesAndAll[] => {
+  const loadedData = GetLoaderData(path);
+  const [desireWithAll, setDesireWithAll] = useState<DesireWithOutcomesAndAll[]>([])
+
+  useEffect(() => {
+    if (loadedData === undefined || loadedData === null) return
+    const data = loadedData as ScheduledLoadersDataWithStrDates
+    const loadedScheduledItems = data.loadedDesiresWithOutcomesListsRoutines
+    const itemsWithProperDates = ArrayOfObjectsStrToDates({ items: loadedScheduledItems, dateKeys: ['createdAt', 'updatedAt'] })
+    setDesireWithAll(itemsWithProperDates)
+  }, [loadedData])
+
+  return desireWithAll
 }
 
-
+ 

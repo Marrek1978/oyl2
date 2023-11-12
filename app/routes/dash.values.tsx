@@ -55,7 +55,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 function ValuesPage() {
 
-  const loadedValuesData = useGetAllValues()
+  const loadedValuesData: Value[] | null = useGetAllValues()
+  const [values, setValues] = useState<Value[]>([]);
+
+  useEffect(() => {
+    if (!loadedValuesData) return
+    setValues(loadedValuesData)
+  }, [loadedValuesData])
+
   const nextSortOrder = useGetArrayLength()
 
   return (
@@ -63,7 +70,7 @@ function ValuesPage() {
       <Outlet />
       <DndAndFormFlex
         listMaxWidthTW={'max-w-max'}
-        dnd={<DndValues passedValues={loadedValuesData} />}
+        dnd={<DndValues passedValues={values} />}
         form={
           <ValueForm isNew={true} nextSortOrder={nextSortOrder} />}
       />
@@ -74,23 +81,23 @@ function ValuesPage() {
 export default ValuesPage
 
 
+const path = 'routes/dash.values'
 
-
-
-export const useGetLoaderData = (): ValueWithStringDates[] | undefined => {
-  const [values, setValues] = useState<ValueWithStringDates[]>();
-  const path = 'routes/dash.values'
+export const useGetLoaderData = (): ValueWithStringDates[] | null => {
+  const [values, setValues] = useState<ValueWithStringDates[] | null>(null);
   const loadedValuesArray = useRouteLoaderData(path)
+
   useEffect(() => {
-    if (!loadedValuesArray) return
-    setValues(loadedValuesArray)
+    if (loadedValuesArray === undefined || loadedValuesArray === null) setValues(null)
+    const valuesArray = loadedValuesArray as ValueWithStringDates[]
+    setValues(valuesArray)
   }, [loadedValuesArray])
   return values
 }
 
 
 export const useGetArrayLength = (): number | undefined => {
-  const loadedValues: ValueWithStringDates[] | undefined = useGetLoaderData()
+  const loadedValues: ValueWithStringDates[] | null = useGetLoaderData()
   const [valuesLength, setValuesLength] = useState<number>()
 
   useEffect(() => {
@@ -102,30 +109,30 @@ export const useGetArrayLength = (): number | undefined => {
 }
 
 
-export const useGetAllValues = (): Value[] | undefined => {
-  const loadedValues: ValueWithStringDates[] | undefined = useGetLoaderData()
-  const [values, setValues] = useState<Value[]>();
+export const useGetAllValues = (): Value[] | null => {
+  const loadedValues: ValueWithStringDates[] | null = useGetLoaderData()
+  const [values, setValues] = useState<Value[] | null>(null);
 
   useEffect(() => {
-    if (!loadedValues) return
+    if (!loadedValues || loadedValues === undefined) return setValues(null)
     const dateKeys = ['createdAt', 'updatedAt']
-    const ValuesWithProperDates: Value[] = ArrayOfObjectsStrToDates({ items: loadedValues, dateKeys })
+    const ValuesWithProperDates: Value[] = ArrayOfObjectsStrToDates({ items: loadedValues, dateKeys }) as Value[]
     setValues(ValuesWithProperDates)
   }, [loadedValues])
 
   return values
 }
 
-export const useGetSpecificValue = (valueId: string): { value: Value | undefined | null, values: Value[] | undefined } => {
-  const values: Value[] | undefined = useGetAllValues()
-  const [value, setValue] = useState<Value | null>()
+export const useGetSpecificValue = (valueId: string): Value | null => {
+  const values: Value[] | null = useGetAllValues()
+  const [value, setValue] = useState<Value | null>(null)
 
   useEffect(() => {
-    if (!values) return
-    const value = values.find(value => value.id === valueId)
+    if (!values || values === undefined) return setValue(null)
+    const value = values.find(value => value.id === valueId) as Value
     if (value === undefined) return setValue(null)
     setValue(value)
   }, [values, valueId])
 
-  return { value, values }
+  return value
 }

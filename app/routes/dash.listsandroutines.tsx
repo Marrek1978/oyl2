@@ -163,65 +163,81 @@ function ListsPage() {
 
 export default ListsPage
 
+
+interface LoaderData {
+  allUserLists: ListAndTodosWithStrDates[]
+  allUserRoutines: RoutineAndTasksWithStrDates[]
+}
+
+// return { allUserLists, allUserRoutines };
+
 export const useGetLoaders = () => {
   const path = 'routes/dash.listsandroutines'
-  const loaderData = useRouteLoaderData(path);
+  const loaderData = useRouteLoaderData(path)
   return loaderData;
   //{ allUserLists, allUserRoutines };
 };
 
 
 export const useGetMiscLists = (): ListAndToDos[] => {
-  const { allUserLists } = useGetLoaders();//{ allUserLists, allUserRoutines };
+  const loaderData = useGetLoaders();
   const [lists, setLists] = useState<ListAndToDos[]>([]);
 
   useEffect(() => {
-    if (!allUserLists) return;
-    const miscListsWithStrDates: ListAndTodosWithStrDates[] = allUserLists.filter((list: ListAndTodosWithStrDates) => list.outcomeId === null && list.isSpecialList === false)
+    if (!loaderData) return;
+    const data = loaderData as LoaderData
+    const allListsWithStrDates = data.allUserLists as ListAndTodosWithStrDates[]
+    const miscListsWithStrDates: ListAndTodosWithStrDates[] = allListsWithStrDates.filter((list: ListAndTodosWithStrDates) => list.outcomeId === null && list.isSpecialList === false)
     const miscListsWithProperDates: ListAndToDos[] = ChangeListArrayDates(miscListsWithStrDates)
     setLists(miscListsWithProperDates)
-  }, [allUserLists])
+  }, [loaderData])
   return lists;
 }
 
 
 export const useGetMiscRoutines = (): RoutineAndTasks[] => {
-  const { allUserRoutines } = useGetLoaders();//{ allUserLists, allUserRoutines };
+  const loaderData = useGetLoaders(); //{ allUserLists, allUserRoutines };
   const [routines, setRoutines] = useState<RoutineAndTasks[]>([]);
+
   useEffect(() => {
-    if (!allUserRoutines) return;
-    const miscRoutinesWithStrDates: RoutineAndTasksWithStrDates[] = allUserRoutines.filter((routine: RoutineAndTasksWithStrDates) => routine.outcomeId === null && routine.isSpecialRoutine === false)
+    if (!loaderData) return;
+    const data = loaderData as LoaderData
+    let allRoutinesWithStrDates = data.allUserRoutines as RoutineAndTasksWithStrDates[]
+    const miscRoutinesWithStrDates: RoutineAndTasksWithStrDates[] = allRoutinesWithStrDates.filter((routine: RoutineAndTasksWithStrDates) => routine.outcomeId === null && routine.isSpecialRoutine === false)
     const miscRoutinesWithProperDates: RoutineAndTasks[] = ChangeListArrayDates(miscRoutinesWithStrDates, 'routine')
     setRoutines(miscRoutinesWithProperDates)
-  }, [allUserRoutines])
-
+  }, [loaderData])
   return routines;
 }
 
 export const useGetSpecialLists = (): ListAndToDos[] => {
-  const { allUserLists } = useGetLoaders();//{ allUserLists, allUserRoutines };
+  const loaderData = useGetLoaders();
   const [lists, setLists] = useState<ListAndToDos[]>([]);
-
   useEffect(() => {
-    if (!allUserLists) return;
-    const miscSpecialListsWithStrDates: ListAndTodosWithStrDates[] = allUserLists.filter((list: ListAndTodosWithStrDates) => list.outcomeId === null && list.isSpecialList === true)
-    const miscListsWithProperDates: ListAndToDos[] = ChangeListArrayDates(miscSpecialListsWithStrDates)
-    setLists(miscListsWithProperDates)
-  }, [allUserLists])
+    if (!loaderData) return;
+    const data = loaderData as LoaderData
+    const allListsWithStrDates = data.allUserLists as ListAndTodosWithStrDates[]
+    const specialListsWithStrDates: ListAndTodosWithStrDates[] = allListsWithStrDates.filter((list: ListAndTodosWithStrDates) => list.outcomeId === null && list.isSpecialList === true)
+    const specialListsWithProperDates: ListAndToDos[] = ChangeListArrayDates(specialListsWithStrDates)
+    setLists(specialListsWithProperDates)
+  }, [loaderData])
   return lists;
 }
 
 
-export const useGetSpecialRoutines = (): RoutineAndTasks[] => {
-  const { allUserRoutines } = useGetLoaders();//{ allUserLists, allUserRoutines };
-  const [routines, setRoutines] = useState<RoutineAndTasks[]>([]);
 
+
+export const useGetSpecialRoutines = (): RoutineAndTasks[] => {
+  const loaderData = useGetLoaders(); //{ allUserLists, allUserRoutines };
+  const [routines, setRoutines] = useState<RoutineAndTasks[]>([]);
   useEffect(() => {
-    if (!allUserRoutines) return;
-    const specialRoutinesWithStrDates: RoutineAndTasksWithStrDates[] = allUserRoutines.filter((routine: RoutineAndTasksWithStrDates) => routine.outcomeId === null && routine.isSpecialRoutine === true)
+    if (!loaderData) return;
+    const data = loaderData as LoaderData
+    const allRoutinesWithStrDates = data.allUserRoutines as RoutineAndTasksWithStrDates[]
+    const specialRoutinesWithStrDates: RoutineAndTasksWithStrDates[] = allRoutinesWithStrDates.filter((routine: RoutineAndTasksWithStrDates) => routine.outcomeId === null && routine.isSpecialRoutine === true) || []
     const specialRoutinesWithProperDates: RoutineAndTasks[] = ChangeListArrayDates(specialRoutinesWithStrDates, 'routine')
     setRoutines(specialRoutinesWithProperDates)
-  }, [allUserRoutines])
+  }, [loaderData])
 
   return routines;
 }
