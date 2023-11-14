@@ -2,9 +2,9 @@ import { Form, Link, useActionData } from '@remix-run/react'
 
 import { closeIcon, dbIcon } from '../utilities/icons'
 import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue'
+import { TimeSpanPlaceHolderTextObj } from '../clarifyingQuestions/consts';
 
 import type { ClarifyingQuestionsWithStringDates } from '~/types/clarityTypes';
-import { TimeSpanPlaceHolderTextObj } from '../clarifyingQuestions/consts';
 
 export type QuestionNameTypes = 'birthDate' | 'twentyFourHours' | 'oneWeek' | 'oneMonth' | 'oneYear' | 'fiveYears' | 'twentyYears' | 'fiftyYears'
 

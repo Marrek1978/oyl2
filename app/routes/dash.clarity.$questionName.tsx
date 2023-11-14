@@ -5,7 +5,7 @@ import Modal from '~/components/modals/Modal';
 import { requireUserId } from '~/models/session.server';
 import { useGetClarityLoaderData } from './dash.clarity';
 import { upsertClarifyingQuestions } from '~/models/clarifying.server';
-import ClarityQuestionsEditModal, { QuestionNameTypes } from '~/components/modals/ClarityQuestionsEditModal';
+import ClarityQuestionsEditModal, { type QuestionNameTypes } from '~/components/modals/ClarityQuestionsEditModal';
 
 import type { ClarifyingQuestionsWithStringDates } from '~/types/clarityTypes';
 
