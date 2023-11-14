@@ -21,8 +21,6 @@ function useInvalidItemIdAlertAndRedirect({ loaderData, goBackXPaths = 1, itemTy
 
   const time = 3
 
-
-
   useEffect(() => {
     setWarning('');
     setRemainingTime(0);

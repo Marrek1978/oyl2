@@ -18,21 +18,24 @@ import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdA
 import { getOutcomeWithMilestonesListsRoutinesHabitsSavingsById, updateOutcome } from '~/models/outcome.server'
 
 import type { Outcome } from '@prisma/client'
-import type { OutcomeWithAllWithStringDates } from '~/types/outcomeTypes'
+import type { OutcomeWithAll, OutcomeWithAllWithStringDates } from '~/types/outcomeTypes'
 import type { DesireWithStringDates, validationErrorsTypes } from '~/types/desireTypes'
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   let userId = await requireUserId(request);
   const { desireId, outcomeId } = params
-  if (!desireId) throw new Error('No desireId in params')
-  if (!outcomeId) throw new Error('No outcomeId in params')
+  if (!desireId) return redirect('../..')
+  if (!outcomeId) return redirect('../..')
   try {
     const desire = await getDesireById(desireId, userId);
+    console.log("🚀 ~ file: dash.desires_.$desireId_.outcomes_.$outcomeId.tsx:32 ~ loader ~ desire:", desire)
+    if (!desire) return 'noId'
     const outcomeWithAll = await getOutcomeWithMilestonesListsRoutinesHabitsSavingsById(outcomeId)
+    if (!outcomeWithAll) return null
     return {
       desire,
-      outcomeWithAll: outcomeWithAll ? outcomeWithAll : null
+      outcomeWithAll
     };
   } catch (error) { throw error }
 };
@@ -46,7 +49,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   let validationErrors: validationErrorsTypes = {};
   !outcomeData.title && (validationErrors.title = 'A title is required')
   !outcomeData.description && (validationErrors.description = 'A description is required')
-  console.log(validationErrors)
   if (!outcomeData.title || !outcomeData.description) return validationErrors
 
   try {
@@ -57,9 +59,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 
 function OutcomePage() {
-  const outcomeWithAll: OutcomeWithAllWithStringDates | null | undefined = useGetOutcomeWithAll()
-  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: outcomeWithAll, itemType: 'Outcome' })
-  const desireTitle = useGetDesireTitle()
+  const outcomeWithAll: OutcomeWithAll | undefined | null = useGetOutcomeWithAll()
+  const desireTitle: string | undefined | null = useGetDesireTitle()
+
+  let { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: outcomeWithAll, itemType: 'Outcome' })
 
   const title = outcomeWithAll?.title || ''
   const vision = outcomeWithAll?.vision || ''
@@ -84,7 +87,7 @@ function OutcomePage() {
             flex flex-wrap w-full justify-between items-baseline
             '>
             <div className='flex-1'>
-              <HeadingH1 text={title || ''} />
+              <HeadingH1 H1Title={title || ''} />
             </div>
             <div className='flex-1 max-w-max'>
               <Link to='edit'>
@@ -108,14 +111,14 @@ function OutcomePage() {
         <article className='w-full flex flex-col gap-y-12'>
           <section>
             {/* //?  PARAGRAPHS  */}
-            <ThreeParaFlex 
-              title1={'The Desired Outcome'} 
-              textParagraph1={description || ''}   
+            <ThreeParaFlex
+              title1={'The Desired Outcome'}
+              textParagraph1={description || ''}
               title2={'The Vision'}
-              textParagraph2={vision || ''}           
-              
-              />
-      
+              textParagraph2={vision || ''}
+
+            />
+
           </section>
 
           <section className='w-full flex flex-col gap-y-6'>
@@ -187,22 +190,37 @@ function OutcomePage() {
 
 export default OutcomePage
 
+interface OutcomeWithAllWithStrDatesType {
+  desireWithStrDates: DesireWithStringDates | undefined | null,
+  outcomeWithStrDates: OutcomeWithAllWithStringDates | undefined | null
+}
 
-export const useGetDesireAndOutcome = ({ path = `routes/dash.desires_.$desireId_.outcomes_.$outcomeId` })
-  : {
-    desireWithStrDates: DesireWithStringDates | undefined | null,
-    outcomeWithStrDates: OutcomeWithAllWithStringDates | undefined | null
-  } => {
+interface OutcomeWithAllType {
+  desire: DesireWithStringDates | undefined | null,
+  outcomeWithAll: OutcomeWithAllWithStringDates | undefined | null
+}
+
+
+
+
+export const useGetOutcomeIdLoaderData = (path = `routes/dash.desires_.$desireId_.outcomes_.$outcomeId`)
+  : OutcomeWithAllWithStrDatesType => {
 
   const loaderData = useRouteLoaderData(path)
-  const [desireWithStrDates, setDesireWithStrDates] = useState<DesireWithStringDates | null | undefined>(undefined)
-  const [outcomeWithStrDates, setOutcomeWithStrDates] = useState<OutcomeWithAllWithStringDates | null | undefined>(undefined)
+  console.log("🚀 ~ file: dash.desires_.$desireId_.outcomes_.$outcomeId.tsx:214 ~ loaderData:", loaderData)
+  const [desireWithStrDates, setDesireWithStrDates] = useState<DesireWithStringDates | undefined | null>()
+  const [outcomeWithStrDates, setOutcomeWithStrDates] = useState<OutcomeWithAllWithStringDates | undefined | null>()
 
   useEffect(() => {
     if (loaderData === undefined) return
-    const { desire, outcomeWithAll } = loaderData
+    if (loaderData === 'noId' || loaderData === null) {
+      setDesireWithStrDates(null)
+      setOutcomeWithStrDates(null)
+      return
+    }
+    const { desire, outcomeWithAll } = loaderData as OutcomeWithAllType
     setDesireWithStrDates(desire)
-    if (outcomeWithAll === null) return setOutcomeWithStrDates(null)
+    if (outcomeWithAll === null || outcomeWithAll === null) return
     setOutcomeWithStrDates(outcomeWithAll)
   }, [loaderData])
 
@@ -210,15 +228,26 @@ export const useGetDesireAndOutcome = ({ path = `routes/dash.desires_.$desireId_
 }
 
 
-export const useGetOutcomeWithAll = (): OutcomeWithAllWithStringDates | undefined | null => {
-  const { outcomeWithStrDates } = useGetDesireAndOutcome({})
-  return outcomeWithStrDates
+export const useGetOutcomeWithAll = (): OutcomeWithAll | undefined | null => {
+
+  const { outcomeWithStrDates } = useGetOutcomeIdLoaderData()
+  const [outcomeWithAll, setOutcomeWithAll] = useState<OutcomeWithAll | undefined | null>()
+
+  useEffect(() => {
+    if (outcomeWithStrDates === undefined) return
+    if (!outcomeWithStrDates) return setOutcomeWithAll(null)
+    const { habitTrackers, lists, milestoneGroup, routines, savingsTrackers, ...restWithStrDates } = outcomeWithStrDates
+    const outcomeWithProperDates = ObjectStrToDates({ item: restWithStrDates, dateKeys: ['createdAt', 'updatedAt'] })
+    setOutcomeWithAll(outcomeWithProperDates)
+  }, [outcomeWithStrDates])
+
+  return outcomeWithAll
 }
 
 
-export const useGetOutcomeOnlyWithProperDates = (): Outcome | undefined | null => {
-  const { outcomeWithStrDates } = useGetDesireAndOutcome({})
-  const [outcomeOnly, setOutcomeOnly] = useState<Outcome | undefined | null>(undefined)
+export const useGetOutcomeOnlyWithProperDates = (): Outcome | undefined => {
+  const { outcomeWithStrDates } = useGetOutcomeIdLoaderData()
+  const [outcomeOnly, setOutcomeOnly] = useState<Outcome>()
 
   useEffect(() => {
     if (!outcomeWithStrDates) return
@@ -231,15 +260,19 @@ export const useGetOutcomeOnlyWithProperDates = (): Outcome | undefined | null =
 }
 
 
-export const useGetDesireTitle = (): string => {
-  const [title, setTitle] = useState<string>('')
-  const { desireWithStrDates } = useGetDesireAndOutcome({})
+export const useGetDesireTitle = (): string | undefined | null => {
+  const [title, setTitle] = useState<string | undefined | null>()
+  const { desireWithStrDates } = useGetOutcomeIdLoaderData()
 
   useEffect(() => {
+    if (desireWithStrDates === undefined) return
+    if (!desireWithStrDates) return setTitle(null)
     setTitle(desireWithStrDates?.title || '')
   }, [desireWithStrDates])
 
   return title
 }
+
+
 
 

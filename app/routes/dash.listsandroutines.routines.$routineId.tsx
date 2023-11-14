@@ -13,8 +13,6 @@ import type { RoutineAndTasks, RoutineAndTasksWithStrDates } from '~/types/routi
 
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-
-
   if (request.method === 'POST') {
     const formBody = await request.text();
     const parsedBody = parse(formBody);
@@ -36,7 +34,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return null
   }
 
-
   throw new Error('Invalid action method in Update List Page');
 }
 
@@ -47,7 +44,7 @@ function RoutinePage() {
   const routine = useGetCurrentRoutine()
   const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: routine, itemType: 'Routine' })
 
-  
+
   useEffect(() => {
     const miscOrSpecial: 'misc' | 'special' = routine?.isSpecialRoutine === false ? 'misc' : 'special'
     // Retrieve from session storage
@@ -84,18 +81,20 @@ export default RoutinePage
 
 
 export const useGetCurrentRoutine = (): RoutineAndTasks | undefined | null => {
-  const { allUserRoutines } = useGetLoaders()
+  const loaderData = useGetLoaders()
   const params = useParams()
   const [routine, setRoutine] = useState<RoutineAndTasks | null>()
 
   useEffect(() => {
+    if (loaderData === undefined) return
+    const { allUserRoutines } = loaderData as { allUserRoutines: RoutineAndTasksWithStrDates[] }
     const { routineId } = params
     if (!allUserRoutines || allUserRoutines === undefined || allUserRoutines.length === 0) return
-    const RoutineWithStrDates: RoutineAndTasksWithStrDates = allUserRoutines.find((routine: RoutineAndTasksWithStrDates) => routine.id === routineId)
+    const RoutineWithStrDates: RoutineAndTasksWithStrDates | undefined = allUserRoutines.find((routine: RoutineAndTasksWithStrDates) => routine.id === routineId)
     if (!RoutineWithStrDates || RoutineWithStrDates === undefined) return setRoutine(null)
     const routineWithProperDates = ChangeListArrayDates([RoutineWithStrDates])
     setRoutine(routineWithProperDates[0])
-  }, [allUserRoutines, params])
+  }, [loaderData, params])
 
   return routine;
 }

@@ -5,7 +5,7 @@ import { type ActionFunctionArgs, redirect } from '@remix-run/server-runtime';
 import Modal from '~/components/modals/Modal';
 import DesiresIdealForm from '~/components/forms/DesiresIdealForm';
 import { updateDesireIdealScenario } from '~/models/desires.server';
-import useServerMessages from '~/components/modals/useServerMessages';
+import useServerMessages, { FetcherMessageType } from '~/components/modals/useServerMessages';
 import useNavigationState from '~/components/utilities/useNavigationState';
 import { useGetSpecificDesireWithValuesAndOutcomes } from './dash.desires_.$desireId';
 
@@ -28,10 +28,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 function EditDesireIdealScenarioPage() {
 
-  const serverMessage = useActionData()
-  const [desire, setDesire] = useState<DesireWithValuesAndOutcomes>()
+  const serverMessage = useActionData() as FetcherMessageType
   const { navigationState } = useNavigationState()
   const loadedDesire = useGetSpecificDesireWithValuesAndOutcomes();
+  const [desire, setDesire] = useState<DesireWithValuesAndOutcomes>()
 
   useEffect(() => {
     if (!loadedDesire) return

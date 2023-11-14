@@ -4,7 +4,7 @@ import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
 
 import Modal from '~/components/modals/Modal'
 import { deleteOutcomeById } from '~/models/outcome.server';
-import { useGetOutcomeWithAll } from './dash.desires_.$desireId_.outcomes_.$outcomeId';
+import { useGetOutcomeIdLoaderData } from './dash.desires_.$desireId_.outcomes_.$outcomeId';
 
 import type { OutcomeWithAllWithStringDates } from '~/types/outcomeTypes';
 import useFormDeletedToastAndRedirect from '~/components/utilities/useFormDeletedToast';
@@ -29,7 +29,8 @@ function DeleteOutcomePage() {
   const [id, setId] = useState<string>('')
   const [title, setTitle] = useState<string>('')
 
-  const outcomeWithAll: OutcomeWithAllWithStringDates | null | undefined = useGetOutcomeWithAll()
+  const { outcomeWithStrDates } = useGetOutcomeIdLoaderData()
+  const outcomeWithAll: OutcomeWithAllWithStringDates | null | undefined = outcomeWithStrDates
 
   useEffect(() => {
     if (!outcomeWithAll) return

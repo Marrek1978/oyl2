@@ -84,18 +84,20 @@ export default ListPage
 
 
 export const useGetCurrentList = (): ListAndToDos | undefined | null => {
-  const { allUserLists } = useGetLoaders()
   const params = useParams()
+  const loaderData = useGetLoaders()
   const [list, setList] = useState<ListAndToDos | null>()
 
   useEffect(() => {
+    if(loaderData === undefined) return
+    const { allUserLists } = loaderData as { allUserLists: ListAndTodosWithStrDates[] }
     const { listId } = params
     if (!allUserLists || allUserLists === undefined || allUserLists.length === 0) return
-    const ListWithStrDates: ListAndTodosWithStrDates = allUserLists.find((list: ListAndTodosWithStrDates) => list.id === listId)
+    const ListWithStrDates: ListAndTodosWithStrDates | undefined = allUserLists.find((list: ListAndTodosWithStrDates) => list.id === listId)
     if (!ListWithStrDates || ListWithStrDates === undefined) return setList(null)
     const listWithProperDates = ChangeListArrayDates([ListWithStrDates])
     setList(listWithProperDates[0])
-  }, [allUserLists, params])
+  }, [loaderData, params])
 
   return list;
 }

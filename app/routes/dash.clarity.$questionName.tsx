@@ -1,10 +1,13 @@
-import { useMatches, useParams } from '@remix-run/react';
+import { useParams } from '@remix-run/react';
 import { type ActionFunctionArgs, redirect } from '@remix-run/server-runtime'
 
 import Modal from '~/components/modals/Modal';
-import ClarityQuestionsEditModal from '~/components/modals/ClarityQuestionsEditModal';
-import { upsertClarifyingQuestions } from '~/models/clarifying.server';
 import { requireUserId } from '~/models/session.server';
+import { useGetClarityLoaderData } from './dash.clarity';
+import { upsertClarifyingQuestions } from '~/models/clarifying.server';
+import ClarityQuestionsEditModal, { QuestionNameTypes } from '~/components/modals/ClarityQuestionsEditModal';
+
+import type { ClarifyingQuestionsWithStringDates } from '~/types/clarityTypes';
 
 export const action = async ({ request }: ActionFunctionArgs) => {
 
@@ -34,9 +37,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 function EditClarityQuestionsPage() {
 
   const params = useParams()
-  const questionName = params.questionName
-  const matches = useMatches();
-  const questions = matches.find(match => match.id === 'routes/dash.clarity')?.data
+  const questionName = params.questionName as QuestionNameTypes
+  const questions = useGetClarityLoaderData() as ClarifyingQuestionsWithStringDates[]
 
   return (
     <>

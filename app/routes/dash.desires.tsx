@@ -105,9 +105,8 @@ interface DataWithStrDates {
 }
 
 
-const path = 'routes/dash.desires'
 
-export const useGetLoaderData = (): DataWithStrDates => {
+export const useGetLoaderData = (path: string = 'routes/dash.desires'): DataWithStrDates => {
   const loadedData = useRouteLoaderData(path)
   const [allUserValues, setAllUserValues] = useState<ValueWithStringDates[]>([])
   const [desiresWithValues, setDesiresWithValues] = useState<DesireWithValuesWithStringDates[]>([])
@@ -142,8 +141,8 @@ export const useGetUserAllValues = (): Value[] => {
 }
 
 
-export const useGetDesiresArrayLength = (): number   => {
-  const { desiresWithValues } = useGetLoaderData() 
+export const useGetDesiresArrayLength = (): number => {
+  const { desiresWithValues } = useGetLoaderData()
   const [desiresLength, setDesiresLength] = useState<number>(0)
 
   useEffect(() => {
@@ -156,7 +155,7 @@ export const useGetDesiresArrayLength = (): number   => {
 
 
 export const useGetAllDesiresWithValues = (): DesireWithValues[] => {
-  const { desiresWithValues } = useGetLoaderData() 
+  const { desiresWithValues } = useGetLoaderData()
   const [desires, setDesires] = useState<DesireWithValues[]>([])
   useEffect(() => {
     if (!desiresWithValues) return
@@ -210,130 +209,4 @@ export const isObjInObjArrayById = <T extends HasId>(obj: T, objArray: T[]): boo
   const objIds = objArray?.map((obj: T) => obj.id)
   const isInArray = objIds?.includes(obj.id)
   return isInArray
-}
-
-
-
-//?????????????????????????????????
-//?????????????????????????????????
-//?????????????????????????????????
-
-
-
-
-// loader  return { desiresWithValues, allUserValues }
-
-// export const useGetDesireWithValuesAndOutcomes = () => {
-//   const params = useParams();
-//   const navigate = useNavigate();
-//   const loaderData = useRouteLoaderData(path);
-//   const [desire, setDesire] = useState<DesireWithValuesAndOutcomes>();
-
-//   useEffect(() => {
-//     const desiresWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates[] = loaderData?.desiresWithValues;
-//     const currentDesireWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates | undefined = desiresWithValuesOutcomesStrDates.find((desire: DesireWithValuesAndOutcomesWithStringDates) => desire.id === params.desireId);
-
-//     if (currentDesireWithValuesOutcomesStrDates !== undefined) {
-//       const currentDesire: DesireWithValuesAndOutcomes = transformCurrentDesireValueOutcomeDates(currentDesireWithValuesOutcomesStrDates);
-//       setDesire(currentDesire);
-//     } else {
-//       navigate('/dash/desires');
-//       return
-//     }
-//   }, [loaderData, params.desireId, navigate]);
-
-//   return desire;
-// };
-
-
-// export const useGetAllDesiresWithValuesAndOutcomes = (): DesireWithValuesAndOutcomes[] | undefined => {
-//   const navigate = useNavigate();
-//   const path = 'routes/dash.desires'
-//   const loaderData = useRouteLoaderData(path);
-//   const [desires, setDesires] = useState<DesireWithValuesAndOutcomes[]>();
-
-//   useEffect(() => {
-//     const desiresWithValuesOutcomesStrDates: DesireWithValuesAndOutcomesWithStringDates[] = loaderData?.desiresWithValuesOutcomes;
-
-//     if (desiresWithValuesOutcomesStrDates !== undefined) {
-//       const currentDesires: DesireWithValuesAndOutcomes[] = transformDesiresValueOutcomeDates(desiresWithValuesOutcomesStrDates);
-//       setDesires(currentDesires);
-//     } else {
-//       navigate('/dash/desires');
-//       return
-//     }
-//   }, [loaderData, navigate]);
-
-//   return desires;
-// };
-
-
-// export function transformDesiresValueOutcomeDates(desiresWithValuesOutcomes: DesireWithValuesAndOutcomesWithStringDates[]): DesireWithValuesAndOutcomes[] {
-//   const desires = desiresWithValuesOutcomes.map((desire: DesireWithValuesAndOutcomesWithStringDates) => {
-//     const outcomes = desire.outcomes.sort((a, b) => a.sortOrder - b.sortOrder)
-//     const values = desire.desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
-//     let outcomesWithProperDates = []
-//     let valuesWithProperDates = []
-
-//     if (outcomes.length > 0) {
-//       outcomesWithProperDates = outcomes.map((outcome: any) => ({
-//         ...outcome,
-//         createdAt: new Date(outcome.createdAt!),
-//         updatedAt: new Date(outcome.updatedAt!),
-//       }))
-//     }
-
-//     if (values.length > 0) {
-//       valuesWithProperDates = values.map((value: any) => ({
-//         ...value,
-//         createdAt: new Date(value.createdAt!),
-//         updatedAt: new Date(value.updatedAt!),
-//       }))
-//     }
-
-//     return ({
-//       ...desire,
-//       createdAt: new Date(desire.createdAt!),
-//       updatedAt: new Date(desire.updatedAt!),
-//       outcomes: outcomesWithProperDates,
-//       desireValues: valuesWithProperDates
-//     })
-//   })
-
-//   return desires
-// }
-
-
-// export function transformCurrentDesireValueOutcomeDates(desiresWithValuesOutcomes: DesireWithValuesAndOutcomesWithStringDates): DesireWithValuesAndOutcomes {
-//   const desire = desiresWithValuesOutcomes
-//   const outcomes = desire.outcomes.sort((a, b) => a.sortOrder - b.sortOrder)
-//   const values = desire.desireValues.sort((a, b) => a.value.sortOrder - b.value.sortOrder)
-//   let outcomesWithProperDates = []
-//   let valuesWithProperDates = []
-
-//   if (outcomes.length > 0) {
-//     outcomesWithProperDates = outcomes.map((outcome: any) => ({
-//       ...outcome,
-//       createdAt: new Date(outcome.createdAt!),
-//       updatedAt: new Date(outcome.updatedAt!),
-//     }))
-//   }
-
-//   if (values.length > 0) {
-//     valuesWithProperDates = values.map((value: any) => ({
-//       ...value,
-//       createdAt: new Date(value.createdAt!),
-//       updatedAt: new Date(value.updatedAt!),
-//     }))
-//   }
-
-//   const transformedDesire: DesireWithValuesAndOutcomes = ({
-//     ...desire,
-//     createdAt: new Date(desire.createdAt!),
-//     updatedAt: new Date(desire.updatedAt!),
-//     outcomes: outcomesWithProperDates,
-//     desireValues: valuesWithProperDates
-//   })
-
-//   return transformedDesire
-// }
+} 

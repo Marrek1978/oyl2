@@ -6,16 +6,16 @@ import { EditIcon } from '../utilities/icons'
 import Modal from '../modals/Modal'
 import RoutineTodosCompletedForm from '../forms/CompletedTasksForm'
 
-import type { RoutineAndToDos } from '~/types/routineTypes'
+import type { RoutineAndTasks } from '~/types/routineTypes'
 
 
 type Props = {
-  routines: RoutineAndToDos[]
+  routines: RoutineAndTasks[]
 }
 
 function RoutinesDisplayToday({ routines }: Props) {
 
-  const [routine, setRoutine] = useState<RoutineAndToDos>()
+  const [routine, setRoutine] = useState<RoutineAndTasks>()
   const [openTodosCompleteModal, setOpenTodosCompleteModal] = useState<boolean>(false)
 
   const handleClick = (routineId: string) => {

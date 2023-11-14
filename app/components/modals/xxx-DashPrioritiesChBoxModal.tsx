@@ -1,23 +1,16 @@
-
-import type { ListAndToDos, Todo } from '~/types/listTypes';
-// import ToDoWithCheckBox from '../list/todos/ToDoWithCheckBox';
-// import { sortTodos } from './EditListModal';
-import { MouseEvent, useEffect, useState } from 'react';
-import { useList } from '../list/ListContext';
-import CloseLabelBtn from '../buttons/SolidLabelClose';
-import HeaderLabel from '../LabelCardHeader';
-import TextBtn from '../buttons/TextBtn';
-// import OutlinedLabelBtn from '../buttons/OutlinedLabelBtn';
-import { trashIcon, downArrowsIcon, dbIcon } from '../utilities/icons';
-import Divider from '~/components/utilities/Divider';
-// import ToDoWithCheckBoxForm from '../list/todos/ToDoWithCheckBoxForm';
 import { Form } from '@remix-run/react';
+
+import {  dbIcon } from '../utilities/icons';
 import SolidBtn from '../buttons/SolidBtn';
+import Divider from '~/components/utilities/Divider';
+import CloseLabelBtn from '../buttons/SolidLabelClose';
+
+import type { ToDo } from '@prisma/client';
 
 interface DashPrioritiesChBoxModalProps {
   htmlFor: string;
   title: string | null;
-  todos: Todo[] | null;
+  todos: ToDo[] | null;
   
 }
 

@@ -2,21 +2,20 @@ import HeadingH1 from './HeadingH1';
 import WithGuidelineLink from '../forms/WithGuidelineLink';
 
 interface InputLabelWithGuideLineLinkProps {
-  text: string;
+  H1Title: string;
   guideline: string;
-  title: string;
+  guideLineTitle: string;
 }
 
-function H1WithGuideLineLink({ text, guideline, title }: InputLabelWithGuideLineLinkProps) {
+function H1WithGuideLineLink({ H1Title, guideline, guideLineTitle }: InputLabelWithGuideLineLinkProps) {
 
   return (
     <>
       <WithGuidelineLink
-        text={text}
         guideline={guideline}
-        title={title}
+        guideLineTitle={guideLineTitle}
       >
-        <HeadingH1 text={text} />
+        <HeadingH1 H1Title={H1Title} />
       </WithGuidelineLink>
 
     </>

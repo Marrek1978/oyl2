@@ -1,15 +1,14 @@
-import React from 'react'
-import type { ListAndToDos } from '~/types/listTypes'
-import type { RoutineAndToDos } from '~/types/routineTypes';
-import { EditIcon } from '../utilities/icons';
-// import RoutineCard from '../routines/RoutineCard';
 import { Link } from '@remix-run/react';
-// import ListCardV2 from '../list/ListCardV2';
+
 import DraggableCard from './DraggableCard';
+import { EditIcon } from '../utilities/icons';
+
+import type { ListAndToDos } from '~/types/listTypes'
+import type { RoutineAndTasks } from '~/types/routineTypes';
 
 interface ListsAsDraggableItemsProps {
   loadedToDos: ListAndToDos[];
-  loadedRoutines: RoutineAndToDos[];
+  loadedRoutines: RoutineAndTasks[];
   handleDragStart: (event: any) => void;
 }
 
@@ -45,7 +44,7 @@ export default function ListsAsDraggableItems({ loadedToDos, loadedRoutines, han
         </div>
       </div>
       <div className='flex flex-wrap gap-6 mt-6'>
-        {loadedRoutines?.map((routine: RoutineAndToDos) => (
+        {loadedRoutines?.map((routine: RoutineAndTasks) => (
           <DraggableCard
             key={routine.id}
             list={routine}

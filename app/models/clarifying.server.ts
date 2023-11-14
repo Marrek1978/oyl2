@@ -53,11 +53,10 @@ export const upsertClarifyingQuestions = async (
 };
 
 export const getClarifyingQuestions = async (userId: User["id"]) => {
-  const result = await prisma.clarifyingQuestions.findMany({
+  return await prisma.clarifyingQuestions.findMany({
     where: { userId },
   });
 
-  return result;
 };
 
 export const upsertMaxAge = async (maxAge:CQ['maxAge'], userId:User['id'] ) => {

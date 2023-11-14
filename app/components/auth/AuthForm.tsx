@@ -1,6 +1,6 @@
 import { Form, Link, useActionData, useNavigation, useSearchParams } from '@remix-run/react'
 
-import SolidBtn from '../SolidBtn'
+import SolidBtn from '../buttons/SolidBtn'
 import { SignUp, LoginIcon } from '~/components/utilities/icons';
 
 import type { ValidationErrorTypes } from '~/types/validationTypes';

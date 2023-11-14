@@ -83,21 +83,22 @@ export default ValuesPage
 
 const path = 'routes/dash.values'
 
-export const useGetLoaderData = (): ValueWithStringDates[] | null => {
-  const [values, setValues] = useState<ValueWithStringDates[] | null>(null);
+export const useGetLoaderData = (): ValueWithStringDates[] => {
+  const [values, setValues] = useState<ValueWithStringDates[]>([]);
   const loadedValuesArray = useRouteLoaderData(path)
 
   useEffect(() => {
-    if (loadedValuesArray === undefined || loadedValuesArray === null) setValues(null)
+    if (loadedValuesArray === undefined || loadedValuesArray === null) return
     const valuesArray = loadedValuesArray as ValueWithStringDates[]
     setValues(valuesArray)
   }, [loadedValuesArray])
+
   return values
 }
 
 
 export const useGetArrayLength = (): number | undefined => {
-  const loadedValues: ValueWithStringDates[] | null = useGetLoaderData()
+  const loadedValues: ValueWithStringDates[] = useGetLoaderData()
   const [valuesLength, setValuesLength] = useState<number>()
 
   useEffect(() => {
@@ -109,12 +110,12 @@ export const useGetArrayLength = (): number | undefined => {
 }
 
 
-export const useGetAllValues = (): Value[] | null => {
-  const loadedValues: ValueWithStringDates[] | null = useGetLoaderData()
-  const [values, setValues] = useState<Value[] | null>(null);
+export const useGetAllValues = (): Value[] => {
+  const loadedValues: ValueWithStringDates[] = useGetLoaderData()
+  const [values, setValues] = useState<Value[]>([]);
 
   useEffect(() => {
-    if (!loadedValues || loadedValues === undefined) return setValues(null)
+    if (!loadedValues || loadedValues === undefined) return
     const dateKeys = ['createdAt', 'updatedAt']
     const ValuesWithProperDates: Value[] = ArrayOfObjectsStrToDates({ items: loadedValues, dateKeys }) as Value[]
     setValues(ValuesWithProperDates)
@@ -123,14 +124,14 @@ export const useGetAllValues = (): Value[] | null => {
   return values
 }
 
-export const useGetSpecificValue = (valueId: string): Value | null => {
-  const values: Value[] | null = useGetAllValues()
-  const [value, setValue] = useState<Value | null>(null)
+export const useGetSpecificValue = (valueId: string): Value | undefined => {
+  const values: Value[] = useGetAllValues()
+  const [value, setValue] = useState<Value | undefined>()
 
   useEffect(() => {
-    if (!values || values === undefined) return setValue(null)
+    if (!values || values === undefined) return  
     const value = values.find(value => value.id === valueId) as Value
-    if (value === undefined) return setValue(null)
+    if (value === undefined || value === null) return  
     setValue(value)
   }, [values, valueId])
 

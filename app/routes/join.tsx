@@ -3,7 +3,7 @@ import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import { useEffect, useRef } from "react";
 
-import { createUser, getUserByEmail } from "~/models/user.server";
+import { User, createUser, getUserByEmail } from "~/models/user.server";
 import { createUserSession, getUserId } from "~/models/session.server";
 import { safeRedirect, validateEmail } from "~/utils";
 
@@ -18,7 +18,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
+  // const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
 
   if (!validateEmail(email)) {
     return json(
@@ -54,12 +54,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     );
   }
 
-  const user = await createUser(email, password);
+  const user = await createUser(email, password, true)  
 
   return createUserSession({
-    redirectTo,
     remember: false,
-    request,
     userId: user.id,
   });
 };

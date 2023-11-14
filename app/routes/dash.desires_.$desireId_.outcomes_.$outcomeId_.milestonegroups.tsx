@@ -99,9 +99,8 @@ export const useGetAllMilestoneGroupsForOutcome = (): MilestoneGroupsWithMilesto
 
   useEffect(() => {
     if (!loadedGroupsArray) return
-    const groupsWithStrDates: MilestoneGroupsWithMilestonesWithStringDates[] = loadedGroupsArray;
+    const groupsWithStrDates = loadedGroupsArray as MilestoneGroupsWithMilestonesWithStringDates[]
     const groupWithProperDates = ArrayOfObjectsStrToDates({ items: groupsWithStrDates, dateKeys: ['createdAt', 'updatedAt'] })
-
     const milestonesDatekeys = ['createdAt', 'updatedAt', 'dueDate', 'completedAt'];
     groupWithProperDates.map((group) => {
       const groupMilestones = group.milestones

@@ -8,18 +8,23 @@ import OutcomesForm from '~/components/forms/OutcomesForm';
 import DndOutcomes from '~/components/dnds/outcomes/DndOutcomes';
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
 import DndAndFormFlex from '~/components/baseContainers/DndAndFormFlex';
-import { getDesireWithValuesAndOutcomes } from '~/models/desires.server';
+import { getDesireById, getDesireWithValuesAndOutcomes } from '~/models/desires.server';
 import { createOutcome, updateOutcomesOrder } from '~/models/outcome.server';
 import { useGetSpecificDesireWithValuesAndOutcomes } from './dash.desires_.$desireId';
 
 import type { Outcome } from '@prisma/client';
+import Modal from '~/components/modals/Modal';
+import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+  const userId = await requireUserId(request);
   const { desireId } = params
-  if (!desireId) throw new Error('No desireId in params')
+  if (!desireId) return null
   try {
-    const desiresWithValuesOutcomes = await getDesireWithValuesAndOutcomes(desireId);
-    return desiresWithValuesOutcomes
+    const desire = await getDesireById(desireId, userId);
+    if (!desire) return 'noId'
+    const desireWithValuesOutcomes = await getDesireWithValuesAndOutcomes(desireId);
+    return desireWithValuesOutcomes
   } catch (error) { throw error }
 };
 
@@ -62,11 +67,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 }
 
 
-function DesireSpecificOutcomesPage() {
+function OutcomesPage() {
 
   const [desireId, setDesireId] = useState<string>();
   const [outcomesState, setOutcomesState] = useState<Outcome[]>([])
-  const desiresIdLoaderData = useGetSpecificDesireWithValuesAndOutcomes({ path: `routes/dash.desires_.$desireId_.outcomes` })
+  const desiresIdLoaderData = useGetSpecificDesireWithValuesAndOutcomes(`routes/dash.desires_.$desireId_.outcomes`) // from $desireId page
+
+  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: desiresIdLoaderData, itemType: 'Desire', goBackXPaths:2 })
 
 
   useEffect(() => {
@@ -80,6 +87,11 @@ function DesireSpecificOutcomesPage() {
   return (
     <>
       <Outlet />
+      {warning && (
+        <Modal zIndex={50}>
+          {alertMessage}
+        </Modal>
+      )}
       <BreadCrumbs secondCrumb={'Desire'} />
       <DndAndFormFlex
         dnd={<DndOutcomes passedOutcomes={outcomesState} />}
@@ -94,4 +106,5 @@ function DesireSpecificOutcomesPage() {
   )
 }
 
-export default DesireSpecificOutcomesPage
+export default OutcomesPage
+

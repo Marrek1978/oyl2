@@ -1,12 +1,12 @@
 interface HeadingH1Props {
-  text: string;
+  H1Title: string;
 }
 
-function HeadingH1({ text }: HeadingH1Props) {
+function HeadingH1({ H1Title }: HeadingH1Props) {
   return (
     <>
       <div className='text-4xl font-normal font-mont tracking-wide'>
-        {text}
+        {H1Title}
       </div>
     </>
   )

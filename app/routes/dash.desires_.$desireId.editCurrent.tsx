@@ -24,7 +24,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 
 function EditDesireCurrentSituationPage() {
-  const serverMessage = useActionData()
+  const serverMessage = useActionData() as 'success' | 'failed' | undefined
   const { navigationState } = useNavigationState()
   const loadedDesireWithValuesOutcomes = useGetSpecificDesireWithValuesAndOutcomes();
 

@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { toasterBtnLabel, toasterDuration, toasterPosition } from '~/components/utilities/constants';
 
+export type FetcherMessageType = 'success' | 'failed' | undefined
+
 
 type Props = {
   fetcherState: string | undefined;
-  fetcherMessage?: 'success' | 'failed' | undefined;
+  fetcherMessage?: FetcherMessageType
   isShowLoading?: boolean;
   loadingMessage?: string;
   isShowSubmitting?: boolean;
@@ -31,7 +33,7 @@ function useServerMessages({
   submittingMessage = 'Sending data to database'
 }: Props) {
 
-  const actionData = useActionData()
+  const actionData = useActionData() as string
   const [isIdleState, setIsIdleState] = useState<boolean>(false)
   const [isLoadingState, setIsLoadingState] = useState<boolean>(false)
   const [isSubmittingState, setIsSubmittingState] = useState<boolean>(false)

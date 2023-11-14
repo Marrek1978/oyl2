@@ -44,6 +44,7 @@ function MilestoneGroupPage() {
 
   const [milestoneGroup, setMilestoneGroup] = useState<MilestoneGroupsWithMilestones>()
   const loadedGroup: MilestoneGroupsWithMilestones | null | undefined = useGetMilestoneGroupWithMilestones()
+  console.log("🚀 ~  MilestoneGroupPage ~ loadedGroup:", loadedGroup)
   const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: loadedGroup, itemType: 'Milestone Group' })
 
 
@@ -75,6 +76,7 @@ function MilestoneGroupPage() {
 export default MilestoneGroupPage
 
 
+
 export const useGetMilestoneGroupWithMilestones = (): MilestoneGroupsWithMilestones | null | undefined => {
 
   const params = useParams();
@@ -84,6 +86,7 @@ export const useGetMilestoneGroupWithMilestones = (): MilestoneGroupsWithMilesto
   const allValidGroups: MilestoneGroupsWithMilestones[] = useGetAllMilestoneGroupsForOutcome()
 
   useEffect(() => {
+    console.log("🚀 ~ file: dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId.tsx:88 ~ useEffect ~ allValidGroups:", allValidGroups)
     if (!allValidGroups) return
     setAllGroups(allValidGroups)
   }, [allValidGroups])
@@ -91,7 +94,8 @@ export const useGetMilestoneGroupWithMilestones = (): MilestoneGroupsWithMilesto
   useEffect(() => {
     if (!allGroups || allGroups.length === 0 || !paramsMilestoneGroupId) return
     const currentGroup: MilestoneGroupsWithMilestones | undefined = allGroups.find((group: MilestoneGroupsWithMilestones) => group.id === paramsMilestoneGroupId);
-    if (currentGroup === undefined) return setGroup(null)
+    console.log("🚀 ~ file: dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId.tsx:96 ~ useEffect ~ currentGroup:", currentGroup)
+    if (currentGroup === undefined) return setGroup(null)  // return null triggers navigate back with message
     setGroup(currentGroup)
   }, [allGroups, paramsMilestoneGroupId])
 

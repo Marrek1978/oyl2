@@ -19,7 +19,7 @@ function BasicToolTipArea({ children, title, closeFunction = () => { } }: basicT
       whitespace-pre-line 
       text-neutral bg-neutral-content
       '>
-      <HeadingH1 text={title} />
+      <HeadingH1 H1Title={title}  />
       {children && typeof children === 'string' && (
         Parser(children)
       )}

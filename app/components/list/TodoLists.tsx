@@ -20,7 +20,7 @@ function TodoLists({ lists, headingSize = 'H1', headingText = 'To Do Lists', lin
 
   let heading =
     headingSize === 'H1' ? (
-      <HeadingH1 text={headingText} />
+      <HeadingH1 H1Title={headingText} />
     ) : headingSize === 'H2' ? (
       <HeadingH2 text={headingText} />
     ) : null

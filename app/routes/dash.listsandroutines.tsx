@@ -169,13 +169,9 @@ interface LoaderData {
   allUserRoutines: RoutineAndTasksWithStrDates[]
 }
 
-// return { allUserLists, allUserRoutines };
-
-export const useGetLoaders = () => {
-  const path = 'routes/dash.listsandroutines'
+export const useGetLoaders = (path = 'routes/dash.listsandroutines') => {
   const loaderData = useRouteLoaderData(path)
   return loaderData;
-  //{ allUserLists, allUserRoutines };
 };
 
 

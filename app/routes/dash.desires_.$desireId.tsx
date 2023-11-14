@@ -7,7 +7,7 @@ import HeadingH1 from '~/components/titles/HeadingH1';
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
 import ThreeParaFlex from '~/components/baseContainers/ThreeParaFlex';
 import TwoToneSubHeading from '~/components/titles/TwoToneSubHeading';
-import { getDesireWithValuesAndOutcomes } from '~/models/desires.server';
+import { getDesireById, getDesireWithValuesAndOutcomes } from '~/models/desires.server';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 import AllOutcomesDisplay from '~/components/desires/outcomes/AllOutcomesDisplay';
 import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
@@ -16,13 +16,18 @@ import { ArrayOfObjectsStrToDates, ObjectStrToDates, varsForPluralText } from '~
 
 import type { Desire, Outcome, Value } from '@prisma/client';
 import type { DesireWithValuesAndOutcomes, DesireWithValuesAndOutcomesWithStringDates } from '~/types/desireTypes';
+import { requireUserId } from '~/models/session.server';
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+  const userId = await requireUserId(request);
   const { desireId } = params
-  if (!desireId) throw new Error('No desireId in params')
+  if (!desireId) return 'no Params Id'
   try {
+    const desire = await getDesireById(desireId, userId);
+    if (!desire) return 'noId'
     const desireWithValuesOutcomes = await getDesireWithValuesAndOutcomes(desireId);
+    if (!desireWithValuesOutcomes) return null
     return desireWithValuesOutcomes
   } catch (error) { throw error }
 };
@@ -32,11 +37,13 @@ function DesirePage() {
 
   const [values, setValues] = useState<Value[]>([]);
   const [outcomes, setOutcomes] = useState<Outcome[]>([]);
-  const [desire, setDesire] = useState<DesireWithValuesAndOutcomes | undefined | null>()
-  const loadedDesire: DesireWithValuesAndOutcomes | null = useGetSpecificDesireWithValuesAndOutcomes();
+  const [desire, setDesire] = useState<DesireWithValuesAndOutcomes | null>()
+  const loadedDesire: DesireWithValuesAndOutcomes | null | undefined = useGetSpecificDesireWithValuesAndOutcomes();
+  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: loadedDesire, itemType: 'Desire' })
+
 
   useEffect(() => {
-    if (loadedDesire === null) return setDesire(null)
+    if (loadedDesire === undefined || loadedDesire === null) return 
     setDesire(loadedDesire)
   }, [loadedDesire])
 
@@ -50,7 +57,7 @@ function DesirePage() {
   const { title, description, current, ideal } = desire || {};
   values?.sort((a, b) => a.sortOrder - b.sortOrder)
   const { plural: outcomeS } = varsForPluralText(outcomes);
-  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: desire, itemType: 'Desire' })
+
 
   const valueTitles = values?.map((value) => value.title)
   return (
@@ -68,7 +75,7 @@ function DesirePage() {
         <article>
           {/* //?  THE TITLE SECTION  */}
           <div className='mt-2 ml-[-2px]'>
-            <HeadingH1 text={title || ''} />
+            <HeadingH1 H1Title={title || ''} />
           </div>
 
           <div className="flex flex-wrap gap-2 mt-1  text-base-content/50">
@@ -114,14 +121,14 @@ function DesirePage() {
 export default DesirePage
 
 
-const path: string = `routes/dash.desires_.$desireId`
 
-export const useGetLoaderData = (): DesireWithValuesAndOutcomesWithStringDates | null => {
+export const useGetLoaderData = (path: string = `routes/dash.desires_.$desireId`): DesireWithValuesAndOutcomesWithStringDates | null | undefined => {
   const loaderData = useRouteLoaderData(path)
-  const [desire, setDesire] = useState<DesireWithValuesAndOutcomesWithStringDates | null>(null)
+  const [desire, setDesire] = useState<DesireWithValuesAndOutcomesWithStringDates | null | undefined>(undefined)
 
   useEffect(() => {
-    if (loaderData === undefined || loaderData === null) return setDesire(null)
+    if(loaderData === undefined) return 
+    if (loaderData === 'noId' || loaderData === null) return setDesire(null)
     const desireWithStrDates = loaderData as DesireWithValuesAndOutcomesWithStringDates
     setDesire(desireWithStrDates)
   }, [loaderData])
@@ -129,14 +136,14 @@ export const useGetLoaderData = (): DesireWithValuesAndOutcomesWithStringDates |
   return desire
 }
 
-export const useGetSpecificDesireWithValuesAndOutcomes = (): DesireWithValuesAndOutcomes => {
-  const [desire, setDesire] = useState<DesireWithValuesAndOutcomes>()
-  const loadedData = useGetLoaderData()
+export const useGetSpecificDesireWithValuesAndOutcomes = (path: string = `routes/dash.desires_.$desireId`): DesireWithValuesAndOutcomes | null | undefined => {
+  const loadedData = useGetLoaderData(path)
+  const [desire, setDesire] = useState<DesireWithValuesAndOutcomes | null | undefined>()
 
   useEffect(() => {
-    if (loadedData === undefined || loadedData === null) return
+    if (loadedData === undefined) return  
+    if(!loadedData || loadedData === null) return setDesire(null)
     const data = loadedData as DesireWithValuesAndOutcomesWithStringDates
-    // console.log("🚀 ~ file: dash.desires_.$desireId.tsx:174 ~ useEffect ~ data:", data)
     const { desireValues, outcomes, ...desire } = data
     let desireWithProperDates: Desire
     let outcomesWithProperDates: Outcome[] = []
@@ -164,7 +171,7 @@ export const useGetSpecificDesireWithValuesAndOutcomes = (): DesireWithValuesAnd
     setDesire(objWithProperDates)
   }, [loadedData])
 
-  return desire || {} as DesireWithValuesAndOutcomes
+  return desire 
 }
 
 

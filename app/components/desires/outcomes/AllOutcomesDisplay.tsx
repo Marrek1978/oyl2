@@ -22,7 +22,7 @@ function AllOutcomesDisplay({ outcomes, plural, title }: SpecificOutcomeDisplayP
       <div className='flex flex-wrap gap-x-12 items-baseline    '>
 
         <div className='mt-4'>
-          <HeadingH1 text={'Outcomes of the Ideal Scenario'} />
+          <HeadingH1 H1Title={'Outcomes of the Ideal Scenario'} />
         </div>
 
         <div className='max-w-max'>
