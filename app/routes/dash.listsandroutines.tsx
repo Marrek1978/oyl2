@@ -164,7 +164,7 @@ function ListsPage() {
 export default ListsPage
 
 
-interface LoaderData {
+export interface LoaderData {
   allUserLists: ListAndTodosWithStrDates[]
   allUserRoutines: RoutineAndTasksWithStrDates[]
 }

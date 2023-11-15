@@ -5,7 +5,7 @@ import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import CompletedTasksForm from '~/components/forms/CompletedTasksForm';
-import { ChangeListArrayDates, useGetLoaders, } from './dash.listsandroutines';
+import { ChangeListArrayDates, LoaderData, useGetLoaders, } from './dash.listsandroutines';
 import { reorderCompletedTasks, updateCompletedTasks } from '~/models/routines.server';
 import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect'
 
@@ -87,7 +87,9 @@ export const useGetCurrentRoutine = (): RoutineAndTasks | undefined | null => {
 
   useEffect(() => {
     if (loaderData === undefined) return
-    const { allUserRoutines } = loaderData as { allUserRoutines: RoutineAndTasksWithStrDates[] }
+    if(!loaderData) return setRoutine(null)
+    const data = loaderData as LoaderData
+    const allUserRoutines = data.allUserRoutines as  RoutineAndTasksWithStrDates[]  
     const { routineId } = params
     if (!allUserRoutines || allUserRoutines === undefined || allUserRoutines.length === 0) return
     const RoutineWithStrDates: RoutineAndTasksWithStrDates | undefined = allUserRoutines.find((routine: RoutineAndTasksWithStrDates) => routine.id === routineId)

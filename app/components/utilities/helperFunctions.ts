@@ -89,7 +89,8 @@ export function ArrayOfObjectsStrToDates({
   items,
   dateKeys,
 }: ArrayObjectsWithStrDates) {
-  return items.map((item: any) => {
+  
+  return items?.map((item: any) => {
     const transformedItem = { ...item };
     dateKeys.forEach((key) => {
       if (item[key]) {
