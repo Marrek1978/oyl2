@@ -10,7 +10,7 @@ import type { BtnType, DaisyUIBtnColor, DaisyUIBtnSize, DaisyUIColor, TWTextSize
 interface BasicFormAreaBGProps {
   children: React.ReactNode;
   h2Text: string | React.ReactNode;
-  
+
   maxWidth?: string;
   onClickFunction?: MouseEventHandler<HTMLButtonElement>;
   onMouseOver?: MouseEventHandler<HTMLButtonElement>;
@@ -36,7 +36,7 @@ function BasicFormAreaBG({
   type = 'button',
   linkText = 'Edit',
   icon = EditIcon,
-  linkDestination ,
+  linkDestination,
   linkColorDaisyUI = 'primary',
   btnColorDaisyUI = 'link',
   textSizeTW = 'base',
@@ -57,12 +57,12 @@ function BasicFormAreaBG({
 
       {/* //**************HEADER *************** */}
       <div className={`
-        w-full min-h-[72px] px-8 
+        w-full min-h-[72px] px-8 py-4
         ${backgroundColor}
         flex items-center
         text-xl font-mont uppercase font-normal tracking-widest 
         text-primary-300
-        overflow-ellipsis  
+        truncate
        `}>
 
         <div className='w-full '>

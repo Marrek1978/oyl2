@@ -16,14 +16,7 @@ type Props = {
 }
 
 
-//take in 3 types of lists
-// display list 
-//display items on hover with styling
-// links to list or routine... requires defininng url
-
-
 function DisplayListsOrRoutines({ lists, listType = 'list' }: Props) {
-
   const inOrder = useIsInOrder()
   const setSortOrderToNewIndex = useSetSortOrderToNewIndex();
   const [orderedLists, setOrderedLists] = useState<ListAndToDos[] | RoutineAndTasks[]>([])
@@ -54,13 +47,17 @@ function DisplayListsOrRoutines({ lists, listType = 'list' }: Props) {
 
           return (
             < div key={listId} className="mt-0 capitalize relative group" >
+              <div className="hidden group-hover:block z-30 absolute top-6 left-12"  >
+                <ListRoutineCard list={list} />
+              </div>
               <div className={` flex flex-wrap justify-between  items-baseline gap-x-4 w-full`} >
-                <div className='flex-1 flex gap-2 items-baseline truncate capitalize cursor-pointer'
+                <div className='flex-1 flex gap-2 items-baseline 
+                  truncate capitalize 
+                  cursor-pointer
+                  relative
+                  '
                 >
                   <Heading16pxWithLink text={listTitle} />
-                  <div className="hidden group-hover:block z-10">
-                    <ListRoutineCard list={list} />
-                  </div>
                 </div>
                 <Link to={linkDestination} className='justify-end self-baseline  '>
                   <BtnWithProps

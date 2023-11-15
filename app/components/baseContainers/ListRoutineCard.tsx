@@ -50,7 +50,7 @@ function ListRoutineCard({ list }: Props) {
 
   return (
     <>
-      <div className='absolute top-0 left-10 '>
+      <div className=' '>
 
         <ListCardBg
           title={title}

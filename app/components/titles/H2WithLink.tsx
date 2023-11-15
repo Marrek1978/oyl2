@@ -55,10 +55,9 @@ function H2WithLink({
     <>
       <div className="
         mt-0
-        flex flex-wrap justify-between  items-baseline gap-x-4 w-full 
+        flex justify-between items-baseline gap-x-4 w-full 
         ">
-        <div
-          className='flex-1 flex gap-2 items-baseline flex-wrap capitalize '>
+        <div  className='shrink flex gap-2 items-baseline flex-wrap capitalize truncate '>
           <HeadingH2 text={h2Text} />
           {formattedDate && <div className='text-sm text-success  '>{formattedDate}</div>}
         </div>
