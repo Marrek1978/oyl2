@@ -9,9 +9,8 @@ import { getAllListsAndTodos } from '~/models/list.server';
 import BtnWithProps from '~/components/buttons/BtnWithProps';
 import SubHeading14px from '~/components/titles/SubHeading14px';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
-import { ArrayOfObjectsStrToDates, ObjectStrToDates } from '~/components/utilities/helperFunctions';
+import { ChangeListArrayDates  } from '~/components/utilities/helperFunctions';
 
-import type { HasSortOrder } from '~/types/genericDndArrayTypes';
 import type { ListAndToDos, ListAndTodosWithStrDates } from '~/types/listTypes';
 import type { RoutineAndTasks, RoutineAndTasksWithStrDates } from '~/types/routineTypes';
 import DisplayListsOrRoutines from '~/components/list/DisplayListsOrRoutines';
@@ -200,7 +199,7 @@ export const useGetMiscRoutines = (): RoutineAndTasks[] => {
     const data = loaderData as LoaderData
     let allRoutinesWithStrDates = data.allUserRoutines as RoutineAndTasksWithStrDates[]
     const miscRoutinesWithStrDates: RoutineAndTasksWithStrDates[] = allRoutinesWithStrDates.filter((routine: RoutineAndTasksWithStrDates) => routine.outcomeId === null && routine.isSpecialRoutine === false)
-    const miscRoutinesWithProperDates: RoutineAndTasks[] = ChangeListArrayDates(miscRoutinesWithStrDates, 'routine')
+    const miscRoutinesWithProperDates: RoutineAndTasks[] = ChangeListArrayDates(miscRoutinesWithStrDates, 'routines')
     setRoutines(miscRoutinesWithProperDates)
   }, [loaderData])
   return routines;
@@ -231,7 +230,7 @@ export const useGetSpecialRoutines = (): RoutineAndTasks[] => {
     const data = loaderData as LoaderData
     const allRoutinesWithStrDates = data.allUserRoutines as RoutineAndTasksWithStrDates[]
     const specialRoutinesWithStrDates: RoutineAndTasksWithStrDates[] = allRoutinesWithStrDates.filter((routine: RoutineAndTasksWithStrDates) => routine.outcomeId === null && routine.isSpecialRoutine === true) || []
-    const specialRoutinesWithProperDates: RoutineAndTasks[] = ChangeListArrayDates(specialRoutinesWithStrDates, 'routine')
+    const specialRoutinesWithProperDates: RoutineAndTasks[] = ChangeListArrayDates(specialRoutinesWithStrDates, 'routines')
     setRoutines(specialRoutinesWithProperDates)
   }, [loaderData])
 
@@ -239,22 +238,3 @@ export const useGetSpecialRoutines = (): RoutineAndTasks[] => {
 }
 
 
-
-export const ChangeListArrayDates = <T extends HasSortOrder>(filteredLists: T[], type = 'list') => {
-  const itemType = type === 'list'
-    ? 'todos'
-    : type === 'routine' ? 'tasks'
-      : ''
-  const dateKeysArray = type === 'list'
-    ? ['createdAt', 'updatedAt', 'dueDate']
-    : type === 'routine' ? ['createdAt', 'updatedAt']
-      : []
-
-  return filteredLists.map((list: T) => {
-    const listWithProperDates = ObjectStrToDates({ item: list, dateKeys: ['createdAt', 'updatedAt'] })
-    let listItemsWithProperDates: T[] = []
-    listItemsWithProperDates = ArrayOfObjectsStrToDates({ items: list[itemType], dateKeys: dateKeysArray })
-
-    return { ...listWithProperDates, todos: listItemsWithProperDates }
-  })
-}

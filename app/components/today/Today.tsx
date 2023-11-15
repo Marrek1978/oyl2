@@ -25,7 +25,7 @@ interface SchedulerProps {
 }
 
 
-function Scheduler({
+function Today({
   scheduledItems,
   miscAndSpecialLists,
   miscAndSpecialRoutines,
@@ -92,7 +92,11 @@ function Scheduler({
 
 
   function handleToolTipAccessor(event: any) {
-    return CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutines, desiresAndAll })
+    const result = CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutines, desiresAndAll })
+    console.log("🚀 ~ file: Today.tsx:96 ~ handleToolTipAccessor ~ result:", result)
+    
+    return result
+    // return CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutines, desiresAndAll })
   }
 
 
@@ -134,7 +138,7 @@ function Scheduler({
   )
 }
 
-export default Scheduler
+export default Today
 
 
 

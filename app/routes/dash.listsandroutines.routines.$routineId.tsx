@@ -5,11 +5,12 @@ import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import CompletedTasksForm from '~/components/forms/CompletedTasksForm';
-import { ChangeListArrayDates, LoaderData, useGetLoaders, } from './dash.listsandroutines';
+import { type LoaderData, useGetLoaders, } from './dash.listsandroutines';
 import { reorderCompletedTasks, updateCompletedTasks } from '~/models/routines.server';
 import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect'
 
 import type { RoutineAndTasks, RoutineAndTasksWithStrDates } from '~/types/routineTypes';
+import { ChangeListArrayDates } from '~/components/utilities/helperFunctions';
 
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -94,7 +95,7 @@ export const useGetCurrentRoutine = (): RoutineAndTasks | undefined | null => {
     if (!allUserRoutines || allUserRoutines === undefined || allUserRoutines.length === 0) return
     const RoutineWithStrDates: RoutineAndTasksWithStrDates | undefined = allUserRoutines.find((routine: RoutineAndTasksWithStrDates) => routine.id === routineId)
     if (!RoutineWithStrDates || RoutineWithStrDates === undefined) return setRoutine(null)
-    const routineWithProperDates = ChangeListArrayDates([RoutineWithStrDates])
+    const routineWithProperDates = ChangeListArrayDates([RoutineWithStrDates], 'routines')
     setRoutine(routineWithProperDates[0])
   }, [loaderData, params])
 

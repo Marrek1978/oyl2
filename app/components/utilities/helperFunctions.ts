@@ -191,3 +191,25 @@ export function resetTasksSortOrder<T extends HasSortOrder>(tasks: T[]): T[] {
     }
   })
 }
+
+
+
+export const ChangeListArrayDates = <T extends HasSortOrder>(filteredLists: T[], type = 'lists') => {
+  const itemType = type === 'lists'
+    ? 'todos'
+    : type === 'routines' ? 'tasks'
+      : ''
+
+  const dateKeysArray = type === 'lists'
+    ? ['createdAt', 'updatedAt', 'dueDate']
+    : type === 'routines' ? ['createdAt', 'updatedAt']
+      : []
+
+  return filteredLists.map((eachListOfItems: T) => {
+    const listWithProperDates = ObjectStrToDates({ item: eachListOfItems, dateKeys: ['createdAt', 'updatedAt'] })
+    let listItemsWithProperDates: T[] = []
+    listItemsWithProperDates = ArrayOfObjectsStrToDates({ items: eachListOfItems[itemType], dateKeys: dateKeysArray })
+
+    return { ...listWithProperDates, [itemType]: listItemsWithProperDates }
+  })
+}

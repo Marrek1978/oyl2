@@ -43,19 +43,21 @@ function DisplayCurrentEvent({ event, loadedRoutines, loadedLists, loadedDesires
       if (type === 'outcome') {
         if (description.subType === 'list') {
           const outcome = GetOutcomeByIdFromDesiresArray(loadedDesiresAndAll, description.outcomeId)
-          const currentList:ListAndToDos[] = GetCurrentListById(description.itemId, outcome[0].lists) as ListAndToDos[]
+          if (outcome.length === 0) return
+          const currentList: ListAndToDos[] = GetCurrentListById(description.itemId, outcome[0].lists) as ListAndToDos[]
           const result = ReturnCompletedTodosForm(currentList[0])
           setOutput(result)
         }
         if (description.subType === 'routine') {
           const outcome = GetOutcomeByIdFromDesiresArray(loadedDesiresAndAll, description.outcomeId)
-          const currentRoutine:RoutineAndTasks[] = GetCurrentListById(description.itemId, outcome[0].routines) as RoutineAndTasks[]
+          if (outcome.length === 0) return
+          const currentRoutine: RoutineAndTasks[] = GetCurrentListById(description.itemId, outcome[0].routines) as RoutineAndTasks[]
           const result = ReturnCompletedTasksForm(currentRoutine[0])
           setOutput(result)
         }
       }
 
-      if (type === 'timeblock') { 
+      if (type === 'timeblock') {
 
         const outcome = GetOutcomeByIdFromDesiresArray(loadedDesiresAndAll, description.outcomeId)[0]
 
@@ -63,46 +65,12 @@ function DisplayCurrentEvent({ event, loadedRoutines, loadedLists, loadedDesires
         setOutput(result)
       }
 
-      // console.log('in useEffect and typeOfEvent is: ', typeOfEvent)
-      // if (typeOfEvent === 'listId') {
-      //   const toDosList = loadedLists.find((loadedList) => loadedList.id === event.itemId)
-      //   if (toDosList === undefined) return
-      //   const result = (<><div> < TodosCompletedForm list={toDosList} /></div></>)
-      //   setOutput(result)
-      //   return
-      // }
-
-      // if (typeOfEvent === 'routineId') {
-      //   const routine = loadedRoutines.find((loadedRoutine) => loadedRoutine.id === event.itemId)
-      //   if (routine === undefined) return
-      //   const result = (<><div> < RoutineTodosCompletedForm routine={routine} /></div></>)
-      //   setOutput(result)
-      //   return
-      // }
-
-      // if (typeOfEvent === 'outcomeId') {
-      //   const result = (<><div>Outcome Time Block</div></>)
-      //   setOutput(result)
-      //   return
-      // sort listAndDotos[] by sortOrder
-      // display list of lists
-      // display completed checkbox form for clicked list
-      // }
-
-
     }
-  }, [description])
+  }, [description, event, loadedLists, loadedRoutines, loadedDesiresAndAll])
 
   return (
     <>
-
       {output}
-
-
-
-
-
-
     </>
   )
 }

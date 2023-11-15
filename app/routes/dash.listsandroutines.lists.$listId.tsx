@@ -4,12 +4,13 @@ import { Outlet, useParams } from '@remix-run/react'
 import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
-import { ChangeListArrayDates, useGetLoaders, } from './dash.listsandroutines';
+import { useGetLoaders, } from './dash.listsandroutines';
 import CompletedTodosForm from '~/components/forms/CompletedTodosForm'
 import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect'
 import { deleteCompletedToDosFromList, reorderCompletedToDos, updateCompletedTodos } from '~/models/list.server'
 
 import type { ListAndToDos, ListAndTodosWithStrDates } from '~/types/listTypes'
+import { ChangeListArrayDates } from '~/components/utilities/helperFunctions';
 
 
 export const action = async ({ request }: ActionFunctionArgs) => {

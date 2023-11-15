@@ -12,7 +12,7 @@ import { useGetLoadedDesiresWithAll, useGetLoadedLists, useGetLoadedRoutines } f
 
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndTasks } from '~/types/routineTypes'
-import type { OutcomeWithAll,  } from '~/types/outcomeTypes';
+import type { OutcomeWithAll, } from '~/types/outcomeTypes';
 import type { DesireWithOutcomesAndAll } from '~/types/desireTypes';
 import type { DragFromOutsideItemArgs, EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop'
 import type { AllDraggedItems, AllScheduleItems, DroppedItem, ScheduleItemNotYetSaved } from '~/types/schedulerTypes';
@@ -249,12 +249,12 @@ function Scheduler({
 export default Scheduler
 
 
-function useGetMainFocusOutcomeId(desiresAndAllArray: DesireWithOutcomesAndAll[]):string {
+function useGetMainFocusOutcomeId(desiresAndAllArray: DesireWithOutcomesAndAll[]): string {
   return useMemo(() => {
     const desireZero = desiresAndAllArray.find((desire: DesireWithOutcomesAndAll) => desire.sortOrder === 0);
     if (!desireZero) return '';
     const outcomes = ArrayOfObjectsStrToDates({ items: desireZero.outcomes, dateKeys: ['createdAt', 'updatedAt'] }) as OutcomeWithAll[]
-    const outcomeZero = outcomes.find((outcome: OutcomeWithAll ) => outcome.sortOrder === 0);
+    const outcomeZero = outcomes.find((outcome: OutcomeWithAll) => outcome.sortOrder === 0);
     return outcomeZero ? outcomeZero.id : '';
   }, [desiresAndAllArray]);
 }
@@ -262,58 +262,70 @@ function useGetMainFocusOutcomeId(desiresAndAllArray: DesireWithOutcomesAndAll[]
 
 interface ToolTipType {
   event: any;
-  miscAndSpecialLists: ListAndToDos[];
-  miscAndSpecialRoutines: RoutineAndTasks[];
-  desiresAndAll: DesireWithOutcomesAndAll[];
+  miscAndSpecialLists: ListAndToDos[] | undefined;
+  miscAndSpecialRoutines: RoutineAndTasks[] | undefined;
+  desiresAndAll: DesireWithOutcomesAndAll[] | undefined;
 }
 
 
-
-export function CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutines, desiresAndAll }: ToolTipType) {
+export function CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutines, desiresAndAll }: ToolTipType): string {
+  console.log("🚀 ~ file: Scheduler.tsx:272 ~ CreateToolTip ~ desiresAndAll:", desiresAndAll)
+  console.log("🚀 ~ file: Scheduler.tsx:272 ~ CreateToolTip ~ miscAndSpecialRoutines:", miscAndSpecialRoutines)
+  console.log("🚀 ~ file: Scheduler.tsx:272 ~ CreateToolTip ~ miscAndSpecialLists:", miscAndSpecialLists)
+  console.log('create tool tip in scheudler')
   const description = event.description
   const type = description.type
   let toolTipHeaderText = ''
   let outcomeName: string;
 
   // let loadedLists: ListAndToDos[] | RoutineAndTasks[] | DesireWithOutcomesAndAll[] = [];
-  let currentList: ListAndToDos[] | RoutineAndTasks[]  ;
+  let currentList: ListAndToDos | RoutineAndTasks | ListAndToDos[]
   let currentToDos: ToDo[] | Task[] = [];
   let itemTitle: string = '';
 
   if (type === 'list') {
     const lists = miscAndSpecialLists as ListAndToDos[]
-    currentList = GetCurrentListById(description.listId, lists) as ListAndToDos[]
-    currentList && (currentToDos = currentList[0]?.['todos'])
-    itemTitle = currentList[0]?.['title']
+    const listById = GetCurrentListById(description.listId, lists) as ListAndToDos[]
+    if (listById.length === 0) return ' '
+    currentList = listById[0]
+    currentList && (currentToDos = currentList?.todos)
+    itemTitle = currentList?.title
     toolTipHeaderText = `List: ${itemTitle} \nTo-Dos`
   }
 
   if (type === 'routine') {
+    console.log(' in routine')
     const routines = miscAndSpecialRoutines as RoutineAndTasks[]
-    currentList = GetCurrentListById(description.routineId, routines) as RoutineAndTasks[]
-    currentList && (currentToDos = currentList[0]?.['tasks'])
-    itemTitle = currentList[0]?.['title']
+    const routineById = GetCurrentListById(description.routineId, routines) as RoutineAndTasks[]
+    if (routineById.length === 0) return ' '
+    currentList = routineById[0]
+    currentList && (currentToDos = currentList?.tasks)
+    itemTitle = currentList?.title
     toolTipHeaderText = `Routine: ${itemTitle} \nTasks`
   }
 
   if (type === 'outcome') {
+    console.log('type = outcome')
     const lists = desiresAndAll as DesireWithOutcomesAndAll[]
-
     if (description.subType === 'list') {
-      const outcome = GetOutcomeByIdFromDesiresArray(lists, description.outcomeId)
-      currentList = GetCurrentListById(description.itemId, outcome[0].lists) as ListAndToDos[]
-      currentList && (currentToDos = currentList[0]?.['todos'])
-      outcomeName = outcome[0].title
-      itemTitle = currentList[0]?.['title']
+      const outcomeById = GetOutcomeByIdFromDesiresArray(lists, description.outcomeId)
+      if (outcomeById.length === 0) return ' '
+      const outcome = outcomeById[0]
+      currentList = GetCurrentListById(description.itemId, outcome.lists)[0] as ListAndToDos
+      currentList && (currentToDos = currentList.todos)
+      outcomeName = outcome.title
+      itemTitle = currentList.title
       toolTipHeaderText = `${outcomeName}\nList: ${itemTitle}\nTo-Dos`
     }
 
     if (description.subType === 'routine') {
-      const outcome = GetOutcomeByIdFromDesiresArray(lists, description.outcomeId)
-      currentList = GetCurrentListById(description.itemId, outcome[0].routines) as RoutineAndTasks[]
-      currentList && (currentToDos = currentList[0]?.['tasks'])
-      outcomeName = outcome[0].title
-      itemTitle = currentList[0]?.['title']
+      const outcomeById = GetOutcomeByIdFromDesiresArray(lists, description.outcomeId)
+      if (outcomeById.length === 0) return ' '
+      const outcome = outcomeById[0]
+      currentList = GetCurrentListById(description.itemId, outcome.routines)[0] as RoutineAndTasks
+      currentList && (currentToDos = currentList?.tasks)
+      outcomeName = outcome.title
+      itemTitle = currentList?.['title']
       toolTipHeaderText = `${outcomeName}\nRoutine: ${itemTitle}\nTasks`
     }
 
@@ -322,9 +334,11 @@ export function CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutin
 
   if (type === 'timeblock') {
     const lists = desiresAndAll as DesireWithOutcomesAndAll[]
-    const outcome = GetOutcomeByIdFromDesiresArray(lists, description.outcomeId)
-    outcomeName = outcome[0].title
-    currentList = outcome[0].lists
+    const outcomeById = GetOutcomeByIdFromDesiresArray(lists, description.outcomeId)
+    if (outcomeById.length === 0) return ' '
+    const outcome = outcomeById[0]
+    outcomeName = outcome.title
+    currentList = outcome.lists
     toolTipHeaderText = `Timeblock for: \n${outcomeName}`
 
 
@@ -351,5 +365,5 @@ export function GetOutcomeByIdFromDesiresArray(desiresAndAll: DesireWithOutcomes
 
 
 export function GetCurrentListById(id: string, array: any) {
-  return array?.filter((item:any) => item.id === id)
+  return array?.filter((item: any) => item.id === id)
 } 
