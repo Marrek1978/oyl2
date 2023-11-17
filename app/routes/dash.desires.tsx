@@ -79,6 +79,7 @@ function DesiresPage() {
     <>
       <Outlet />
       <DndAndFormFlex
+        listMaxWidthTW={'max-w-max'}
         dnd={<DndDesires passedDesires={desires} />}
         form={
           <DesiresForm

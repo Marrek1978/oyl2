@@ -9,7 +9,7 @@ type Props = {
   listMaxWidthTW?: maxWidthTW | ''
 }
 
-function DndAndFormFlex({ dnd, form, formMaxWidthTW = '', listMaxWidthTW = '' }: Props) {
+function DndAndFormFlex({ dnd, form, formMaxWidthTW = 'max-w-3xl', listMaxWidthTW = '' }: Props) {
   return (
     <>
       <article className="flex gap-8 flex-wrap ">

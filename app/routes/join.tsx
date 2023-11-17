@@ -1,11 +1,11 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import { useEffect, useRef } from "react";
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
-import { useEffect, useRef } from "react";
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 
-import { User, createUser, getUserByEmail } from "~/models/user.server";
-import { createUserSession, getUserId } from "~/models/session.server";
-import { safeRedirect, validateEmail } from "~/utils";
+import { validateEmail } from "~/utils";
+import { getUserByEmail, handleUserCreationAndSession } from "~/models/user.server";
+
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   // const userId = await getUserId(request);
@@ -54,17 +54,20 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     );
   }
 
-  const user = await createUser(email, password, true)  
+  try {
+    return await handleUserCreationAndSession(email, password, true)
+  } catch (error) {
+    return json({ error: 'Internal Server Error' }, { status: 500 });
+    // throw error 
+  }
 
-  return createUserSession({
-    remember: false,
-    userId: user.id,
-  });
+
 };
 
 export const meta: MetaFunction = () => [{ title: "Sign Up" }];
 
 export default function Join() {
+  console.log(' in Join')
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirectTo") ?? undefined;
   const actionData = useActionData<typeof action>();

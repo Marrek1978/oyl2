@@ -1,9 +1,10 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { createUser, verifyLogin } from "~/models/user.server";
+import { handleUserCreationAndSession, verifyLogin } from "~/models/user.server";
 import { getUserId } from "~/models/session.server";
 import AuthForm from "~/components/auth/AuthForm";
 import { validateCredentials } from "~/models/validation.server";
+import { useSearchParams } from "@remix-run/react";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserId(request);
@@ -38,7 +39,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         remember === "on" ? true : false,
       );
     } else {
-      return await createUser(email, password, remember === "on" ? true : false,);
+      return await handleUserCreationAndSession(email, password, remember === "on" ? true : false,);
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -56,9 +57,15 @@ export const meta: MetaFunction = () => [{ title: "Login" }];
 
 export default function Index() {
 
+  const [searchParams] = useSearchParams();
+  const authMode = searchParams.get("mode") || 'login';
+  console.log("🚀 ~ file: login.tsx:63 ~ Index ~ authMode:", authMode)
+
   return (
     <main className="relative min-h-[90vh] grid p-2 sm:p-6">
-      <AuthForm />
+      {authMode === 'login' && (  // removes join from app - keep until security is implemented and space is avail
+        <AuthForm />
+      )}
     </main>
   );
 }

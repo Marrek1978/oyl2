@@ -73,7 +73,7 @@ function OutcomesPage() {
   const [outcomesState, setOutcomesState] = useState<Outcome[]>([])
   const desiresIdLoaderData = useGetSpecificDesireWithValuesAndOutcomes(`routes/dash.desires_.$desireId_.outcomes`) // from $desireId page
 
-  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: desiresIdLoaderData, itemType: 'Desire', goBackXPaths:2 })
+  const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: desiresIdLoaderData, itemType: 'Desire', goBackXPaths: 2 })
 
 
   useEffect(() => {
@@ -94,6 +94,7 @@ function OutcomesPage() {
       )}
       <BreadCrumbs secondCrumb={'Desire'} />
       <DndAndFormFlex
+        listMaxWidthTW={'max-w-max'}
         dnd={<DndOutcomes passedOutcomes={outcomesState} />}
         form={
           <OutcomesForm

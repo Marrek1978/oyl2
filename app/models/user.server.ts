@@ -29,7 +29,7 @@ export async function createUser(
   email: User["email"],
   password: string,
   remember: boolean
-) {
+):Promise<User> {
   //check for existing email
   try {
     const existingUser = await prisma.user.findUnique({
@@ -53,14 +53,29 @@ export async function createUser(
 
     if (!newUser) throw new Error("Could not create user");
 
-    return createUserSession({
-      userId: newUser.id,
-      remember,
-    });
+    return newUser
+  //   return createUserSession({
+  //     userId: newUser.id,
+  //     remember,
+  //   });
   } catch (error) {
     throw error;
   }
 }
+
+export async function handleUserCreationAndSession(email: string, password: string, remember: boolean) {
+  try{
+    const user = await createUser(email, password, remember)
+    return createUserSession({
+      userId: user.id,
+      remember,
+    });
+  }catch(error){
+    throw error
+  }
+}
+
+
 
 export async function deleteUserByEmail(email: User["email"]) {
   try {

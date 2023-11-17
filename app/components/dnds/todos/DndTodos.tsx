@@ -1,15 +1,15 @@
 import React from 'react'
+import { useFetcher } from '@remix-run/react';
 
 import type { CreationTodo } from '~/types/listTypes';
-import SubHeading14px from "~/components/titles/SubHeading14px";
 
-import DndAndSortableContexts from '../DndAndSortableContexts';
-import useDndDropOrderSaveFunctions from '../useDndDropOrderSaveFunctions';
-import { useFetcher } from '@remix-run/react';
-import useFetcherState from '~/components/utilities/useFetcherState';
-import useServerMessages from '~/components/modals/useServerMessages';
 import DndInfo from '../DndInfo';
 import SortableToDo from './SortableTodo';
+import DndAndSortableContexts from '../DndAndSortableContexts';
+import SubHeading14px from "~/components/titles/SubHeading14px";
+import useFetcherState from '~/components/utilities/useFetcherState';
+import useServerMessages from '~/components/modals/useServerMessages';
+import useDndDropOrderSaveFunctions from '../useDndDropOrderSaveFunctions';
 
 interface DndTodosProps {
   todos: CreationTodo[];

@@ -82,6 +82,7 @@ function MilestoneGroupsPage() {
       <BreadCrumbs secondCrumb={'Desire'} title2={'Outcome'} />
       <Outlet />
       <DndAndFormFlex
+        listMaxWidthTW={'max-w-max'}
         dnd={<DndMilestoneGroups groups={groups} />}
         form={<MilestoneGroupForm />}
       />

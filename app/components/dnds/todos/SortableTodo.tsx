@@ -34,7 +34,7 @@ function SortableToDo({ id, todo, removeTodo, handleOpenEditModal }: SortableIte
       <div className={`
           block 
           rounded-none
-          px-3 py-2 w-full mt-2
+          px-3 py-2 w-full mt-2 max-w-prose truncate
           cursor-pointer 
           font-poppins text-left text-base-content
           transition duration-500

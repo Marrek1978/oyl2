@@ -27,7 +27,7 @@ export async function createUserSession({
 }: {
  userId: string;
  remember: boolean;
-}) {
+}) : Promise<Response>{
  const session = await sessionStorage.getSession();
  session.set(USER_SESSION_KEY, userId);
  return redirect(

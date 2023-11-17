@@ -46,7 +46,7 @@ xl	1280px	@media (min-width: 1280px) { ... }
 
 .input-field-text-para {
   @apply input  textarea
-  textarea-bordered textarea-secondary h-24 
+  textarea-bordered textarea-secondary h-32
   w-full  
   rounded-none
   border-2 border-base-300 bg-base-200 py-2 

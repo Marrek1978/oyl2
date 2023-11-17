@@ -10,7 +10,6 @@ const AuthForm = () => {
   const [searchParams] = useSearchParams();
   const navigation = useNavigation();
   const validationErrors: ValidationErrorTypes | undefined = useActionData();
-  console.log("🚀 ~ file: AuthForm.tsx:13 ~ AuthForm ~ validationErrors:", validationErrors)
 
   const authMode = searchParams.get('mode') || 'login';
   const submitBtnText = authMode === 'login' ? 'Log In' : 'Sign Up';

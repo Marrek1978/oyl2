@@ -175,8 +175,9 @@ function ListForm({ list, isNew = true, nextSortOrder, isNewInModal = false, isS
           <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
           <input type='string' name='outcomeId' value={outcomeId} hidden readOnly />
 
-          <div className=' flex gap-12 flex-wrap'>
-            <div className="flex-1 form-control gap-y-8 ">
+          <div className=' grid  grid-cols-1 md:grid-cols-2 gap-12 flex-wrap'>
+            {/* <div className=' flex gap-12 flex-wrap'> */}
+            <div className="  form-control gap-y-8 ">
               <div >
                 <InputLabelWithGuideLineLink
                   inputTitle='List Title'
@@ -252,7 +253,7 @@ function ListForm({ list, isNew = true, nextSortOrder, isNewInModal = false, isS
             </div>
 
             {/* //? PREVIEW PANEL */}
-            <div className="flex-1 form-control gap-y-6 justify-between">
+            <div className="flex-1 form-control gap-y-6 justify-between  ">
               <div>
                 <div className='mt-1 text-success'>
                   <SubHeading14px text='Preview' />
@@ -262,7 +263,7 @@ function ListForm({ list, isNew = true, nextSortOrder, isNewInModal = false, isS
                 </div>
 
 
-                <div className=' max-h-[360px] overflow-auto overflow-x-hidden mt-4 pr-2'>
+                <div className=' max-h-[360px] h-[360px] overflow-auto overflow-x-hidden mt-4 pr-2'>
                   <DndTodos
                     setTodos={setTodos}
                     todos={todos}
