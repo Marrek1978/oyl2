@@ -38,6 +38,7 @@ export type DaisyUIColor =
   | "dark"
   | "white"
   | "black"
+  |'accent'
   | "primary-focus"
   | "primary-content"
   | "secondary-focus"

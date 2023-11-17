@@ -10,9 +10,10 @@ interface SortableGenericProps {
   title: string | JSX.Element;
   description: string;
   linkTitle?: string;
+  isShowDescription?: boolean;
 }
 
-function DndSortableGeneric({ id, title, description, linkTitle = 'Edit' }: SortableGenericProps) {
+function DndSortableGeneric({ id, title, description, linkTitle = 'Edit', isShowDescription = true }: SortableGenericProps) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: id });
 
@@ -35,9 +36,11 @@ function DndSortableGeneric({ id, title, description, linkTitle = 'Edit' }: Sort
           />
 
           <div className="mt-2 ">
-            <TextProseWidth
-              text={description}
-            />
+            {isShowDescription && (
+              <TextProseWidth
+                text={description}
+              />
+            )}
           </div>
 
         </DndSortableStyling>

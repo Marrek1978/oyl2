@@ -14,7 +14,7 @@ function DndAndFormFlex({ dnd, form, formMaxWidthTW = 'max-w-3xl', listMaxWidthT
     <>
       <article className="flex gap-8 flex-wrap ">
         <section className={` 
-          flex-1 w-full 
+          flex-1  w-full  
           ${listMaxWidthTW} 
           min-w-[350px] 
           lg:min-w-[450px] 

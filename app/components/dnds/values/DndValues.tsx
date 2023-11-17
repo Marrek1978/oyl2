@@ -10,6 +10,7 @@ import DndAndSortableContexts from '~/components/dnds/DndAndSortableContexts';
 import useDndDropOrderSaveFunctions from '~/components/dnds/useDndDropOrderSaveFunctions';
 
 import type { Value } from '@prisma/client'
+import ToggleWithLabelAndGuideLineLink from '~/components/forms/ToggleWithLabelAndGuideLineLink';
 
 
 interface Props {
@@ -19,9 +20,13 @@ interface Props {
 const DndValues = ({ passedValues }: Props) => {
   const fetcher = useFetcher();
   const [values, setValues] = useState<Value[]>([]);
+  const [isShowDescription, setIsShowDescription] = useState<boolean>(true);
+  console.log("🚀 ~ file: DndValues.tsx:25 ~ DndValues ~ isShowDescription:", isShowDescription)
   const { handleDragEnd, setItemsArrayInProperOrder } = useDndDropOrderSaveFunctions({ fetcher, sortableArray: values, setSortableArray: setValues })
   const { fetcherState, fetcherMessage, } = useFetcherState({ fetcher })
   useServerMessages({ fetcherMessage, fetcherState, isShowFailed: true })
+
+
 
   //initial load
   useEffect(() => {
@@ -33,12 +38,32 @@ const DndValues = ({ passedValues }: Props) => {
   return (
     <>
       <PageTitle text='Values' />
+
       <DndAndSortableContexts
         handleDragEnd={handleDragEnd}
         sortableArray={values}
         isVertical={true}
       >
-        <DndInfo />
+
+        <div className='w-full flex flex-col items-end mt-6'>
+        {/* <div className='flex justify-between items-center mt-6'> */}
+          <div className="checkbox-label-flex min-w-[130px] max-w-max ">
+            <ToggleWithLabelAndGuideLineLink
+              text='Show Value Descriptions?'
+              // guideline={DesireOutcomeGuideline}
+              // guidelineTitle='Milestone Description'
+              checkedState={isShowDescription}
+              handleCheckedState={() => setIsShowDescription(!isShowDescription)}
+              toggleColorDaisyUI='secondary'
+              labelWidthTailwindClass='w-56'
+              isSecondaryInput={true}
+            />
+          </div>
+
+          <div className='shrink mt-4'>
+            <DndInfo />
+          </div>
+        </div>
 
         {values?.map((value) => {
           const title = (<>
@@ -51,6 +76,7 @@ const DndValues = ({ passedValues }: Props) => {
               id={value.id}
               description={value.description}
               title={title}
+              isShowDescription={isShowDescription}
             />
           )
         })}
