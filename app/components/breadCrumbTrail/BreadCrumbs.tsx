@@ -31,11 +31,11 @@ function BreadCrumbs({ secondCrumb, title2, title3 }: BreadCrumbProps) {
                 {index < breadcrumbArray.length - 1
                   ? (
                     <Link to={link}>
-                      <div className={linkColor}><SubHeading12px text={crumb} /> </div>
+                      <div className={`${linkColor} max-w-[100px] truncate  `}><SubHeading12px text={crumb} /> </div>
                     </Link>
                   )
                   :
-                  (<div className={endColor}> <SubHeading12px text={crumb} /></div>)
+                  (<div className={`${endColor} max-w-[100px] truncate`} > <SubHeading12px text={crumb} /></div>)
                 }
               </li>
             )

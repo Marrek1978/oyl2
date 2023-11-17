@@ -43,7 +43,7 @@ function DesirePage() {
 
 
   useEffect(() => {
-    if (loadedDesire === undefined || loadedDesire === null) return 
+    if (loadedDesire === undefined || loadedDesire === null) return
     setDesire(loadedDesire)
   }, [loadedDesire])
 
@@ -63,7 +63,7 @@ function DesirePage() {
   return (
     <>
 
-      <BreadCrumbs secondCrumb={'Desire'} />
+      <BreadCrumbs secondCrumb={desire?.title || 'Desire'} />
       <Outlet />
       {warning && (
         <Modal zIndex={50}>
@@ -93,10 +93,12 @@ function DesirePage() {
             linkDestination1={'editDetails'}
             linkText1={'Edit Desire Description'}
             textParagraph1={description || ''}
+
             title2={'The Current Situation'}
             linkDestination2={'editCurrent'}
-            textParagraph2={'Edit Current Situation'}
-            linkText2={current?.length ? current : DesireCurrentDefaultText}
+            linkText2={'Edit Current Situation'}
+            textParagraph2={current?.length ? current : DesireCurrentDefaultText}
+
             title3={'The Ideal Scenario'}
             linkDestination3={'editIdeal'}
             linkText3={'Edit Ideal Scenario'}
@@ -127,7 +129,7 @@ export const useGetLoaderData = (path: string = `routes/dash.desires_.$desireId`
   const [desire, setDesire] = useState<DesireWithValuesAndOutcomesWithStringDates | null | undefined>(undefined)
 
   useEffect(() => {
-    if(loaderData === undefined) return 
+    if (loaderData === undefined) return
     if (loaderData === 'noId' || loaderData === null) return setDesire(null)
     const desireWithStrDates = loaderData as DesireWithValuesAndOutcomesWithStringDates
     setDesire(desireWithStrDates)
@@ -141,8 +143,8 @@ export const useGetSpecificDesireWithValuesAndOutcomes = (path: string = `routes
   const [desire, setDesire] = useState<DesireWithValuesAndOutcomes | null | undefined>()
 
   useEffect(() => {
-    if (loadedData === undefined) return  
-    if(!loadedData || loadedData === null) return setDesire(null)
+    if (loadedData === undefined) return
+    if (!loadedData || loadedData === null) return setDesire(null)
     const data = loadedData as DesireWithValuesAndOutcomesWithStringDates
     const { desireValues, outcomes, ...desire } = data
     let desireWithProperDates: Desire
@@ -171,7 +173,7 @@ export const useGetSpecificDesireWithValuesAndOutcomes = (path: string = `routes
     setDesire(objWithProperDates)
   }, [loadedData])
 
-  return desire 
+  return desire
 }
 
 

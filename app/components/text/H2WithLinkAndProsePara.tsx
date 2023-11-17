@@ -10,14 +10,12 @@ interface H2WithLinkAndProseParaProps {
   isTextBtn?: boolean;
 }
 
-function H2WithLinkAndProsePara({ title, linkDestination, linkText, paragraph, isTextBtn=true }: H2WithLinkAndProseParaProps) {
-  
-  
-  
-  
+function H2WithLinkAndProsePara({ title, linkDestination, linkText, paragraph, isTextBtn = true }: H2WithLinkAndProseParaProps) {
+
+
   return (
     <>
-      <div className='  '>
+      <div>
         <H2WithLink
           h2Text={title}
           linkDestination={linkDestination}

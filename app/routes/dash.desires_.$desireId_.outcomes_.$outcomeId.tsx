@@ -71,7 +71,7 @@ function OutcomePage() {
   return (
     <>
       <Outlet />
-      <BreadCrumbs secondCrumb={'Desire'} title2={'Outcome'} />
+      <BreadCrumbs secondCrumb={desireTitle || 'Desire'} title2={outcomeWithAll?.title || 'Outcome'} />
       {warning && (
         <Modal zIndex={50}>
           {alertMessage}

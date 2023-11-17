@@ -36,62 +36,66 @@ function ThreeParaFlex({
   textParagraph3,
 }: Props) {
   return (
-    <div className='flex flex-wrap gap-12 mt-8'>
+    <>
+      <div className='flex flex-wrap gap-12 mt-8'>
 
-      {/* //?  THE DESIRE  */}
-      <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max '>
-        {linkDestination1 && linkText1 ? (
-          <H2WithLinkAndProsePara
-            title={title1}
-            linkDestination={linkDestination1}
-            linkText={linkText1}
-            paragraph={textParagraph1}
-          />
-        ) : (
-          <H2WithProsePara
-            title={title1}
-            paragraph={textParagraph1}
-          />
-        )}
+        {/* //?  THE DESIRE  */}
+        <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max '>
+          {title1 && textParagraph1 &&
+            (linkDestination1 && linkText1 ? (
+              <H2WithLinkAndProsePara
+                title={title1}
+                linkDestination={linkDestination1}
+                linkText={linkText1}
+                paragraph={textParagraph1}
+              />
+            ) : (
+              <H2WithProsePara
+                title={title1}
+                paragraph={textParagraph1}
+              />
+            ))}
+        </div>
+
+        {/* //?  THE CURRENT SITUATION  */}
+        <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max   '>
+          {title2 && textParagraph2 &&
+            (linkDestination2 && linkText2 ? (
+              <H2WithLinkAndProsePara
+                title={title2}
+                linkDestination={linkDestination2}
+                linkText={linkText2}
+                paragraph={textParagraph2}
+              />
+            ) : (
+              <H2WithProsePara
+                title={title2}
+                paragraph={textParagraph2}
+              />
+            ))}
+        </div>
+
+        {/* //?  THE IDEAL SITUATION  */}
+        <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max   '>
+          {title3 && textParagraph3 &&
+            (linkDestination3 && linkText3 ?
+              (
+                <H2WithLinkAndProsePara
+                  title={title3}
+                  linkDestination={linkDestination3}
+                  linkText={linkText3}
+                  paragraph={textParagraph3}
+                />
+              ) : (
+                <H2WithProsePara
+                  title={title3}
+                  paragraph={textParagraph3}
+                />
+              ))}
+        </div>
+
       </div>
-
-      {/* //?  THE CURRENT SITUATION  */}
-      <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max   '>
-        {title2 && linkDestination2 && linkText2 && textParagraph2 && (
-          <H2WithLinkAndProsePara
-            title={title2}
-            linkDestination={linkDestination2}
-            linkText={linkText2}
-            paragraph={textParagraph2}
-          />
-        )}
-        {title2 && textParagraph2 &&  !linkDestination3 && !linkText3 && (
-          <H2WithProsePara
-            title={title2}
-            paragraph={textParagraph2}
-          />
-        )}
-      </div>
-
-      {/* //?  THE IDEAL SITUATION  */}
-      <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max   '>
-      {title3 && linkDestination3 && linkText3 && textParagraph3 && (
-          <H2WithLinkAndProsePara
-            title={title3}
-            linkDestination={linkDestination3}
-            linkText={linkText3}
-            paragraph={textParagraph3}
-          />
-        )}
-        {title3 && textParagraph3 && !linkDestination3 && !linkText3 &&  (
-          <H2WithProsePara
-            title={title3}
-            paragraph={textParagraph3}
-          />
-        )}
-      </div>
-
-    </div>
+    </>
   )
 }
 

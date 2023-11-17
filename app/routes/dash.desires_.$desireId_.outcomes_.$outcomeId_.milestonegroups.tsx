@@ -15,19 +15,25 @@ import { getMilestoneGroupsByOutcomeId, createMilestoneGroup, updateGroupsOrder 
 import type { Milestone } from "@prisma/client";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/server-runtime';
 import type { MilestoneGroupsWithMilestones, MilestoneGroupsWithMilestonesWithStringDates } from "~/types/milestoneTypes";
+import { getDesireById } from "~/models/desires.server";
 
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  await requireUserId(request);
-  const { outcomeId } = params;
+  let userId = await requireUserId(request);
+  const { outcomeId, desireId } = params;
+  if (!desireId) return redirect('../../../..')
   if (!outcomeId) return redirect('../..')
 
   try {
+    const desire = await getDesireById(desireId, userId);
+    if (!desire) return 'noDesireId'
+    const desireName = desire.title
     const outcome = await getOutcomeByOutcomeId(outcomeId);
-    if (!outcome) return null
+    if (!outcome) return "noOutcomeId"
+    const outcomeName = outcome.title
     const loadedGroups = await getMilestoneGroupsByOutcomeId(outcomeId);
-    return loadedGroups || null
+    return { loadedGroups, desireName, outcomeName }
   } catch (error) { throw error }
 };
 
@@ -68,6 +74,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 function MilestoneGroupsPage() {
 
+  const { desireName, outcomeName } = useGetParamNames()
   const loadedGroupsData = useGetAllMilestoneGroupsForOutcome()
   const [groups, setGroups] = useState<MilestoneGroupsWithMilestones[]>([]);
 
@@ -79,7 +86,7 @@ function MilestoneGroupsPage() {
 
   return (
     <>
-      <BreadCrumbs secondCrumb={'Desire'} title2={'Outcome'} />
+      <BreadCrumbs secondCrumb={desireName || 'Desire'} title2={outcomeName || 'Outcome'} />
       <Outlet />
       <DndAndFormFlex
         listMaxWidthTW={'max-w-max'}
@@ -93,12 +100,41 @@ function MilestoneGroupsPage() {
 export default MilestoneGroupsPage
 
 
+export const useGetLoaderData = (path: string = "routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups") => {
+  const fromDb = useRouteLoaderData(path)
+  return fromDb
+}
+
+export const useGetParamNames = (): { desireName: string, outcomeName: string } => {
+  const loadedData = useGetLoaderData()
+  const [desireName, setDesireName] = useState<string>('')
+  const [outcomeName, setOutcomeName] = useState<string>('')
+
+  useEffect(() => {
+    if (!loadedData || loadedData === undefined) return
+    const data = loadedData as { loadedGroups: MilestoneGroupsWithMilestonesWithStringDates[], desireName: string, outcomeName: string }
+    if (!data) return
+    const { desireName, outcomeName } = data
+    setDesireName(desireName)
+    setOutcomeName(outcomeName)
+  }, [loadedData])
+
+  return { desireName, outcomeName }
+
+}
+
+
+
+
 export const useGetAllMilestoneGroupsForOutcome = (): MilestoneGroupsWithMilestones[] => {
-  const path = "routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups"
-  const loadedGroupsArray = useRouteLoaderData(path)
+
+  const loadedData = useGetLoaderData()
   const [groups, setGroups] = useState<MilestoneGroupsWithMilestones[]>([]);
 
   useEffect(() => {
+    if (!loadedData || loadedData === undefined) return
+    const data = loadedData as { loadedGroups: MilestoneGroupsWithMilestonesWithStringDates[], desireName: string, outcomeName: string }
+    const loadedGroupsArray = data.loadedGroups
     if (!loadedGroupsArray) return
     const groupsWithStrDates = loadedGroupsArray as MilestoneGroupsWithMilestonesWithStringDates[]
     const groupWithProperDates = ArrayOfObjectsStrToDates({ items: groupsWithStrDates, dateKeys: ['createdAt', 'updatedAt'] })
@@ -110,7 +146,7 @@ export const useGetAllMilestoneGroupsForOutcome = (): MilestoneGroupsWithMilesto
     })
 
     setGroups(groupWithProperDates)
-  }, [loadedGroupsArray]);
+  }, [loadedData]);
 
   return groups;
 };

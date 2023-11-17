@@ -70,9 +70,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 function OutcomesPage() {
 
   const [desireId, setDesireId] = useState<string>();
+  const [desireTitle, setDesireTitle] = useState<string>( )
   const [outcomesState, setOutcomesState] = useState<Outcome[]>([])
   const desiresIdLoaderData = useGetSpecificDesireWithValuesAndOutcomes(`routes/dash.desires_.$desireId_.outcomes`) // from $desireId page
 
+  console.log("🚀 ~ file: dash.desires_.$desireId_.outcomes.tsx:76 ~ OutcomesPage ~ desiresIdLoaderData:", desiresIdLoaderData)
   const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: desiresIdLoaderData, itemType: 'Desire', goBackXPaths: 2 })
 
 
@@ -80,6 +82,7 @@ function OutcomesPage() {
     if (!desiresIdLoaderData) return
     const { outcomes, desireValues, ...loadedDesire } = desiresIdLoaderData
     setDesireId(loadedDesire.id)
+    setDesireTitle(loadedDesire.title)
     if (outcomes) setOutcomesState(outcomes)
   }, [desiresIdLoaderData])
 
@@ -92,7 +95,7 @@ function OutcomesPage() {
           {alertMessage}
         </Modal>
       )}
-      <BreadCrumbs secondCrumb={'Desire'} />
+      <BreadCrumbs secondCrumb={desireTitle || 'Desire'} />
       <DndAndFormFlex
         listMaxWidthTW={'max-w-max'}
         dnd={<DndOutcomes passedOutcomes={outcomesState} />}
