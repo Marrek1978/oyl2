@@ -27,6 +27,7 @@ interface Props {
   btnSizeDaisyUI?: DaisyUIBtnSize;
   date?: Date | null;
   sortOrder?: number;
+  isDragging?: boolean;
 }
 
 function H2WithLink({

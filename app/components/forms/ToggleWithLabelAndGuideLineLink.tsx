@@ -14,7 +14,7 @@ type Props = {
   labelWidthTailwindClass?: string
 }
 
-function ToggleWithLabelAndGuideLineLink({ text, guideline, guidelineTitle, checkedState, handleCheckedState, toggleColorDaisyUI, isSecondaryInput = false, labelWidthTailwindClass = 'w-28' }: Props) {
+function ToggleWithLabelAndGuideLineLink({ text, guideline = '', guidelineTitle = '', checkedState, handleCheckedState, toggleColorDaisyUI, isSecondaryInput = false, labelWidthTailwindClass = 'w-28' }: Props) {
 
   const toggleColor = `toggle-${toggleColorDaisyUI}`
   const TWGapCSS = guideline ? 'gap-2' : ''

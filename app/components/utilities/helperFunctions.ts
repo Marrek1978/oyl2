@@ -149,6 +149,17 @@ export function resetTodoSortOrder<T extends HasSortOrder>(todos: T[]): T[] {
   });
 }
 
+export function resetArraySortOrderToIndex<T extends HasSortOrder>(array: T[]): T[] {
+  return array.map((item, index) => {
+    return {
+      ...item,
+      sortOrder: index,
+    };
+  });
+}
+
+
+
 // export function resetTasksSortOrder(tasks: CreationTask[]) {
 //   return tasks.map((task, index) => {
 //     return {

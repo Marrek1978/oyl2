@@ -21,7 +21,6 @@ const DndValues = ({ passedValues }: Props) => {
   const fetcher = useFetcher();
   const [values, setValues] = useState<Value[]>([]);
   const [isShowDescription, setIsShowDescription] = useState<boolean>(true);
-  console.log("🚀 ~ file: DndValues.tsx:25 ~ DndValues ~ isShowDescription:", isShowDescription)
   const { handleDragEnd, setItemsArrayInProperOrder } = useDndDropOrderSaveFunctions({ fetcher, sortableArray: values, setSortableArray: setValues })
   const { fetcherState, fetcherMessage, } = useFetcherState({ fetcher })
   useServerMessages({ fetcherMessage, fetcherState, isShowFailed: true })
@@ -38,7 +37,6 @@ const DndValues = ({ passedValues }: Props) => {
   return (
     <>
       <PageTitle text='Values' />
-
       <DndAndSortableContexts
         handleDragEnd={handleDragEnd}
         sortableArray={values}
@@ -46,17 +44,15 @@ const DndValues = ({ passedValues }: Props) => {
       >
 
         <div className='w-full flex flex-col items-end mt-6'>
-        {/* <div className='flex justify-between items-center mt-6'> */}
           <div className="checkbox-label-flex min-w-[130px] max-w-max ">
             <ToggleWithLabelAndGuideLineLink
               text='Show Value Descriptions?'
-              // guideline={DesireOutcomeGuideline}
-              // guidelineTitle='Milestone Description'
               checkedState={isShowDescription}
               handleCheckedState={() => setIsShowDescription(!isShowDescription)}
               toggleColorDaisyUI='secondary'
               labelWidthTailwindClass='w-56'
               isSecondaryInput={true}
+
             />
           </div>
 

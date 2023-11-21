@@ -1,5 +1,8 @@
-import { arrowLeftCircle } from '../utilities/icons';
 import ListLabel from './ListLabel';
+import { arrowLeftCircle } from '../utilities/icons';
+
+import type { NumTimesValueServedType } from '~/routes/dash.desires';
+import { useEffect, useState } from 'react';
 
 type Props = {
   id: string;
@@ -7,9 +10,19 @@ type Props = {
   checkedValues: string[];
   handleCheckboxChange: (valueTitle: string) => void;
   notYetUsed?: boolean
+  numTimesValueServed?: NumTimesValueServedType
 }
 
-function CheckboxWithLabel({ id, label, checkedValues, handleCheckboxChange, notYetUsed = false }: Props) {
+function CheckboxWithLabel({ id, label, checkedValues, handleCheckboxChange, notYetUsed = false, numTimesValueServed }: Props) {
+  const [numTimesUsed, setNumTimesUsed] = useState<number>(0)
+
+  useEffect(() => {
+    if (!numTimesValueServed) return
+    const key = Object.keys(numTimesValueServed)[0]
+    const numOnly = numTimesValueServed[key]
+    setNumTimesUsed(numOnly)
+  }, [numTimesValueServed])
+
 
   const toggleCheckbox = () => {
     handleCheckboxChange(label)
@@ -45,7 +58,12 @@ function CheckboxWithLabel({ id, label, checkedValues, handleCheckboxChange, not
 
         </div>
         {notYetUsed && (
-          <div className='text-xs text-error font-bold flex gap-x-2 items-center '>{arrowLeftCircle}Not yet used.</div>
+          <div className='text-xs text-error font-bold flex gap-x-2 items-center '>{arrowLeftCircle}Not yet served.</div>
+        )}
+
+        {numTimesUsed > 0 && (
+          <div className='text-xs text-secondary font-bold flex gap-x-2 items-center '>{arrowLeftCircle}Served {numTimesUsed} times.</div>
+
         )}
       </div>
 

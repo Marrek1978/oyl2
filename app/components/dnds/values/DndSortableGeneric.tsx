@@ -14,6 +14,7 @@ interface SortableGenericProps {
 }
 
 function DndSortableGeneric({ id, title, description, linkTitle = 'Edit', isShowDescription = true }: SortableGenericProps) {
+
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: id });
 
@@ -21,7 +22,6 @@ function DndSortableGeneric({ id, title, description, linkTitle = 'Edit', isShow
     transform: CSS.Transform.toString(transform),
     transition,
   };
-
 
 
   return (

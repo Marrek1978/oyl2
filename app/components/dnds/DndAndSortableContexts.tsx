@@ -1,4 +1,4 @@
-import { DndContext, type  DragEndEvent, closestCenter } from "@dnd-kit/core";
+import { DndContext, type DragEndEvent, closestCenter } from "@dnd-kit/core";
 import { SortableContext, horizontalListSortingStrategy, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
 import useCustomSensors from "./useCustomDndSensors";
@@ -17,11 +17,16 @@ function DndAndSortableContexts<T extends HasSortOrder & { id: string }>({
   handleDragEnd,
   sortableArray,
   children,
-  isVertical = true
+  isVertical = true,
 }: Props<T>) {
 
   const sensors = useCustomSensors();
-  const strategy = isVertical ? verticalListSortingStrategy: horizontalListSortingStrategy
+  const strategy = isVertical ? verticalListSortingStrategy : horizontalListSortingStrategy
+
+  // const handleDragStartedLocal = (event:DragEvent ) => {
+  // }
+
+
 
   return (
     <>
@@ -29,6 +34,7 @@ function DndAndSortableContexts<T extends HasSortOrder & { id: string }>({
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
         sensors={sensors}
+        // onDragStart={handleDragStartedLocal}
       >
         <SortableContext
           items={sortableArray?.map((item) => item.id)}

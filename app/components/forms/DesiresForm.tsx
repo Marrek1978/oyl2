@@ -4,13 +4,13 @@ import { useEffect, useMemo, useState } from 'react'
 import FormButtons from './FormButtons';
 import BasicFormAreaBG from './BasicFormAreaBG';
 import CheckboxWithLabel from './CheckboxWithLabel';
-import { isObjInObjArrayById } from '~/routes/dash.desires';
 import { headerText, useSaveBtnText } from './FormsCommonFunctions';
 import useGetNavigationState from '../utilities/useNavigationState';
 import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
 import { DesireDescription, DesireTitle, DesireValuesServed } from '../utilities/Guidelines';
 
 import type { Value } from '@prisma/client';
+import { isObjInObjArrayById, type NumTimesValueServedType } from '~/routes/dash.desires';
 import type { DesireWithValues, DesireWithValuesAndOutcomes } from '~/types/desireTypes';
 
 interface DesireFormProps {
@@ -19,10 +19,10 @@ interface DesireFormProps {
   nextSortOrder?: number
   allUserValues?: Value[] | undefined
   unservedValues?: Value[] | undefined
+  numTimesValueServed?: NumTimesValueServedType[]
 }
 
-function DesiresForm({ desire, isNew = true, nextSortOrder, allUserValues, unservedValues }: DesireFormProps) {
-
+function DesiresForm({ desire, isNew = true, nextSortOrder, allUserValues, unservedValues, numTimesValueServed }: DesireFormProps) {
   const [title, setTitle] = useState<string>('')
   const [desireId, setDesireId] = useState<string>('')
   const [sortOrder, setSortOrder] = useState<number>(0) //if adding new desire, set to desires.length
@@ -122,8 +122,8 @@ function DesiresForm({ desire, isNew = true, nextSortOrder, allUserValues, unser
                   guideline={DesireValuesServed}
                 />
                 {allUserValues?.map((value: Value) => {
-
                   const isUnServed = isObjInObjArrayById(value, unservedValues || [])
+                  const numTimesThisValueServed = numTimesValueServed?.find(obj => obj.hasOwnProperty(value.title))  || undefined
                   return (
                     <div key={value.id} className='mt-2'>
                       <CheckboxWithLabel
@@ -132,6 +132,7 @@ function DesiresForm({ desire, isNew = true, nextSortOrder, allUserValues, unser
                         checkedValues={checkedValues}
                         handleCheckboxChange={handleCheckboxChange}
                         notYetUsed={isUnServed}
+                        numTimesValueServed={numTimesThisValueServed}
                       />
                     </div>
                   )
