@@ -31,6 +31,7 @@ import type { OutcomeWithListsWithStrDates } from '~/types/outcomeTypes'
 import type { ListAndToDos, ListAndTodosWithStrDates } from '~/types/listTypes'
 import type { RoutineAndTasks, RoutineAndTasksWithStrDates } from '~/types/routineTypes'
 import type { DesireWithOutcomesAndAll, DesireWithOutcomesAndListsWithStrDates, DesireWithStringDates } from '~/types/desireTypes'
+import HeadingH1 from '~/components/titles/HeadingH1'
 
 
 export const links: LinksFunction = () => [
@@ -102,23 +103,34 @@ function TodayPage() {
   return (
     <>
       <article>
-        <BasicTextAreaBG pageTitle={'Main Focus Today'} >
+        <BasicTextAreaBG pageTitle={'Today'} >
           <div className='flex flex-wrap flex-col gap-8 w-full  '>
-            <div className='mt-8 w-full bg-base-300'>
+            <div className='mt-6 w-full bg-base-300'>
               TimeLIne
             </div>
 
-            <div>
-              <TwoToneSubHeading
-                staticHeading='Outcome to Focus On'
-                variableHeadingsArray={[mainOutcome?.title || '']}
-                size='14px'
-              />
+            <div  >
+              <div className='text-info'>
+                <SubHeading14px text='Main Focus' />
+              </div>
+              <HeadingH1 H1Title={mainOutcome?.title || ''} />
               <TwoToneSubHeading
                 staticHeading='For Desire'
                 variableHeadingsArray={[mainDesire?.title || '']}
                 size='14px'
               />
+            </div>
+
+            <div >
+              habit tracker
+            </div>
+
+            <div >
+              money tracker
+            </div>
+
+            <div>
+              Milestones
             </div>
 
 

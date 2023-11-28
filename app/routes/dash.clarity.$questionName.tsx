@@ -18,13 +18,18 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   let validationErrors: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(clarityData)) {
+
     if (key === 'birthDate') {
       reshapedData[key] = new Date(value as string)
       if (!(reshapedData[key] instanceof Date)) {
         return validationErrors[key] = 'Please enter a valid date'
       }
+    } else if (key === 'maxAge') {
+      reshapedData[key] = parseInt(value as string)
+    } else if (key === 'fiveYears' || key === 'twentyYears' || key === 'fiftyYears') {
+      reshapedData[key] = value as string
     } else {
-      reshapedData[key] = value
+      reshapedData[key] = value as string
     }
   }
 
@@ -35,7 +40,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 }
 
 function EditClarityQuestionsPage() {
-
   const params = useParams()
   const questionName = params.questionName as QuestionNameTypes
   const questions = useGetClarityLoaderData() as ClarifyingQuestionsWithStringDates[]

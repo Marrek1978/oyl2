@@ -11,6 +11,7 @@ export const keysInOrder: string[] = [
   'fiveYears',
   'twentyYears',
   'fiftyYears',
+  'maxAge'
 ]
 
 export const timeSpansObj: { [key: string]: string | number } = {
@@ -29,7 +30,7 @@ export const timeSpansObj: { [key: string]: string | number } = {
   'oneYearRegrets': 'What regrets would I have? ',
   'fiveYears': '5 Years to Live ',
   'fiveYearsDays': 1826,
-  'twentyYears': '20 Years to Live: ',
+  'twentyYears': '20 Years to Live',
   'twentyYearsDays': 7305,
   'fiftyYears': '50 Years to Live ',
   'fiftyYearsDays': 18262,
@@ -57,4 +58,6 @@ export const TimeSpanPlaceHolderTextObj: { [key: string]: string } = {
   'twentyYearsTitle': 'Twenty Years to Live?',
   'fiftyYears': 'How would I spend my time if I only had fifty years to live?',
   'fiftyYearsTitle': 'Fifty Years to Live?',
+  'maxAge': 'How old do you expect to live to be?',
+  'maxAgeTitle': 'Maximum Age'
 }

@@ -20,6 +20,11 @@
   text-base-content/80
 }
 
+.greyed-heading-color{
+  @apply
+  text-base-content/60
+}
+
 .my-steps {
  @apply
 

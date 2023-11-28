@@ -1,151 +1,163 @@
-import { Form, Link, useActionData } from '@remix-run/react'
+import type { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
+import { Form, useActionData } from '@remix-run/react'
 
-import { closeIcon, dbIcon } from '../utilities/icons'
-import SolidBtnGreyBlue from '../buttons/SolidBtnGreyBlue'
+import FormButtons from '../forms/FormButtons';
+import BasicFormAreaBG from '../forms/BasicFormAreaBG';
+import TextInputField from '../forms/inputs/TextInputField';
+import TextAreaInputField from '../forms/inputs/TextAreaInputField';
 import { TimeSpanPlaceHolderTextObj } from '../clarifyingQuestions/consts';
 
-import type { ClarifyingQuestionsWithStringDates } from '~/types/clarityTypes';
+import type { ClarifyingQuestions } from '@prisma/client';
 
-export type QuestionNameTypes = 'birthDate' | 'twentyFourHours' | 'oneWeek' | 'oneMonth' | 'oneYear' | 'fiveYears' | 'twentyYears' | 'fiftyYears'
+export type QuestionNameTypes =
+  'birthDate'
+  | 'maxAge'
+  | 'twentyFourHours'
+  | 'twentyFourHoursRegrets'
+  | 'oneWeek'
+  | 'oneWeekRegrets'
+  | 'oneMonth'
+  | 'oneMonthRegrets'
+  | 'oneYear'
+  | 'oneYearRegrets'
+  | 'fiveYears'
+  | 'twentyYears'
+  | 'fiftyYears'
 
 interface ClarityQuestionsEditModalProps {
   questionName: QuestionNameTypes
-  questions: ClarifyingQuestionsWithStringDates[]
+  questions: ClarifyingQuestions[]
 }
 
 function ClarityQuestionsEditModal({ questionName, questions }: ClarityQuestionsEditModalProps) {
   const validationErrors = useActionData() as string
 
-  let regretsKey = (questionName + "Regrets") as keyof ClarifyingQuestionsWithStringDates;
+  let regretsKey = (questionName + "Regrets") as keyof ClarifyingQuestions;
+
+  const [formTitle, setFormTitle] = useState<string>('')
+  const [inputType, setInputType] = useState<string>('text')
+  const [inputFieldLabel, setInputFieldLabel] = useState<string>('')
+  const [inputFieldJSX, setInputFieldJSX] = useState<ReactNode>(null)
+  const [regretsInputFieldLabel, setRegretsInputFieldLabel] = useState<string>('')
+  const [defaultValue, setDefaultValue] = useState<string | number | undefined>('')
+  const [regretsInputFieldJSX, setRegretsInputFieldJSX] = useState<ReactNode>(null)
+  const [defaultRegretsValue, setDefaultRegretsValue] = useState<string | number | undefined>()
+  const [fieldValue, setFieldValue] = useState<string | number | undefined>('')
+
+
+  useEffect(() => {
+
+    if (!questions || !questions[0]) return
+    setInputFieldLabel(TimeSpanPlaceHolderTextObj[questionName])
+    setFormTitle(TimeSpanPlaceHolderTextObj[questionName + `Title`])
+
+    if (questionName === 'birthDate') {
+      setDefaultValue(formatDate(questions && questions[0] && questions[0][questionName]?.toISOString()))
+      setInputType('date')
+      setInputFieldJSX(
+        <TextInputField
+          inputFieldLabel={inputFieldLabel}
+          inputType={inputType}
+          defaultValue={defaultValue}
+          fieldName={questionName}
+          validationErrors={validationErrors}
+         onChangeSetter={setFieldValue}
+        />
+      )
+    }
+
+    if (questionName === 'maxAge') {
+      setDefaultValue(questions && questions[0] && questions[0][questionName] || 76)
+      setInputType('number')
+      setInputFieldJSX(
+        <TextInputField
+          inputFieldLabel={inputFieldLabel}
+          inputType={inputType}
+          defaultValue={defaultValue}
+          fieldName={questionName}
+          validationErrors={validationErrors}
+        />
+      )
+    }
+
+    if (questionName !== 'birthDate' && questionName !== 'maxAge') {
+      setDefaultValue((questions && questions[0] && questions[0][questionName])
+        ? questions[0][questionName] as string
+        : '')
+      setInputFieldJSX(
+        <TextAreaInputField
+          inputFieldLabel={inputFieldLabel}
+          fieldName={questionName}
+          defaultValue={defaultValue}
+          placeholder={'I would...'}
+          validationErrors={validationErrors}
+        />
+      )
+    }
+
+    //*********************  REGRET FIELDS ***************** */
+    if (questionName === 'twentyFourHours' || questionName === 'oneWeek' || questionName === 'oneMonth' || questionName === 'oneYear') {
+      setRegretsInputFieldLabel(TimeSpanPlaceHolderTextObj[regretsKey])
+      setDefaultRegretsValue((questions && questions[0] && questions[0][regretsKey])
+        ? questions[0][regretsKey] as string
+        : '')
+      setRegretsInputFieldJSX(
+        <TextAreaInputField
+          inputFieldLabel={regretsInputFieldLabel}
+          fieldName={regretsKey}
+          defaultValue={defaultRegretsValue}
+          placeholder={'I would regret...'}
+          validationErrors={validationErrors}
+        />
+      )
+    }
+
+  }, [questions, questionName, regretsKey, inputFieldLabel, inputType, defaultValue, regretsInputFieldLabel, defaultRegretsValue, validationErrors])
+
+
 
   return (
     <>
-      {/* <div className="
-        card px-4 bg-base-100 
-        rounded-none
-        font-mont
-        shadow-xl z-30
-        "> */}
-      <div className='
-          bg-base-100 
-          grid grid-cols-[minmax(300px,800px)] grid-rows-[72px_1fr_min-content]
-          cursor-default  shadow-xl
-          '>
-        <div className='w-full h-full px-8 bg-base-content flex justify-between items-center'>
-          <div className={`
-              text-xl font-mont uppercase font-normal tracking-widest 
-              text-primary-300
-              truncate overflow-ellipsis 
-              `}>
-            {TimeSpanPlaceHolderTextObj[questionName + `Title`]}
-          </div>
-        </div>
+      <BasicFormAreaBG h2Text={formTitle}  >
+        <Form method='post' className='p-8'>
+          <div className="form-control gap-y-6 ">
+            {(questionName === 'birthDate' || questionName === 'maxAge') && (
+              <>{inputFieldJSX}</>
+            )}
 
+            {(questionName !== 'birthDate' && questionName !== 'maxAge') && (
+              <>{inputFieldJSX}</>
+            )}
 
-        <Form method='post' className='m-8'>
+            {(questionName === 'twentyFourHours' || questionName === 'oneWeek' || questionName === 'oneMonth' || questionName === 'oneYear') && (
+              <>
+                <div className="mt-4">
+                  {regretsInputFieldJSX}
+                </div>
+              </>
+            )}
 
-          {questionName === 'birthDate' && (
-            <>
-              <div className="form-control flex-row gap-4">
-                <label className="label">
-                  <span className="label-text text-base font-mont font-medium">{TimeSpanPlaceHolderTextObj[questionName]}</span>
-                </label>
-                <input
-                  type="date"
-                  className=" w-56
-                    input border-none input-secondary 
-                    bg-base-200 rounded-none
-                    font-poppins font-normal  leading-snug"
-                  name={questionName}
-                  defaultValue={(questions && questions[0] && questions[0][questionName])
-                    ? new Date(questions[0][questionName]).toISOString().slice(0, 10)
-                    : new Date().toISOString().slice(0, 10)
-                  }
-                >
-                </input>
-              </div>
-
-              {validationErrors && (
-                <div className='text-red-700'> {validationErrors}</div>
-              )}
-            </>
-          )}
-
-          {(questionName !== 'birthDate') && (
-            <>
-              <div className="form-control ">
-                <label className="label">
-                  <span className="label-text text-base font-mont font-medium">{TimeSpanPlaceHolderTextObj[questionName]}</span>
-                </label>
-                <textarea
-                  className="w-full 
-                    textarea textarea-bordered h-24 
-                    input border-none input-secondary 
-                    bg-base-200 rounded-none
-                    font-poppins font-normal  leading-snug"
-                  placeholder="I would..."
-                  name={questionName}
-                  defaultValue={(questions && questions[0] && questions[0][questionName])
-                    ? questions[0][questionName] as string
-                    : ''
-                  }
-                >
-                </textarea>
-              </div>
-            </>
-          )}
-
-          {(questionName === 'twentyFourHours' || questionName === 'oneWeek' || questionName === 'oneMonth' || questionName === 'oneYear') && (
-            <>
-              <div className="form-control mt-4">
-                <label className="label">
-                  <span className="label-text text-base font-mont font-medium">
-                    {TimeSpanPlaceHolderTextObj[regretsKey]}
-                  </span>
-
-                </label>
-                <textarea
-                  className="w-full 
-                  textarea textarea-bordered h-24 
-                  input border-none input-secondary 
-                  bg-base-200 rounded-none
-                  font-poppins font-normal  leading-snug"
-                  placeholder="I would regret..."
-                  name={regretsKey}
-                  defaultValue={(questions && questions[0] && questions[0][regretsKey])
-                    ? questions[0][regretsKey] as string
-                    : ''
-                  }
-                >
-                </textarea>
-              </div>
-            </>
-          )}
-
-
-
-          {/* //?  BUTTONS */}
-          <div className="flex gap-6 w-full justify-between mt-8">
-            <Link to='..' className='w-6/12 flex gap-2 flex-1 '>
-              <SolidBtnGreyBlue
-                text='Cancel Edit'
-                onClickFunction={() => { }}
-                icon={closeIcon}
-              />
-            </Link>
-            <div className='flex-1'>
-              <button
-                className="btn btn-error rounded-none w-full"
-                type='submit'
-
-              >Save {dbIcon}
-              </button>
+            {/* //?  BUTTONS */}
+            <div className='mt-2'>
+              <FormButtons />
             </div>
+
           </div>
         </Form>
-      </div>
+      </BasicFormAreaBG>
     </>
   )
 }
 
 export default ClarityQuestionsEditModal
+
+function formatDate(dateInput: string | number | null | undefined): string {
+  const date = dateInput ? new Date(dateInput) : new Date();
+  return date.toISOString().slice(0, 10);
+}
+
+
+
+
+

@@ -9,6 +9,8 @@ import ClarifyingQuestionsDisplay from '~/components/clarifyingQuestions/Clarify
 import type { ClarifyingQuestionsWithStringDates } from '~/types/clarityTypes';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 import { useEffect, useState } from 'react';
+import { ArrayOfObjectsStrToDates } from '~/components/utilities/helperFunctions';
+import type { ClarifyingQuestions } from '@prisma/client';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   let userId = await requireUserId(request);
@@ -40,16 +42,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 function ClarityPage() {
 
-  const questions = useGetClarityLoaderData() as ClarifyingQuestionsWithStringDates[]
-  console.log("🚀 ~ file: dash.clarity.tsx:44 ~ ClarityPage ~ questions:", questions)
-
   return (
     <>
       <Outlet />
       <section className=' flex gap-8 '>
         <div className='flex-1'>
           <BasicTextAreaBG >
-            <ClarifyingQuestionsDisplay questions={questions} />
+            <ClarifyingQuestionsDisplay   />
           </BasicTextAreaBG >
         </div>
 
@@ -67,12 +66,13 @@ export default ClarityPage
 
 export function useGetClarityLoaderData(path: string = 'routes/dash.clarity') {
   const loaderData = useRouteLoaderData(path)
-  const [answers, setAnswers] = useState<ClarifyingQuestionsWithStringDates[] | null | undefined>()
+  const [answers, setAnswers] = useState<ClarifyingQuestions[] >([])
 
   useEffect(() => {
-    if (loaderData === undefined) return
-    if (!loaderData) return
-    setAnswers(loaderData as ClarifyingQuestionsWithStringDates[])
+    if (loaderData === undefined || !loaderData) return
+    const clarityArray = loaderData as ClarifyingQuestionsWithStringDates[]
+    const clarityArrayWithProperDates = ArrayOfObjectsStrToDates({ items: clarityArray, dateKeys: ['birthDate', 'maxAgeDate', 'createdAt', 'updatedAt'] })
+    setAnswers(clarityArrayWithProperDates as ClarifyingQuestions[])
   }, [loaderData])
 
   return answers
