@@ -1,5 +1,7 @@
 import React from 'react'
 import InputLabel from './inputFieldLabel'
+import type { Dispatch, SetStateAction } from 'react'
+
 
 type Props = {
   inputFieldLabel: string
@@ -7,9 +9,10 @@ type Props = {
   defaultValue: string | number | undefined
   placeholder: string
   validationErrors?: string
+  onChangeSetter: Dispatch<SetStateAction<string | number | undefined>>
 }
 
-function TextAreaInputField({ inputFieldLabel, fieldName, defaultValue, placeholder, validationErrors }: Props) {
+function TextAreaInputField({ inputFieldLabel, fieldName, defaultValue, placeholder, validationErrors , onChangeSetter}: Props) {
 
   const inputFieldLabelComponent = InputLabel({ inputLabel: inputFieldLabel })
 
@@ -23,6 +26,7 @@ function TextAreaInputField({ inputFieldLabel, fieldName, defaultValue, placehol
             placeholder={placeholder}
             name={fieldName}
             defaultValue={defaultValue}
+            onChange={(e) => onChangeSetter(e.target.value)}
           >
           </textarea>
         </div>

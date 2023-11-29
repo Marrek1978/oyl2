@@ -10,7 +10,6 @@ import ClarityQuestionsEditModal, { type QuestionNameTypes } from '~/components/
 import type { ClarifyingQuestionsWithStringDates } from '~/types/clarityTypes';
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-
   const userId = await requireUserId(request)
   const formData = await request.formData()
   const clarityData = Object.fromEntries(formData);
@@ -18,7 +17,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   let validationErrors: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(clarityData)) {
-
     if (key === 'birthDate') {
       reshapedData[key] = new Date(value as string)
       if (!(reshapedData[key] instanceof Date)) {

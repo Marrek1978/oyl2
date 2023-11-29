@@ -1,16 +1,16 @@
+import { useEffect, useState } from 'react';
 import { Outlet, useRouteLoaderData } from '@remix-run/react'
-import { redirect, type LoaderFunctionArgs, type ActionFunctionArgs } from '@remix-run/server-runtime';
+import { type LoaderFunctionArgs } from '@remix-run/server-runtime';
 
 import { requireUserId } from '~/models/session.server';
-import { getClarifyingQuestions, upsertMaxAge } from '~/models/clarifying.server';
 import TimeLeft from '~/components/clarifyingQuestions/TimeLeft';
+import { getClarifyingQuestions } from '~/models/clarifying.server';
+import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
+import { ArrayOfObjectsStrToDates } from '~/components/utilities/helperFunctions';
 import ClarifyingQuestionsDisplay from '~/components/clarifyingQuestions/ClarifyingQuestionsDisplay';
 
-import type { ClarifyingQuestionsWithStringDates } from '~/types/clarityTypes';
-import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
-import { useEffect, useState } from 'react';
-import { ArrayOfObjectsStrToDates } from '~/components/utilities/helperFunctions';
 import type { ClarifyingQuestions } from '@prisma/client';
+import type { ClarifyingQuestionsWithStringDates } from '~/types/clarityTypes';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   let userId = await requireUserId(request);
@@ -21,24 +21,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const userId = await requireUserId(request)
-  const formData = await request.formData()
-  const maxAgeString = formData.get('maxAge');
-  //validation
-  let maxAgeError;
-  if (!maxAgeString) {
-    maxAgeError = 'Please enter a number between 1 and 150'
-    return maxAgeError
-  }
-  const maxAge = parseInt(maxAgeString as string) | 75
-
-  try {
-    await upsertMaxAge(maxAge, userId)
-    return redirect('/dash/clarity')
-  } catch (error) { throw error }
-}
-
 
 function ClarityPage() {
 
@@ -48,7 +30,7 @@ function ClarityPage() {
       <section className=' flex gap-8 '>
         <div className='flex-1'>
           <BasicTextAreaBG >
-            <ClarifyingQuestionsDisplay   />
+            <ClarifyingQuestionsDisplay />
           </BasicTextAreaBG >
         </div>
 
@@ -64,9 +46,9 @@ function ClarityPage() {
 
 export default ClarityPage
 
-export function useGetClarityLoaderData(path: string = 'routes/dash.clarity') {
+export function useGetClarityLoaderData(path: string = 'routes/dash.clarity'): ClarifyingQuestions[] | undefined {
   const loaderData = useRouteLoaderData(path)
-  const [answers, setAnswers] = useState<ClarifyingQuestions[] >([])
+  const [answers, setAnswers] = useState<ClarifyingQuestions[]>([])
 
   useEffect(() => {
     if (loaderData === undefined || !loaderData) return
@@ -76,4 +58,35 @@ export function useGetClarityLoaderData(path: string = 'routes/dash.clarity') {
   }, [loaderData])
 
   return answers
+}
+
+export function useGetMaxAge():number {
+  const loadedAnswers = useGetClarityLoaderData() as ClarifyingQuestions[]
+  const [maxAge, setMaxAge] = useState<number>(75)
+
+  useEffect(() => {
+    if (!loadedAnswers) return
+    const answers = loadedAnswers[0] as ClarifyingQuestions
+    if (!answers?.maxAge) return
+    setMaxAge(answers.maxAge)
+  }, [loadedAnswers])
+
+  return maxAge
+}
+
+
+
+export function useGetBirthDate():Date {
+  const loadedAnswers = useGetClarityLoaderData() as ClarifyingQuestions[]
+  const [birthDate, setBirthDate] = useState<Date>(new Date('1980-01-01'))
+
+  useEffect(() => {
+    if (!loadedAnswers) return
+    const answers = loadedAnswers[0] as ClarifyingQuestions
+    if (!answers?.birthDate) return
+
+    setBirthDate(answers.birthDate)
+  }, [loadedAnswers])
+
+  return birthDate
 }

@@ -1,50 +1,56 @@
-import { useEffect, useState } from 'react';
 import { Link, } from '@remix-run/react'
+import { useEffect, useState } from 'react';
 
 import HeadingH1 from '../titles/HeadingH1';
 import { EditIcon } from '../utilities/icons';
-
-import { useGetClarityLoaderData } from '~/routes/dash.clarity';
-
-import type { ClarifyingQuestions } from '@prisma/client';
 import BtnWithProps from '../buttons/BtnWithProps';
+import { useGetBirthDate,  useGetMaxAge } from '~/routes/dash.clarity';
+
 
 function TimeLeft() {
-
-  const [answers, setAnswers] = useState<ClarifyingQuestions>()
-  const loadedClarityAnswers = useGetClarityLoaderData() as ClarifyingQuestions[]
+  const loadedMaxAge: number = useGetMaxAge()
+  const loadedBirthDate: Date = useGetBirthDate()
 
   const [maxAge, setMaxAge] = useState<number>(75)
+  const [birthDate, setBirthDate] = useState<Date>()
   const [deathDate, setDeathDate] = useState<string>('')
-  const [birthDate, setBirthDate] = useState<Date>(new Date('1980-01-01'))
   const [birthDateString, setBirthDateString] = useState<string>('1980-01-01')
 
-  const today = new Date()
-  const weeksLived = Math.floor((today.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24 * 7))
-  const maxAgeDate = new Date(birthDate.getFullYear() + maxAge, birthDate.getMonth(), birthDate.getDate());
-  const weeksLeft = Math.floor((maxAgeDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24 * 7));
-  const weeksInYearBeforeBirth = Math.floor((birthDate.getTime() - new Date(birthDate.getFullYear(), 0, 1).getTime()) / (1000 * 60 * 60 * 24 * 7))
+  const [maxAgeDate, setMaxAgeDate] = useState<Date>()
+  const [weeksLeft, setWeeksLeft] = useState<number>(0)
+  const [weeksLived, setWeeksLived] = useState<number>(0)
+  const [weeksInYearBeforeBirth, setWeeksInYearBeforeBirth] = useState<number>(0)
 
 
   useEffect(() => {
-    if (loadedClarityAnswers === undefined || loadedClarityAnswers === null || !loadedClarityAnswers[0]) return
-    setAnswers(loadedClarityAnswers[0])
-  }, [loadedClarityAnswers])
+    if (!loadedMaxAge) return
+    setMaxAge(loadedMaxAge)
+  }, [loadedMaxAge])
+
+  useEffect(() => {
+    if (!loadedBirthDate) return
+    setBirthDate(loadedBirthDate)
+  }, [loadedBirthDate])
 
 
   useEffect(() => {
-    if (answers === undefined) return
-    if (answers.maxAge !== null) {
-      setMaxAge(answers.maxAge)
-      if (answers.birthDate !== null) {
-        const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
-        setBirthDate(answers.birthDate)
-        setBirthDateString(new Intl.DateTimeFormat('en-US', options).format(answers.birthDate))
-        setDeathDate(new Date(answers.birthDate.getFullYear() + answers.maxAge, answers.birthDate.getMonth(), answers.birthDate.getDate()).toDateString())
-      }
-    }
-  }, [answers])
+    if (!birthDate || !maxAge) return
+    
+    const today = new Date()
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+    setBirthDateString(new Intl.DateTimeFormat('en-US', options).format(birthDate))
+    setDeathDate(new Date(birthDate.getFullYear() + maxAge, birthDate.getMonth(), birthDate.getDate()).toDateString())
+    setWeeksLived(Math.floor((today.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24 * 7)))
+    setMaxAgeDate(new Date(birthDate.getFullYear() + maxAge, birthDate.getMonth(), birthDate.getDate()))
+    setWeeksInYearBeforeBirth(Math.floor((birthDate.getTime() - new Date(birthDate.getFullYear(), 0, 1).getTime()) / (1000 * 60 * 60 * 24 * 7)))
 
+  }, [birthDate, maxAge])
+
+  useEffect(() => {
+    if (!maxAgeDate) return
+    const today = new Date()
+    setWeeksLeft(Math.floor((maxAgeDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24 * 7)))
+  }, [maxAgeDate])
 
 
   return (
@@ -79,36 +85,6 @@ function TimeLeft() {
           />
         </Link>
       </div>
-
-      {/* <Form method='post' className='mt-4 '>
-        <div className='flex gap-4 items-baseline'>
-          <label className="label">
-            <span className="label-text text-base font-mont font-medium">Maximum Age</span>
-          </label>
-          <input
-            type="number"
-            className="
-              w-20
-              input border-none input-secondary 
-              bg-base-200 rounded-none
-              font-poppins font-normal  leading-snug"
-            name='maxAge'
-            min={1}
-            max={150}
-            defaultValue={maxAge || 85}
-          >
-          </input>
-          <button
-            type='submit'
-            className='btn btn-primary btn-sm  rounded-none 0 '
-          >
-            Save
-          </button>
-        </div>
-        {maxAgeError && (
-          <div className='text-red-700'> {maxAgeError}</div>
-        )}
-      </Form> */}
 
       <div className='mt-6'>
         <div>You have <span className='font-medium'> lived {weeksLived}</span> weeks</div>

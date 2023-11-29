@@ -4,7 +4,7 @@ import type { User, ClarifyingQuestions as CQ } from "@prisma/client";
 interface ClarifyQuestionsInput
   extends Omit<CQ, "id" | "createdAt" | "updatedAt" | "userId"> {}
 
-interface ClarifyQuestionsInputOptionals {
+interface ClarifyQuestionsFromApp {
   birthDate?: Date | null;
   twentyFourHours?: string;
   twentyFourHoursRegrets?: string;
@@ -17,7 +17,7 @@ interface ClarifyQuestionsInputOptionals {
   fiveYears?: string;
   twentyYears?: string;
   fiftyYears?: string;
-  maxAge?: string;
+  maxAge?: number | null | undefined;
 }
 
 export const createClarifyingQuestions = async (
@@ -35,25 +35,23 @@ export const createClarifyingQuestions = async (
 };
 
 export const upsertClarifyingQuestions = async (
-  clarifyingQuestions: ClarifyQuestionsInputOptionals,
+  clarifyingQuestions: ClarifyQuestionsFromApp,
   userId: User["id"]
 ) => {
-  // let maxAgeNum =
-  //   clarifyingQuestions.maxAge !== undefined
-  //     ? Number(clarifyingQuestions.maxAge)
-  //     : undefined;
+  console.log(
+    "🚀 ~ file: clarifying.server.ts:57 ~ clarifyingQuestions:",
+    clarifyingQuestions
+  );
+
+  const updateData = {
+    ...clarifyingQuestions,
+    userId,
+  };
 
   const result = await prisma.clarifyingQuestions.upsert({
     where: { userId },
-    create: {
-      ...clarifyingQuestions,
-      maxAge: Number( clarifyingQuestions.maxAge),
-      userId,
-    },
-    update: {
-      ...clarifyingQuestions,
-      maxAge: Number( clarifyingQuestions.maxAge),
-    },
+    create: updateData,
+    update: updateData,
   });
 
   return result;

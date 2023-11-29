@@ -1,5 +1,5 @@
-import type{ Dispatch, SetStateAction } from 'react'
 import InputLabel from './inputFieldLabel'
+import type { Dispatch, SetStateAction } from 'react'
 
 type Props = {
   inputFieldLabel: string
@@ -7,8 +7,7 @@ type Props = {
   fieldName: string
   defaultValue: string | number | undefined
   validationErrors?: string
-  onChangeSetter?: Dispatch<SetStateAction<string>>
-
+  onChangeSetter: Dispatch<SetStateAction<string | number | undefined>>
 }
 
 function TextInputField({ inputFieldLabel, inputType, fieldName, defaultValue, validationErrors, onChangeSetter }: Props) {
@@ -26,7 +25,9 @@ function TextInputField({ inputFieldLabel, inputType, fieldName, defaultValue, v
             className='input-field-text-title'
             name={fieldName}
             defaultValue={defaultValue}
-            onChange={() => onChangeSetter}
+            onChange={(e) => onChangeSetter(e.target.value)}
+            min={1}
+            max={150}
           />
         </div >
       </div >

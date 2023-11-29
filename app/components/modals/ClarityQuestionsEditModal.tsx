@@ -32,66 +32,82 @@ interface ClarityQuestionsEditModalProps {
 
 function ClarityQuestionsEditModal({ questionName, questions }: ClarityQuestionsEditModalProps) {
   const validationErrors = useActionData() as string
-
   let regretsKey = (questionName + "Regrets") as keyof ClarifyingQuestions;
 
   const [formTitle, setFormTitle] = useState<string>('')
   const [inputType, setInputType] = useState<string>('text')
-  const [inputFieldLabel, setInputFieldLabel] = useState<string>('')
-  const [inputFieldJSX, setInputFieldJSX] = useState<ReactNode>(null)
+
+  const [inputLabel, setInputLabel] = useState<string>('')
+  const [inputJSX, setInputJSX] = useState<ReactNode>(null)
+  const [inputValue, setInputValue] = useState<string | number | undefined>('')
+  const [loadedInputValue, setLoadedInputValue] = useState<string | number | undefined>('')
+
   const [regretsInputFieldLabel, setRegretsInputFieldLabel] = useState<string>('')
-  const [defaultValue, setDefaultValue] = useState<string | number | undefined>('')
   const [regretsInputFieldJSX, setRegretsInputFieldJSX] = useState<ReactNode>(null)
-  const [defaultRegretsValue, setDefaultRegretsValue] = useState<string | number | undefined>()
-  const [fieldValue, setFieldValue] = useState<string | number | undefined>('')
+  const [regretsInputValue, setRegretsInputValue] = useState<string | number | undefined>('')
+  const [loadedRegretsValue, setLoadedRegretsValue] = useState<string | number | undefined>()
+
+  const [isSaveable, setIsSaveable] = useState<boolean>(false)
 
 
   useEffect(() => {
+    if (!loadedInputValue) return
+    setInputValue(loadedInputValue)
+  }, [loadedInputValue])
 
+  useEffect(() => {
+    if (!loadedRegretsValue) return
+    setRegretsInputValue(loadedRegretsValue)
+  }, [loadedRegretsValue])
+
+
+  useEffect(() => {
     if (!questions || !questions[0]) return
-    setInputFieldLabel(TimeSpanPlaceHolderTextObj[questionName])
+    setInputLabel(TimeSpanPlaceHolderTextObj[questionName])
     setFormTitle(TimeSpanPlaceHolderTextObj[questionName + `Title`])
 
     if (questionName === 'birthDate') {
-      setDefaultValue(formatDate(questions && questions[0] && questions[0][questionName]?.toISOString()))
+      setLoadedInputValue(formatDate(questions && questions[0] && questions[0][questionName]?.toISOString()))
       setInputType('date')
-      setInputFieldJSX(
+      setInputJSX(
         <TextInputField
-          inputFieldLabel={inputFieldLabel}
+          inputFieldLabel={inputLabel}
           inputType={inputType}
-          defaultValue={defaultValue}
+          defaultValue={loadedInputValue}
           fieldName={questionName}
           validationErrors={validationErrors}
-         onChangeSetter={setFieldValue}
+          onChangeSetter={setInputValue}
         />
       )
     }
 
     if (questionName === 'maxAge') {
-      setDefaultValue(questions && questions[0] && questions[0][questionName] || 76)
+      setLoadedInputValue(questions && questions[0] && questions[0][questionName] || 76)
       setInputType('number')
-      setInputFieldJSX(
+      setInputJSX(
         <TextInputField
-          inputFieldLabel={inputFieldLabel}
+          inputFieldLabel={inputLabel}
           inputType={inputType}
-          defaultValue={defaultValue}
+          defaultValue={loadedInputValue}
           fieldName={questionName}
           validationErrors={validationErrors}
+          onChangeSetter={setInputValue}
         />
       )
     }
 
     if (questionName !== 'birthDate' && questionName !== 'maxAge') {
-      setDefaultValue((questions && questions[0] && questions[0][questionName])
+      setLoadedInputValue((questions && questions[0] && questions[0][questionName])
         ? questions[0][questionName] as string
         : '')
-      setInputFieldJSX(
+      setInputJSX(
         <TextAreaInputField
-          inputFieldLabel={inputFieldLabel}
+          inputFieldLabel={inputLabel}
           fieldName={questionName}
-          defaultValue={defaultValue}
+          defaultValue={loadedInputValue}
           placeholder={'I would...'}
           validationErrors={validationErrors}
+          onChangeSetter={setInputValue}
         />
       )
     }
@@ -99,22 +115,28 @@ function ClarityQuestionsEditModal({ questionName, questions }: ClarityQuestions
     //*********************  REGRET FIELDS ***************** */
     if (questionName === 'twentyFourHours' || questionName === 'oneWeek' || questionName === 'oneMonth' || questionName === 'oneYear') {
       setRegretsInputFieldLabel(TimeSpanPlaceHolderTextObj[regretsKey])
-      setDefaultRegretsValue((questions && questions[0] && questions[0][regretsKey])
+      setLoadedRegretsValue((questions && questions[0] && questions[0][regretsKey])
         ? questions[0][regretsKey] as string
         : '')
       setRegretsInputFieldJSX(
         <TextAreaInputField
           inputFieldLabel={regretsInputFieldLabel}
           fieldName={regretsKey}
-          defaultValue={defaultRegretsValue}
+          defaultValue={loadedRegretsValue}
           placeholder={'I would regret...'}
           validationErrors={validationErrors}
+          onChangeSetter={setRegretsInputValue}
         />
       )
     }
+  }, [questions, questionName, regretsKey, inputLabel, inputType, loadedInputValue, regretsInputFieldLabel, loadedRegretsValue, validationErrors])
 
-  }, [questions, questionName, regretsKey, inputFieldLabel, inputType, defaultValue, regretsInputFieldLabel, defaultRegretsValue, validationErrors])
 
+  useEffect(() => {
+    if (inputValue !== loadedInputValue) { setIsSaveable(true) } else { setIsSaveable(false) }
+    if (!loadedRegretsValue) return
+    if (regretsInputValue !== loadedRegretsValue) setIsSaveable(true)
+  }, [inputValue, loadedInputValue, regretsInputValue, loadedRegretsValue])
 
 
   return (
@@ -123,11 +145,11 @@ function ClarityQuestionsEditModal({ questionName, questions }: ClarityQuestions
         <Form method='post' className='p-8'>
           <div className="form-control gap-y-6 ">
             {(questionName === 'birthDate' || questionName === 'maxAge') && (
-              <>{inputFieldJSX}</>
+              <>{inputJSX}</>
             )}
 
             {(questionName !== 'birthDate' && questionName !== 'maxAge') && (
-              <>{inputFieldJSX}</>
+              <>{inputJSX}</>
             )}
 
             {(questionName === 'twentyFourHours' || questionName === 'oneWeek' || questionName === 'oneMonth' || questionName === 'oneYear') && (
@@ -140,9 +162,10 @@ function ClarityQuestionsEditModal({ questionName, questions }: ClarityQuestions
 
             {/* //?  BUTTONS */}
             <div className='mt-2'>
-              <FormButtons />
+              <FormButtons
+                isSaveBtnDisabled={!isSaveable}
+              />
             </div>
-
           </div>
         </Form>
       </BasicFormAreaBG>
