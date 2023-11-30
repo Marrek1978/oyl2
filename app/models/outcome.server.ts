@@ -10,10 +10,12 @@ type UpdateOutcome = Omit<
   "createdAt" | "updatedAt" | "sortOrder" | "complete" | "desireId"
 >;
 
-
 export async function createOutcome(outcome: CreateOutcome) {
-  console.log("🚀 ~ file: outcome.server.ts:14 ~ createOutcome ~ outcome:", outcome)
-  
+  console.log(
+    "🚀 ~ file: outcome.server.ts:14 ~ createOutcome ~ outcome:",
+    outcome
+  );
+
   try {
     const createOutcome = await prisma.outcome.create({
       data: {
@@ -32,8 +34,6 @@ export async function createOutcome(outcome: CreateOutcome) {
   }
 }
 
-
-
 export async function getOutcomeByOutcomeId(outcomeId: Outcome["id"]) {
   try {
     const outcome = await prisma.outcome.findFirst({
@@ -44,7 +44,6 @@ export async function getOutcomeByOutcomeId(outcomeId: Outcome["id"]) {
     throw error;
   }
 }
-
 
 export async function getOutcomesByDesireId(desireId: Desire["id"]) {
   try {
@@ -58,7 +57,6 @@ export async function getOutcomesByDesireId(desireId: Desire["id"]) {
   }
 }
 
-
 export async function getOutcomeWithMilestonesListsRoutinesHabitsSavingsById(
   outcomeId: Outcome["id"]
 ) {
@@ -69,8 +67,8 @@ export async function getOutcomeWithMilestonesListsRoutinesHabitsSavingsById(
         milestoneGroup: true,
         lists: true,
         routines: true,
-        habitTrackers: true,
-        savingsTrackers: true,
+        habits: true,
+        savings: true,
       },
     });
     return outcome;
@@ -79,16 +77,17 @@ export async function getOutcomeWithMilestonesListsRoutinesHabitsSavingsById(
   }
 }
 
-export async function getAllOutcomesByDesireId(desireId: Desire['id']){
-  try{
+export async function getAllOutcomesByDesireId(desireId: Desire["id"]) {
+  try {
     const outcomes = await prisma.outcome.findMany({
       where: { desireId },
       orderBy: { sortOrder: "asc" },
-    })
+    });
     return outcomes;
-  } catch (error) {throw error}
+  } catch (error) {
+    throw error;
+  }
 }
-
 
 export async function updateOutcome(outcome: UpdateOutcome) {
   try {
@@ -106,8 +105,6 @@ export async function updateOutcome(outcome: UpdateOutcome) {
     throw error;
   }
 }
-
-
 
 export async function updateOutcomesOrder(outcomes: Outcome[]) {
   try {
@@ -134,4 +131,3 @@ export async function deleteOutcomeById(outcomeId: Outcome["id"]) {
     throw error;
   }
 }
-

@@ -160,7 +160,7 @@ function OutcomePage() {
 
             <div className=' grid grid-cols-[250px,_100px] items-baseline'>
               <SubHeading14px text={'Habit Trackers'} />
-              <Link to='milestones'>
+              <Link to='habits'>
                 <BtnWithProps
                   btnPurpose={'goto'}
                   textSizeTW={'sm'}

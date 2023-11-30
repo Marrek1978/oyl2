@@ -13,12 +13,12 @@ interface DatePickerProps {
   isSecondaryInput?: boolean;
 }
 
-const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, labelText = 'Due Date', isHorizontal = false, isSecondaryInput=false }) => {
+const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, labelText = 'Due Date', isHorizontal = false, isSecondaryInput = false }) => {
 
   const [displayDate, setDisplayDate] = useState<Date | null>(selectedDate);
   const [isHorizontalLayout, setIsHorizontalLayout] = useState<boolean>(false)
 
-  const parentDivCss = isHorizontalLayout ? 'flex flex-wrap items-center  gap-x-4  ' : ' '
+  const parentDivCss = isHorizontalLayout ? 'flex flex-wrap items-center gap-x-4  ' : ' '
 
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, 
   return (
     <>
 
-      <div className={`w-full ${parentDivCss}`}>
+      <div className={`w-full  ${parentDivCss}`}>
         {isHorizontalLayout ? (
           <>
             {labelText && (
@@ -48,12 +48,14 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, 
             )}
           </>
         ) : (
-          <InputLabelWithGuideLineLink
-            guideLineTitle={labelText}
-            inputTitle='Due Date'
-            guideline={DueDates}
-            isSecondaryInput={isSecondaryInput}
-          />
+          <div className='pb-0'>
+            <InputLabelWithGuideLineLink
+              guideLineTitle={labelText}
+              inputTitle='Due Date'
+              guideline={DueDates}
+              isSecondaryInput={isSecondaryInput}
+            />
+          </div>
         )}
 
         <TheDatePicker
@@ -63,7 +65,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, 
             p-2 pl-4 
             min-h-8
             font-poppins font-normal tracking-wide
-            bg-base-200
+             border-base-300 bg-base-200
             text-blue placeholder:text-neutral-400
             '
           selected={displayDate}

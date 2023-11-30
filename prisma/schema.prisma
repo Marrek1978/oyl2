@@ -105,8 +105,8 @@ model Outcome {
   notes  Note[]
   routines Routine[]
   milestoneGroup MilestoneGroup[]
-  savingsTrackers SavingsTracker[]
-  habitTrackers HabitTracker[]
+  savings  Savings[]
+  habits Habit[]
 
 }
  
@@ -153,7 +153,6 @@ model ScheduledItem {
   userId String
 }
 
- 
 
 model Note {
   id    String @id @default(cuid())
@@ -173,6 +172,7 @@ model Note {
   desire Desire? @relation(fields: [desireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   desireId String?
 }
+
 
 model List {
   id    String @id @default(cuid())
@@ -208,6 +208,7 @@ model ToDo {
   listId String
 }
 
+
 model Routine {
   id    String @id @default(cuid())
   createdAt DateTime @default(now())
@@ -226,6 +227,7 @@ model Routine {
   tasks Task[]
 }
 
+
 model Task {
   id   String @id @default(cuid())
   createdAt DateTime @default(now())
@@ -240,8 +242,7 @@ model Task {
 }
 
 
-
-model SavingsTracker {
+model Savings {
   id String @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -251,30 +252,59 @@ model SavingsTracker {
   sortOrder Int @default(0)
 
   requiredAmount Int
+  startDate DateTime
   savedAmount Int @default(0)
+  monthlyContribution Int
+  estCompletionDate DateTime
 
   Outcome Outcome @relation(fields: [outcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   outcomeId String
 
+  savingsPayments SavingsPayments[]
  }
 
-model HabitTracker {
+ model SavingsPayments {
+  id String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  month String
+  amount Int
+  paymentDate DateTime
+
+  savings Savings @relation(fields: [savingsId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  savingsId String
+ }
+
+
+model Habit {
   id String @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   title String
   description String?
+  startDate DateTime @default(now())
   sortOrder Int @default(0)
-
-  date DateTime
-  success Boolean @default(false)
 
   Outcome Outcome @relation(fields: [outcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   outcomeId String
+
+  streak Streak[]
 }
 
 
+model Streak {
+  id    String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  date DateTime
+  isSuccess Boolean? 
+
+  habits Habit @relation(fields: [habitId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  habitId String
+}
 
 
 model MilestoneGroup {
@@ -306,6 +336,5 @@ model Milestone {
   
   milestoneGroup MilestoneGroup @relation(fields: [milestoneGroupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   milestoneGroupId String
- 
-
 }
+
