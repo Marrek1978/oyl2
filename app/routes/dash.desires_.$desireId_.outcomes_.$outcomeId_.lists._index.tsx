@@ -21,6 +21,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       todos = JSON.parse(parsedBody.todosString as string);
     }
     const outcomeId = parsedBody.outcomeId as string;
+    
     try {
       await createList({ title, userId, todos, outcomeId, sortOrder })
       return 'success'

@@ -1,7 +1,7 @@
 import { parse } from "querystring";
 import { redirect } from "@remix-run/node";
 import { useEffect, useState } from "react";
-import { Outlet, useRouteLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData, useRouteLoaderData } from "@remix-run/react";
 
 import { requireUserId } from '~/models/session.server';
 import { getOutcomeByOutcomeId } from '~/models/outcome.server';
@@ -11,18 +11,24 @@ import DndAndFormFlex from "~/components/baseContainers/DndAndFormFlex";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/server-runtime';
 import { getDesireById } from "~/models/desires.server";
 import HabitForm from "~/components/forms/habits/HabitForm";
-import { createHabit, getHabitsByOutcomeId, updateHabitsOrder } from "~/models/habits.server";
+import { createHabit, getHabitById, getHabitsByOutcomeId, updateHabitsOrder } from "~/models/habits.server";
 import DndHabits from "~/components/dnds/habits/DndHabits";
 import type { HabitWithStreaks } from "~/types/habitTypes";
 import type { Habit } from "@prisma/client";
+import Modal from "~/components/modals/Modal";
+import BasicTextAreaBG from "~/components/baseContainers/BasicTextAreaBG";
+import PageTitle from "~/components/titles/PageTitle";
+import HabitDisplay from "~/components/habits/HabitDisplay";
+import HabitStreakForm from "~/components/forms/habits/HabitStreakForm";
 
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   let userId = await requireUserId(request);
-  const { outcomeId, desireId } = params;
+  const { outcomeId, desireId, habitId } = params;
   if (!desireId) return redirect('../../../..')
   if (!outcomeId) return redirect('../..')
+  if (!habitId) return redirect('..')
 
   try {
     const desire = await getDesireById(desireId, userId);
@@ -31,10 +37,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     const outcome = await getOutcomeByOutcomeId(outcomeId);
     if (!outcome) return "noOutcomeId"
     const loadedOutcomeName = outcome.title
-    const loadedHabits = await getHabitsByOutcomeId(outcomeId);
-    return { loadedHabits, loadedDesireName, loadedOutcomeName }
+    const loadedHabit = await getHabitById(habitId);
+    return { loadedHabit, loadedDesireName, loadedOutcomeName }
   } catch (error) { throw error }
-  return null
 };
 
 
@@ -74,12 +79,13 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 }
 
 
-function HabitsPage() {
+function HabitPage() {
 
   const { desireName, outcomeName } = useGetParamNames()
-  const habits = useGetHabits() as HabitWithStreaks[]
-  const habitsArrayLength:number = useGetHabitsArrayLength()
+  const habit = useGetHabit() as HabitWithStreaks
 
+  const unTrackedDatesArray = useGetUnTrackedDatesArray(habit)
+  
   // useEffect(() => {
   //   if (!loadedGroupsData) return
   //   setGroups(loadedGroupsData);
@@ -88,28 +94,28 @@ function HabitsPage() {
 
   return (
     <>
-      <BreadCrumbs secondCrumb={desireName || 'Desire'} title2={outcomeName || 'Outcome'} />
+      <BreadCrumbs secondCrumb={desireName || 'Desire'} title2={outcomeName || 'Outcome'} title3={habit?.title} />
       <Outlet />
       <DndAndFormFlex
         listMaxWidthTW={'max-w-max'}
-        dnd={<DndHabits passedHabits={habits} />}
-        form={<HabitForm habitsArrayLength={habitsArrayLength} />}
+        dnd={<HabitDisplay habit={habit} />}
+        form={<HabitStreakForm habit={habit} unTrackedDays={unTrackedDatesArray} />}
       />
     </>
   )
 }
 
-export default HabitsPage
+export default HabitPage
 
 
 
-export const useGetLoaderData = (path: string = "routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.habits") => {
-  const fromDb = useRouteLoaderData(path)
+export const useGetLoaderData = () => {
+  const fromDb = useLoaderData()
   return fromDb
 }
 
 interface LoaderData {
-  loadedHabits: Habit[]
+  loadedHabit: Habit
   loadedDesireName: string
   loadedOutcomeName: string
 }
@@ -117,7 +123,7 @@ interface LoaderData {
 
 export const useSplitLoaderData = () => {
   const loadedData = useGetLoaderData()
-  const [habits, setHabits] = useState<Habit[]>([]);
+  const [habit, setHabit] = useState<Habit>();
   const [desireName, setDesireName] = useState<string>('')
   const [outcomeName, setOutcomeName] = useState<string>('')
 
@@ -125,13 +131,13 @@ export const useSplitLoaderData = () => {
     if (!loadedData || loadedData === undefined) return
     const data = loadedData as LoaderData
     if (!data) return
-    const { loadedHabits, loadedDesireName, loadedOutcomeName } = data
-    loadedHabits && setHabits(loadedHabits)
+    const { loadedHabit, loadedDesireName, loadedOutcomeName } = data
+    loadedHabit && setHabit(loadedHabit)
     loadedDesireName && setDesireName(loadedDesireName)
     loadedOutcomeName && setOutcomeName(loadedOutcomeName)
   }, [loadedData])
 
-  return { habits, desireName, outcomeName }
+  return { habit, desireName, outcomeName }
 }
 
 export const useGetParamNames = (): { desireName: string, outcomeName: string } => {
@@ -140,15 +146,36 @@ export const useGetParamNames = (): { desireName: string, outcomeName: string } 
 }
 
 
-export const useGetHabits = () => {
-  const { habits } = useSplitLoaderData()
-  return habits
+export const useGetHabit = () => {
+  const { habit } = useSplitLoaderData()
+  return habit
 }
 
-export const useGetHabitsArrayLength = () => {
-  const habits = useGetHabits()
-  return habits.length
+export const useGetUnTrackedDatesArray = (habit: HabitWithStreaks) => {
+
+
+  const startDate = habit?.startDate
+  const today = new Date()
+  // const streakInDescOrder = habit?.streaks?.sort((a, b) => { return b.date.getTime() - a.date.getTime() })
+
+
+  //make an array of dates starting at startDate adn ending at today
+  let unTrackedDatesArray = []
+
+  if (startDate) {
+    let date = new Date(startDate)
+    while (date <= today) {
+      unTrackedDatesArray.push(new Date(date))
+      date.setDate(date.getDate() + 1)
+    }
+  }
+
+  return unTrackedDatesArray
+
+
 }
+
+
 
 
 

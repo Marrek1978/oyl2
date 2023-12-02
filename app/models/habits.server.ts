@@ -9,9 +9,7 @@ export const createHabit = async ({
   sortOrder,
   outcomeId,
 }: CreateHabit) => {
-  console.log("🚀 ~ file: habits.server.ts:12 ~ title:", title)
-
-  
+  console.log("🚀 ~ file: habits.server.ts:12 ~ title:", title);
 
   try {
     const result = await prisma.habit.create({
@@ -55,6 +53,18 @@ export const updateHabitsOrder = async (habits: Habit[]) => {
 
     const updatedHabits = await prisma.$transaction(updatedPromises);
     return updatedHabits;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getHabitById = async (habitId: string) => {
+  try {
+    return await prisma.habit.findFirst({
+      where: {
+        id: habitId,
+      }
+    });
   } catch (error) {
     throw error;
   }

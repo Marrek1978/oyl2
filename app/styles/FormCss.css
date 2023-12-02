@@ -83,3 +83,6 @@ xl	1280px	@media (min-width: 1280px) { ... }
 .checkbox-label-flex {
   @apply flex items-center gap-4;
 }
+
+
+ 

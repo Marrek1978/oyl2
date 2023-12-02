@@ -69,6 +69,7 @@ function DndHabits({ passedHabits }: Props) {
               description={habit.description || ''}
               title={title}
               isShowDescription={isShowDescription}
+              linkTitle={'Go to Habit'}
             />
           )
         })}

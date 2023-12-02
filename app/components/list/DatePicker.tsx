@@ -51,7 +51,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, 
           <div className='pb-0'>
             <InputLabelWithGuideLineLink
               guideLineTitle={labelText}
-              inputTitle='Due Date'
+              inputTitle={labelText}
               guideline={DueDates}
               isSecondaryInput={isSecondaryInput}
             />

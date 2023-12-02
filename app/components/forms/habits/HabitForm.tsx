@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, } from 'react';
 import { Form, useFetcher, useParams, } from '@remix-run/react'
 
 import FormButtons from '../FormButtons';
+import DatePicker from '~/components/list/DatePicker';
 import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
 import { headerText, useSaveBtnText } from '../FormsCommonFunctions';
 import useGetNavigationState from '~/components/utilities/useNavigationState';
@@ -10,8 +11,6 @@ import { MilestoneGroupDefaultText } from '~/components/utilities/PlaceHolderTex
 import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
 
 import type { Habit } from '@prisma/client';
-import DatePicker from '~/components/list/DatePicker';
-import type { CreateHabit } from '~/types/habitTypes';
 
 
 type Props = {
