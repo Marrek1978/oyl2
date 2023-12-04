@@ -1,15 +1,27 @@
 import PageTitle from '../titles/PageTitle'
 import HeadingH1 from '../titles/HeadingH1'
-
-import type { HabitWithStreaks } from '~/types/habitTypes'
 import HeadingH3 from '../titles/HeadingH3'
 import HeadingH4 from '../titles/HeadingH4'
 
+import type  { Streak } from '@prisma/client'
+import type { HabitWithStreaks } from '~/types/habitTypes'
+
+
 type Props = {
   habit: HabitWithStreaks
+  existingStreaks:Streak[]
 }
 
-function HabitDisplay({ habit }: Props) {
+function HabitDisplay({ habit, existingStreaks}: Props) {
+console.log("🚀 ~ file: HabitDisplay.tsx:16 ~ HabitDisplay ~ existingStreaks:", existingStreaks)
+
+
+  // setup streaks, count positive in a row
+  //display as green check or red x
+
+
+
+
   return (
     <>
       <PageTitle text={'Habit'} />
@@ -21,13 +33,12 @@ function HabitDisplay({ habit }: Props) {
         <HeadingH4 text={`Last 3 Streaks ${habit?.description || ''}`} />
       </div>
       <div className='mt-6  '>
-        <div> Date  </div>
-        <div> Date  </div>
-        <div> Date  </div>
-        <div> Date  </div>
-        <div> Date  </div>
-        <div> Date  </div>
-        <div> Date  </div>
+       { existingStreaks && existingStreaks?.map((streak, index) => {
+
+        return (streak?.date?.toDateString())
+
+       })}
+
       </div>
     </>
   )

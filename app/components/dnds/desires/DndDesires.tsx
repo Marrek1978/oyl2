@@ -19,8 +19,8 @@ interface Props {
 const DndDesires = ({ passedDesires }: Props) => {
   const fetcher = useFetcher();
   const [desires, setDesires] = useState<DesireWithValuesAndOutcomes[]>([]);
-  const [isShowValues, setIsShowValues] = useState<boolean>(true);
-  const [isShowOutcomes, setIsShowOutcomes] = useState<boolean>(true);
+  const [isShowValues, setIsShowValues] = useState<boolean>(false);
+  const [isShowOutcomes, setIsShowOutcomes] = useState<boolean>(false);
 
   const { handleDragEnd, setItemsArrayInProperOrder } = useDndDropOrderSaveFunctions({ fetcher, sortableArray: desires, setSortableArray: setDesires })
 

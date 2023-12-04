@@ -1,26 +1,23 @@
 import { parse } from "querystring";
 import { redirect } from "@remix-run/node";
-import { useEffect, useState } from "react";
-import { Outlet, useLoaderData, useRouteLoaderData } from "@remix-run/react";
+import { useEffect, useMemo, useState } from "react";
+import { Outlet, useLoaderData } from "@remix-run/react";
 
 import { requireUserId } from '~/models/session.server';
+import { getDesireById } from "~/models/desires.server";
+import HabitDisplay from "~/components/habits/HabitDisplay";
 import { getOutcomeByOutcomeId } from '~/models/outcome.server';
 import BreadCrumbs from "~/components/breadCrumbTrail/BreadCrumbs";
 import DndAndFormFlex from "~/components/baseContainers/DndAndFormFlex";
-
-import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/server-runtime';
-import { getDesireById } from "~/models/desires.server";
-import HabitForm from "~/components/forms/habits/HabitForm";
-import { createHabit, getHabitById, getHabitsByOutcomeId, updateHabitsOrder } from "~/models/habits.server";
-import DndHabits from "~/components/dnds/habits/DndHabits";
-import type { HabitWithStreaks } from "~/types/habitTypes";
-import type { Habit } from "@prisma/client";
-import Modal from "~/components/modals/Modal";
-import BasicTextAreaBG from "~/components/baseContainers/BasicTextAreaBG";
-import PageTitle from "~/components/titles/PageTitle";
-import HabitDisplay from "~/components/habits/HabitDisplay";
 import HabitStreakForm from "~/components/forms/habits/HabitStreakForm";
+import { addStreakDates, getHabitById, } from "~/models/habits.server";
 
+import type { Habit, Streak } from "@prisma/client";
+import type { HabitWithStreaks, StreakDataEntriesType } from "~/types/habitTypes";
+import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/server-runtime';
+import { toast } from 'sonner';
+import { max } from "date-fns";
+import { ArrayOfObjectsStrToDates } from "~/components/utilities/helperFunctions";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -45,32 +42,29 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
 
-  if (request.method === 'PUT') {
-    const formBody = await request.text();
-    const parsedBody = parse(formBody);
-    const groupsObj = JSON.parse(parsedBody.toServerDataString as string);
-    const groups = groupsObj.sortableArray
-    try {
-      await updateHabitsOrder(groups)
-      return 'success'
-    } catch (error) { return 'failure' }
-  }
-
   if (request.method === 'POST') {
     const formData = await request.text()
-    const parsedHabitData = parse(formData)
+    const parsedStreakData = parse(formData)
+    if (!parsedStreakData) return 'failure'
+    const { rowId, ...streakData } = parsedStreakData //streakData is an object with keys of dates and values of true or false
+    const habitId = rowId as string
 
-    if (!parsedHabitData.habitString) return 'failure'
-    const habitData = JSON.parse(parsedHabitData.habitString as string);
+    const streakDataEntries: StreakDataEntriesType[] = []
+    for (const [key, value] of Object.entries(streakData)) {
+      if (key !== 'rowId') {
+        const date = new Date(key)
+        date.setHours(0, 0, 0, 0)
 
-    const title = habitData.title as string
-    const description = habitData.description as string
-    const startDate = habitData.startDate ? new Date(habitData.startDate as string) : new Date()
-    const sortOrder = habitData.sortOrder ? parseInt(habitData.sortOrder as string) : 0
-    const outcomeId = habitData.outcomeId as string
+        streakDataEntries.push({
+          date: date,
+          isSuccess: value === 'on' ? true : false,
+          habitId,
+        })
+      }
+    }
 
     try {
-      await createHabit({ title, description, startDate, sortOrder, outcomeId });
+      await addStreakDates(streakDataEntries);
       return 'success'
     } catch (error) { return 'failure' }
   }
@@ -84,8 +78,9 @@ function HabitPage() {
   const { desireName, outcomeName } = useGetParamNames()
   const habit = useGetHabit() as HabitWithStreaks
 
-  const unTrackedDatesArray = useGetUnTrackedDatesArray(habit)
-  
+  const { existingStreaks, untrackedDatesFromToday } = useGetStreakArrays(habit)
+  console.log("🚀 ~ file: dash.desires_.$desireId_.outcomes_.$outcomeId_.habits_.$habitId.tsx:82 ~ HabitPage ~ existingStreaks:", existingStreaks)
+
   // useEffect(() => {
   //   if (!loadedGroupsData) return
   //   setGroups(loadedGroupsData);
@@ -98,8 +93,8 @@ function HabitPage() {
       <Outlet />
       <DndAndFormFlex
         listMaxWidthTW={'max-w-max'}
-        dnd={<HabitDisplay habit={habit} />}
-        form={<HabitStreakForm habit={habit} unTrackedDays={unTrackedDatesArray} />}
+        dnd={<HabitDisplay habit={habit} existingStreaks={existingStreaks} />}
+        form={<HabitStreakForm habit={habit} unTrackedDays={untrackedDatesFromToday} />}
       />
     </>
   )
@@ -151,26 +146,50 @@ export const useGetHabit = () => {
   return habit
 }
 
-export const useGetUnTrackedDatesArray = (habit: HabitWithStreaks) => {
+export const useGetStreakArrays = (habit: HabitWithStreaks) => {
+  // console.log("🚀 ~ file: dash.desires_.$desireId_.outcomes_.$outcomeId_.habits_.$habitId.tsx:148 ~ useGetStreakArrays ~ habit:", habit)
+
+  const [startDate, setStartDate] = useState<Date>()
+  const [existingStreaks, setExistingStreaks] = useState<Streak[]>([])
+  console.log("🚀 ~ file: dash.desires_.$desireId_.outcomes_.$outcomeId_.habits_.$habitId.tsx:153 ~ useGetStreakArrays ~ existingStreaks:", existingStreaks)
+  const [untrackedDatesFromToday, setUntrackedDatesFromToday] = useState<Date[]>([])
 
 
-  const startDate = habit?.startDate
-  const today = new Date()
-  // const streakInDescOrder = habit?.streaks?.sort((a, b) => { return b.date.getTime() - a.date.getTime() })
-
-
-  //make an array of dates starting at startDate adn ending at today
-  let unTrackedDatesArray = []
-
-  if (startDate) {
-    let date = new Date(startDate)
-    while (date <= today) {
-      unTrackedDatesArray.push(new Date(date))
-      date.setDate(date.getDate() + 1)
+  useEffect(() => {
+    if (!habit) return
+    if (habit.startDate) setStartDate(habit.startDate)
+    if (!habit.startDate) setStartDate(new Date())
+    if (habit.streak) {
+      const streaksWithProperDates = ArrayOfObjectsStrToDates({ items: habit.streak, dateKeys: ['date', 'createdAt', 'updatedAt'] }) as Streak[]
+      const streakInDescOrder = streaksWithProperDates.sort((a, b) => { return b.date.getTime() - a.date.getTime() })
+      setExistingStreaks(streakInDescOrder)
     }
-  }
+  }, [habit])
 
-  return unTrackedDatesArray
+
+  useEffect(() => {
+    const today = new Date()
+    let maxTrackedDate = new Date()
+    if (existingStreaks.length > 0) maxTrackedDate = existingStreaks[0].date
+
+    if (today > maxTrackedDate) {
+      let unTrackedDatesArray = []
+
+      let date = new Date(maxTrackedDate)
+      date.setDate(date.getDate() + 1)
+
+      while (date <= today) {
+        unTrackedDatesArray.push(new Date(date))
+        date.setDate(date.getDate() + 1)
+      }
+      setUntrackedDatesFromToday(unTrackedDatesArray)
+    }
+  }, [existingStreaks, startDate])
+
+
+
+
+  return { existingStreaks, untrackedDatesFromToday }
 
 
 }

@@ -2,6 +2,7 @@ import { Form } from '@remix-run/react'
 import { useState, useEffect, } from 'react';
 
 import FormButtons from '~/components/forms/FormButtons';
+import DateCheckBox from '~/components/habits/DateCheckBox';
 import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
 import useServerMessages from '~/components/modals/useServerMessages';
 import { useSaveBtnText } from '~/components/forms/FormsCommonFunctions';
@@ -10,7 +11,6 @@ import useGetNavigationState from '~/components/utilities/useNavigationState';
 import BtnWithProps from '~/components/buttons/BtnWithProps';
 
 import type { HabitWithStreaks } from '~/types/habitTypes';
-import StreakCompletedBox from '~/components/habits/StreakCompletedBox';
 
 type Props = {
   habit: HabitWithStreaks;
@@ -19,21 +19,27 @@ type Props = {
 }
 
 function HabitStreakForm({ habit, unTrackedDays, isNew = true }: Props) {
-  console.log("🚀 ~ file: HabitStreakForm.tsx:21 ~ HabitStreakForm ~ unTrackedDays:", unTrackedDays)
 
   const [title, setTitle] = useState<string>('')
   const [habitId, setHabitId] = useState<string>('')
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
 
+  const [checkAll, setCheckAll] = useState<boolean>(false) 
+  const [checkBtnLabel, setCheckBtnLabel] = useState<string>('Check All')
   const { isIdle, navigationState } = useGetNavigationState()
   useServerMessages({ fetcherState: navigationState, isShowFailed: true })
 
- 
 
   useEffect(() => {
     setTitle(habit?.title || '')
     setHabitId(habit?.id || '')
   }, [habit])
+
+
+  const checkAllFunction = () => {
+    setCheckAll(!checkAll)
+    setCheckBtnLabel( checkAll ? 'Check All' : 'Un-check All')
+  }
 
 
   return (
@@ -46,27 +52,25 @@ function HabitStreakForm({ habit, unTrackedDays, isNew = true }: Props) {
 
             <BtnWithProps
               btnPurpose='goto'
-              btnLabel='Check All'
+              btnLabel={checkBtnLabel}
               textColorDaisyUI='primary'
-              isBtnDisabled={false}
-              onClickFunction={() => { }}
+              isBtnDisabled={!isIdle}
+              onClickFunction={checkAllFunction}
               daisyUIBtnSize={'sm'}
               fontWidthTW={'bold'}
             />
 
-
             <div>
               {unTrackedDays?.map((day, index) => {
                 return (
-                  <StreakCompletedBox
+                  <DateCheckBox
                     key={index}
                     streakDate={day}
+                    isChecked={checkAll}
                   />
                 )
               })}
             </div>
-
-
 
             {/* //**************BUTTONS ***************  */}
             <div className='mt-2'>

@@ -59,7 +59,6 @@ function HabitForm({ passedHabit, isNew = true, habitsArrayLength = 0 }: Props) 
 
 
   const handleSave = async () => {
-    console.log(' in handle save')
     const habitObject = {
       title: title,
       description: description,
@@ -69,7 +68,6 @@ function HabitForm({ passedHabit, isNew = true, habitsArrayLength = 0 }: Props) 
     }
 
     const habitString = JSON.stringify(habitObject)
-    console.log("🚀 ~ file: HabitForm.tsx:74 ~ handleSave ~ habitString:", habitString)
     try {
       fetcher.submit({
         habitString,

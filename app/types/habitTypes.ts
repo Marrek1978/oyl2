@@ -1,4 +1,10 @@
 import type { Habit, Streak } from "@prisma/client";
 
 export type CreateHabit = Omit<Habit, "id" | "createdAt" | "updatedAt">;
-export type HabitWithStreaks = Habit & {streaks: Streak[]};
+export type HabitWithStreaks = Habit & { streak: Streak[] };
+
+export type StreakDataEntriesType = {
+  date: Date
+  isSuccess: boolean;
+  habitId: string;
+};

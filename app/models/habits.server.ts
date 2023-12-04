@@ -1,6 +1,6 @@
 import { prisma } from "~/db.server";
 import type { Habit } from "@prisma/client";
-import type { CreateHabit } from "~/types/habitTypes";
+import type { CreateHabit, StreakDataEntriesType } from "~/types/habitTypes";
 
 export const createHabit = async ({
   title,
@@ -9,8 +9,6 @@ export const createHabit = async ({
   sortOrder,
   outcomeId,
 }: CreateHabit) => {
-  console.log("🚀 ~ file: habits.server.ts:12 ~ title:", title);
-
   try {
     const result = await prisma.habit.create({
       data: {
@@ -63,7 +61,23 @@ export const getHabitById = async (habitId: string) => {
     return await prisma.habit.findFirst({
       where: {
         id: habitId,
-      }
+      },
+      include: {
+        streak: {
+          orderBy: { date: "desc" },
+        },
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const addStreakDates = (streakDataEntries: StreakDataEntriesType[]) => {
+  // makes sure that the date (year, month, day) is unique
+  try {
+    return prisma.streak.createMany({
+      data: streakDataEntries,
     });
   } catch (error) {
     throw error;

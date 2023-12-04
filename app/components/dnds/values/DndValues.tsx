@@ -20,7 +20,7 @@ interface Props {
 const DndValues = ({ passedValues }: Props) => {
   const fetcher = useFetcher();
   const [values, setValues] = useState<Value[]>([]);
-  const [isShowDescription, setIsShowDescription] = useState<boolean>(true);
+  const [isShowDescription, setIsShowDescription] = useState<boolean>(false);
   const { handleDragEnd, setItemsArrayInProperOrder } = useDndDropOrderSaveFunctions({ fetcher, sortableArray: values, setSortableArray: setValues })
   const { fetcherState, fetcherMessage, } = useFetcherState({ fetcher })
   useServerMessages({ fetcherMessage, fetcherState, isShowFailed: true })
