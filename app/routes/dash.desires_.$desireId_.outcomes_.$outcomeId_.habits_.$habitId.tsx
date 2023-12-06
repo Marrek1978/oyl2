@@ -1,7 +1,7 @@
 import { parse } from "querystring";
 import { redirect } from "@remix-run/node";
-import { useEffect, useMemo, useState } from "react";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { useEffect, useState } from "react";
+import { Outlet, useLoaderData, useRouteLoaderData } from "@remix-run/react";
 
 import { requireUserId } from '~/models/session.server';
 import { getDesireById } from "~/models/desires.server";
@@ -15,8 +15,6 @@ import { addStreakDates, getHabitById, } from "~/models/habits.server";
 import type { Habit, Streak } from "@prisma/client";
 import type { HabitWithStreaks, StreakDataEntriesType } from "~/types/habitTypes";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/server-runtime';
-import { toast } from 'sonner';
-import { max } from "date-fns";
 import { ArrayOfObjectsStrToDates } from "~/components/utilities/helperFunctions";
 
 
@@ -75,12 +73,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 function HabitPage() {
 
-  const { desireName, outcomeName } = useGetParamNames()
   const habit = useGetHabit() as HabitWithStreaks
+  const { desireName, outcomeName } = useGetParamNames()
 
-  const { existingStreaks, untrackedDatesFromToday } = useGetStreakArrays(habit)
-  console.log("🚀 ~ file: dash.desires_.$desireId_.outcomes_.$outcomeId_.habits_.$habitId.tsx:82 ~ HabitPage ~ existingStreaks:", existingStreaks)
-
+  const { existingStreaks, untrackedDatesFromToday } = useGetStreakArrays()
   // useEffect(() => {
   //   if (!loadedGroupsData) return
   //   setGroups(loadedGroupsData);
@@ -103,14 +99,15 @@ function HabitPage() {
 export default HabitPage
 
 
+const path = 'routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.habits_.$habitId'
 
 export const useGetLoaderData = () => {
-  const fromDb = useLoaderData()
+  const fromDb = useRouteLoaderData(path)
   return fromDb
 }
 
 interface LoaderData {
-  loadedHabit: Habit
+  loadedHabit: HabitWithStreaks
   loadedDesireName: string
   loadedOutcomeName: string
 }
@@ -127,9 +124,21 @@ export const useSplitLoaderData = () => {
     const data = loadedData as LoaderData
     if (!data) return
     const { loadedHabit, loadedDesireName, loadedOutcomeName } = data
-    loadedHabit && setHabit(loadedHabit)
     loadedDesireName && setDesireName(loadedDesireName)
     loadedOutcomeName && setOutcomeName(loadedOutcomeName)
+
+    if (loadedHabit) {
+
+      const streaksWithStringDates = loadedHabit.streak
+      const streaksWithProperDates = ArrayOfObjectsStrToDates({ items: streaksWithStringDates, dateKeys: ['date', 'createdAt', 'updatedAt'] }) as Streak[]
+
+      const updatedHabit = { ...loadedHabit, streak: streaksWithProperDates }
+
+      setHabit(updatedHabit)
+    }
+
+
+
   }, [loadedData])
 
   return { habit, desireName, outcomeName }
@@ -146,14 +155,11 @@ export const useGetHabit = () => {
   return habit
 }
 
-export const useGetStreakArrays = (habit: HabitWithStreaks) => {
-  // console.log("🚀 ~ file: dash.desires_.$desireId_.outcomes_.$outcomeId_.habits_.$habitId.tsx:148 ~ useGetStreakArrays ~ habit:", habit)
-
+export const useGetStreakArrays = () => {
+  const habit = useGetHabit() as HabitWithStreaks
   const [startDate, setStartDate] = useState<Date>()
   const [existingStreaks, setExistingStreaks] = useState<Streak[]>([])
-  console.log("🚀 ~ file: dash.desires_.$desireId_.outcomes_.$outcomeId_.habits_.$habitId.tsx:153 ~ useGetStreakArrays ~ existingStreaks:", existingStreaks)
   const [untrackedDatesFromToday, setUntrackedDatesFromToday] = useState<Date[]>([])
-
 
   useEffect(() => {
     if (!habit) return
@@ -169,12 +175,14 @@ export const useGetStreakArrays = (habit: HabitWithStreaks) => {
 
   useEffect(() => {
     const today = new Date()
-    let maxTrackedDate = new Date()
-    if (existingStreaks.length > 0) maxTrackedDate = existingStreaks[0].date
+    today.setHours(0, 0, 0, 0)
+    if (!startDate) return
+    let maxTrackedDate = new Date(startDate)
+    if (existingStreaks.length > 0) maxTrackedDate = new Date(existingStreaks[0].date)
+    maxTrackedDate.setHours(0, 0, 0, 0)
 
-    if (today > maxTrackedDate) {
+    if (today >= maxTrackedDate) {
       let unTrackedDatesArray = []
-
       let date = new Date(maxTrackedDate)
       date.setDate(date.getDate() + 1)
 
@@ -186,13 +194,10 @@ export const useGetStreakArrays = (habit: HabitWithStreaks) => {
     }
   }, [existingStreaks, startDate])
 
-
-
-
   return { existingStreaks, untrackedDatesFromToday }
-
-
 }
+
+
 
 
 

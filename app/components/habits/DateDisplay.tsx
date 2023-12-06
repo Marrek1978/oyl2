@@ -1,10 +1,43 @@
-import React from 'react'
+import { useEffect, useState } from 'react'
 
-type Props = {}
+import type { Streak } from '@prisma/client'
+import BtnWithProps from '../buttons/BtnWithProps'
+import { Link } from '@remix-run/react'
 
-function DateDisplay({}: Props) {
+type Props = {
+  streakObj: Streak
+}
+
+
+function DateDisplay({ streakObj }: Props) {
+  const [date, setDate] = useState<string>('')
+  const [isSuccess, setIsSuccess] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (!streakObj) return
+    setDate(streakObj?.date?.toDateString())
+    setIsSuccess(streakObj?.isSuccess || false)
+  }, [streakObj])
+
+
   return (
-    <div>DateDisplay</div>
+    <>
+      <div>
+        <div className='grid grid-cols-[150px_50px_80px] items-center  '>
+          <div className=' '>{date}</div>
+          <div>{isSuccess ? '✅' : '❌'}</div>
+          <div>
+            <Link to={streakObj.id} >
+              <BtnWithProps
+                btnPurpose={'goto'}
+                daisyUIBtnSize={'sm'}
+                fontWidthTW={'bold'}
+              />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
 
