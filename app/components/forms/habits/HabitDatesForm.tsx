@@ -18,11 +18,10 @@ type Props = {
   isNew?: boolean
 }
 
-function HabitStreakForm({ habit, unTrackedDays, isNew = true }: Props) {
+function HabitDatesForm({ habit, unTrackedDays, isNew = true }: Props) {
 
   const [title, setTitle] = useState<string>('')
   const [habitId, setHabitId] = useState<string>('')
-  const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
 
   const [checkAll, setCheckAll] = useState<boolean>(false) 
   const [checkBtnLabel, setCheckBtnLabel] = useState<string>('Check All')
@@ -88,4 +87,4 @@ function HabitStreakForm({ habit, unTrackedDays, isNew = true }: Props) {
   )
 }
 
-export default HabitStreakForm
+export default HabitDatesForm

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from '@remix-run/react'
 
 import Modal from '~/components/modals/Modal'
-import StreakDateForm from '~/components/forms/habits/StreakDateForm'
+import HabitEditDateForm from '~/components/forms/habits/HabitEditDateForm'
 import { useSplitLoaderData } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.habits_.$habitId'
 // import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect'
 
@@ -11,10 +11,10 @@ import type { HabitWithStreaks } from '~/types/habitTypes'
 
 
 
-function EditStreakDatePage() {
+function EditHabitDatePage() {
 
   const params = useParams();
-  const streakDateId = params.streakDateId
+  const habitDateId = params.dateId
 
   const { habit } = useSplitLoaderData()
   const loadedHabit = habit as HabitWithStreaks
@@ -22,11 +22,11 @@ function EditStreakDatePage() {
   const [title, setTitle] = useState<string>('')
 
   useEffect(() => {
-    if (!streakDateId) return
+    if (!habitDateId) return
     if (!loadedHabit?.streak) return
-    setStreakObj(loadedHabit.streak.find(streak => streak.id === streakDateId))
+    setStreakObj(loadedHabit.streak.find(streak => streak.id === habitDateId))
     setTitle(loadedHabit.title)
-  }, [loadedHabit, streakDateId])
+  }, [loadedHabit, habitDateId])
 
   // const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: habit, itemType: 'Streak Date' })
 
@@ -39,12 +39,12 @@ function EditStreakDatePage() {
       )} */}
 
       <Modal onClose={() => { }} zIndex={10}>
-        <div className='formWidth'>
-          <StreakDateForm streakDateObj={streakObj} habitTitle={title} />
+        <div className='max-w-md'>
+          <HabitEditDateForm streakDateObj={streakObj} habitTitle={title} />
         </div>
       </Modal>
     </>
   )
 }
 
-export default EditStreakDatePage
+export default EditHabitDatePage

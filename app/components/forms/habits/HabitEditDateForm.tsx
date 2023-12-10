@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import BasicFormAreaBG from '../BasicFormAreaBG'
 
 import type { Streak } from '@prisma/client'
+import FormButtons from '../FormButtons'
 
 
 type Props = {
@@ -11,7 +12,7 @@ type Props = {
   habitTitle: string
 }
 
-function StreakDateForm({ streakDateObj, habitTitle }: Props) {
+function HabitEditDateForm({ streakDateObj, habitTitle }: Props) {
   const [id, setId] = useState<string>('')
   const [date, setDate] = useState<string>()
   const [isSuccess, setIsSuccess] = useState<boolean>(false)
@@ -40,10 +41,10 @@ function StreakDateForm({ streakDateObj, habitTitle }: Props) {
               <div>{isSuccess ? '✅' : '❌'}</div>
               <div>
                 <input type="checkbox" name='isSuccess' checked={isSuccess} />
-
               </div>
             </div>
 
+            <FormButtons />
           </div>
         </Form>
       </BasicFormAreaBG>
@@ -51,4 +52,4 @@ function StreakDateForm({ streakDateObj, habitTitle }: Props) {
   )
 }
 
-export default StreakDateForm
+export default HabitEditDateForm

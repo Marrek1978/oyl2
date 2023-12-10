@@ -1,21 +1,21 @@
 import { parse } from "querystring";
 import { redirect } from "@remix-run/node";
 import { useEffect, useState } from "react";
-import { Outlet, useLoaderData, useRouteLoaderData } from "@remix-run/react";
+import { Outlet, useRouteLoaderData } from "@remix-run/react";
 
 import { requireUserId } from '~/models/session.server';
 import { getDesireById } from "~/models/desires.server";
 import HabitDisplay from "~/components/habits/HabitDisplay";
 import { getOutcomeByOutcomeId } from '~/models/outcome.server';
 import BreadCrumbs from "~/components/breadCrumbTrail/BreadCrumbs";
-import DndAndFormFlex from "~/components/baseContainers/DndAndFormFlex";
-import HabitStreakForm from "~/components/forms/habits/HabitStreakForm";
+import HabitDatesForm from "~/components/forms/habits/HabitDatesForm";
 import { addStreakDates, getHabitById, } from "~/models/habits.server";
+import DndAndFormFlex from "~/components/baseContainers/DndAndFormFlex";
+import { ArrayOfObjectsStrToDates } from "~/components/utilities/helperFunctions";
 
 import type { Habit, Streak } from "@prisma/client";
 import type { HabitWithStreaks, StreakDataEntriesType } from "~/types/habitTypes";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/server-runtime';
-import { ArrayOfObjectsStrToDates } from "~/components/utilities/helperFunctions";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -77,10 +77,6 @@ function HabitPage() {
   const { desireName, outcomeName } = useGetParamNames()
 
   const { existingStreaks, untrackedDatesFromToday } = useGetStreakArrays()
-  // useEffect(() => {
-  //   if (!loadedGroupsData) return
-  //   setGroups(loadedGroupsData);
-  // }, [loadedGroupsData])
 
 
   return (
@@ -89,8 +85,9 @@ function HabitPage() {
       <Outlet />
       <DndAndFormFlex
         listMaxWidthTW={'max-w-max'}
+        formMaxWidthTW={'max-w-sm'}
         dnd={<HabitDisplay habit={habit} existingStreaks={existingStreaks} />}
-        form={<HabitStreakForm habit={habit} unTrackedDays={untrackedDatesFromToday} />}
+        form={<HabitDatesForm habit={habit} unTrackedDays={untrackedDatesFromToday} />}
       />
     </>
   )
@@ -128,16 +125,11 @@ export const useSplitLoaderData = () => {
     loadedOutcomeName && setOutcomeName(loadedOutcomeName)
 
     if (loadedHabit) {
-
       const streaksWithStringDates = loadedHabit.streak
       const streaksWithProperDates = ArrayOfObjectsStrToDates({ items: streaksWithStringDates, dateKeys: ['date', 'createdAt', 'updatedAt'] }) as Streak[]
-
       const updatedHabit = { ...loadedHabit, streak: streaksWithProperDates }
-
       setHabit(updatedHabit)
     }
-
-
 
   }, [loadedData])
 
