@@ -1,15 +1,15 @@
 import { prisma } from "~/db.server";
 import type { Savings } from "@prisma/client";
 
-import type { CreateSavings } from "~/types/savingsType";
+import type { CreateSavings, SavingsAndPayments } from "~/types/savingsType";
 
 export const createSaving = async ({
   title,
   description,
   sortOrder,
   requiredAmount,
-  savedAmount,
   outcomeId,
+  payment,
 }: CreateSavings) => {
   try {
     const result = await prisma.savings.create({
@@ -18,8 +18,10 @@ export const createSaving = async ({
         description,
         sortOrder,
         requiredAmount,
-        savedAmount,
         outcomeId,
+        payments: {
+          create: payment,
+        },
       },
     });
     return result;
@@ -29,15 +31,13 @@ export const createSaving = async ({
   }
 };
 
-export const getSavingsByOutcomeId = async (outcomeId: string) => {
+export const getSavingsWithPaymentsByOutcomeId = async (outcomeId: string):Promise<SavingsAndPayments[] | null> => {
   try {
     const result = await prisma.savings.findMany({
-      where: {
-        outcomeId: outcomeId,
-      },
+      where: { outcomeId: outcomeId },
+      include: { payments: true },
       orderBy: { sortOrder: "asc" },
     });
-
     return result;
   } catch (error) {
     throw error;
@@ -60,14 +60,15 @@ export const updateSavingsOrder = async (savings: Savings[]) => {
   }
 };
 
-export const getSavingById = async (savingId: string) => {
+export const getSavingWithPaymentsById = async (savingId: string):Promise<SavingsAndPayments | null> => {
   try {
     const result = await prisma.savings.findFirst({
       where: { id: savingId },
+      include: { payments: true },
     });
 
     return result;
   } catch (error) {
     throw error;
   }
-}
+};

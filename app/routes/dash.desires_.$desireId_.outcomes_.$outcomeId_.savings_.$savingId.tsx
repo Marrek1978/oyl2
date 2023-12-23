@@ -1,26 +1,35 @@
-import { Outlet, useRouteLoaderData } from '@remix-run/react'
 import { redirect } from "@remix-run/node";
+import { useEffect, useState } from 'react';
+import { Outlet } from '@remix-run/react'
 import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 
-import DndAndFormFlex from '~/components/baseContainers/DndAndFormFlex'
-import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
 import { getDesireById } from '~/models/desires.server';
-import { getOutcomeByOutcomeId } from '~/models/outcome.server';
-import { getSavingById } from '~/models/saving.server';
 import { requireUserId } from '~/models/session.server';
-import { Savings, Streak } from '@prisma/client';
-import { useEffect, useState } from 'react';
-import { ArrayOfObjectsStrToDates } from '~/components/utilities/helperFunctions';
+import { getOutcomeByOutcomeId } from '~/models/outcome.server';
 import SavingDisplay from '~/components/savings/SavingDisplay';
 import PaymentForm from '~/components/forms/savings/PaymentForm';
+import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
+import { getSavingWithPaymentsById } from '~/models/saving.server';
+import { getClarifyingQuestions } from "~/models/clarifying.server";
+import DndAndFormFlex from '~/components/baseContainers/DndAndFormFlex'
+import { useGetLoaderData } from "./dash.desires_.$desireId_.outcomes_.$outcomeId_.savings";
+import { ArrayOfObjectsStrToDates, ObjectStrToDates } from "~/components/utilities/helperFunctions";
+
+import type { ClarifyingQuestions, Payments } from '@prisma/client';
+import type { SavingsAndPayments, SavingsAndPaymentsWithStrDates } from "~/types/savingsType";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+
   let userId = await requireUserId(request);
   const { outcomeId, desireId, savingId } = params;
   if (!desireId) return redirect('../../../..')
   if (!outcomeId) return redirect('../..')
   if (!savingId) return redirect('..')
+  const usersData = await getClarifyingQuestions(userId);
+  if (!usersData) return redirect('../..')
+  const loadedUserData = usersData[0] as ClarifyingQuestions
+  const loadedMonthlyAmount = loadedUserData.monthlyAmount
 
   try {
     const desire = await getDesireById(desireId, userId);
@@ -29,17 +38,20 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     const outcome = await getOutcomeByOutcomeId(outcomeId);
     if (!outcome) return "noOutcomeId"
     const loadedOutcomeName = outcome.title
-    const loadedSaving = await getSavingById(savingId);
-    return { loadedSaving, loadedDesireName, loadedOutcomeName }
+    const loadedSaving = await getSavingWithPaymentsById(savingId);
+    return { loadedSaving, loadedDesireName, loadedOutcomeName, loadedMonthlyAmount }
   } catch (error) { throw error }
 };
 
 
+const path = 'routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings_.$savingId'
+
+
+
 function SavingPage() {
 
-  const saving = useGetSaving()
-  const { desireName, outcomeName } = useGetParamNames()
-
+  const saving = useGetSaving(path) as SavingsAndPayments
+  const { desireName, outcomeName } = useGetParamNames(path)
 
 
   return (
@@ -50,7 +62,7 @@ function SavingPage() {
         <DndAndFormFlex
           listMaxWidthTW={'max-w-max'}
           formMaxWidthTW={'max-w-sm'}
-          dnd={<SavingDisplay saving={saving} />}
+          dnd={<SavingDisplay passedSaving={saving} path={path} />}
           form={<PaymentForm />}
         />
       </>
@@ -60,53 +72,74 @@ function SavingPage() {
 
 export default SavingPage
 
-const path = 'routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings_.$savingId'
 
-export const useGetLoaderData = () => {
-  const fromDb = useRouteLoaderData(path)
-  console.log("🚀 ~ file: dash.desires_.$desireId_.outcomes_.$outcomeId_.savings_.$savingId.tsx:69 ~ useGetLoaderData ~ fromDb:", fromDb)
-  return fromDb
-}
 
 interface LoaderData {
-  loadedSaving: Savings
+  loadedSaving: SavingsAndPaymentsWithStrDates
   loadedDesireName: string
   loadedOutcomeName: string
+  loadedMonthlyAmount: number
 }
 
-export const useSplitLoaderData = () => {
-  const loadedData = useGetLoaderData()
-  const [saving, setSaving] = useState<Savings>();
+interface SplitData {
+  saving: SavingsAndPayments | undefined
+  desireName: string
+  outcomeName: string
+  monthlyAmount: number
+}
+
+export const useSplitLoaderData =  (path: string): SplitData => {
+  const loadedData = useGetLoaderData(path)
+  const [saving, setSaving] = useState<SavingsAndPayments>();
   const [desireName, setDesireName] = useState<string>('')
   const [outcomeName, setOutcomeName] = useState<string>('')
+  const [monthlyAmount, setMonthlyAmount] = useState<number>(0)
+
 
   useEffect(() => {
     if (!loadedData || loadedData === undefined) return
     const data = loadedData as LoaderData
     if (!data) return
-    const { loadedSaving, loadedDesireName, loadedOutcomeName } = data
+    const { loadedSaving, loadedDesireName, loadedOutcomeName, loadedMonthlyAmount } = data
     loadedDesireName && setDesireName(loadedDesireName)
     loadedOutcomeName && setOutcomeName(loadedOutcomeName)
-    loadedSaving && setSaving(loadedSaving)
+    loadedMonthlyAmount && setMonthlyAmount(loadedMonthlyAmount)
 
-    // if (loadedSaving) {
-    //   const savingWithStringDates = loadedSaving.streak
-    //   const streaksWithProperDates = ArrayOfObjectsStrToDates({ items: streaksWithStringDates, dateKeys: ['date', 'createdAt', 'updatedAt'] }) as Streak[]
-    //   const updatedHabit = { ...loadedSaving, streak: streaksWithProperDates }
-    //   setSaving(updatedHabit)
-    // }
+    // if (!loadedSaving || loadedSaving === undefined) return
+    const savingAndPaymentsWithStrDates = loadedSaving as SavingsAndPaymentsWithStrDates
+    const savingWithProperDates = ObjectStrToDates({ item: savingAndPaymentsWithStrDates, dateKeys: ['createdAt', 'updatedAt'] }) as SavingsAndPayments
+    const paymentsWithProperDates = ArrayOfObjectsStrToDates({ items: savingAndPaymentsWithStrDates.payments, dateKeys: ['paymentDate', 'createdAt', 'updatedAt'] }) as Payments[]
+    const savingAndPayments = { ...savingWithProperDates, payments: paymentsWithProperDates }
 
+    setSaving(savingAndPayments)
   }, [loadedData])
-  return { saving, desireName, outcomeName }
+
+  return { saving, desireName, outcomeName, monthlyAmount }
 }
 
 
-export const useGetParamNames = (): { desireName: string, outcomeName: string } => {
-  const { desireName, outcomeName } = useSplitLoaderData()
+export const useGetParamNames = (path: string): { desireName: string, outcomeName: string } => {
+  const { desireName, outcomeName } = useSplitLoaderData(path)
   return { desireName, outcomeName }
 }
 
-export const useGetSaving = ():Savings => {
-  const { saving } = useSplitLoaderData()
-  return saving as Savings
+export const useGetSaving =  (path: string): SavingsAndPayments => {
+  const { saving } = useSplitLoaderData(path)
+  return saving as SavingsAndPayments
 }
+
+export const useGetTotalPayments =  (path: string): number => {
+  const saving = useGetSaving(path)
+  const totalPayments = saving?.payments?.reduce((total, payment) => {
+    return total + payment.amount
+  }, 0)
+  return totalPayments
+}
+
+
+export const useGetMonthlySavingsAmount = (path: string): number => {
+  console.log('useGetMonthlySavingsAmount')
+  const { monthlyAmount } = useSplitLoaderData(path)
+  return monthlyAmount
+}
+

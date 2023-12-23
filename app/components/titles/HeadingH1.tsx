@@ -5,7 +5,7 @@ interface HeadingH1Props {
 function HeadingH1({ H1Title }: HeadingH1Props) {
   return (
     <>
-      <div className='text-4xl font-normal font-mont tracking-wide'>
+      <div className='text-4xl font-normal font-mont tracking-wide capitalize'>
         {H1Title}
       </div>
     </>

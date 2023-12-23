@@ -44,7 +44,7 @@ function SavingForm({ passedSaving, isNew = true, savingsArrayLength = 0 }: Prop
     setDescription(saving?.description || '')
     setSortOrder(saving?.sortOrder || savingsArrayLength || 0)
     saving?.requiredAmount && setAmtReqd(setAsCurrency(saving?.requiredAmount.toString() || '0'))
-    saving?.savedAmount && setAmtReqd(setAsCurrency(saving?.savedAmount.toString() || '0'))
+    // saving?.savedAmount && setAmtReqd(setAsCurrency(saving?.savedAmount.toString() || '0'))
   }, [saving, savingsArrayLength])
 
 

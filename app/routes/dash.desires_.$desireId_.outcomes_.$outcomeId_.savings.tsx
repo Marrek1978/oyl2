@@ -10,13 +10,15 @@ import DndSavings from "~/components/dnds/savings/DndSavings";
 import SavingForm from "~/components/forms/savings/SavingForm";
 import { getOutcomeByOutcomeId } from '~/models/outcome.server';
 import BreadCrumbs from "~/components/breadCrumbTrail/BreadCrumbs";
+import { getClarifyingQuestions } from "~/models/clarifying.server";
 import useFetcherState from "~/components/utilities/useFetcherState";
 import useServerMessages from "~/components/modals/useServerMessages";
 import DndAndFormFlex from "~/components/baseContainers/DndAndFormFlex";
-import { createSaving, getSavingsByOutcomeId, updateSavingsOrder } from "~/models/saving.server";
+import { createSaving, getSavingsWithPaymentsByOutcomeId, updateSavingsOrder } from "~/models/saving.server";
 
-import type { ClarifyingQuestions, Savings } from "@prisma/client";
-import { getClarifyingQuestions } from "~/models/clarifying.server";
+import type { ClarifyingQuestions, Payments } from "@prisma/client";
+import type { SavingsAndPayments, SavingsAndPaymentsWithStrDates } from "~/types/savingsType";
+import { ArrayOfObjectsStrToDates, ObjectStrToDates } from "~/components/utilities/helperFunctions";
 
 
 
@@ -37,7 +39,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     const outcome = await getOutcomeByOutcomeId(outcomeId);
     if (!outcome) return "noOutcomeId"
     const loadedOutcomeName = outcome.title
-    const loadedSavings = await getSavingsByOutcomeId(outcomeId);
+    const loadedSavings = await getSavingsWithPaymentsByOutcomeId(outcomeId);
+
     return { loadedSavings, loadedDesireName, loadedOutcomeName, loadedMonthlyAmount }
   } catch (error) { throw error }
 };
@@ -62,7 +65,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 
   if (request.method === 'POST') {
-    console.log(' posting ')
     const formData = await request.text()
     const parsedSavingData = parse(formData)
 
@@ -74,7 +76,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     const requiredAmount = currStringToNum(parsedSavingData.amtRequired as string)
     const savedAmount = currStringToNum(parsedSavingData.amtSaved as string)
-
+    const payment = {
+      amount: savedAmount,
+      paymentDate: new Date(),
+    }
 
     try {
       await createSaving({
@@ -82,7 +87,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         description,
         sortOrder,
         requiredAmount,
-        savedAmount,
+        payment, // as initial Payment
         outcomeId,
       });
       return 'success'
@@ -94,17 +99,19 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 }
 
 
+const path: string = "routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings"
+
+
 function SavingsPage() {
 
-  const { desireName, outcomeName } = useGetParamNames()
-  const savings = useGetSavings() as Savings[]
-  const savingsArrayLength: number = useGetSavingsArrayLength()
+  const { desireName, outcomeName } = useGetParamNames(path)
+  const savings = useGetSavingsWithPayments(path) as SavingsAndPayments[]
+  const savingsArrayLength: number = useGetSavingsArrayLength(path)
 
   const fetcher = useFetcher();
   const { fetcherState, fetcherMessage, } = useFetcherState({ fetcher })
   useServerMessages({ fetcherMessage, fetcherState, isShowFailed: true, isShowLoading: false, isShowSuccess: true })
 
-  console.log("laoding")
   // const response = useActionData()
 
   return (
@@ -112,8 +119,8 @@ function SavingsPage() {
       <BreadCrumbs secondCrumb={desireName || 'Desire'} title2={outcomeName || 'Outcome'} />
       <Outlet />
       <DndAndFormFlex
-        listMaxWidthTW={'max-w-max'}
-        dnd={<DndSavings passedSavings={savings} />}
+        listMaxWidthTW={'max-w-xl'}
+        dnd={<DndSavings passedSavings={savings} path={path} />}
         form={<SavingForm savingsArrayLength={savingsArrayLength} />}
       />
     </>
@@ -124,22 +131,29 @@ export default SavingsPage
 
 
 
-export const useGetLoaderData = (path: string = "routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings") => {
+export const useGetLoaderData = (path: string) => {
   const fromDb = useRouteLoaderData(path)
   return fromDb
 }
 
 interface LoaderData {
-  loadedSavings: Savings[]
+  loadedSavings: SavingsAndPaymentsWithStrDates[]
   loadedDesireName: string
   loadedOutcomeName: string
-  loadedMonthlyAmount:number
+  loadedMonthlyAmount: number
+}
+
+interface SplitData {
+  savings: SavingsAndPaymentsWithStrDates[]
+  desireName: string
+  outcomeName: string
+  monthlyAmount: number
 }
 
 
-export const useSplitLoaderData = () => {
-  const loadedData = useGetLoaderData()
-  const [savings, setSavings] = useState<Savings[]>([]);
+export const useSplitLoaderData = (path: string): SplitData => {
+  const loadedData = useGetLoaderData(path) as LoaderData
+  const [savings, setSavings] = useState<SavingsAndPaymentsWithStrDates[]>([]);
   const [desireName, setDesireName] = useState<string>('')
   const [outcomeName, setOutcomeName] = useState<string>('')
   const [monthlyAmount, setMonthlyAmount] = useState<number>(0)
@@ -155,27 +169,42 @@ export const useSplitLoaderData = () => {
     loadedMonthlyAmount && setMonthlyAmount(loadedMonthlyAmount)
   }, [loadedData])
 
-  return { savings, desireName, outcomeName , monthlyAmount}
+  return { savings, desireName, outcomeName, monthlyAmount }
 }
 
-export const useGetParamNames = (): { desireName: string, outcomeName: string } => {
-  const { desireName, outcomeName } = useSplitLoaderData()
+export const useGetParamNames = (path: string): { desireName: string, outcomeName: string } => {
+  const { desireName, outcomeName } = useSplitLoaderData(path)
   return { desireName, outcomeName }
 }
 
 
-export const useGetSavings = () => {
-  const { savings } = useSplitLoaderData()
-  return savings
+export const useGetSavingsWithPayments = (path: string): SavingsAndPayments[] => {
+  const { savings } = useSplitLoaderData(path)
+  const [savingsWithPayments, setSavingsWithPayments] = useState<SavingsAndPayments[]>([])
+
+  useEffect(() => {
+    if (!savings || savings.length === 0) return
+    const savingsWithStringDatesArray = savings as SavingsAndPaymentsWithStrDates[]
+
+    const savingsWithProperDates = savingsWithStringDatesArray.map((savingWithStrDatesAndPayments) => {
+      const savingWithProperDates = ObjectStrToDates({ item: savingWithStrDatesAndPayments, dateKeys: ['createdAt', 'updatedAt'] }) as SavingsAndPayments
+      const paymentsWithProperDates = ArrayOfObjectsStrToDates({ items: savingWithStrDatesAndPayments.payments, dateKeys: ['paymentDate', 'createdAt', 'updatedAt'] }) as Payments[]
+      return { ...savingWithProperDates, payments: paymentsWithProperDates }
+    })
+
+    setSavingsWithPayments(savingsWithProperDates)
+  }, [savings])
+
+  return savingsWithPayments
 }
 
-export const useGetSavingsArrayLength = () => {
-  const savings = useGetSavings()
+export const useGetSavingsArrayLength = (path: string): number => {
+  const savings = useGetSavingsWithPayments(path)
   return savings.length
 }
 
-export const useGetMonthlySavingsAmount = () => {
-  const { monthlyAmount } = useSplitLoaderData()
+export const useGetMonthlySavingsAmount = (path: string): number => {
+  const { monthlyAmount } = useSplitLoaderData(path)
   return monthlyAmount
 }
 

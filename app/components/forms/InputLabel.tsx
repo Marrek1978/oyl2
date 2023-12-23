@@ -6,10 +6,7 @@ interface InputLabelProps {
 }
 
 function InputLabel({ inputTitle, widthTailwind = 'w-full', isSecondaryInput = false }: InputLabelProps) {
-
   const secondaryColorClass = isSecondaryInput ? 'text-base-content/70' : ''
-
-
   return (
     <>
       <div className={`${widthTailwind} `}>
@@ -20,7 +17,6 @@ function InputLabel({ inputTitle, widthTailwind = 'w-full', isSecondaryInput = f
             {inputTitle}
           </span>
         </label>
-
       </div>
     </>
   )

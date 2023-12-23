@@ -8,8 +8,8 @@ type Props = {
 function PageTitle({ text }: Props) {
   return (
     <>
-      <div className='text-success '>
-        <SubHeading16px text={text} />
+      <div  >
+        <SubHeading16px text={text} daisyUIColor={'success'} />
       </div>
     </>
   )

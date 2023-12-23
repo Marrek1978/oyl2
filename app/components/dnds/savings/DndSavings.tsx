@@ -14,15 +14,16 @@ import useDndDropOrderSaveFunctions from '../useDndDropOrderSaveFunctions';
 import ToggleWithLabelAndGuideLineLink from '~/components/forms/ToggleWithLabelAndGuideLineLink';
 import { useGetMonthlySavingsAmount } from '~/routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings';
 
-import type { Savings } from '@prisma/client'
+import type { SavingsAndPayments } from '~/types/savingsType';
 
 type Props = {
-  passedSavings: Savings[]
+  passedSavings: SavingsAndPayments[]
+  path: string
 }
 
-function DndSavings({ passedSavings }: Props) {
+function DndSavings({ passedSavings, path }: Props) {
 
-  const [savings, setSavings] = useState<Savings[]>([]);
+  const [savings, setSavings] = useState<SavingsAndPayments[]>([]);
   const [isShowDescription, setIsShowDescription] = useState<boolean>(false);
 
   const params = useParams()
@@ -30,7 +31,7 @@ function DndSavings({ passedSavings }: Props) {
 
   const today = new Date()
   let runningDate = today
-  const monthlySavingsAmount = useGetMonthlySavingsAmount()
+  const monthlySavingsAmount = useGetMonthlySavingsAmount(path)
 
   const fetcher = useFetcher();
   const { handleDragEnd, setItemsArrayInProperOrder } = useDndDropOrderSaveFunctions({ fetcher, sortableArray: savings, setSortableArray: setSavings })
@@ -51,13 +52,13 @@ function DndSavings({ passedSavings }: Props) {
 
 
       <div className='flex gap-2 mt-6 items-baseline'>
-        <div className='flex-auto'>
+        <div className='flex-auto para-color'>
           <SubHeading14px text={'Avg Monthly Contribution'} />
         </div>
         <div className='flex-auto'>
           <SubHeading16px text={`$${monthlySavingsAmount}`} daisyUIColor={'base-content'} />
         </div>
-        <div className='flex-auto'>
+        <div className='flex-auto max-w-max'>
           <Link to={`/dash/desires/${desireId}/outcomes/${outcomeId}/savings/monthlysavingsamt`}>
             <BtnWithProps btnPurpose={'goto'} textSizeTW={'sm'} fontWidthTW={'bold'} />
           </Link>
@@ -66,13 +67,13 @@ function DndSavings({ passedSavings }: Props) {
 
 
 
-      <div className="checkbox-label-flex min-w-[130px] mt-8 justify-end   ">
+      <div className="checkbox-label-flex min-w-[130px] mt-8 justify-end items-center   ">
         <ToggleWithLabelAndGuideLineLink
-          text='Show Saving Descriptions?'
+          text='Show Descriptions?'
           checkedState={isShowDescription}
           handleCheckedState={() => setIsShowDescription(!isShowDescription)}
           toggleColorDaisyUI='secondary'
-          labelWidthTailwindClass='w-56'
+          labelWidthTailwindClass='w-40'
           isSecondaryInput={true}
         />
       </div>
@@ -91,16 +92,22 @@ function DndSavings({ passedSavings }: Props) {
 
         {savings?.map((saving) => {
 
-          const monthsLeft = (saving?.requiredAmount || 0 - saving?.savedAmount) / monthlySavingsAmount
+          let savedAmount: number = 0
+          saving.payments.forEach(payment => {
+            savedAmount += payment.amount
+          })
+
+          const monthsLeft = (saving?.requiredAmount || 0 - savedAmount) / monthlySavingsAmount
           runningDate = addDeciamlMonthsToDate(runningDate, monthsLeft)
 
           return (
             <DndSavingsSortable
               key={saving.id}
               saving={saving}
-              linkTitle={'Edit Outcome Savings'}
+              linkTitle={'Edit'}
               isShowDescription={isShowDescription}
               estCompDate={runningDate}
+              savedAmount={savedAmount}
             />
           )
         })}

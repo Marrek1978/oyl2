@@ -16,7 +16,7 @@ type Props = {
 
 function MonthlyAmtForm({ CqId }: Props) {
 
-  const loadedMonthlyAmount = useGetMonthlySavingsAmount()
+  const loadedMonthlyAmount = useGetMonthlySavingsAmount( "routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings")
   const [amtMonthly, setAmtMonthly] = useState<string>('0')
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
 

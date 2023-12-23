@@ -22,21 +22,21 @@ function ToggleWithLabelAndGuideLineLink({ text, guideline = '', guidelineTitle 
 
   return (
     <>
-      <div className={`max-w-max flex justify-between flex-wrap ${TWGapCSS} items-center  `}>
-        <div className="flex flex-wrap gap-2 items-center ">
+      <div className={`max-w-max flex flex-wrap ${TWGapCSS} items-center   `}>
+        <div className="flex flex-wrap gap-2 ">
           <div className={labelWidthTailwindClass}>
             <InputLabel inputTitle={text} widthTailwind='max-w-max' isSecondaryInput={isSecondaryInput} />
           </div>
           <div>
             <input type="checkbox"
-              className={`toggle ${toggleColor}   `}
+              className={`toggle ${toggleColor} m-0 p-0   `}
               checked={checkedState}
               onChange={handleCheckedState}
             />
           </div>
         </div>
 
-        <div>
+        <div >
           <WithGuidelineLink
             guideline={guideline}
             guideLineTitle={guidelineTitle}
