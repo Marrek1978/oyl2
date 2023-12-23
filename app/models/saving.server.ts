@@ -8,10 +8,7 @@ export const createSaving = async ({
   description,
   sortOrder,
   requiredAmount,
-  startDate,
   savedAmount,
-  monthlyContribution,
-  estCompletionDate,
   outcomeId,
 }: CreateSavings) => {
   try {
@@ -21,10 +18,7 @@ export const createSaving = async ({
         description,
         sortOrder,
         requiredAmount,
-        startDate,
         savedAmount,
-        monthlyContribution,
-        estCompletionDate,
         outcomeId,
       },
     });
@@ -37,14 +31,14 @@ export const createSaving = async ({
 
 export const getSavingsByOutcomeId = async (outcomeId: string) => {
   try {
-    const savings = await prisma.savings.findMany({
+    const result = await prisma.savings.findMany({
       where: {
         outcomeId: outcomeId,
       },
       orderBy: { sortOrder: "asc" },
     });
 
-    return savings;
+    return result;
   } catch (error) {
     throw error;
   }
@@ -65,3 +59,15 @@ export const updateSavingsOrder = async (savings: Savings[]) => {
     throw error;
   }
 };
+
+export const getSavingById = async (savingId: string) => {
+  try {
+    const result = await prisma.savings.findFirst({
+      where: { id: savingId },
+    });
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}

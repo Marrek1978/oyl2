@@ -1,24 +1,20 @@
 import { useEffect, useState } from 'react'
-import { Form, useFetcher } from '@remix-run/react';
+import { Link, useFetcher, useParams } from '@remix-run/react';
 
 import DndInfo from '../DndInfo';
 import PageTitle from '~/components/titles/PageTitle';
 import DndSavingsSortable from './DndSavingsSortable';
+import BtnWithProps from '~/components/buttons/BtnWithProps';
 import DndAndSortableContexts from '../DndAndSortableContexts';
+import SubHeading14px from '~/components/titles/SubHeading14px';
+import SubHeading16px from '~/components/titles/SubHeading16px';
 import useFetcherState from '~/components/utilities/useFetcherState';
 import useServerMessages from '~/components/modals/useServerMessages';
 import useDndDropOrderSaveFunctions from '../useDndDropOrderSaveFunctions';
 import ToggleWithLabelAndGuideLineLink from '~/components/forms/ToggleWithLabelAndGuideLineLink';
+import { useGetMonthlySavingsAmount } from '~/routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings';
 
 import type { Savings } from '@prisma/client'
-import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
-import { CoreValue } from '~/components/utilities/Guidelines';
-import FormButtons from '~/components/forms/FormButtons';
-import { useGetMonthlySavingsAmount } from '~/routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings';
-import SubHeading14px from '~/components/titles/SubHeading14px';
-import BtnWithProps from '~/components/buttons/BtnWithProps';
-import SubHeading16px from '~/components/titles/SubHeading16px';
-import { closeIcon } from '~/components/utilities/icons';
 
 type Props = {
   passedSavings: Savings[]
@@ -29,19 +25,24 @@ function DndSavings({ passedSavings }: Props) {
   const [savings, setSavings] = useState<Savings[]>([]);
   const [isShowDescription, setIsShowDescription] = useState<boolean>(false);
 
+  const params = useParams()
+  const { desireId, outcomeId } = params
+
+  const today = new Date()
+  let runningDate = today
+  const monthlySavingsAmount = useGetMonthlySavingsAmount()
+
   const fetcher = useFetcher();
   const { handleDragEnd, setItemsArrayInProperOrder } = useDndDropOrderSaveFunctions({ fetcher, sortableArray: savings, setSortableArray: setSavings })
   const { fetcherState, fetcherMessage, } = useFetcherState({ fetcher })
   useServerMessages({ fetcherMessage, fetcherState, isShowFailed: true })
 
-  const monthlySavingsAmount = useGetMonthlySavingsAmount()
 
   //initial load
   useEffect(() => {
     if (!passedSavings) return
     setItemsArrayInProperOrder(passedSavings)
   }, [passedSavings, setItemsArrayInProperOrder])
-
 
 
   return (
@@ -57,7 +58,9 @@ function DndSavings({ passedSavings }: Props) {
           <SubHeading16px text={`$${monthlySavingsAmount}`} daisyUIColor={'base-content'} />
         </div>
         <div className='flex-auto'>
-          <BtnWithProps btnPurpose={'goto'} textSizeTW={'sm'} fontWidthTW={'bold'} />
+          <Link to={`/dash/desires/${desireId}/outcomes/${outcomeId}/savings/monthlysavingsamt`}>
+            <BtnWithProps btnPurpose={'goto'} textSizeTW={'sm'} fontWidthTW={'bold'} />
+          </Link>
         </div>
       </div>
 
@@ -88,25 +91,16 @@ function DndSavings({ passedSavings }: Props) {
 
         {savings?.map((saving) => {
 
-
-          //track months till paid her
-          const today = new Date()
-          const currentMonth = today.getMonth()
-          const currentYear = today.getFullYear()
-
           const monthsLeft = (saving?.requiredAmount || 0 - saving?.savedAmount) / monthlySavingsAmount
-          const monthsLeftRounded = monthsLeft.toFixed(2)
-
-
+          runningDate = addDeciamlMonthsToDate(runningDate, monthsLeft)
 
           return (
             <DndSavingsSortable
               key={saving.id}
               saving={saving}
-              linkTitle={'Go to saving'}
+              linkTitle={'Edit Outcome Savings'}
               isShowDescription={isShowDescription}
-              monthsLeft={monthsLeftRounded}
-              currentMonth={currentMonth}
+              estCompDate={runningDate}
             />
           )
         })}
@@ -116,3 +110,16 @@ function DndSavings({ passedSavings }: Props) {
 }
 
 export default DndSavings
+
+
+const addDeciamlMonthsToDate = (date: Date, decimalMonths: number): Date => {
+  const year = date.getFullYear()
+  const month = date.getMonth()
+  const day = date.getDate()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const daysToAdd = Math.round(decimalMonths * daysInMonth)
+
+  return new Date(year, month, day + daysToAdd)
+}
+
+

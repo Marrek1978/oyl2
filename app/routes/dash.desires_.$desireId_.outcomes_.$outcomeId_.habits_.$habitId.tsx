@@ -75,9 +75,7 @@ function HabitPage() {
 
   const habit = useGetHabit() as HabitWithStreaks
   const { desireName, outcomeName } = useGetParamNames()
-
   const { existingStreaks, untrackedDatesFromToday } = useGetStreakArrays()
-
 
   return (
     <>

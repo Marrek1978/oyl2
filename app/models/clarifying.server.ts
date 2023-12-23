@@ -1,5 +1,9 @@
 import { prisma } from "~/db.server";
-import type { User, ClarifyingQuestions as CQ } from "@prisma/client";
+import type {
+  User,
+  ClarifyingQuestions as CQ,
+  ClarifyingQuestions,
+} from "@prisma/client";
 
 interface ClarifyQuestionsInput
   extends Omit<CQ, "id" | "createdAt" | "updatedAt" | "userId"> {}
@@ -79,4 +83,30 @@ export const upsertMaxAge = async (
   });
 
   return result;
+};
+
+export const getClarifyingQIdForUserByUserId = async (userId: User["id"]) => {
+  const result = await prisma.clarifyingQuestions.findUnique({
+    where: { userId },
+  });
+  const id = result?.id;
+  return id;
+};
+
+export const updateMonthlySavingsAmount = async ({
+  monthlyAmount,
+  id,
+}: { monthlyAmount: ClarifyingQuestions["monthlyAmount"] } & {
+  id: ClarifyingQuestions["id"];
+}) => {
+  try {
+    const result = await prisma.clarifyingQuestions.update({
+      where: { id },
+      data: { monthlyAmount },
+    });
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
 };

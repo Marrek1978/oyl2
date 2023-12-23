@@ -74,7 +74,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     const requiredAmount = currStringToNum(parsedSavingData.amtRequired as string)
     const savedAmount = currStringToNum(parsedSavingData.amtSaved as string)
-    const monthlyContribution = currStringToNum(parsedSavingData.amtMonthly as string)
 
 
     try {
@@ -82,12 +81,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         title,
         description,
         sortOrder,
-        outcomeId,
-        startDate: new Date(),
         requiredAmount,
         savedAmount,
-        monthlyContribution,
-        estCompletionDate: new Date(),
+        outcomeId,
       });
       return 'success'
     } catch (error) {
@@ -108,6 +104,7 @@ function SavingsPage() {
   const { fetcherState, fetcherMessage, } = useFetcherState({ fetcher })
   useServerMessages({ fetcherMessage, fetcherState, isShowFailed: true, isShowLoading: false, isShowSuccess: true })
 
+  console.log("laoding")
   // const response = useActionData()
 
   return (

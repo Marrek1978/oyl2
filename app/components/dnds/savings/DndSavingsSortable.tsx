@@ -5,44 +5,29 @@ import { useSortable } from '@dnd-kit/sortable';
 import DndSortableStyling from "../DndSortableStyling";
 import H2WithLink from "~/components/titles/H2WithLink";
 import TextProseWidth from "~/components/text/TextProseWidth";
-import SubHeading14px from "~/components/titles/SubHeading14px";
-import SubHeading12px from "~/components/titles/SubHeading12px";
 
 import type { Savings } from "@prisma/client";
-import { setAsCurrency } from "~/components/forms/savings/SavingForm";
 
 
-interface SortableGenericProps {
+interface DndSavingSortableProps {
   saving: Savings;
   linkTitle?: string;
   isShowDescription?: boolean;
-  monthsLeft: string;
-  currentMonth:number;
+  estCompDate: Date;
 }
 
-function DndSortableGeneric({ saving, linkTitle = 'Edit', isShowDescription = true , monthsLeft, currentMonth}: SortableGenericProps) {
-
+function DndSavingSortable({ saving, linkTitle = 'Edit', isShowDescription = true, estCompDate }: DndSavingSortableProps) {
 
   const [id, setId] = useState<string>('')
   const [description, setDescription] = useState<string | null>('')
-  const [amtReqd, setAmtReqd] = useState<number>()
-  const [amtSaved, setAmtSaved] = useState<number>(0)
-  // const [amtMonthly, setAmtMonthly] = useState<number>()
-
   const [currencyReqd, setCurrencyReqd] = useState<string>()
-  const [currencySaved, setCurrencySaved] = useState<string>()
-  const [currencyMonthly, setCurrencyMonthly] = useState<string>()
-
-  // const [monthsLeft, setMonthsLeft] = useState<number>()
+  const [currencySaved, setCurrencySaved] = useState<string>('0')
 
   useEffect(() => {
     if (!saving) return
     setId(saving?.id || '')
     setDescription(saving?.description)
-    setAmtReqd(saving?.requiredAmount || 0)
-    setAmtSaved(saving?.savedAmount || 0)
-    // setAmtMonthly(saving?.monthlyContribution || 0)
-    setCurrencySaved(saving.savedAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD' }).replace(/\.00$/, ''))
+    // setCurrencySaved(saving.savedAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD' }).replace(/\.00$/, ''))
     setCurrencyReqd(saving.requiredAmount?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }).replace(/\.00$/, ''))
   }, [saving])
 
@@ -60,10 +45,10 @@ function DndSortableGeneric({ saving, linkTitle = 'Edit', isShowDescription = tr
     <div>
       <span className="text-sm">{saving.sortOrder + 1}</span>. <span className="text-lg">{saving.title}</span>
     </div>
-    {currencySaved} / {currencyReqd}
+    <div className="ml-4">
+      {currencySaved} / {currencyReqd}
+    </div>
   </>)
-
-
 
 
   return (
@@ -77,38 +62,17 @@ function DndSortableGeneric({ saving, linkTitle = 'Edit', isShowDescription = tr
             btnColorDaisyUI={'link'}
           />
 
-          <div className="mt-2 ">
-            {isShowDescription && (
+          {isShowDescription && (
+            <div className="mt-2 ">
               <TextProseWidth
                 text={description || ''}
               />
-            )}
+            </div>
+          )}
+
+          <div className=" ml-4 mt-0 items-baseline text-sm text-left w-full para-color">
+            Est. Saved Date: <span className="font-bold text-base" > {estCompDate.toDateString()}</span>
           </div>
-
-          <div className="flex gap-2 items-baseline text-sm">
-           Est. {monthsLeft} months left
-          </div>
-
-
-          {/* <div className="flex gap-2 items-baseline">
-            <SubHeading14px text={`${currencySaved || '0'} / ${currencyReqd}`} />
-            {monthsLeft}
-          </div> */}
-
-          {/* <div className="flex gap-2 items-baseline">
-            <SubHeading12px text='Total Required' />
-            {currencyReqd}
-          </div> */}
-
-          {/* <div className="flex gap-2 items-baseline">
-            <SubHeading12px text='Amount Saved to Date' />
-            {currencySaved}
-          </div> */}
-
-          {/* <div className="flex gap-2 items-baseline">
-            <SubHeading12px text='Monthly Payment: ' />
-            {currencyMonthly}
-          </div> */}
 
         </DndSortableStyling>
       </div>
@@ -116,5 +80,5 @@ function DndSortableGeneric({ saving, linkTitle = 'Edit', isShowDescription = tr
   )
 }
 
-export default DndSortableGeneric
+export default DndSavingSortable
 

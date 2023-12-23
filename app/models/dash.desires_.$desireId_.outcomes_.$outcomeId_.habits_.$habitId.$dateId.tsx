@@ -5,7 +5,6 @@ import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import HabitEditDateForm from '~/components/forms/habits/HabitEditDateForm'
-import { useSplitLoaderData } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.habits_.$habitId'
 // import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect'
 
 import { updateStreakSuccessById } from '~/models/habits.server';
@@ -15,6 +14,7 @@ import useFormSubmittedToastAndRedirect from '~/components/utilities/useFormSubm
 
 import type { Streak } from '@prisma/client'
 import type { HabitWithStreaks } from '~/types/habitTypes'
+import { useSplitLoaderData } from '~/routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.habits_.$habitId';
 // import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
 
 export const action = async ({ request }: ActionFunctionArgs) => {

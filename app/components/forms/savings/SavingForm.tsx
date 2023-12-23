@@ -1,8 +1,7 @@
+import { Form, useActionData, useParams, } from '@remix-run/react'
 import { useState, useEffect, useMemo, } from 'react';
-import { Form, useFetcher, useParams, } from '@remix-run/react'
 
 import FormButtons from '../FormButtons';
-// import DatePicker from '~/components/list/DatePicker';
 import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
 import { headerText, useSaveBtnText } from '../FormsCommonFunctions';
 import useGetNavigationState from '~/components/utilities/useNavigationState';
@@ -20,25 +19,21 @@ type Props = {
 }
 
 function SavingForm({ passedSaving, isNew = true, savingsArrayLength = 0 }: Props) {
-  const params = useParams();
-  // const fetcher = useFetcher();
 
   const [id, setId] = useState<string>('')
   const [title, setTitle] = useState<string>('')
-  const [sortOrder, setSortOrder] = useState<number>(0) //if adding new value, set to values.length
-  const [startDate, setStartDate] = useState<Date | null>(null)
-  const [description, setDescription] = useState<string>('')
-  const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
   const [amtReqd, setAmtReqd] = useState<string>('0')
   const [amtSaved, setAmtSaved] = useState<string>('0')
-  const [amtMonthly, setAmtMonthly] = useState<string>('0')
+  const [sortOrder, setSortOrder] = useState<number>(0) //if adding new value, set to values.length
+  const [description, setDescription] = useState<string>('')
+  const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
 
-  const { isIdle } = useGetNavigationState()
-
+  const params = useParams();
   const paramsOutcomeId = useMemo(() => params.outcomeId, [params.outcomeId])
   if (!paramsOutcomeId) throw new Error('Outcome Id is missing')
   const saving = useMemo(() => passedSaving, [passedSaving])
 
+  const { isIdle } = useGetNavigationState()
   const saveBtnTxt = useSaveBtnText(isNew, isIdle, 'Saving')
   const headerTxt = useMemo(() => headerText(isNew, 'Saving', saving?.title || ''), [isNew, saving?.title])
 
@@ -47,29 +42,26 @@ function SavingForm({ passedSaving, isNew = true, savingsArrayLength = 0 }: Prop
     setId(saving?.id || '')
     setTitle(saving?.title || '')
     setDescription(saving?.description || '')
-    setStartDate(saving?.startDate || null)
     setSortOrder(saving?.sortOrder || savingsArrayLength || 0)
+    saving?.requiredAmount && setAmtReqd(setAsCurrency(saving?.requiredAmount.toString() || '0'))
+    saving?.savedAmount && setAmtReqd(setAsCurrency(saving?.savedAmount.toString() || '0'))
   }, [saving, savingsArrayLength])
 
 
   useEffect(() => {
-    const isInputEmpty = !title
+    const isInputEmpty = !title || !amtReqd || amtReqd === '0'
     const isInputDifferent =
       title !== saving?.title
       || description !== saving?.description
     setIsSaveable(!isInputEmpty && (isInputDifferent))
-  }, [title, description, saving]);
-
-
-
-  const removeCharacters = (inputValue: any): any => {
-    return inputValue.replace(/[^0-9.]/g, '');
-  };
-
+  }, [title, description, saving, amtReqd]);
 
 
 
   //*****************  INPUT HANDLERS  *****************//
+  const removeCharacters = (inputValue: any): any => {
+    return inputValue.replace(/[^0-9.]/g, '');
+  };
 
   //? *****************  AMOUNT REQUIRED *****************//
   const handleAmtReqdChange = (e: any) => {
@@ -89,16 +81,16 @@ function SavingForm({ passedSaving, isNew = true, savingsArrayLength = 0 }: Prop
     return setAmtSaved(setAsCurrency(amtSaved))
   }
 
-
-  //? *****************  AMOUNT Monthly *****************//
-  const handleAmtMonthlyChange = (e: any) => {
-    setAmtMonthly(removeCharacters(e.target.value))
-  }
-
-  const blurAmtMonthly = () => {
-    return setAmtMonthly(setAsCurrency(amtMonthly))
-  }
-
+  const actionResult = useActionData()
+  useEffect(() => {
+    if (!actionResult) return
+    if (actionResult === 'success' && isNew) {
+      setTitle('')
+      setAmtReqd('0')
+      setAmtSaved('0')
+      setDescription('')
+    }
+  }, [actionResult, isNew])
 
 
 
@@ -106,7 +98,7 @@ function SavingForm({ passedSaving, isNew = true, savingsArrayLength = 0 }: Prop
     <BasicFormAreaBG h2Text={headerTxt}  >
 
       <Form method='post' className='p-8 '>
-        <div className="form-control gap-y-6    ">
+        <div className="form-control gap-y-6">
           <input type="number" name='sortOrder' value={sortOrder} hidden readOnly />
           <input type="string" name='rowId' value={id} hidden readOnly />
           <input type="string" name='outcomeId' value={paramsOutcomeId} hidden readOnly />
@@ -143,15 +135,6 @@ function SavingForm({ passedSaving, isNew = true, savingsArrayLength = 0 }: Prop
             </textarea>
           </div>
 
-          {/* <div  className='' >
-            <DatePicker
-              labelText={'Start Date'}
-              selectedDate={startDate}
-              setSelectedDate={setStartDate}
-              isHorizontal={false}
-            />
-          </div> */}
-
           <div >
             <InputLabelWithGuideLineLink
               inputTitle='Total Amount Required'
@@ -185,26 +168,6 @@ function SavingForm({ passedSaving, isNew = true, savingsArrayLength = 0 }: Prop
               required
             />
           </div>
-
-
-          <div >
-            <InputLabelWithGuideLineLink
-              inputTitle='Avg Monthly Contribution'
-              guideline={CoreValue}
-              guideLineTitle='Group'
-            />
-            <input type="text"
-              placeholder="Enter the Amount to Contribute each month"
-              name='amtMonthly'
-              className=" input-field-currency "
-              value={amtMonthly}
-              onChange={handleAmtMonthlyChange}
-              onBlur={blurAmtMonthly}
-              required
-            />
-          </div>
-
-
 
           {/* //**************BUTTONS ***************  */}
 

@@ -7,4 +7,4 @@ export type SavingsWithStrDates = Omit<Savings, "createdAt" | "updatedAt"> & {
   updatedAt: string;
 };
 
-export type CreateSavings = Omit<Savings, "id" | "createdAt" | "updatedAt">;
+export type CreateSavings = Omit<Savings, "id" | "createdAt" | "updatedAt" >;
