@@ -77,7 +77,7 @@ function HabitForm({ passedHabit, isNew = true, habitsArrayLength = 0 }: Props) 
     } catch (error) { throw error }
     clearFormStates()
   }
-
+  
   const handleEdits = async () => { }
 
   const clearFormStates = () => {

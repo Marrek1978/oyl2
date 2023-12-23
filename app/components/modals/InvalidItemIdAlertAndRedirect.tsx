@@ -10,6 +10,7 @@ interface Props {
 
 // if the loaderData is set to null, this triggers the alert message
 function useInvalidItemIdAlertAndRedirect({ loaderData, goBackXPaths = 1, itemType = 'Item' }: Props = {}) {
+  
   const navigate = useNavigate()
   const location = useLocation()
   const [warning, setWarning] = useState<string>('')

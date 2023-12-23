@@ -29,7 +29,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   if (!outcomeId) return redirect('../..')
   try {
     const desire = await getDesireById(desireId, userId);
-    console.log("🚀 ~ file: dash.desires_.$desireId_.outcomes_.$outcomeId.tsx:32 ~ loader ~ desire:", desire)
     if (!desire) return 'noId'
     const outcomeWithAll = await getOutcomeWithMilestonesListsRoutinesHabitsSavingsById(outcomeId)
     if (!outcomeWithAll) return null
@@ -172,7 +171,7 @@ function OutcomePage() {
 
             <div className=' grid grid-cols-[250px,_100px] items-baseline'>
               <SubHeading14px text={'Savings Trackers'} />
-              <Link to='milestones'>
+              <Link to='savings'>
                 <BtnWithProps
                   btnPurpose={'goto'}
                   textSizeTW={'sm'}

@@ -1,8 +1,10 @@
-import type { SavingsTracker } from "@prisma/client";
+import type { Savings } from "@prisma/client";
 
 
 
-export type SavingsWithStrDates = Omit<SavingsTracker, "createdAt" | "updatedAt"> & {
+export type SavingsWithStrDates = Omit<Savings, "createdAt" | "updatedAt"> & {
   createdAt: string;
   updatedAt: string;
 };
+
+export type CreateSavings = Omit<Savings, "id" | "createdAt" | "updatedAt">;

@@ -1,14 +1,37 @@
+import { parse } from 'querystring'
 import { useEffect, useState } from 'react'
-import { useParams } from '@remix-run/react'
+import { useFetcher, useParams } from '@remix-run/react'
+import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
 import HabitEditDateForm from '~/components/forms/habits/HabitEditDateForm'
 import { useSplitLoaderData } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.habits_.$habitId'
 // import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect'
 
+import { updateStreakSuccessById } from '~/models/habits.server';
+import useFetcherState from '~/components/utilities/useFetcherState';
+import useServerMessages from '~/components/modals/useServerMessages';
+import useFormSubmittedToastAndRedirect from '~/components/utilities/useFormSubmittedToast';
+
 import type { Streak } from '@prisma/client'
 import type { HabitWithStreaks } from '~/types/habitTypes'
+// import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
 
+export const action = async ({ request }: ActionFunctionArgs) => {
+
+  const formBody = await request.text();
+  const parsedStreakData = parse(formBody)
+  if (!parsedStreakData) return 'failure'
+  const { rowId, ...streak } = parsedStreakData
+  const streakId = rowId as string
+  const streakValue = Object.values(streak)
+  const isSuccess = streakValue[0] === 'on' ? true : false
+
+  try {
+    await updateStreakSuccessById({ id: streakId, isSuccess })
+    return 'success'
+  } catch (error) { return 'failure' }
+}
 
 
 function EditHabitDatePage() {
@@ -18,8 +41,17 @@ function EditHabitDatePage() {
 
   const { habit } = useSplitLoaderData()
   const loadedHabit = habit as HabitWithStreaks
-  const [streakObj, setStreakObj] = useState<Streak>()
+
   const [title, setTitle] = useState<string>('')
+  const [streakObj, setStreakObj] = useState<Streak>()
+
+  const fetcher = useFetcher();
+  const { fetcherState, fetcherMessage, } = useFetcherState({ fetcher })
+  useServerMessages({ fetcherMessage, fetcherState, isShowFailed: true, isShowLoading: false, isShowSuccess: false })
+
+  const redirectRoute = '/dash/desires/' + params.desireId + '/outcomes/' + params.outcomeId + '/habits/' + params.habitId
+  useFormSubmittedToastAndRedirect({ redirectTo: redirectRoute, message: 'Streak was changed' })
+
 
   useEffect(() => {
     if (!habitDateId) return

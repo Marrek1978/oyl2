@@ -60,6 +60,15 @@ xl	1280px	@media (min-width: 1280px) { ... }
   text-base;
 }
 
+.input-field-currency {
+  @apply input
+  input-secondary 
+  w-1/2 
+  rounded-none  
+  border-2 border-base-300 bg-base-200
+  font-poppins font-normal tracking-wide;
+}
+
 .validation-error {
   @apply pb-0 font-poppins
   text-base font-normal  

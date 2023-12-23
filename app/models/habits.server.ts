@@ -83,3 +83,15 @@ export const addStreakDates = (streakDataEntries: StreakDataEntriesType[]) => {
     throw error;
   }
 };
+
+
+export const updateStreakSuccessById = ({id, isSuccess}:{id:string, isSuccess:boolean}) => {
+  try {
+    return prisma.streak.update({
+      where: { id },
+      data: { isSuccess },
+    });
+  } catch (error) {
+    throw error;
+  }
+}

@@ -22,7 +22,7 @@ function ToggleWithLabelAndGuideLineLink({ text, guideline = '', guidelineTitle 
 
   return (
     <>
-      <div className={`w-full flex justify-between flex-wrap ${TWGapCSS} items-center`}>
+      <div className={`max-w-max flex justify-between flex-wrap ${TWGapCSS} items-center  `}>
         <div className="flex flex-wrap gap-2 items-center ">
           <div className={labelWidthTailwindClass}>
             <InputLabel inputTitle={text} widthTailwind='max-w-max' isSecondaryInput={isSecondaryInput} />
@@ -41,6 +41,7 @@ function ToggleWithLabelAndGuideLineLink({ text, guideline = '', guidelineTitle 
             guideline={guideline}
             guideLineTitle={guidelineTitle}
           >
+            <></>
           </WithGuidelineLink>
         </div>
       </div>

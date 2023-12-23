@@ -5,6 +5,7 @@ import BasicFormAreaBG from '../BasicFormAreaBG'
 
 import type { Streak } from '@prisma/client'
 import FormButtons from '../FormButtons'
+import DateCheckBox from '~/components/habits/DateCheckBox'
 
 
 type Props = {
@@ -12,11 +13,13 @@ type Props = {
   habitTitle: string
 }
 
+
 function HabitEditDateForm({ streakDateObj, habitTitle }: Props) {
   const [id, setId] = useState<string>('')
-  const [date, setDate] = useState<string>()
-  const [isSuccess, setIsSuccess] = useState<boolean>(false)
+  const [date, setDate] = useState<Date>()
+  const [dateString, setDateString] = useState<string>()
   const [title, setTitle] = useState<string>('d')
+  const [isSuccess, setIsSuccess] = useState<boolean>(false)
 
   useEffect(() => {
     setTitle(habitTitle)
@@ -24,25 +27,26 @@ function HabitEditDateForm({ streakDateObj, habitTitle }: Props) {
 
   useEffect(() => {
     if (!streakDateObj) return
-    setDate(streakDateObj?.date.toDateString())
+    setDate(streakDateObj?.date)
+    setDateString(streakDateObj?.date.toDateString())
     setIsSuccess(streakDateObj?.isSuccess || false)
+    setId(streakDateObj?.id)
   }, [streakDateObj])
 
   return (
     <>
 
-      <BasicFormAreaBG h2Text={`Edit Day ${date} for ${title}`}  >
+      <BasicFormAreaBG h2Text={`Edit Day ${dateString} for ${title}`}   >
         <Form method='post' className='p-8'>
           <div className="form-control gap-y-6 ">
             <input type="string" name='rowId' value={id} hidden readOnly />
 
-            <div className='grid grid-cols-[150px_50px_80px] items-center  '>
-              <div className=' '>{date}</div>
-              <div>{isSuccess ? '✅' : '❌'}</div>
-              <div>
-                <input type="checkbox" name='isSuccess' checked={isSuccess} />
-              </div>
-            </div>
+            {date && (
+              <DateCheckBox
+                streakDate={date}
+                isChecked={isSuccess}
+              />
+            )}
 
             <FormButtons />
           </div>

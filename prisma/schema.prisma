@@ -132,6 +132,8 @@ model ClarifyingQuestions {
   fiftyYears String? @default("")
   maxAge Int? @default(85)
 
+  monthlyAmount Int? @default(500)
+
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
 }
@@ -251,11 +253,11 @@ model Savings {
   description String?
   sortOrder Int @default(0)
 
-  requiredAmount Int
-  startDate DateTime
+  requiredAmount Int?
+  startDate DateTime?
   savedAmount Int @default(0)
-  monthlyContribution Int
-  estCompletionDate DateTime
+  monthlyContribution Int?
+  estCompletionDate DateTime?
 
   Outcome Outcome @relation(fields: [outcomeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   outcomeId String
@@ -276,6 +278,14 @@ model Savings {
   savingsId String
  }
 
+
+model monthySavings {
+  id String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  amount Int
+ }
 
 model Habit {
   id String @id @default(cuid())

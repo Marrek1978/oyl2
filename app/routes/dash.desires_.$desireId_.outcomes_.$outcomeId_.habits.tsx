@@ -34,7 +34,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     const loadedHabits = await getHabitsByOutcomeId(outcomeId);
     return { loadedHabits, loadedDesireName, loadedOutcomeName }
   } catch (error) { throw error }
-  return null
 };
 
 
@@ -79,11 +78,6 @@ function HabitsPage() {
   const { desireName, outcomeName } = useGetParamNames()
   const habits = useGetHabits() as HabitWithStreaks[]
   const habitsArrayLength:number = useGetHabitsArrayLength()
-
-  // useEffect(() => {
-  //   if (!loadedGroupsData) return
-  //   setGroups(loadedGroupsData);
-  // }, [loadedGroupsData])
 
 
   return (

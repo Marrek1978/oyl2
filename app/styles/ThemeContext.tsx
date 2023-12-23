@@ -14,7 +14,7 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [theme, setTheme] = useState('winter');
+  const [theme, setTheme] = useState('night');
 
   useEffect(() => {
     document.querySelector('html')?.setAttribute('data-theme', theme);
