@@ -75,6 +75,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 const thisPath = 'routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings_.$savingId'
 
 function SavingPage() {
+
   const saving = useGetSaving(thisPath) as SavingsAndPayments
   const { desireName, outcomeName } = useGetParamNames(thisPath)
 
@@ -153,7 +154,7 @@ export const useGetSaving = (path: string = thisPath): SavingsAndPayments => {
   return saving as SavingsAndPayments
 }
 
-export const useGetTotalPayments = (path:  string): number => {
+export const useGetTotalPayments = (path: string): number => {
   const saving = useGetSaving(path)
   const totalPayments = saving?.payments?.reduce((total, payment) => {
     return total + payment.amount

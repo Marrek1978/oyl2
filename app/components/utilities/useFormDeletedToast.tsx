@@ -4,16 +4,16 @@ import { toast } from 'sonner'
 import { toasterBtnLabel, toasterDuration, toasterPosition } from './constants'
 
 interface FormDeleteProps {
-  redirectTo?: string  
+  redirectTo?: string
   message?: string;
 }
 
-function useFormDeletedToastAndRedirect({ redirectTo, message= 'Value was delted'}: FormDeleteProps = {}) {
+function useFormDeletedToastAndRedirect({ redirectTo, message = 'Value was delted' }: FormDeleteProps = {}) {
 
   const actionData = useActionData()
   const navigate = useNavigate()
   const isDeleted = actionData === 'deleted'
-  
+
 
   useEffect(() => {
     if (isDeleted) {
@@ -28,7 +28,7 @@ function useFormDeletedToastAndRedirect({ redirectTo, message= 'Value was delted
 
       if (redirectTo) navigate(redirectTo)
     }
-  }, [isDeleted, navigate, redirectTo,  message])
+  }, [isDeleted, navigate, redirectTo, message])
 }
 
 export default useFormDeletedToastAndRedirect
