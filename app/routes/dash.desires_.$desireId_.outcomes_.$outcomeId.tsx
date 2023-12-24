@@ -206,7 +206,6 @@ export const useGetOutcomeIdLoaderData = (path = `routes/dash.desires_.$desireId
   : OutcomeWithAllWithStrDatesType => {
 
   const loaderData = useRouteLoaderData(path)
-  console.log("🚀 ~ file: dash.desires_.$desireId_.outcomes_.$outcomeId.tsx:214 ~ loaderData:", loaderData)
   const [desireWithStrDates, setDesireWithStrDates] = useState<DesireWithStringDates | undefined | null>()
   const [outcomeWithStrDates, setOutcomeWithStrDates] = useState<OutcomeWithAllWithStringDates | undefined | null>()
 

@@ -8,6 +8,7 @@ import TextProseWidth from "~/components/text/TextProseWidth";
 
 import type { Savings } from "@prisma/client";
 import HeadingH1 from "~/components/titles/HeadingH1";
+import { currStringToNum } from "~/routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings";
 
 
 interface DndSavingSortableProps {
@@ -24,6 +25,7 @@ function DndSavingSortable({ saving, linkTitle = 'Edit', isShowDescription = tru
   const [description, setDescription] = useState<string | null>('')
   const [currencyReqd, setCurrencyReqd] = useState<string>()
   const [currencySaved, setCurrencySaved] = useState<string>('0')
+  const [isPaidInFull, setIsPaidInFull] = useState<boolean>(false)
 
 
   useEffect(() => {
@@ -33,6 +35,15 @@ function DndSavingSortable({ saving, linkTitle = 'Edit', isShowDescription = tru
     savedAmount && setCurrencySaved(savedAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD' }).replace(/\.00$/, ''))
     setCurrencyReqd(saving.requiredAmount?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }).replace(/\.00$/, ''))
   }, [saving, savedAmount, currencyReqd, currencySaved, description, id, setId, setDescription, setCurrencyReqd, setCurrencySaved])
+
+
+  useEffect(() => {
+    if (!currencyReqd || !currencySaved) return
+    const reqdNum = currStringToNum(currencyReqd)
+    const savedNum = currStringToNum(currencySaved)
+    if (savedNum >= reqdNum) { setIsPaidInFull(true) }
+    else { setIsPaidInFull(false) }
+  }, [currencyReqd, currencySaved])
 
 
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -60,7 +71,7 @@ function DndSavingSortable({ saving, linkTitle = 'Edit', isShowDescription = tru
                 btnColorDaisyUI={'link'}
               />
 
-              <div className="mt-2">
+              <div className={`mt-2 ${isPaidInFull && 'text-success'}`}>
                 <HeadingH1 H1Title={`${currencySaved} / ${currencyReqd}`} />
               </div>
 

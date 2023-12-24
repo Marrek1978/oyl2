@@ -1,7 +1,12 @@
 import { prisma } from "~/db.server";
 import type { Savings } from "@prisma/client";
 
-import type { CreateSavings, SavingsAndPayments } from "~/types/savingsType";
+import type {
+  CreateSavings,
+  SavingsAndPayments,
+  UpdateSavings,
+} from "~/types/savingsType";
+import { currStringToNum } from "~/routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings";
 
 export const createSaving = async ({
   title,
@@ -26,12 +31,42 @@ export const createSaving = async ({
     });
     return result;
   } catch (error) {
-    console.log("🚀 ~ file: saving.server.ts:32 ~ error:", error);
     throw error;
   }
 };
 
-export const getSavingsWithPaymentsByOutcomeId = async (outcomeId: string):Promise<SavingsAndPayments[] | null> => {
+export const updateSaving = async ({
+  id,
+  title,
+  description,
+  requiredAmount,
+}: { id: string } & UpdateSavings) => {
+  
+  const dataObject:UpdateSavings = {};
+  if (title) {
+    dataObject.title = title as string;
+  }
+  if (description) {
+    dataObject.description = description as string;
+  }
+  if (requiredAmount) {
+    dataObject.requiredAmount = currStringToNum(requiredAmount.toString()) as number;
+  }
+
+  try {
+    const result = await prisma.savings.update({
+      where: { id },
+      data: dataObject,
+    });
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getSavingsWithPaymentsByOutcomeId = async (
+  outcomeId: string
+): Promise<SavingsAndPayments[] | null> => {
   try {
     const result = await prisma.savings.findMany({
       where: { outcomeId: outcomeId },
@@ -60,7 +95,9 @@ export const updateSavingsOrder = async (savings: Savings[]) => {
   }
 };
 
-export const getSavingWithPaymentsById = async (savingId: string):Promise<SavingsAndPayments | null> => {
+export const getSavingWithPaymentsById = async (
+  savingId: string
+): Promise<SavingsAndPayments | null> => {
   try {
     const result = await prisma.savings.findFirst({
       where: { id: savingId },
@@ -72,3 +109,32 @@ export const getSavingWithPaymentsById = async (savingId: string):Promise<Saving
     throw error;
   }
 };
+
+export const getSavingById = async (
+  savingId: string
+): Promise<Savings | null> => {
+  try {
+    const result = await prisma.savings.findFirst({
+      where: { id: savingId },
+    });
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+export const deleteSaving = async (savingId: string) => { 
+  console.log(' in server func')
+  try {
+    const result = await prisma.savings.delete({
+      where: { id: savingId },
+    });
+    console.log("🚀 ~ file: saving.server.ts:134 ~ deleteSaving ~ result:", result)
+    return result;
+  } catch (error) {
+    console.log("🚀 ~ file: saving.server.ts:137 ~ deleteSaving ~ error:", error)
+    throw error;
+  }
+}

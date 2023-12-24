@@ -33,6 +33,7 @@ function useServerMessages({
   submittingMessage = 'Sending data to database'
 }: Props) {
 
+
   const actionData = useActionData() as string
   const [isIdleState, setIsIdleState] = useState<boolean>(false)
   const [isLoadingState, setIsLoadingState] = useState<boolean>(false)

@@ -87,6 +87,8 @@ function HabitForm({ passedHabit, isNew = true, habitsArrayLength = 0 }: Props) 
     setStartDate(new Date())
     // setSortOrder(habitsArrayLength)
   }
+
+  
   return (
     <BasicFormAreaBG h2Text={headerTxt}  >
 

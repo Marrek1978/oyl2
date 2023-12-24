@@ -37,7 +37,6 @@ function DesirePage() {
 
   const [values, setValues] = useState<Value[]>([]);
   const [outcomes, setOutcomes] = useState<Outcome[]>([]);
-  console.log("🚀 ~ file: dash.desires_.$desireId.tsx:40 ~ DesirePage ~ outcomes:", outcomes)
   const [desire, setDesire] = useState<DesireWithValuesAndOutcomes | null>()
   const loadedDesire: DesireWithValuesAndOutcomes | null | undefined = useGetSpecificDesireWithValuesAndOutcomes();
   const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: loadedDesire, itemType: 'Desire' })

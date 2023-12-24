@@ -10,6 +10,12 @@ export type CreateSavings = Omit<Savings, "id" | "createdAt" | "updatedAt"> & {
   payment: { amount: number; paymentDate: Date };
 };
 
+export type UpdateSavings = {
+  title?: string;
+  description?: string;
+  requiredAmount?: number;
+}
+
 export type SavingsAndPaymentsWithStrDates = SavingsWithStrDates & {payments: PaymentsWithStrDates[]};
 
 export type SavingsAndPayments = Savings & {payments: Payments[]};

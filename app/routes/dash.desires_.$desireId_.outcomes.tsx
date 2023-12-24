@@ -73,8 +73,6 @@ function OutcomesPage() {
   const [desireTitle, setDesireTitle] = useState<string>( )
   const [outcomesState, setOutcomesState] = useState<Outcome[]>([])
   const desiresIdLoaderData = useGetSpecificDesireWithValuesAndOutcomes(`routes/dash.desires_.$desireId_.outcomes`) // from $desireId page
-
-  console.log("🚀 ~ file: dash.desires_.$desireId_.outcomes.tsx:76 ~ OutcomesPage ~ desiresIdLoaderData:", desiresIdLoaderData)
   const { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: desiresIdLoaderData, itemType: 'Desire', goBackXPaths: 2 })
 
 

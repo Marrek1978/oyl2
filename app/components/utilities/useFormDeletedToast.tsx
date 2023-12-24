@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import { toasterBtnLabel, toasterDuration, toasterPosition } from './constants'
 
 interface FormDeleteProps {
-  redirectTo?: string;
+  redirectTo?: string  
   message?: string;
 }
 

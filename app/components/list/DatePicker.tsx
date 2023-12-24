@@ -62,17 +62,18 @@ const DatePicker: React.FC<DatePickerProps> = ({ setSelectedDate, selectedDate, 
           isClearable={true}
           showIcon={false}
           className='
-            p-2 pl-4 
-            min-h-8
-            font-poppins font-normal tracking-wide
-             border-base-300 bg-base-200
-            text-blue placeholder:text-neutral-400
-            '
+          p-2 pl-4 
+          min-h-8
+          font-poppins font-normal tracking-wide
+          border-base-300 bg-base-200
+          text-blue placeholder:text-neutral-400
+          '
           selected={displayDate}
           onChange={handleSelectedDateChange}
           placeholderText={'Click to select a date.'}
           dateFormat="MMMM do, yyyy"
         />
+
       </div>
     </>
   );

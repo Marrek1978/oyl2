@@ -1,3 +1,4 @@
+import { Link } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 
 import PageTitle from '../titles/PageTitle'
@@ -9,7 +10,9 @@ import SubHeading16px from '../titles/SubHeading16px'
 import { setAsCurrency } from '../forms/savings/SavingForm'
 import { useGetMonthlySavingsAmount, useGetTotalPayments } from '~/routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings_.$savingId'
 
+import type { Payments } from '@prisma/client'
 import type { SavingsAndPayments } from '~/types/savingsType'
+import { currStringToNum } from '~/routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings'
 
 
 interface Props {
@@ -21,13 +24,18 @@ interface Props {
 function SavingDisplay({ passedSaving, path }: Props) {
 
   const totalPayments = useGetTotalPayments(path)
-  const [currencyReqd, setCurrencyReqd] = useState<string>()
-  const [currencySaved, setCurrencySaved] = useState<string>('0')
   const [estMonths, setEstMonths] = useState<number>(0)
+  const [currencyReqd, setCurrencyReqd] = useState<string>('0')
+  const [currencySaved, setCurrencySaved] = useState<string>('0')
+  const [isPaidInFull, setIsPaidInFull] = useState<boolean>(false)
+  const [payments, setPayments] = useState<Payments[] | undefined>([])
+
   const monthyContribution = useGetMonthlySavingsAmount(path)
 
   useEffect(() => {
-    setCurrencyReqd(passedSaving?.requiredAmount?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }).replace(/\.00$/, ''))
+    setCurrencyReqd(passedSaving?.requiredAmount?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }).replace(/\.00$/, '') || '0')
+    const sortedPayments = passedSaving?.payments?.sort((a, b) => a.paymentDate.getTime() - b.paymentDate.getTime())
+    setPayments(sortedPayments)
   }, [passedSaving])
 
   useEffect(() => {
@@ -39,10 +47,14 @@ function SavingDisplay({ passedSaving, path }: Props) {
     setEstMonths(Math.round(((passedSaving?.requiredAmount - totalPayments) / monthyContribution) * 100) / 100)
   }, [passedSaving, totalPayments, monthyContribution])
 
+  useEffect(() => {
+    if (!currencyReqd || !currencySaved) return
+    const reqdNum = currStringToNum(currencyReqd)
+    const savedNum = currStringToNum(currencySaved)
+    if (savedNum >= reqdNum) { setIsPaidInFull(true) }
+    else { setIsPaidInFull(false) }
+  }, [currencyReqd, currencySaved])
 
-  // edit saving modal  delete too
-  //edit payment modal  delete too
-  //add payment form 
 
   return (
     <>
@@ -52,7 +64,7 @@ function SavingDisplay({ passedSaving, path }: Props) {
 
         <TextProseWidth text={passedSaving?.description || ' '} />
 
-        <div className='mt-6 flex gap-4 items-baseline '>
+        <div className={`mt-6 flex gap-4 items-baseline  ${isPaidInFull && 'text-success'} `}>
           <HeadingH1 H1Title={`${currencySaved} / ${currencyReqd}`} />
           <div className="   text-sm text-left  para-color">
             <span className="font-bold text-base" >
@@ -62,16 +74,18 @@ function SavingDisplay({ passedSaving, path }: Props) {
         </div>
 
         <div className='mt-8'>
-          <SubHeading16px text={'Savings/Payments'} />
+          <SubHeading16px text={'Savings/Payments'} daisyUIColor={`success`} />
         </div>
 
-        {passedSaving?.payments?.map((payment, index) => {
+        {payments?.map((payment, index) => {
           return (
-            <div key={index} className='grid grid-cols-[70px_200px_100px] items-center  '>
-              <div>${payment.amount}</div>
-              <div> <span className="para-color" >on</span> {payment.paymentDate.toDateString()}</div>
+            <div key={index} className='grid grid-cols-[70px_200px_100px] gap-x-2 items-center  '>
+              <div className='text-right'>${payment.amount}</div>
+              <div> <span className="para-color px-2" > on </span> {payment.paymentDate.toDateString()}</div>
               <div className='max-w-max'>
-                <BtnWithProps btnLabel={'Edit'} btnPurpose={'goto'} fontWidthTW={'bold'} textSizeTW={'sm'} />
+                <Link to={payment.id} >
+                  <BtnWithProps btnLabel={'Edit'} btnPurpose={'goto'} fontWidthTW={'bold'} textSizeTW={'sm'} />
+                </Link>
               </div>
             </div>
           )

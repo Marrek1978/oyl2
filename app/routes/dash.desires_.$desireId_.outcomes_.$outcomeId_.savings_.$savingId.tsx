@@ -1,10 +1,12 @@
+import { parse } from 'querystring';
 import { redirect } from "@remix-run/node";
 import { useEffect, useState } from 'react';
 import { Outlet } from '@remix-run/react'
-import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
+import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import { getDesireById } from '~/models/desires.server';
 import { requireUserId } from '~/models/session.server';
+import { createPayment } from '~/models/payment.server';
 import { getOutcomeByOutcomeId } from '~/models/outcome.server';
 import SavingDisplay from '~/components/savings/SavingDisplay';
 import PaymentForm from '~/components/forms/savings/PaymentForm';
@@ -15,6 +17,8 @@ import DndAndFormFlex from '~/components/baseContainers/DndAndFormFlex'
 import { useGetLoaderData } from "./dash.desires_.$desireId_.outcomes_.$outcomeId_.savings";
 import { ArrayOfObjectsStrToDates, ObjectStrToDates } from "~/components/utilities/helperFunctions";
 
+
+import type { CreatePayment } from '~/types/paymentTypes';
 import type { ClarifyingQuestions, Payments } from '@prisma/client';
 import type { SavingsAndPayments, SavingsAndPaymentsWithStrDates } from "~/types/savingsType";
 
@@ -44,14 +48,35 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 };
 
 
-const path = 'routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings_.$savingId'
+export const action = async ({ request }: ActionFunctionArgs) => {
+
+  if (request.method === 'POST') {
+    const formData = await request.text()
+    const parsedData = parse(formData)
+    const paymentData = JSON.parse(parsedData?.paymentString as string)
+
+    const payment: CreatePayment = {
+      savingsId: paymentData?.savingsId as string,
+      paymentDate: new Date(paymentData?.paymentDate?.toString() || new Date()),
+      amount: parseInt(paymentData?.amount?.toString() || 0)
+    }
+
+    try {
+      await createPayment(payment)
+      return "success"
+    } catch (error) {
+      return 'failure'
+    }
+  }
+  return null
+}
 
 
+const thisPath = 'routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings_.$savingId'
 
 function SavingPage() {
-
-  const saving = useGetSaving(path) as SavingsAndPayments
-  const { desireName, outcomeName } = useGetParamNames(path)
+  const saving = useGetSaving(thisPath) as SavingsAndPayments
+  const { desireName, outcomeName } = useGetParamNames(thisPath)
 
 
   return (
@@ -62,8 +87,8 @@ function SavingPage() {
         <DndAndFormFlex
           listMaxWidthTW={'max-w-max'}
           formMaxWidthTW={'max-w-sm'}
-          dnd={<SavingDisplay passedSaving={saving} path={path} />}
-          form={<PaymentForm />}
+          dnd={<SavingDisplay passedSaving={saving} path={thisPath} />}
+          form={<PaymentForm passedSavingsId={saving?.id} />}
         />
       </>
     </>
@@ -88,7 +113,7 @@ interface SplitData {
   monthlyAmount: number
 }
 
-export const useSplitLoaderData =  (path: string): SplitData => {
+export const useSplitLoaderData = (path: string): SplitData => {
   const loadedData = useGetLoaderData(path)
   const [saving, setSaving] = useState<SavingsAndPayments>();
   const [desireName, setDesireName] = useState<string>('')
@@ -123,12 +148,12 @@ export const useGetParamNames = (path: string): { desireName: string, outcomeNam
   return { desireName, outcomeName }
 }
 
-export const useGetSaving =  (path: string): SavingsAndPayments => {
+export const useGetSaving = (path: string = thisPath): SavingsAndPayments => {
   const { saving } = useSplitLoaderData(path)
   return saving as SavingsAndPayments
 }
 
-export const useGetTotalPayments =  (path: string): number => {
+export const useGetTotalPayments = (path:  string): number => {
   const saving = useGetSaving(path)
   const totalPayments = saving?.payments?.reduce((total, payment) => {
     return total + payment.amount
@@ -138,7 +163,6 @@ export const useGetTotalPayments =  (path: string): number => {
 
 
 export const useGetMonthlySavingsAmount = (path: string): number => {
-  console.log('useGetMonthlySavingsAmount')
   const { monthlyAmount } = useSplitLoaderData(path)
   return monthlyAmount
 }

@@ -1,20 +1,21 @@
 import { useEffect } from 'react'
-import { useActionData, useNavigate } from '@remix-run/react'
+import { type FetcherWithComponents, useNavigate } from '@remix-run/react'
 
 import { toast } from 'sonner'
 import { toasterBtnLabel, toasterDuration, toasterPosition } from './constants'
+import useFetcherState from './useFetcherState';
 
 interface FormDeleteProps {
-  redirectTo?: string;
-  message?: string;
-  isIgnore?: boolean;
+  fetcher: FetcherWithComponents<any>;
+   redirectTo?: string;
+    message?: string;
 }
 
-function useFormSubmittedToastAndRedirect({ redirectTo = '../', message = 'Form was successfully submitted', isIgnore = false }: FormDeleteProps = {}) {
+function useFormSubmittedToastUsingFetcher( {fetcher, redirectTo='../', message='Form was Updated'}:FormDeleteProps  ) {
 
   const navigate = useNavigate()
-  const actionData = useActionData()
-  const isSuccess = actionData === 'success'
+  const { fetcherMessage } = useFetcherState({ fetcher })
+  const isSuccess = fetcherMessage === 'success'
 
   useEffect(() => {
     if (isSuccess) {
@@ -32,4 +33,4 @@ function useFormSubmittedToastAndRedirect({ redirectTo = '../', message = 'Form 
   }, [isSuccess, navigate, redirectTo, message])
 }
 
-export default useFormSubmittedToastAndRedirect
+export default useFormSubmittedToastUsingFetcher

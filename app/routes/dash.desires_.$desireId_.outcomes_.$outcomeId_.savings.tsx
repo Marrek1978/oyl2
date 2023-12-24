@@ -14,11 +14,11 @@ import { getClarifyingQuestions } from "~/models/clarifying.server";
 import useFetcherState from "~/components/utilities/useFetcherState";
 import useServerMessages from "~/components/modals/useServerMessages";
 import DndAndFormFlex from "~/components/baseContainers/DndAndFormFlex";
+import { ArrayOfObjectsStrToDates, ObjectStrToDates } from "~/components/utilities/helperFunctions";
 import { createSaving, getSavingsWithPaymentsByOutcomeId, updateSavingsOrder } from "~/models/saving.server";
 
 import type { ClarifyingQuestions, Payments } from "@prisma/client";
 import type { SavingsAndPayments, SavingsAndPaymentsWithStrDates } from "~/types/savingsType";
-import { ArrayOfObjectsStrToDates, ObjectStrToDates } from "~/components/utilities/helperFunctions";
 
 
 
@@ -45,7 +45,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   } catch (error) { throw error }
 };
 
-const currStringToNum = (currString: string): number => {
+export const currStringToNum = (currString: string): number => {
   const numString = currString.replace(/[^0-9.-]+/g, '');
   const num = parseInt(numString)
   return num
@@ -70,7 +70,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     const title = parsedSavingData.title as string
     const description = parsedSavingData.description as string
-    // const startDate = parsedSavingData.startDate ? new Date(parsedSavingData.startDate as string) : new Date()
     const sortOrder = parsedSavingData.sortOrder ? parseInt(parsedSavingData.sortOrder as string) : 0
     const outcomeId = parsedSavingData.outcomeId as string
 
@@ -111,8 +110,6 @@ function SavingsPage() {
   const fetcher = useFetcher();
   const { fetcherState, fetcherMessage, } = useFetcherState({ fetcher })
   useServerMessages({ fetcherMessage, fetcherState, isShowFailed: true, isShowLoading: false, isShowSuccess: true })
-
-  // const response = useActionData()
 
   return (
     <>

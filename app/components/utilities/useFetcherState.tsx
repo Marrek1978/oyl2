@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ServerFailureMessage, ServerSuccessMessage } from './constants';
 
-import type { FetcherWithComponents} from '@remix-run/react';
+import type { FetcherWithComponents } from '@remix-run/react';
 
 const string1 = ServerSuccessMessage;
 const string2 = ServerFailureMessage;
@@ -20,6 +20,7 @@ function useFetcherState({ fetcher }: FetcherStateProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fetcherState, setFetcherState] = useState<string>();
   const [fetcherMessage, setFetcherMessage] = useState<ServerResponseMessagesType>();
+
 
   useEffect(() => {
     setIsSubmitting(fetcher.state === 'submitting');

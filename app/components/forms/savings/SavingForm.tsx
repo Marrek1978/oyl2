@@ -23,7 +23,7 @@ function SavingForm({ passedSaving, isNew = true, savingsArrayLength = 0 }: Prop
   const [id, setId] = useState<string>('')
   const [title, setTitle] = useState<string>('')
   const [amtReqd, setAmtReqd] = useState<string>('0')
-  const [amtSaved, setAmtSaved] = useState<string>('0')
+  // const [amtSaved, setAmtSaved] = useState<string>('0')
   const [sortOrder, setSortOrder] = useState<number>(0) //if adding new value, set to values.length
   const [description, setDescription] = useState<string>('')
   const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
@@ -44,7 +44,6 @@ function SavingForm({ passedSaving, isNew = true, savingsArrayLength = 0 }: Prop
     setDescription(saving?.description || '')
     setSortOrder(saving?.sortOrder || savingsArrayLength || 0)
     saving?.requiredAmount && setAmtReqd(setAsCurrency(saving?.requiredAmount.toString() || '0'))
-    // saving?.savedAmount && setAmtReqd(setAsCurrency(saving?.savedAmount.toString() || '0'))
   }, [saving, savingsArrayLength])
 
 
@@ -53,16 +52,13 @@ function SavingForm({ passedSaving, isNew = true, savingsArrayLength = 0 }: Prop
     const isInputDifferent =
       title !== saving?.title
       || description !== saving?.description
+      || amtReqd !== setAsCurrency(saving?.requiredAmount?.toString() || '0')
     setIsSaveable(!isInputEmpty && (isInputDifferent))
   }, [title, description, saving, amtReqd]);
 
 
 
   //*****************  INPUT HANDLERS  *****************//
-  const removeCharacters = (inputValue: any): any => {
-    return inputValue.replace(/[^0-9.]/g, '');
-  };
-
   //? *****************  AMOUNT REQUIRED *****************//
   const handleAmtReqdChange = (e: any) => {
     setAmtReqd(removeCharacters(e.target.value))
@@ -73,21 +69,22 @@ function SavingForm({ passedSaving, isNew = true, savingsArrayLength = 0 }: Prop
   }
 
   //? *****************  AMOUNT SAVED *****************//
-  const handleAmtSavedChange = (e: any) => {
-    setAmtSaved(removeCharacters(e.target.value))
-  }
+  // const handleAmtSavedChange = (e: any) => {
+  //   setAmtSaved(removeCharacters(e.target.value))
+  // }
 
-  const blurAmtSaved = () => {
-    return setAmtSaved(setAsCurrency(amtSaved))
-  }
+  // const blurAmtSaved = () => {
+  //   return setAmtSaved(setAsCurrency(amtSaved))
+  // }
 
   const actionResult = useActionData()
+
   useEffect(() => {
     if (!actionResult) return
     if (actionResult === 'success' && isNew) {
       setTitle('')
       setAmtReqd('0')
-      setAmtSaved('0')
+      // setAmtSaved('0')
       setDescription('')
     }
   }, [actionResult, isNew])
@@ -152,7 +149,7 @@ function SavingForm({ passedSaving, isNew = true, savingsArrayLength = 0 }: Prop
             />
           </div>
 
-          <div >
+          {/* <div >
             <InputLabelWithGuideLineLink
               inputTitle='Already Saved'
               guideline={CoreValue}
@@ -167,7 +164,7 @@ function SavingForm({ passedSaving, isNew = true, savingsArrayLength = 0 }: Prop
               onBlur={blurAmtSaved}
               required
             />
-          </div>
+          </div> */}
 
           {/* //**************BUTTONS ***************  */}
 
@@ -190,6 +187,12 @@ function SavingForm({ passedSaving, isNew = true, savingsArrayLength = 0 }: Prop
 
 export default SavingForm
 
+
+
+//*****************  INPUT HANDLERS  *****************//
+export const removeCharacters = (inputValue: any): any => {
+  return inputValue.replace(/[^0-9.]/g, '');
+};
 
 export const setAsCurrency = (value: string) => {
   const currencyRegex = /^\$\d+(,\d{3})*(\.\d{2})?$/;
