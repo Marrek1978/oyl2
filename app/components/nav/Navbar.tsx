@@ -7,6 +7,7 @@ import { useTheme } from '~/styles/ThemeContext';
 import OutlinedBtn from '../buttons/OutlinedBtn';
 import { getUser } from "~/models/session.server";
 import { LogoutIcon, MoonIcon, SunIcon } from '~/components/utilities/icons';
+
 import type { User } from '@prisma/client';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

@@ -64,10 +64,14 @@ export async function getOutcomeWithMilestonesListsRoutinesHabitsSavingsById(
     const outcome = await prisma.outcome.findFirst({
       where: { id: outcomeId },
       include: {
-        milestoneGroup: true,
+        milestoneGroup: {
+          include: { milestones: true },
+        },
         lists: true,
         routines: true,
-        habits: true,
+        habits: {
+          include: { streak: true },
+        },
         savings: true,
       },
     });

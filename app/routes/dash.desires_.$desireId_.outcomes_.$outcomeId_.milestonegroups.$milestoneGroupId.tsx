@@ -6,7 +6,7 @@ import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 import Modal from '~/components/modals/Modal'
 import { updateMilestoneCompleted, updateMilestonesOrder } from '~/models/milestone.server'
 import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
-import MilestoneGroupHorizontalDisplay from '~/components/milestones/MilestoneGroupHorizontalDisplay';
+import MilestoneGroupHorizontalDisplayWithDnd from '~/components/milestones/MilestoneGroupHorizontalDisplayWithDnd';
 import { useGetAllMilestoneGroupsForOutcome } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups';
 
 import type { MilestoneGroupsWithMilestones } from '~/types/milestoneTypes';
@@ -65,7 +65,7 @@ function MilestoneGroupPage() {
       <Modal >
         <div className={`w-full min-w-[450px] formWidth`}>
           {milestoneGroup && (
-            <MilestoneGroupHorizontalDisplay milestoneGroup={milestoneGroup} />
+            <MilestoneGroupHorizontalDisplayWithDnd milestoneGroup={milestoneGroup} />
           )}
         </div>
       </Modal >

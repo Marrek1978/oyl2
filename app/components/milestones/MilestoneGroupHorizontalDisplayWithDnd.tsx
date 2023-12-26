@@ -12,7 +12,7 @@ type Props = {
   milestoneGroup: MilestoneGroupsWithMilestones
 }
 
-function MilestoneGroupHorizontalDisplay({ milestoneGroup }: Props) {
+function MilestoneGroupHorizontalDisplayWithDnd({ milestoneGroup }: Props) {
 
   const milestones = milestoneGroup?.milestones || []
   const header = (<>
@@ -62,4 +62,4 @@ function MilestoneGroupHorizontalDisplay({ milestoneGroup }: Props) {
   )
 }
 
-export default MilestoneGroupHorizontalDisplay
+export default MilestoneGroupHorizontalDisplayWithDnd

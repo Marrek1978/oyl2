@@ -17,6 +17,13 @@ const SideNav = () => {
     <>
       <nav >
         <ul id='side-nav' className="menu w-56 p-0 [&_li>*]:rounded-none">
+
+        <li className="relative">
+            <NavLink to='/dash/focus' end  >
+              <span>Current Focus</span>
+            </NavLink>
+          </li>
+
           <li className="relative">
             <NavLink to='/dash/today' end >
               <span>Today</span>
@@ -62,11 +69,7 @@ const SideNav = () => {
           )}
 
 
-          <li className="relative">
-            <NavLink to='/dash' end  >
-              <span>Current Focus</span>
-            </NavLink>
-          </li>
+       
 
 
       
@@ -96,6 +99,18 @@ const SideNav = () => {
           <li className="">
             <NavLink to='/dash/clarity'  >
               <span>Clarify / Life Calendar</span>
+            </NavLink>
+          </li>
+
+          <li className="">
+            <NavLink to='/dash'  >
+              <span>Retirement Plan</span>
+            </NavLink>
+          </li>
+
+          <li className="">
+            <NavLink to='/dash'  >
+              <span>Dnd Overview</span>
             </NavLink>
           </li>
 

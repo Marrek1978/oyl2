@@ -16,7 +16,7 @@ type Props = {
 }
 
 function HabitDisplay({ habit, existingStreaks }: Props) {
-  const streaks = useGetStreaks(habit)
+  const streaks = useGetStreaks(habit?.streak)
 
   let currentStreak
   let secondStreak
@@ -58,46 +58,83 @@ function HabitDisplay({ habit, existingStreaks }: Props) {
 export default HabitDisplay
 
 
-export const useGetStreaks = (habit: HabitWithStreaks) => {
-  const [lastThreeStreaks, setLastThreeStreaks] = useState<number[]>()
+export const useGetStreaks = (streaks: Streak[]):number[] => {
+  const [lastThreeStreaks, setLastThreeStreaks] = useState<number[]>([0])
 
   useEffect(() => {
-    if (!habit || !habit.streak) return
+    if (!streaks ) return
 
-    let counter = 0
-    let isCounting = false
-    const allTrackedDates: Streak[] = habit?.streak
-    let streaksArray: number[] = []
+    // let counter = 0
+    // let isCounting = false
+    // const allTrackedDates: Streak[] = streaks
+    // let streaksArray: number[] = []
 
-    for (let i = 0; i < allTrackedDates.length; i++) {
-      const trackedDate = allTrackedDates[i]
+    // for (let i = 0; i < allTrackedDates.length; i++) {
+    //   const trackedDate = allTrackedDates[i]
 
-      if (trackedDate.isSuccess) {
-        counter++
-        isCounting = true
-      }
+    //   if (trackedDate.isSuccess) {
+    //     counter++
+    //     isCounting = true
+    //   }
 
-      if (!trackedDate.isSuccess) {
-        isCounting = false
-        if (counter > 0) {
-          streaksArray.push(counter)
-          counter = 0
-        }
-      }
+    //   if (!trackedDate.isSuccess) {
+    //     isCounting = false
+    //     if (counter > 0) {
+    //       streaksArray.push(counter)
+    //       counter = 0
+    //     }
+    //   }
 
-      if (streaksArray?.length === 3) {
-        break
-      }
+    //   if (streaksArray?.length === 3) {
+    //     break
+    //   }
 
-      if (i === allTrackedDates.length - 1 && isCounting) {
-        streaksArray.push(counter)
-      }
-    }
+    //   if (i === allTrackedDates.length - 1 && isCounting) {
+    //     streaksArray.push(counter)
+    //   }
+    // }
+
+
+    const streaksArray = findLastThreeStreaks(streaks)
 
     setLastThreeStreaks(streaksArray)
-  }, [habit])
+  }, [streaks])
 
 
   return lastThreeStreaks
+}
 
+
+export const findLastThreeStreaks = (streaks: Streak[]):number[] => {
+  let counter = 0
+  let isCounting = false
+  const allTrackedDates: Streak[] = streaks
+  let streaksArray: number[] = []
+
+  for (let i = 0; i < allTrackedDates.length; i++) {
+    const trackedDate = allTrackedDates[i]
+
+    if (trackedDate.isSuccess) {
+      counter++
+      isCounting = true
+    }
+
+    if (!trackedDate.isSuccess) {
+      isCounting = false
+      if (counter > 0) {
+        streaksArray.push(counter)
+        counter = 0
+      }
+    }
+
+    if (streaksArray?.length === 3) {
+      break
+    }
+
+    if (i === allTrackedDates.length - 1 && isCounting) {
+      streaksArray.push(counter)
+    }
+  }
+
+  return streaksArray
 }

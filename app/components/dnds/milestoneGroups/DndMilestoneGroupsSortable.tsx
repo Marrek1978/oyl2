@@ -62,7 +62,7 @@ function DndMilestoneGroupsSortable<T extends HasSortOrder>({ id, passedGroup }:
               w-full mt-4
               text-center   
             ">
-              <ul className={`steps my-steps    `}>
+              <ul className={`steps my-steps `}>
                 {milestonesNoGroup?.map((milestone) => {
                   const completed = milestone.isComplete ? 'step-primary' : ''
                   const label = milestone.title

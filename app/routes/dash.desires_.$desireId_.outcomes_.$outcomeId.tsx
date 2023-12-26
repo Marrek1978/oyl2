@@ -13,13 +13,17 @@ import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
 import ThreeParaFlex from '~/components/baseContainers/ThreeParaFlex'
 import TwoToneSubHeading from '~/components/titles/TwoToneSubHeading'
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
-import { ObjectStrToDates } from '~/components/utilities/helperFunctions'
+import MilestoneGroupsDisplay from '~/components/milestones/MilestoneGroupsDisplay'
 import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect'
+import { ArrayOfObjectsStrToDates, ObjectStrToDates } from '~/components/utilities/helperFunctions'
 import { getOutcomeWithMilestonesListsRoutinesHabitsSavingsById, updateOutcome } from '~/models/outcome.server'
 
-import type { Outcome } from '@prisma/client'
-import type { OutcomeWithAll, OutcomeWithAllWithStringDates } from '~/types/outcomeTypes'
+import type { HabitWithStreaks, HabitWithStreaksWithStrDates } from '~/types/habitTypes'
+import type { Habit, MilestoneGroup, Outcome, Streak } from '@prisma/client'
+import type { OutcomeWithAllWithStringDates } from '~/types/outcomeTypes'
 import type { DesireWithStringDates, validationErrorsTypes } from '~/types/desireTypes'
+import type { MilestoneGroupsWithMilestones, MilestoneGroupsWithMilestonesWithStringDates } from '~/types/milestoneTypes'
+import HabitBadge from '~/components/habits/HabitBadge'
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -58,8 +62,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 
 function OutcomePage() {
-  const outcomeWithAll: OutcomeWithAll | undefined | null = useGetOutcomeWithAll()
+  const outcomeWithAll: OutcomeWithAllWithStringDates | undefined | null = useGetOutcomeWithAll()
   const desireTitle: string | undefined | null = useGetDesireTitle()
+
+  const milestoneGroups = useGetMilestoneGroups()
+  const habits = useGetHabitTrackers()
+  console.log("🚀 ~   ~ habits:", habits)
 
   let { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: outcomeWithAll, itemType: 'Outcome' })
 
@@ -120,7 +128,8 @@ function OutcomePage() {
 
           </section>
 
-          <section className='w-full flex flex-col gap-y-6'>
+
+          <section className='w-full  '>
             <div className=' grid grid-cols-[250px,_100px] items-baseline'>
               <SubHeading14px text={'Milestones'} />
               <Link to='milestonegroups'>
@@ -132,6 +141,31 @@ function OutcomePage() {
                 />
               </Link>
             </div>
+
+            {milestoneGroups && (
+              <MilestoneGroupsDisplay milestoneGroups={milestoneGroups} />
+            )}
+          </section>
+
+
+          <section>
+            <div className=' grid grid-cols-[250px,_100px] items-baseline'>
+              <SubHeading14px text={'Habit Trackers'} />
+              <Link to='habits'>
+                <BtnWithProps
+                  btnPurpose={'goto'}
+                  textSizeTW={'sm'}
+                  fontWidthTW={'bold'}
+                  btnLabel={'Go To'}
+                />
+              </Link>
+            </div>
+
+            <HabitBadge habits={habits} />
+          </section>
+
+
+          <section>
 
             <div className=' grid grid-cols-[250px,_100px] items-baseline'>
               <SubHeading14px text={'Lists'} />
@@ -157,17 +191,7 @@ function OutcomePage() {
               </Link>
             </div>
 
-            <div className=' grid grid-cols-[250px,_100px] items-baseline'>
-              <SubHeading14px text={'Habit Trackers'} />
-              <Link to='habits'>
-                <BtnWithProps
-                  btnPurpose={'goto'}
-                  textSizeTW={'sm'}
-                  fontWidthTW={'bold'}
-                  btnLabel={'Go To'}
-                />
-              </Link>
-            </div>
+
 
             <div className=' grid grid-cols-[250px,_100px] items-baseline'>
               <SubHeading14px text={'Savings Trackers'} />
@@ -180,6 +204,10 @@ function OutcomePage() {
                 />
               </Link>
             </div>
+
+            Notes &
+            Limiting Beliefs
+
           </section>
         </article>
       </BasicTextAreaBG >
@@ -225,31 +253,13 @@ export const useGetOutcomeIdLoaderData = (path = `routes/dash.desires_.$desireId
   return { desireWithStrDates, outcomeWithStrDates }
 }
 
-
-export const useGetOutcomeWithAll = (): OutcomeWithAll | undefined | null => {
-
-  const { outcomeWithStrDates } = useGetOutcomeIdLoaderData()
-  const [outcomeWithAll, setOutcomeWithAll] = useState<OutcomeWithAll | undefined | null>()
-
-  useEffect(() => {
-    if (outcomeWithStrDates === undefined) return
-    if (!outcomeWithStrDates) return setOutcomeWithAll(null)
-    const { habitTrackers, lists, milestoneGroup, routines, savingsTrackers, ...restWithStrDates } = outcomeWithStrDates
-    const outcomeWithProperDates = ObjectStrToDates({ item: restWithStrDates, dateKeys: ['createdAt', 'updatedAt'] })
-    setOutcomeWithAll(outcomeWithProperDates)
-  }, [outcomeWithStrDates])
-
-  return outcomeWithAll
-}
-
-
 export const useGetOutcomeOnlyWithProperDates = (): Outcome | undefined => {
   const { outcomeWithStrDates } = useGetOutcomeIdLoaderData()
   const [outcomeOnly, setOutcomeOnly] = useState<Outcome>()
 
   useEffect(() => {
     if (!outcomeWithStrDates) return
-    const { habitTrackers, lists, milestoneGroup, routines, savingsTrackers, ...restWithStrDates } = outcomeWithStrDates
+    const { habits, lists, milestoneGroup, routines, savings, ...restWithStrDates } = outcomeWithStrDates
     const outcomeWithProperDates = ObjectStrToDates({ item: restWithStrDates, dateKeys: ['createdAt', 'updatedAt'] })
     setOutcomeOnly(outcomeWithProperDates)
   }, [outcomeWithStrDates])
@@ -257,6 +267,68 @@ export const useGetOutcomeOnlyWithProperDates = (): Outcome | undefined => {
   return outcomeOnly
 }
 
+
+//?  ************************************  CUSTOM HOOKS  ************************************
+export const useGetOutcomeWithAll = (): OutcomeWithAllWithStringDates | undefined | null => {
+  const { outcomeWithStrDates } = useGetOutcomeIdLoaderData()
+  const [outcomeWithAll, setOutcomeWithAll] = useState<OutcomeWithAllWithStringDates | undefined | null>()
+  useEffect(() => {
+    if (outcomeWithStrDates === undefined) return
+    if (!outcomeWithStrDates) return setOutcomeWithAll(null)
+    setOutcomeWithAll(outcomeWithStrDates)
+  }, [outcomeWithStrDates])
+
+  return outcomeWithAll
+}
+
+
+export const useGetMilestoneGroups = (): MilestoneGroupsWithMilestones[] => {
+  const outcomeWithAll = useGetOutcomeWithAll() as OutcomeWithAllWithStringDates
+  const { milestoneGroup } = outcomeWithAll || []
+  const [milestoneGroupWithMilestones, setMilestoneGroupWithMilestones] = useState<MilestoneGroupsWithMilestones[]>([])
+  
+  useEffect(() => {
+    if (!milestoneGroup) return
+    const milesonteGroupsArray = milestoneGroup as MilestoneGroupsWithMilestonesWithStringDates[]
+    if (milesonteGroupsArray.length === 0) return
+
+    const groupsWithProperDates = milesonteGroupsArray.map((group: MilestoneGroupsWithMilestonesWithStringDates) => {
+      const { milestones, ...rest } = group
+      const milestonesWithProperDates = ArrayOfObjectsStrToDates({ items: milestones, dateKeys: ['createdAt', 'updatedAt', 'dueDate', 'completedAt'] }) as unknown as MilestoneGroup
+      const groupWithProperDates = ObjectStrToDates({ item: rest, dateKeys: ['createdAt', 'updatedAt'] }) as unknown as MilestoneGroup
+      return { ...groupWithProperDates, milestones: milestonesWithProperDates }
+    })
+
+    setMilestoneGroupWithMilestones(groupsWithProperDates as unknown as MilestoneGroupsWithMilestones[])
+  }, [milestoneGroup])
+
+  return milestoneGroupWithMilestones
+}
+
+
+export const useGetHabitTrackers = (): HabitWithStreaks[] => {
+  const outcomeWithAll = useGetOutcomeWithAll() as OutcomeWithAllWithStringDates
+  const { habits } = outcomeWithAll || []
+  const [habitsWithStreaks, setHabitsWithStreaks] = useState<HabitWithStreaks[]>([])
+
+  useEffect(() => {
+    if(!habits) return
+    if(habits.length === 0) return
+
+    const habitsWithProperDates = habits.map((habit:HabitWithStreaksWithStrDates) => {
+      const { streak, ...rest } = habit
+      const streakWithProperDates = ArrayOfObjectsStrToDates({ items: streak, dateKeys: ['createdAt', 'updatedAt']  }) as unknown as Streak[]
+      const habitWithProperDates = ObjectStrToDates({ item: rest, dateKeys: ['createdAt', 'updatedAt', 'startDate'] }) as unknown as Habit 
+      return { ...habitWithProperDates, streak: streakWithProperDates }
+    })
+
+    setHabitsWithStreaks(habitsWithProperDates)
+
+  }, [habits])
+
+
+  return habitsWithStreaks
+}
 
 export const useGetDesireTitle = (): string | undefined | null => {
   const [title, setTitle] = useState<string | undefined | null>()
@@ -270,7 +342,6 @@ export const useGetDesireTitle = (): string | undefined | null => {
 
   return title
 }
-
 
 
 
