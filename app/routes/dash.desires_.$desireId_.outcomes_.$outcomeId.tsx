@@ -23,7 +23,8 @@ import type { Habit, MilestoneGroup, Outcome, Streak } from '@prisma/client'
 import type { OutcomeWithAllWithStringDates } from '~/types/outcomeTypes'
 import type { DesireWithStringDates, validationErrorsTypes } from '~/types/desireTypes'
 import type { MilestoneGroupsWithMilestones, MilestoneGroupsWithMilestonesWithStringDates } from '~/types/milestoneTypes'
-import HabitBadge from '~/components/habits/HabitBadge'
+import HabitBadges from '~/components/habits/HabitBadges'
+
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -67,7 +68,7 @@ function OutcomePage() {
 
   const milestoneGroups = useGetMilestoneGroups()
   const habits = useGetHabitTrackers()
-  console.log("🚀 ~   ~ habits:", habits)
+  // console.log("🚀 ~   ~ habits:", habits)
 
   let { warning, alertMessage } = useInvalidItemIdAlertAndRedirect({ loaderData: outcomeWithAll, itemType: 'Outcome' })
 
@@ -161,7 +162,7 @@ function OutcomePage() {
               </Link>
             </div>
 
-            <HabitBadge habits={habits} />
+            <HabitBadges habits={habits} />
           </section>
 
 

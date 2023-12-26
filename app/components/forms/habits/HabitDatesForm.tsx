@@ -24,6 +24,7 @@ function HabitDatesForm({ habit, unTrackedDays, isNew = true }: Props) {
   const [checkAll, setCheckAll] = useState<boolean>(false)
   const [checkBtnLabel, setCheckBtnLabel] = useState<string>('Check All')
   const { isIdle, navigationState } = useGetNavigationState()
+  console.log("🚀 ~ file: HabitDatesForm.tsx:27 ~ HabitDatesForm ~ isIdle:", isIdle)
 
   useServerMessages({ fetcherState: navigationState, isShowFailed: true })
 
@@ -77,6 +78,7 @@ function HabitDatesForm({ habit, unTrackedDays, isNew = true }: Props) {
                   saveBtnText={'Save Days'}
                   isNew={isNew}
                   isShowCloseBtn={false}
+                  isSaveBtnDisabled={!isIdle}
                 />
               </div>
             </div>
