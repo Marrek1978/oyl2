@@ -10,6 +10,8 @@ interface FormDeleteProps {
   isIgnore?: boolean;
 }
 
+
+//?    place on forms -> not routes
 function useFormSubmittedToastAndRedirect({ redirectTo = '../', message = 'Form was successfully submitted', isIgnore = false }: FormDeleteProps = {}) {
 
   const navigate = useNavigate()

@@ -1,37 +1,34 @@
-
 import { Link } from '@remix-run/react'
 import { findLastThreeStreaks } from './HabitDisplay'
 
-import type { HabitWithStreaks } from '~/types/habitTypes'
+import type { HabitWithDates } from '~/types/habitTypes'
 
 
 type Props = {
-  habits: HabitWithStreaks[]
+  habits: HabitWithDates[]
 }
 
 function HabitBadges({ habits }: Props) {
 
   const dropShadowClass = 'shadow-2xl shadow-primary'
-
   const sortedHabits = habits?.sort((a, b) => a.sortOrder - b.sortOrder)
-
 
   return (
     <>
       <div className=' flex gap-12 flex-wrap mt-4'>
 
         {sortedHabits?.map((habit) => {
-          const lastThreeStreaks = findLastThreeStreaks(habit.streak)
+          const lastThreeStreaks = findLastThreeStreaks(habit.habitDates)
           const currentStreak = lastThreeStreaks[0] || null
           const secondStreak = lastThreeStreaks[1] || null
           const thirdStreak = lastThreeStreaks[2] || null
 
           const today = new Date()
-          const streaks = habit.streak
+          const streaks = habit.habitDates
 
 
           let mostRecentDateTracked
-          if (streaks.length > 0) {
+          if (streaks?.length > 0) {
             mostRecentDateTracked = streaks.reduce((latest, current) => {
               return current.date > latest ? current.date : latest
             }, streaks[0].date)
@@ -68,14 +65,14 @@ function HabitBadges({ habits }: Props) {
                       <div className='text-base font-semibold'>Days</div>
                       <div className='text-base-content/60 self-end'>{secondStreak}  {thirdStreak} </div>
                     </div>
-                ):(
-                  <div>
-                    <div className='text-base font-semibold text-wrap'>A brand new Habit. </div>
+                  ) : (
+                    <div>
+                      <div className='text-base font-semibold text-wrap'>A brand new Habit. </div>
                     </div>
-                  
+
                   )}
 
-                  </div>
+                </div>
                 {daysPending > 0 && (
                   <div className='text-base-content/70 text-sm mt-4'>
                     {daysPending} Days Not Tracked

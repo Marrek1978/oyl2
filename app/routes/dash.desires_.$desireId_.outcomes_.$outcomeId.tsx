@@ -7,6 +7,7 @@ import Modal from '~/components/modals/Modal'
 import HeadingH1 from '~/components/titles/HeadingH1'
 import { requireUserId } from '~/models/session.server'
 import { getDesireById } from '~/models/desires.server'
+import HabitBadges from '~/components/habits/HabitBadges'
 import BtnWithProps from '~/components/buttons/BtnWithProps'
 import SubHeading14px from '~/components/titles/SubHeading14px'
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
@@ -18,12 +19,11 @@ import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdA
 import { ArrayOfObjectsStrToDates, ObjectStrToDates } from '~/components/utilities/helperFunctions'
 import { getOutcomeWithMilestonesListsRoutinesHabitsSavingsById, updateOutcome } from '~/models/outcome.server'
 
-import type { HabitWithStreaks, HabitWithStreaksWithStrDates } from '~/types/habitTypes'
-import type { Habit, MilestoneGroup, Outcome, Streak } from '@prisma/client'
 import type { OutcomeWithAllWithStringDates } from '~/types/outcomeTypes'
+import type { Habit, HabitDate, MilestoneGroup, Outcome} from '@prisma/client'
+import type { HabitWithDates, HabitWithDatesWithStrDates } from '~/types/habitTypes'
 import type { DesireWithStringDates, validationErrorsTypes } from '~/types/desireTypes'
 import type { MilestoneGroupsWithMilestones, MilestoneGroupsWithMilestonesWithStringDates } from '~/types/milestoneTypes'
-import HabitBadges from '~/components/habits/HabitBadges'
 
 
 
@@ -307,20 +307,20 @@ export const useGetMilestoneGroups = (): MilestoneGroupsWithMilestones[] => {
 }
 
 
-export const useGetHabitTrackers = (): HabitWithStreaks[] => {
+export const useGetHabitTrackers = (): HabitWithDates[] => {
   const outcomeWithAll = useGetOutcomeWithAll() as OutcomeWithAllWithStringDates
   const { habits } = outcomeWithAll || []
-  const [habitsWithStreaks, setHabitsWithStreaks] = useState<HabitWithStreaks[]>([])
+  const [habitsWithStreaks, setHabitsWithStreaks] = useState<HabitWithDates[]>([])
 
   useEffect(() => {
     if(!habits) return
     if(habits.length === 0) return
 
-    const habitsWithProperDates = habits.map((habit:HabitWithStreaksWithStrDates) => {
-      const { streak, ...rest } = habit
-      const streakWithProperDates = ArrayOfObjectsStrToDates({ items: streak, dateKeys: ['createdAt', 'updatedAt']  }) as unknown as Streak[]
+    const habitsWithProperDates = habits.map((habit:HabitWithDatesWithStrDates) => {
+      const { habitDates, ...rest } = habit
+      const habitDatesWithProperDates = ArrayOfObjectsStrToDates({ items: habitDates, dateKeys: ['createdAt', 'updatedAt']  }) as unknown as HabitDate[]
       const habitWithProperDates = ObjectStrToDates({ item: rest, dateKeys: ['createdAt', 'updatedAt', 'startDate'] }) as unknown as Habit 
-      return { ...habitWithProperDates, streak: streakWithProperDates }
+      return { ...habitWithProperDates, habitDates: habitDatesWithProperDates }
     })
 
     setHabitsWithStreaks(habitsWithProperDates)

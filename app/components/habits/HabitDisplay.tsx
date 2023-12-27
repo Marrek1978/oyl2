@@ -1,22 +1,23 @@
+import { useEffect, useState } from 'react'
 
 import DateDisplay from './DateDisplay'
 import PageTitle from '../titles/PageTitle'
-import HeadingH1 from '../titles/HeadingH1'
 import HeadingH3 from '../titles/HeadingH3'
 import HeadingH4 from '../titles/HeadingH4'
+import H1WithLink from '../titles/H1WithLink'
+import TextProseWidth from '../text/TextProseWidth'
 
-import type { Streak } from '@prisma/client'
-import type { HabitWithStreaks } from '~/types/habitTypes'
-import { useEffect, useState } from 'react'
+import type { HabitWithDates } from '~/types/habitTypes'
+import type { HabitDate } from '@prisma/client'
 
 
 type Props = {
-  habit: HabitWithStreaks
-  existingStreaks: Streak[]
+  habit: HabitWithDates
+  existingStreaks: HabitDate[]
 }
 
 function HabitDisplay({ habit, existingStreaks }: Props) {
-  const streaks = useGetStreaks(habit?.streak)
+  const streaks = useGetStreaks(habit?.habitDate)
 
   let currentStreak
   let secondStreak
@@ -32,8 +33,19 @@ function HabitDisplay({ habit, existingStreaks }: Props) {
     <>
       <PageTitle text={'Habit'} />
       <div className='mt-2  '>
-        <HeadingH1 H1Title={habit?.title} />
+        <H1WithLink title={habit?.title} linkDestination={'edit'} />
       </div>
+
+      {habit?.description && (
+        <div className="mt-2
+        max-w-prose
+        font-poppins
+        text-left text-base-content
+         ">
+          <TextProseWidth text={habit?.description} />
+        </div>
+      )}
+
       <div className='mt-6  '>
         <HeadingH3 text={`Current Streak ${currentStreak || 0} days`} />
         <div className='flex flex-wrap gap-2'>
@@ -58,60 +70,26 @@ function HabitDisplay({ habit, existingStreaks }: Props) {
 export default HabitDisplay
 
 
-export const useGetStreaks = (streaks: Streak[]):number[] => {
+export const useGetStreaks = (streaks: HabitDate[]): number[] => {
   const [lastThreeStreaks, setLastThreeStreaks] = useState<number[]>([0])
 
   useEffect(() => {
-    if (!streaks ) return
-
-    // let counter = 0
-    // let isCounting = false
-    // const allTrackedDates: Streak[] = streaks
-    // let streaksArray: number[] = []
-
-    // for (let i = 0; i < allTrackedDates.length; i++) {
-    //   const trackedDate = allTrackedDates[i]
-
-    //   if (trackedDate.isSuccess) {
-    //     counter++
-    //     isCounting = true
-    //   }
-
-    //   if (!trackedDate.isSuccess) {
-    //     isCounting = false
-    //     if (counter > 0) {
-    //       streaksArray.push(counter)
-    //       counter = 0
-    //     }
-    //   }
-
-    //   if (streaksArray?.length === 3) {
-    //     break
-    //   }
-
-    //   if (i === allTrackedDates.length - 1 && isCounting) {
-    //     streaksArray.push(counter)
-    //   }
-    // }
-
-
+    if (!streaks) return
     const streaksArray = findLastThreeStreaks(streaks)
-
     setLastThreeStreaks(streaksArray)
   }, [streaks])
-
 
   return lastThreeStreaks
 }
 
 
-export const findLastThreeStreaks = (streaks: Streak[]):number[] => {
+export const findLastThreeStreaks = (streaks: HabitDate[]): number[] => {
   let counter = 0
   let isCounting = false
-  const allTrackedDates: Streak[] = streaks
+  const allTrackedDates: HabitDate[] = streaks
   let streaksArray: number[] = []
 
-  for (let i = 0; i < allTrackedDates.length; i++) {
+  for (let i = 0; i < allTrackedDates?.length; i++) {
     const trackedDate = allTrackedDates[i]
 
     if (trackedDate.isSuccess) {

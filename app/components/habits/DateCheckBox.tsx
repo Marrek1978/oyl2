@@ -13,6 +13,7 @@ function DateCheckBox({ streakDate, isChecked = false }: Props) {
   }, [isChecked])
 
   const handleCheckboxChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.checked)
     setIsCheckedLocal(event.target.checked)
   }
 
@@ -21,7 +22,6 @@ function DateCheckBox({ streakDate, isChecked = false }: Props) {
   return (
     <>
       <div className='grid grid-cols-[200px_200px] items-center' >
-
 
         <label className="cursor-pointer label">
           <div>{streakDate?.toDateString()}</div>

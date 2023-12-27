@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import type { Streak } from '@prisma/client'
 import BtnWithProps from '../buttons/BtnWithProps'
 import { Link } from '@remix-run/react'
+import { greenCheck } from '../utilities/icons'
 
 type Props = {
   streakObj: Streak
@@ -23,11 +24,11 @@ function DateDisplay({ streakObj }: Props) {
   return (
     <>
       <div>
-        <div className='grid grid-cols-[150px_50px_80px] items-center  '>
+        <div className='grid grid-cols-[150px_50px_80px] items-center '>
           <div className=' '>{date}</div>
-          <div>{isSuccess ? '✅' : '❌'}</div>
+          <div className='text-green'>{isSuccess ? greenCheck  : '❌'}</div>
           <div>
-            <Link to={streakObj.id} >
+            <Link to={`habitDate/${streakObj.id}`} >
               <BtnWithProps
                 btnPurpose={'goto'}
                 daisyUIBtnSize={'sm'}

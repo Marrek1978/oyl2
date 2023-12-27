@@ -1,6 +1,8 @@
 import { prisma } from "~/db.server";
+
 import type { Habit } from "@prisma/client";
-import type { CreateHabit, StreakDataEntriesType } from "~/types/habitTypes";
+import type { CreateHabitDate } from "~/types/habitDateTypes";
+import type { CreateHabit, UpdateHabit } from "~/types/habitTypes";
 
 export const createHabit = async ({
   title,
@@ -17,6 +19,22 @@ export const createHabit = async ({
         sortOrder,
         outcomeId,
         startDate,
+      },
+    });
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateHabit = async (habit: UpdateHabit) => {
+  try {
+    const result = await prisma.habit.update({
+      where: { id: habit.id },
+      data: {
+        title: habit.title,
+        description: habit.description,
+        startDate: habit.startDate,
       },
     });
     return result;
@@ -63,7 +81,7 @@ export const getHabitById = async (habitId: string) => {
         id: habitId,
       },
       include: {
-        streak: {
+        habitDate: {
           orderBy: { date: "desc" },
         },
       },
@@ -73,25 +91,34 @@ export const getHabitById = async (habitId: string) => {
   }
 };
 
-export const addStreakDates = (streakDataEntries: StreakDataEntriesType[]) => {
+export const addHabitDates = (habitDates: CreateHabitDate[]) => {
+  console.log('habitDates', habitDates)
   // makes sure that the date (year, month, day) is unique
   try {
-    return prisma.streak.createMany({
-      data: streakDataEntries,
+    const result =  prisma.habitDate.createMany({
+      data: habitDates,
     });
+    console.log("🚀 ~ file: habits.server.ts:101 ~ addHabitDates ~ result:", result)
+    return result
   } catch (error) {
+    console.log("🚀 ~ file: habits.server.ts:102 ~ addHabitDates ~ error:", error)
     throw error;
   }
 };
 
-
-export const updateStreakSuccessById = ({id, isSuccess}:{id:string, isSuccess:boolean}) => {
+export const updateHabitDateSuccessById = ({
+  id,
+  isSuccess,
+}: {
+  id: string;
+  isSuccess: boolean;
+}) => {
   try {
-    return prisma.streak.update({
+    return prisma.habitDate.update({
       where: { id },
       data: { isSuccess },
     });
   } catch (error) {
     throw error;
   }
-}
+};

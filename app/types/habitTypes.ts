@@ -1,8 +1,9 @@
-import type { Habit, Streak } from "@prisma/client";
-import type { StreakWithStrDates } from "./streakTypes";
+import type { Habit, HabitDate } from "@prisma/client";
+import type  { HabitDateWithStrDates } from "./habitDateTypes";
 
 export type CreateHabit = Omit<Habit, "id" | "createdAt" | "updatedAt">;
-export type HabitWithStreaks = Habit & { streak: Streak[] };
+export type UpdateHabit = Omit<Habit, "createdAt" | "updatedAt" | "sortOrder" | "outcomeId">;
+export type HabitWithDates = Habit & { habitDate: HabitDate[] };
 
 export type HabitWithStrDates = Omit<
   Habit,
@@ -13,12 +14,8 @@ export type HabitWithStrDates = Omit<
   startDate: string;
 };
 
-export type HabitWithStreaksWithStrDates = HabitWithStrDates & {
-  streak: StreakWithStrDates[];
+export type HabitWithDatesWithStrDates = HabitWithStrDates & {
+  habitDates: HabitDateWithStrDates[];
 };
 
-export type StreakDataEntriesType = {
-  date: Date;
-  isSuccess: boolean;
-  habitId: string;
-};
+

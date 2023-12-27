@@ -1,20 +1,11 @@
 import { prisma } from "~/db.server";
-import type { Desire, Outcome, User } from "@prisma/client";
 
-type CreateOutcome = Omit<Outcome, "id" | "createdAt" | "updatedAt"> & {
-  userId: User["id"];
-};
+import type { Desire, Outcome } from "@prisma/client";
+import type { CreateOutcome, UpdateOutcome } from "~/types/outcomeTypes";
 
-type UpdateOutcome = Omit<
-  Outcome,
-  "createdAt" | "updatedAt" | "sortOrder" | "complete" | "desireId"
->;
+
 
 export async function createOutcome(outcome: CreateOutcome) {
-  console.log(
-    "🚀 ~ file: outcome.server.ts:14 ~ createOutcome ~ outcome:",
-    outcome
-  );
 
   try {
     const createOutcome = await prisma.outcome.create({
@@ -70,7 +61,7 @@ export async function getOutcomeWithMilestonesListsRoutinesHabitsSavingsById(
         lists: true,
         routines: true,
         habits: {
-          include: { streak: true },
+          include: { habitDate: true },
         },
         savings: true,
       },

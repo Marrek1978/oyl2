@@ -9,8 +9,10 @@ import useGetNavigationState from '~/components/utilities/useNavigationState';
 import { CoreValue, CoreValueStatement } from '~/components/utilities/Guidelines';
 import { MilestoneGroupDefaultText } from '~/components/utilities/PlaceHolderTexts';
 import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
+import useFormSubmittedToastUsingFetcher from '~/components/utilities/useFormSubmittedToastUsingFetcher';
 
 import type { Habit } from '@prisma/client';
+import type { UpdateHabit } from '~/types/habitTypes';
 
 
 type Props = {
@@ -21,7 +23,6 @@ type Props = {
 
 function HabitForm({ passedHabit, isNew = true, habitsArrayLength = 0 }: Props) {
   const params = useParams();
-  const fetcher = useFetcher();
 
   const [id, setId] = useState<string>('')
   const [title, setTitle] = useState<string>('')
@@ -39,6 +40,9 @@ function HabitForm({ passedHabit, isNew = true, habitsArrayLength = 0 }: Props) 
   const saveBtnTxt = useSaveBtnText(isNew, isIdle, 'Habit')
   const headerTxt = useMemo(() => headerText(isNew, 'Habit', habit?.title || ''), [isNew, habit?.title])
 
+  const fetcher = useFetcher();
+  useFormSubmittedToastUsingFetcher({ fetcher, redirectTo: '../', message: 'Habit was updated' })
+
 
   useEffect(() => {
     setId(habit?.id || '')
@@ -54,8 +58,9 @@ function HabitForm({ passedHabit, isNew = true, habitsArrayLength = 0 }: Props) 
     const isInputDifferent =
       title !== habit?.title
       || description !== habit?.description
+      || startDate !== habit?.startDate
     setIsSaveable(!isInputEmpty && (isInputDifferent))
-  }, [title, description, habit]);
+  }, [title, description, habit, startDate]);
 
 
   const handleSave = async () => {
@@ -77,8 +82,25 @@ function HabitForm({ passedHabit, isNew = true, habitsArrayLength = 0 }: Props) 
     } catch (error) { throw error }
     clearFormStates()
   }
-  
-  const handleEdits = async () => { }
+
+  const handleEdits = async () => {
+    const habitObject: UpdateHabit = {
+      id: id,
+      title: title,
+      description: description,
+      startDate: startDate || new Date(),
+    }
+
+    const habitString = JSON.stringify(habitObject)
+
+    try {
+      fetcher.submit({
+        habitString,
+      }, {
+        method: 'PUT',
+      })
+    } catch (error) { throw error }
+  }
 
   const clearFormStates = () => {
     setId('')
@@ -88,7 +110,7 @@ function HabitForm({ passedHabit, isNew = true, habitsArrayLength = 0 }: Props) 
     // setSortOrder(habitsArrayLength)
   }
 
-  
+
   return (
     <BasicFormAreaBG h2Text={headerTxt}  >
 
@@ -130,7 +152,7 @@ function HabitForm({ passedHabit, isNew = true, habitsArrayLength = 0 }: Props) 
             </textarea>
           </div>
 
-          <div  className='' >
+          <div className='' >
             <DatePicker
               labelText={'Start Date'}
               selectedDate={startDate}

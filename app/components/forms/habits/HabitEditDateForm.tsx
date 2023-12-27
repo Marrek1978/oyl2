@@ -1,42 +1,62 @@
 import { Form } from '@remix-run/react'
 
+import FormButtons from '../FormButtons'
 import { useEffect, useState } from 'react'
 import BasicFormAreaBG from '../BasicFormAreaBG'
-
-import type { Streak } from '@prisma/client'
-import FormButtons from '../FormButtons'
 import DateCheckBox from '~/components/habits/DateCheckBox'
+
+import type { HabitDate } from '@prisma/client'
+import useGetNavigationState from '~/components/utilities/useNavigationState'
 
 
 type Props = {
-  streakDateObj?: Streak
+  habitDate?: HabitDate
   habitTitle: string
 }
 
 
-function HabitEditDateForm({ streakDateObj, habitTitle }: Props) {
+function HabitEditDateForm({ habitDate, habitTitle }: Props) {
+
   const [id, setId] = useState<string>('')
   const [date, setDate] = useState<Date>()
+  // const [title, setTitle] = useState<string>('')
   const [dateString, setDateString] = useState<string>()
-  const [title, setTitle] = useState<string>('d')
   const [isSuccess, setIsSuccess] = useState<boolean>(false)
+  const [isSaveable, setIsSaveable] = useState<boolean>(false) //true if title and description are not empty
+
+  const { isIdle } = useGetNavigationState()
 
   useEffect(() => {
-    setTitle(habitTitle)
-  }, [habitTitle])
+    const isInputDifferent = isSuccess !== habitDate?.isSuccess
+    setIsSaveable(isInputDifferent)
+  }, [isSuccess, habitDate?.isSuccess]);
+
+
+  const headerTxt = (
+    <>
+      <span className='text-sm mr-1' >{`Edit day:`}</span>
+      {dateString}
+      <span className='text-sm mx-2' >for</span>
+      {habitTitle}
+    </>
+  )
+
+  // useEffect(() => {
+  //   setTitle(habitTitle)
+  // }, [habitTitle])
 
   useEffect(() => {
-    if (!streakDateObj) return
-    setDate(streakDateObj?.date)
-    setDateString(streakDateObj?.date.toDateString())
-    setIsSuccess(streakDateObj?.isSuccess || false)
-    setId(streakDateObj?.id)
-  }, [streakDateObj])
+    if (!habitDate) return
+    setDate(habitDate?.date)
+    setDateString(habitDate?.date.toDateString())
+    setIsSuccess(habitDate?.isSuccess || false)
+    setId(habitDate?.id)
+  }, [habitDate])
 
   return (
     <>
 
-      <BasicFormAreaBG h2Text={`Edit Day ${dateString} for ${title}`}   >
+      <BasicFormAreaBG h2Text={headerTxt}   >
         <Form method='post' className='p-8'>
           <div className="form-control gap-y-6 ">
             <input type="string" name='rowId' value={id} hidden readOnly />
@@ -48,7 +68,9 @@ function HabitEditDateForm({ streakDateObj, habitTitle }: Props) {
               />
             )}
 
-            <FormButtons />
+            <FormButtons
+              isSaveBtnDisabled={!isSaveable || !isIdle}
+            />
           </div>
         </Form>
       </BasicFormAreaBG>

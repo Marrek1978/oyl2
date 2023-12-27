@@ -8,11 +8,11 @@ import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
 import useServerMessages from '~/components/modals/useServerMessages';
 import useGetNavigationState from '~/components/utilities/useNavigationState';
 
-import type { HabitWithStreaks } from '~/types/habitTypes';
+import type { HabitWithDates } from '~/types/habitTypes';
 
 
 type Props = {
-  habit: HabitWithStreaks;
+  habit: HabitWithDates;
   unTrackedDays?: Date[]
   isNew?: boolean
 }
@@ -24,10 +24,10 @@ function HabitDatesForm({ habit, unTrackedDays, isNew = true }: Props) {
   const [checkAll, setCheckAll] = useState<boolean>(false)
   const [checkBtnLabel, setCheckBtnLabel] = useState<string>('Check All')
   const { isIdle, navigationState } = useGetNavigationState()
-  console.log("🚀 ~ file: HabitDatesForm.tsx:27 ~ HabitDatesForm ~ isIdle:", isIdle)
 
   useServerMessages({ fetcherState: navigationState, isShowFailed: true })
 
+  // find any untracked days between start date and today.
 
   useEffect(() => {
     setTitle(habit?.title || '')

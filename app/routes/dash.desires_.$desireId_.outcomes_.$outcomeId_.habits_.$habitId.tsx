@@ -2,6 +2,7 @@ import { parse } from "querystring";
 import { redirect } from "@remix-run/node";
 import { useEffect, useState } from "react";
 import { Outlet, useRouteLoaderData } from "@remix-run/react";
+import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import { requireUserId } from '~/models/session.server';
 import { getDesireById } from "~/models/desires.server";
@@ -9,13 +10,13 @@ import HabitDisplay from "~/components/habits/HabitDisplay";
 import { getOutcomeByOutcomeId } from '~/models/outcome.server';
 import BreadCrumbs from "~/components/breadCrumbTrail/BreadCrumbs";
 import HabitDatesForm from "~/components/forms/habits/HabitDatesForm";
-import { addStreakDates, getHabitById, } from "~/models/habits.server";
+import { addHabitDates, getHabitById, } from "~/models/habits.server";
 import DndAndFormFlex from "~/components/baseContainers/DndAndFormFlex";
-import { ArrayOfObjectsStrToDates } from "~/components/utilities/helperFunctions";
+import { ArrayOfObjectsStrToDates, ObjectStrToDates } from "~/components/utilities/helperFunctions";
 
-import type { Habit, Streak } from "@prisma/client";
-import type { HabitWithStreaks, StreakDataEntriesType } from "~/types/habitTypes";
-import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/server-runtime';
+import type { Habit, HabitDate, } from "@prisma/client";
+import type { HabitWithDates } from "~/types/habitTypes";
+import type { CreateHabitDate } from "~/types/habitDateTypes";
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -39,41 +40,41 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
-
+  
   if (request.method === 'POST') {
     const formData = await request.text()
     const parsedStreakData = parse(formData)
     if (!parsedStreakData) return 'failure'
     const { rowId, ...streakData } = parsedStreakData //streakData is an object with keys of dates and values of true or false
     const habitId = rowId as string
-
-    const streakDataEntries: StreakDataEntriesType[] = []
+    
+    const streakDateEntries: CreateHabitDate[] = []
     for (const [key, value] of Object.entries(streakData)) {
       if (key !== 'rowId') {
         const date = new Date(key)
         date.setHours(0, 0, 0, 0)
-
-        streakDataEntries.push({
+        
+        streakDateEntries.push({
           date: date,
           isSuccess: value === 'on' ? true : false,
           habitId,
         })
       }
     }
-
+    
     try {
-      await addStreakDates(streakDataEntries);
+      await addHabitDates(streakDateEntries);
       return 'success'
     } catch (error) { return 'failure' }
   }
-
+  
   return null
 }
 
 
 function HabitPage() {
 
-  const habit = useGetHabit() as HabitWithStreaks
+  const habit = useGetHabit() as HabitWithDates
   const { desireName, outcomeName } = useGetParamNames()
   const { existingStreaks, untrackedDatesFromToday } = useGetStreakArrays()
 
@@ -102,7 +103,7 @@ export const useGetLoaderData = () => {
 }
 
 interface LoaderData {
-  loadedHabit: HabitWithStreaks
+  loadedHabit: HabitWithDates
   loadedDesireName: string
   loadedOutcomeName: string
 }
@@ -123,9 +124,11 @@ export const useSplitLoaderData = () => {
     loadedOutcomeName && setOutcomeName(loadedOutcomeName)
 
     if (loadedHabit) {
-      const streaksWithStringDates = loadedHabit.streak
-      const streaksWithProperDates = ArrayOfObjectsStrToDates({ items: streaksWithStringDates, dateKeys: ['date', 'createdAt', 'updatedAt'] }) as Streak[]
-      const updatedHabit = { ...loadedHabit, streak: streaksWithProperDates }
+      const habitWtihProperDates = ObjectStrToDates({ item: loadedHabit, dateKeys: ['startDate', 'createdAt', 'updatedAt'] }) as HabitWithDates
+
+      const habitDatesWithStringDates = loadedHabit.habitDate
+      const habitDatesWithProperDates = ArrayOfObjectsStrToDates({ items: habitDatesWithStringDates, dateKeys: ['date', 'createdAt', 'updatedAt'] }) as HabitDate[]
+      const updatedHabit = { ...habitWtihProperDates, habitDate: habitDatesWithProperDates }
       setHabit(updatedHabit)
     }
 
@@ -146,18 +149,18 @@ export const useGetHabit = () => {
 }
 
 export const useGetStreakArrays = () => {
-  const habit = useGetHabit() as HabitWithStreaks
+  const habit = useGetHabit() as HabitWithDates
   const [startDate, setStartDate] = useState<Date>()
-  const [existingStreaks, setExistingStreaks] = useState<Streak[]>([])
+  const [existingStreaks, setExistingStreaks] = useState<HabitDate[]>([])
   const [untrackedDatesFromToday, setUntrackedDatesFromToday] = useState<Date[]>([])
 
   useEffect(() => {
     if (!habit) return
     if (habit.startDate) setStartDate(habit.startDate)
     if (!habit.startDate) setStartDate(new Date())
-    if (habit.streak) {
-      const streaksWithProperDates = ArrayOfObjectsStrToDates({ items: habit.streak, dateKeys: ['date', 'createdAt', 'updatedAt'] }) as Streak[]
-      const streakInDescOrder = streaksWithProperDates.sort((a, b) => { return b.date.getTime() - a.date.getTime() })
+    if (habit.habitDate) {
+      const habitDatesWithProperDates = ArrayOfObjectsStrToDates({ items: habit.habitDate, dateKeys: ['date', 'createdAt', 'updatedAt'] }) as HabitDate[]
+      const streakInDescOrder = habitDatesWithProperDates.sort((a, b) => { return b.date.getTime() - a.date.getTime() })
       setExistingStreaks(streakInDescOrder)
     }
   }, [habit])

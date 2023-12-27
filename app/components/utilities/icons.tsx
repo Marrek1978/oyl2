@@ -112,3 +112,9 @@ export const Xcircle = (<svg xmlns="http://www.w3.org/2000/svg" fill="none" view
 export const arrowLeftCircle = (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
   <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 9l-3 3m0 0l3 3m-3-3h7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
 </svg>)
+
+export const greenCheck = (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={4} stroke="green" className="w-6 h-6">
+<path strokeLinecap="round" strokeLinejoin="round" d="M5 12 l5 5 l10 -10" />
+</svg>
+
+)

@@ -7,11 +7,12 @@ import useFetcherState from './useFetcherState';
 
 interface FormDeleteProps {
   fetcher: FetcherWithComponents<any>;
-   redirectTo?: string;
-    message?: string;
+  redirectTo?: string;
+  message?: string;
 }
 
-function useFormSubmittedToastUsingFetcher( {fetcher, redirectTo='../', message='Form was Updated'}:FormDeleteProps  ) {
+//?    place on forms -> not routes
+function useFormSubmittedToastUsingFetcher({ fetcher, redirectTo = '../', message = 'Form was Updated' }: FormDeleteProps) {
 
   const navigate = useNavigate()
   const { fetcherMessage } = useFetcherState({ fetcher })

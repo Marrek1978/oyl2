@@ -4,17 +4,15 @@ import { useFetcher, useParams } from '@remix-run/react'
 import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal'
-import HabitEditDateForm from '~/components/forms/habits/HabitEditDateForm'
-import { useSplitLoaderData } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.habits_.$habitId'
-// import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect'
-
-import { updateStreakSuccessById } from '~/models/habits.server';
+import { updateHabitDateSuccessById } from '~/models/habits.server';
 import useFetcherState from '~/components/utilities/useFetcherState';
 import useServerMessages from '~/components/modals/useServerMessages';
+import HabitEditDateForm from '~/components/forms/habits/HabitEditDateForm'
+import { useSplitLoaderData } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.habits_.$habitId'
 import useFormSubmittedToastAndRedirect from '~/components/utilities/useFormSubmittedToast';
 
-import type { Streak } from '@prisma/client'
-import type { HabitWithStreaks } from '~/types/habitTypes'
+import type { HabitDate } from '@prisma/client';
+import type { HabitWithDates } from '~/types/habitTypes';
 // import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -28,7 +26,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const isSuccess = streakValue[0] === 'on' ? true : false
 
   try {
-    await updateStreakSuccessById({ id: streakId, isSuccess })
+    await updateHabitDateSuccessById({ id: streakId, isSuccess })
     return 'success'
   } catch (error) { return 'failure' }
 }
@@ -40,10 +38,10 @@ function EditHabitDatePage() {
   const habitDateId = params.dateId
 
   const { habit } = useSplitLoaderData()
-  const loadedHabit = habit as HabitWithStreaks
+  const loadedHabit = habit as HabitWithDates
 
   const [title, setTitle] = useState<string>('')
-  const [streakObj, setStreakObj] = useState<Streak>()
+  const [habitDate, setHabitDate] = useState<HabitDate>()
 
   const fetcher = useFetcher();
   const { fetcherState, fetcherMessage, } = useFetcherState({ fetcher })
@@ -55,8 +53,8 @@ function EditHabitDatePage() {
 
   useEffect(() => {
     if (!habitDateId) return
-    if (!loadedHabit?.streak) return
-    setStreakObj(loadedHabit.streak.find(streak => streak.id === habitDateId))
+    if (!loadedHabit?.habitDate) return
+    setHabitDate(loadedHabit.habitDate.find(date => date.id === habitDateId))
     setTitle(loadedHabit.title)
   }, [loadedHabit, habitDateId])
 
@@ -71,8 +69,8 @@ function EditHabitDatePage() {
       )} */}
 
       <Modal onClose={() => { }} zIndex={10}>
-        <div className='max-w-md'>
-          <HabitEditDateForm streakDateObj={streakObj} habitTitle={title} />
+        <div className='w-full max-w-max'>
+          <HabitEditDateForm habitDate={habitDate} habitTitle={title} />
         </div>
       </Modal>
     </>
