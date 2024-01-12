@@ -24,6 +24,7 @@ import type { Habit, HabitDate, MilestoneGroup, Outcome} from '@prisma/client'
 import type { HabitWithDates, HabitWithDatesWithStrDates } from '~/types/habitTypes'
 import type { DesireWithStringDates, validationErrorsTypes } from '~/types/desireTypes'
 import type { MilestoneGroupsWithMilestones, MilestoneGroupsWithMilestonesWithStringDates } from '~/types/milestoneTypes'
+import SubHeading14WithLink from '~/components/titles/SubHeading14WithLink'
 
 
 
@@ -131,6 +132,8 @@ function OutcomePage() {
 
 
           <section className='w-full  '>
+          <SubHeading14WithLink title={'Routines'} linkText={'Go To'} linkDestination={`routines`} />
+
             <div className=' grid grid-cols-[250px,_100px] items-baseline'>
               <SubHeading14px text={'Milestones'} />
               <Link to='milestonegroups'>
@@ -320,7 +323,7 @@ export const useGetHabitTrackers = (): HabitWithDates[] => {
       const { habitDates, ...rest } = habit
       const habitDatesWithProperDates = ArrayOfObjectsStrToDates({ items: habitDates, dateKeys: ['createdAt', 'updatedAt']  }) as unknown as HabitDate[]
       const habitWithProperDates = ObjectStrToDates({ item: rest, dateKeys: ['createdAt', 'updatedAt', 'startDate'] }) as unknown as Habit 
-      return { ...habitWithProperDates, habitDates: habitDatesWithProperDates }
+      return { ...habitWithProperDates, habitDate: habitDatesWithProperDates }
     })
 
     setHabitsWithStreaks(habitsWithProperDates)

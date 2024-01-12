@@ -25,6 +25,7 @@ module.exports = {
         nanum: ["Nanum Myeongjo", "serif"],
         mont: ["Montserrat", "sans-serif"],
         poppins: ["Poppins", "sans-serif"],
+        roboto: ["Roboto", "sans-serif"],
       },
     },
   },

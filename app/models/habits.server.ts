@@ -91,6 +91,10 @@ export const getHabitById = async (habitId: string) => {
   }
 };
 
+
+
+//****************************   HABIT DATES ************************************************* */
+
 export const addHabitDates = (habitDates: CreateHabitDate[]) => {
   console.log('habitDates', habitDates)
   // makes sure that the date (year, month, day) is unique

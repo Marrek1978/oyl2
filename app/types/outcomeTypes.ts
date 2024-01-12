@@ -1,19 +1,14 @@
-import type {
-  ListAndToDos,
-  ListAndTodosWithStrDates,
-  ListWithStrDates,
-} from "~/types/listTypes";
+import type { ListAndToDos, ListAndTodosWithStrDates } from "~/types/listTypes";
 
 import type {
   RoutineAndTasks,
-  RoutineWithStrDates,
+  RoutineAndTasksWithStrDates,
 } from "~/types/routineTypes";
 
 import type { Outcome, User } from "@prisma/client";
-import type { SavingsWithStrDates } from "~/types/savingsType";
-import type  { HabitWithDatesWithStrDates } from "./habitTypes";
+import type { HabitWithDatesWithStrDates } from "./habitTypes";
+import type { SavingsAndPaymentsWithStrDates } from "~/types/savingsType";
 import type { MilestoneGroupsWithMilestonesWithStringDates } from "~/types/milestoneTypes";
-
 
 export type CreateOutcome = Omit<Outcome, "id" | "createdAt" | "updatedAt"> & {
   userId: User["id"];
@@ -42,11 +37,11 @@ export type OutcomeWithListsWithStrDates = OutcomeWithStringDates & {
 export type OutcomeWithAllWithStringDates = OutcomeWithStringDates & {
   milestoneGroup: MilestoneGroupsWithMilestonesWithStringDates[];
 } & {
-  lists: ListWithStrDates[];
+  lists: ListAndTodosWithStrDates[];
 } & {
-  routines: RoutineWithStrDates[];
+  routines: RoutineAndTasksWithStrDates[];
 } & {
-  savings: SavingsWithStrDates[];
+  savings: SavingsAndPaymentsWithStrDates[];
 } & {
   habits: HabitWithDatesWithStrDates[];
 };

@@ -31,6 +31,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   if (!outcomeId) return redirect('../..')
   if (!savingId) return redirect('..')
   const usersData = await getClarifyingQuestions(userId);
+  //!!!  no, set a note to update it
   if (!usersData) return redirect('../..')
   const loadedUserData = usersData[0] as ClarifyingQuestions
   const loadedMonthlyAmount = loadedUserData.monthlyAmount
@@ -79,7 +80,6 @@ function SavingPage() {
   const saving = useGetSaving(thisPath) as SavingsAndPayments
   const { desireName, outcomeName } = useGetParamNames(thisPath)
 
-
   return (
     <>
       <>
@@ -97,8 +97,6 @@ function SavingPage() {
 }
 
 export default SavingPage
-
-
 
 interface LoaderData {
   loadedSaving: SavingsAndPaymentsWithStrDates
@@ -143,7 +141,6 @@ export const useSplitLoaderData = (path: string): SplitData => {
   return { saving, desireName, outcomeName, monthlyAmount }
 }
 
-
 export const useGetParamNames = (path: string): { desireName: string, outcomeName: string } => {
   const { desireName, outcomeName } = useSplitLoaderData(path)
   return { desireName, outcomeName }
@@ -161,7 +158,6 @@ export const useGetTotalPayments = (path: string): number => {
   }, 0)
   return totalPayments
 }
-
 
 export const useGetMonthlySavingsAmount = (path: string): number => {
   const { monthlyAmount } = useSplitLoaderData(path)

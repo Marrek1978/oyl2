@@ -7,11 +7,12 @@ import Heading16pxWithLink from '../titles/Heading16pxWithLink'
 import ListRoutineCard from '../baseContainers/ListRoutineCard'
 import useSetSortOrderToNewIndex from '../dnds/useSetSortOrderToNewIndex'
 
-import type { ListAndToDos } from '~/types/listTypes'
+import type { ListAndToDos, ListArrayTypes } from '~/types/listTypes'
 import type { RoutineAndTasks } from '~/types/routineTypes'
 
+
 type Props = {
-  lists: ListAndToDos[] | RoutineAndTasks[]
+  lists: ListArrayTypes,
   listType?: 'list' | 'routine' | 'filtered'
 }
 
@@ -19,7 +20,7 @@ type Props = {
 function DisplayListsOrRoutines({ lists, listType = 'list' }: Props) {
   const inOrder = useIsInOrder()
   const setSortOrderToNewIndex = useSetSortOrderToNewIndex();
-  const [orderedLists, setOrderedLists] = useState<ListAndToDos[] | RoutineAndTasks[]>([])
+  const [orderedLists, setOrderedLists] = useState<ListArrayTypes>([])
 
   const listTypeURL = listType === 'list' ? 'lists' : 'routines'
 

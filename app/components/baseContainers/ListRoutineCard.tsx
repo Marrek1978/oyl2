@@ -3,8 +3,7 @@ import { useEffect, useState } from 'react'
 import ListCardBg from '../list/ListCardBg';
 
 import type { Task, ToDo } from '@prisma/client';
-import type { ListAndToDos } from '~/types/listTypes'
-import type { RoutineAndTasks } from '~/types/routineTypes'
+import type { ListTypes } from '~/types/listTypes'
 import TaskTodoItem from './TaskTodoItem';
 
 export type FilteredList = {
@@ -15,7 +14,7 @@ export type FilteredList = {
 export type ActionItem = ToDo | Task
 
 type Props = {
-  list?: ListAndToDos | RoutineAndTasks | FilteredList
+  list?: ListTypes |  FilteredList
 }
 
 

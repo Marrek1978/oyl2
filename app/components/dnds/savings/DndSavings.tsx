@@ -119,7 +119,7 @@ function DndSavings({ passedSavings, path }: Props) {
 export default DndSavings
 
 
-const addDeciamlMonthsToDate = (date: Date, decimalMonths: number): Date => {
+export const addDeciamlMonthsToDate = (date: Date, decimalMonths: number): Date => {
   const year = date.getFullYear()
   const month = date.getMonth()
   const day = date.getDate()

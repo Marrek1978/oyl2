@@ -10,7 +10,8 @@ type Props = {
 
 function HabitBadges({ habits }: Props) {
 
-  const dropShadowClass = 'shadow-2xl shadow-primary'
+  // const pendingClass = 'shadow-2xl shadow-primary'
+  const pendingClass = 'bg-warning'
   const sortedHabits = habits?.sort((a, b) => a.sortOrder - b.sortOrder)
 
   return (
@@ -18,13 +19,13 @@ function HabitBadges({ habits }: Props) {
       <div className=' flex gap-12 flex-wrap mt-4'>
 
         {sortedHabits?.map((habit) => {
-          const lastThreeStreaks = findLastThreeStreaks(habit.habitDates)
+          const lastThreeStreaks = findLastThreeStreaks(habit.habitDate)
           const currentStreak = lastThreeStreaks[0] || null
           const secondStreak = lastThreeStreaks[1] || null
           const thirdStreak = lastThreeStreaks[2] || null
 
           const today = new Date()
-          const streaks = habit.habitDates
+          const streaks = habit.habitDate
 
 
           let mostRecentDateTracked
@@ -49,9 +50,11 @@ function HabitBadges({ habits }: Props) {
 
           return (
             <div key={habit.id} className={`
-             p-4 max-w-max ${isDaysPending && dropShadowClass}
-              shadow-2xl h-min
+              ${isDaysPending && pendingClass}
+               h-min max-w-max p-4 
+               text-base-content
                hover:cursor-pointer hover:bg-primary `}>
+
               <Link to={`habits/${habit.id}`}>
                 <div className='text-xl font-bold text-base-content/70'>{habit.title}</div>
                 <div className='flex gap-1  items-start'>

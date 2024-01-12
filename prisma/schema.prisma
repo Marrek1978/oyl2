@@ -304,7 +304,7 @@ model HabitDate {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  date DateTime @unique
+  date DateTime  
   isSuccess Boolean? 
 
   habits Habit @relation(fields: [habitId], references: [id], onDelete: Cascade, onUpdate: Cascade)

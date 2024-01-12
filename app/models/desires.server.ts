@@ -290,6 +290,48 @@ export const getDesiresAndOutcomes = async (userId: User["id"]) => {
   }
 };
 
+export const getMainFocus = async (userId: User["id"]) => {
+  try {
+    const result = await prisma.desire.findFirst({
+      where: { userId, sortOrder: 0 },
+      include: {
+        outcomes: {
+          where: { sortOrder: 0 },
+          include: {
+            milestoneGroup: {
+              include: { milestones: true },
+            },
+            lists: {
+              include: {
+                todos: {
+                  orderBy: { sortOrder: "asc" },
+                },
+              },
+            },
+            routines: {
+              include: {
+                tasks: {
+                  orderBy: { sortOrder: "asc" },
+                },
+              },
+            },
+            habits: {
+              include: { habitDate: true },
+            },
+            savings: {
+              include: { payments: true },
+            }
+          },
+        },
+      },
+    });
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getDesiresAndOutcomesWithLists = async (userId: User["id"]) => {
   try {
     const result = await prisma.desire.findMany({

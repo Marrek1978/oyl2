@@ -67,6 +67,14 @@ export const getClarifyingQuestions = async (userId: User["id"]) => {
   });
 };
 
+export const getMonthlyAmount = async (userId: User["id"]) => {
+  const result = await prisma.clarifyingQuestions.findUnique({
+    where: { userId },
+  });
+
+  return result?.monthlyAmount;
+};
+
 export const upsertMaxAge = async (
   maxAge: CQ["maxAge"],
   userId: User["id"]

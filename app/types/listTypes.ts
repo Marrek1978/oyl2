@@ -1,6 +1,6 @@
 // types.ts
 import type { ToDo, List } from "@prisma/client";
-import type { RoutineAndTasks, RoutineToDo } from "~/types/routineTypes";
+import type { RoutineAndTasks, RoutineAndTasksWithStrDates, RoutineToDo } from "~/types/routineTypes";
 
 export type ListAndToDos = List & {
   todos: ToDo[];
@@ -38,3 +38,7 @@ export type ToDoWithStrDates = Omit<
 export type ListAndTodosWithStrDates = ListWithStrDates & {
   todos: ToDoWithStrDates[];
 };
+
+export type ListArrayTypes =  ListAndToDos[] | ListAndTodosWithStrDates[] |  RoutineAndTasks[] | RoutineAndTasksWithStrDates[]
+
+export type ListTypes =  ListAndToDos | ListAndTodosWithStrDates |  RoutineAndTasks | RoutineAndTasksWithStrDates
