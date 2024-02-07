@@ -4,7 +4,7 @@ function SubHeading14px({ text }: { text: string }) {
   return (
     <>
       <div className='text-sm font-bold font-mont 
-      tracking-wide uppercase whitespace-normal max-w-max
+      tracking-wide capitalize whitespace-normal max-w-max
       '>
         {text}
       </div>

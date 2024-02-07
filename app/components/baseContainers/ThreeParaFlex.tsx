@@ -37,7 +37,7 @@ function ThreeParaFlex({
 }: Props) {
   return (
     <>
-      <div className='flex flex-wrap gap-12 mt-8'>
+      <div className='flex flex-wrap gap-x-12 gap-y-8 mt-8'>
 
         {/* //?  THE DESIRE  */}
         <div className='flex-1 min-w-[350px] sm:min-w-[550px] max-w-max '>

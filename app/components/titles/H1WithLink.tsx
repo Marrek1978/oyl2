@@ -17,13 +17,13 @@ interface Props {
 function H1WithLink({ title, linkDestination, linkColor = 'primary', linkText = 'Edit', maxWidthTW = 'max-w-full' }: Props) {
   return (
     <>
-      <div className={`flex items-baseline gap-x-24 w-full ${maxWidthTW}`}>
+      <div className={`flex items-baseline gap-x-8 w-full ${maxWidthTW}`}>
         <HeadingH1 H1Title={title} />
         <Link to={linkDestination} className='text-sm uppercase'>
           <BtnWithProps
             btnPurpose={'goto'}
             textSizeTW={'sm'}
-            fontWidthTW={'bold'}
+            fontWidthTW={'semibold'}
             btnLabel={linkText}
           />
         </Link>

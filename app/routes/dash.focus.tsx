@@ -24,6 +24,7 @@ import type { SavingsAndPaymentsWithStrDates } from '~/types/savingsType';
 import type { HabitWithDates, HabitWithDatesWithStrDates } from '~/types/habitTypes';
 import type { MilestoneGroupsWithMilestones, MilestoneGroupsWithMilestonesWithStringDates } from '~/types/milestoneTypes';
 import { getMonthlyAmount } from '~/models/clarifying.server';
+import SubHeading16WithLink from '~/components/titles/SubHeading16WithLink';
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -77,53 +78,13 @@ function MainFocusPage() {
           />
 
           <TwoToneSubHeading
-            staticHeading='Serves the Desire'
+            staticHeading='For the Desire'
             variableHeadingsArray={[desireTitle]}
             size='14px'
           />
         </section>
 
-
-        <article className='w-full flex flex-col gap-y-12 mt-12'>
-          {/* //**********************  HABIT TRACKERS *********************************** */}
-          <section>
-            <SubHeading14WithLink title={'Habit Trackers'} linkText={'Go To'} linkDestination={`${linkToOutcome}/habits`} />
-            <HabitBadges habits={habits} />
-          </section>
-
-
-          {/* //**********************  LISTS *********************************** */}
-          <section>
-            <div className='flex flex-wrap gap-12 mt-8'>
-              <div className=' flex-1 max-w-sm w-full min-w-60'>
-                <SubHeading14WithLink title={'Lists'} linkText={'Go To'} linkDestination={`${linkToOutcome}/lists`} />
-                <DisplayListsOrRoutines lists={lists} />
-              </div>
-
-              {/* //**********************  NOTES *********************************** */}
-              <div className=' flex-1 max-w-sm w-full min-w-60'>
-                Notes
-              </div>
-            </div>
-          </section>
-
-
-          {/* //**********************  BELIEFS *********************************** */}
-          <section>
-            <div className=' flex-1 max-w-sm w-full min-w-60'>
-              Limiting Beliefs
-            </div>
-          </section>
-
-
-          {/* //**********************  MILESTONES *********************************** */}
-          <section className='w-full  '>
-            <SubHeading14WithLink title={'Milestones'} linkText={'Go To'} linkDestination={`${linkToOutcome}/milestonegroups`} />
-            {milestoneGroups && (
-              <MilestoneGroupsDisplay milestoneGroups={milestoneGroups} />
-            )}
-          </section>
-
+        <article className='w-full flex flex-col gap-y-12 mt-0' >
 
           {/* //**********************  PARAGRAPHS *********************************** */}
           <section>
@@ -136,17 +97,56 @@ function MainFocusPage() {
             />
           </section>
 
+          {/* //**********************  LIMITING BELIEFS *********************************** */}
+          <section className='mt-[-24px]  '>
+            <SubHeading16WithLink title={' Notes'} linkText={'Go To'} linkDestination={`${linkToOutcome}/notes`} />
+            No Notes
+          </section>
+
+          {/* //**********************  NOTES *********************************** */}
+          <section className=' '>
+            <SubHeading16WithLink title={'Limiting Beliefs'} linkText={'Go To'} linkDestination={`${linkToOutcome}/limitingbeliefs`} />
+            No Limiting Beliefs Identified
+          </section>
+
+
+          {/* //**********************  HABIT TRACKERS *********************************** */}
+          <section>
+            <SubHeading16WithLink title={'Habit Trackers'} linkText={'Go To'} linkDestination={`${linkToOutcome}/habits`} />
+            <HabitBadges habits={habits} />
+          </section>
+
+
+          {/* //**********************  LISTS *********************************** */}
+          <section>
+            <SubHeading16WithLink title={'Lists'} linkText={'Go To'} linkDestination={`${linkToOutcome}/lists`} />
+            <DisplayListsOrRoutines lists={lists} />
+          </section>
+
+
+
+          {/* //**********************  MILESTONES *********************************** */}
+          <section className='w-full  '>
+            <SubHeading16WithLink title={'Milestones'} linkText={'Go To'} linkDestination={`${linkToOutcome}/milestonegroups`} />
+            {milestoneGroups && (
+              <MilestoneGroupsDisplay milestoneGroups={milestoneGroups} />
+            )}
+          </section>
+
+
+
+
 
           {/* //**********************  ROUTINES *********************************** */}
           <section>
-            <SubHeading14WithLink title={'Routines'} linkText={'Go To'} linkDestination={`${linkToOutcome}/routines`} />
+            <SubHeading16WithLink title={'Routines'} linkText={'Go To'} linkDestination={`${linkToOutcome}/routines`} />
             <DisplayListsOrRoutines lists={routines} />
           </section>
 
 
           {/* //**********************  SAVINGS *********************************** */}
           <section>
-            <SubHeading14WithLink title={'Savings Trackers'} linkText={'Go To'} linkDestination={`${linkToOutcome}/savings`} />
+            <SubHeading16WithLink title={'Savings Trackers'} linkText={'Go To'} linkDestination={`${linkToOutcome}/savings`} />
             <SavingsBadges savings={savings} monthlyAmount={monthlyAmount} />
           </section>
         </article>

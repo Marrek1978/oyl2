@@ -1,8 +1,8 @@
 
-function SubHeading16px({ text , daisyUIColor='info'}: { text: string, daisyUIColor?: string }) {
+function SubHeading16px({ text , daisyUIColor='info', upperCase='uppercase'}: { text: string, daisyUIColor?: string, upperCase?: string}) {
   return (
     <>
-      <div className={` font-bold font-mont tracking-wide uppercase text-${daisyUIColor}`}>
+      <div className={` font-bold font-mont tracking-wide ${upperCase} text-${daisyUIColor}`}>
         {text}
       </div>
     </>

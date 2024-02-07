@@ -1,6 +1,6 @@
 import { Link } from '@remix-run/react'
 
-import SubHeading14px from './SubHeading14px'
+import SubHeading16px from './SubHeading16px'
 import BtnWithProps from '../buttons/BtnWithProps'
 
 import type { maxWidthTW } from '~/types/CSSTypes'
@@ -13,7 +13,7 @@ type Props = {
 }
 
 
-function SubHeading14WithLink({ title, linkText, linkDestination, maxWidthTW = 'max-w-max' }: Props) {
+function SubHeading16WithLink({ title, linkText, linkDestination, maxWidthTW = 'max-w-max' }: Props) {
   return (
     <>
       <div className={`
@@ -23,7 +23,7 @@ function SubHeading14WithLink({ title, linkText, linkDestination, maxWidthTW = '
         `}>
 
         <div className='flex-1 capitalize truncate '>
-          <SubHeading14px text={title} />
+          <SubHeading16px text={title} upperCase={"capitalize"} daisyUIColor={'text-base-content'} />
         </div>
 
         <div className='justify-self-end'>
@@ -41,4 +41,4 @@ function SubHeading14WithLink({ title, linkText, linkDestination, maxWidthTW = '
   )
 }
 
-export default SubHeading14WithLink
+export default SubHeading16WithLink

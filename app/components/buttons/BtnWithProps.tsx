@@ -84,7 +84,7 @@ function BtnWithProps({
           ${buttonPaddingClasses}
          `}
       >
-        <div className='flex gap-2 items-center justify-center text-md uppercase py-0 my-0'>
+        <div className='flex gap-2 items-center justify-center text-md capitalize py-0 my-0'>
           {buttonText}{buttonIcon}
         </div>
       </button>

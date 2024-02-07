@@ -35,3 +35,22 @@
 }
 
  
+[data-theme="night"] .night-lg-text {
+  @apply 
+  text-gray-500
+}
+
+[data-theme="winter"] .winter-lg-text {
+  @apply 
+  text-gray-400
+}
+
+[data-theme="night"] .night-sm-text {
+  @apply 
+  text-gray-500
+}
+
+[data-theme="winter"] .winter-sm-text {
+  @apply 
+  text-gray-400
+}
