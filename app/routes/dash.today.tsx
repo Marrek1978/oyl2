@@ -10,14 +10,14 @@ import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 
 import Today from '~/components/today/Today'
 import HeadingH2 from '~/components/titles/HeadingH2'
-import HeadingH3 from '~/components/titles/HeadingH3'
-import HeadingH5 from '~/components/titles/HeadingH5'
+// import HeadingH3 from '~/components/titles/HeadingH3'
+// import HeadingH5 from '~/components/titles/HeadingH5'
 import { requireUserId } from '~/models/session.server'
 import { getScheduledItems } from '~/models/scheduler.server'
-import SubHeading14px from '~/components/titles/SubHeading14px'
+// import SubHeading14px from '~/components/titles/SubHeading14px'
 import { getAllMiscAndSpecialLists } from '~/models/list.server'
-import TwoToneSubHeading from '~/components/titles/TwoToneSubHeading'
-import ThreeParaFlex from '~/components/baseContainers/ThreeParaFlex'
+// import TwoToneSubHeading from '~/components/titles/TwoToneSubHeading'
+// import ThreeParaFlex from '~/components/baseContainers/ThreeParaFlex'
 import { getAllMiscAndSpecialRoutines } from '~/models/routines.server'
 import DisplayCurrentEvent from '~/components/today/DisplayCurrentEvent'
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
@@ -31,7 +31,7 @@ import type { OutcomeWithListsWithStrDates } from '~/types/outcomeTypes'
 import type { ListAndToDos, ListAndTodosWithStrDates } from '~/types/listTypes'
 import type { RoutineAndTasks, RoutineAndTasksWithStrDates } from '~/types/routineTypes'
 import type { DesireWithOutcomesAndAll, DesireWithOutcomesAndListsWithStrDates, DesireWithStringDates } from '~/types/desireTypes'
-import HeadingH1 from '~/components/titles/HeadingH1'
+// import HeadingH1 from '~/components/titles/HeadingH1'
 
 
 export const links: LinksFunction = () => [
@@ -97,7 +97,7 @@ function TodayPage() {
   },);
 
 
-  const { mainDesire, mainOutcome } = useGetMainFocus()
+  // const { mainDesire, mainOutcome } = useGetMainFocus()
 
 
   return (
@@ -105,7 +105,7 @@ function TodayPage() {
       <article>
         <BasicTextAreaBG pageTitle={'Today'} >
           <div className='flex flex-wrap flex-col gap-8 w-full  '>
-            <div className='mt-6 w-full bg-base-300'>
+            {/* <div className='mt-6 w-full bg-base-300'>
               TimeLIne
             </div>
 
@@ -119,9 +119,9 @@ function TodayPage() {
                 variableHeadingsArray={[mainDesire?.title || '']}
                 size='14px'
               />
-            </div>
+            </div> */}
 
-            <div >
+            {/* <div >
               habit tracker
             </div>
 
@@ -147,7 +147,7 @@ function TodayPage() {
               textParagraph3={'vision here'}
             // linkDestination3={'editIdeal'}
             // linkText3={'Edit Ideal Scenario'}
-            />
+            /> */}
 
 
             <div className='w-full'>
@@ -183,9 +183,9 @@ function TodayPage() {
             </div>
 
 
-            remake the outcome page here?
+            {/* remake the outcome page here? */}
 
-            <div className='flex flex-col gap-y-8 w-full '>
+            {/* <div className='flex flex-col gap-y-8 w-full '>
               <div className='flex flex-wrap gap-8 justify-between w-full'>
                 <div  >
                   <div className='text-base-content/70' >
@@ -201,11 +201,10 @@ function TodayPage() {
                   <div className='flex flex-wrap gap-8 mt-8 '>
                     <div>
                       <HeadingH3 text="Routines" />
-                      {/* <RoutinesDisplayToday routines={focusRoutines} /> */}
+                      {/* <RoutinesDisplayToday routines={focusRoutines} />  
                     </div>
                     <div>
                       <HeadingH3 text="Lists" />
-                      {/* <ListsDisplayToday lists={focusLists} /> */}
                     </div>
 
                     <div>
@@ -225,7 +224,7 @@ function TodayPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </BasicTextAreaBG>
       </article >
