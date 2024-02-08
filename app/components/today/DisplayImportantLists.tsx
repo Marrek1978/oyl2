@@ -18,7 +18,7 @@ export type ToDosWithListInfo = {
 }
 
 function DisplayImportantLists({ loadedLists }: Props) {
-  console.log("🚀 ~ file: DisplayImportantLists.tsx:21 ~ DisplayImportantLists ~ loadedLists:", loadedLists)
+  // console.log("🚀 ~ file: DisplayImportantLists.tsx:21 ~ DisplayImportantLists ~ loadedLists:", loadedLists)
   const [urgentToDosWithListInfo, setUrgentToDosWithListInfo] = useState<ToDosWithListInfo[]>()
   const [pastDueToDosWithListInfo, setPastDueToDosWithListInfo] = useState<ToDosWithListInfo[]>()
   const [upcomingToDosWithListInfo, setUpcomingToDosWithListInfo] = useState<ToDosWithListInfo[]>()

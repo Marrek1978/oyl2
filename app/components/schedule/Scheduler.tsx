@@ -269,10 +269,10 @@ interface ToolTipType {
 
 
 export function CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutines, desiresAndAll }: ToolTipType): string {
-  console.log("🚀 ~ file: Scheduler.tsx:272 ~ CreateToolTip ~ desiresAndAll:", desiresAndAll)
-  console.log("🚀 ~ file: Scheduler.tsx:272 ~ CreateToolTip ~ miscAndSpecialRoutines:", miscAndSpecialRoutines)
-  console.log("🚀 ~ file: Scheduler.tsx:272 ~ CreateToolTip ~ miscAndSpecialLists:", miscAndSpecialLists)
-  console.log('create tool tip in scheudler')
+  // console.log("🚀 ~ file: Scheduler.tsx:272 ~ CreateToolTip ~ desiresAndAll:", desiresAndAll)
+  // console.log("🚀 ~ file: Scheduler.tsx:272 ~ CreateToolTip ~ miscAndSpecialRoutines:", miscAndSpecialRoutines)
+  // console.log("🚀 ~ file: Scheduler.tsx:272 ~ CreateToolTip ~ miscAndSpecialLists:", miscAndSpecialLists)
+  // console.log('create tool tip in scheudler')
   const description = event.description
   const type = description.type
   let toolTipHeaderText = ''
@@ -294,7 +294,7 @@ export function CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutin
   }
 
   if (type === 'routine') {
-    console.log(' in routine')
+    // console.log(' in routine')
     const routines = miscAndSpecialRoutines as RoutineAndTasks[]
     const routineById = GetCurrentListById(description.routineId, routines) as RoutineAndTasks[]
     if (routineById.length === 0) return ' '
@@ -305,7 +305,7 @@ export function CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutin
   }
 
   if (type === 'outcome') {
-    console.log('type = outcome')
+    // console.log('type = outcome')
     const lists = desiresAndAll as DesireWithOutcomesAndAll[]
     if (description.subType === 'list') {
       const outcomeById = GetOutcomeByIdFromDesiresArray(lists, description.outcomeId)

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { json } from "@remix-run/node";
 import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
@@ -14,16 +15,16 @@ import {
 } from "@remix-run/react";
 
 import Navbar from './components/nav/Navbar';
+import navSytles from '~/styles/SideNav.css'
+import Modal from '~/components/modals/Modal'
+import FormStyles from '~/styles/FormCss.css';
 import Error from '~/components/utilities/Error'
 import { getUser } from "~/models/session.server";
-
-import navSytles from '~/styles/SideNav.css'
-import FormStyles from '~/styles/FormCss.css';
 import SolidBtn from "./components/buttons/SolidBtn";
 import datePickerStyles from "~/styles/CustomCss.css";
 import tailwindStylesheetUrl from "~/styles/tailwind.css";
-
 import { ThemeProvider, useTheme } from './styles/ThemeContext';
+import useGetNavigationState from "./components/utilities/useNavigationState";
 
 import type { CustomError } from "./types/ErrorTypes";
 
@@ -59,6 +60,23 @@ export default function App() {
 
 function AppContent() {
   const { theme } = useTheme();
+  // const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    isLoading,
+    setIsLoading,
+    navigationState
+  } = useGetNavigationState();
+
+
+  useEffect(() => {
+    if (navigationState === 'loading') {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+  }, [navigationState, setIsLoading]);
+
 
   return (
     <html lang="en"
@@ -80,6 +98,12 @@ function AppContent() {
       <body className="min-h-screen bg-base-200">
         <main className=" h-full min-h-screen m-auto ">
           <Navbar />
+
+          {isLoading && (
+          <Modal onClose={() => { }} zIndex={20}>
+            <span className="loading loading-spinner loading-lg"></span>
+            </Modal>
+            )}
           <Outlet />
         </main>
         <ScrollRestoration />
@@ -93,10 +117,10 @@ function AppContent() {
 
 
 export function ErrorBoundary() {
+
   const error = useRouteError();
 
   return (
-
     <main>
       <Link to='/'>
         <SolidBtn

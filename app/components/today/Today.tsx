@@ -93,7 +93,7 @@ function Today({
 
   function handleToolTipAccessor(event: any) {
     const result = CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutines, desiresAndAll })
-    console.log("🚀 ~ file: Today.tsx:96 ~ handleToolTipAccessor ~ result:", result)
+    // console.log("🚀 ~ file: Today.tsx:96 ~ handleToolTipAccessor ~ result:", result)
     
     return result
     // return CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutines, desiresAndAll })
