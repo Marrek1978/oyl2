@@ -6,15 +6,18 @@ import type { ToDo } from '@prisma/client';
 
 type Props = {
   todoObject: ToDo;
+  due?: 'past' | 'today' | 'upcoming';
 }
 
-function ListCardToDoItem({ todoObject }: Props) {
+function ListCardToDoItem({ todoObject, due  }: Props) {
 
-  const priorityStyling = ToDoItemStylesNoBg({ todo: todoObject })
+  let priorityStyling = ToDoItemStylesNoBg({ todo: todoObject })
+  if(due === 'past') priorityStyling = 'text-error'
+  if(due === 'today') priorityStyling = 'text-important'
+  if(due === 'upcoming') priorityStyling = 'text-base-content'
 
   return (
     <>
-
       <div className={` 
         flex w-full gap-4 items-center justify-between
         p-0 m-0
@@ -23,7 +26,7 @@ function ListCardToDoItem({ todoObject }: Props) {
         ${priorityStyling}
       `}>
         <div className={`
-          wrap truncate text-ellipsis 	
+          wrap truncate text-ellipsis capitalize	
           ${todoObject.isComplete && 'line-through text-slate-300'}
         `} >
           {todoObject.body}

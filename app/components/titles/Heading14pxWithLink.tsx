@@ -8,13 +8,13 @@ import type { DaisyUIColor } from '~/types/CSSTypes';
 interface Props {
   title: string;
   linkDestination: string;
-  textColorDaisyUI?: DaisyUIColor;
+  linkTextColorDaisyUI?: DaisyUIColor;
   linkText?: string;
   date?: Date | null;
 }
 
 
-function Heading14pxWithLink({ title, linkDestination, textColorDaisyUI = 'primary', linkText = 'Edit', date }: Props) {
+function Heading14pxWithLink({ title, linkDestination, linkTextColorDaisyUI = 'primary', linkText = 'Edit', date }: Props) {
   return (
     <>
       <div className="w-full flex justify-between items-baseline gap-x-4">
@@ -27,7 +27,7 @@ function Heading14pxWithLink({ title, linkDestination, textColorDaisyUI = 'prima
             text={linkText}
             onClickFunction={() => { }}
             icon={EditIcon}
-            textColorDaisyUI={textColorDaisyUI}
+            textColorDaisyUI={linkTextColorDaisyUI}
           />
         </Link>
       </div>

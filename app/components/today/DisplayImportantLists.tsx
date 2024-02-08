@@ -18,7 +18,6 @@ export type ToDosWithListInfo = {
 }
 
 function DisplayImportantLists({ loadedLists }: Props) {
-  // console.log("🚀 ~ file: DisplayImportantLists.tsx:21 ~ DisplayImportantLists ~ loadedLists:", loadedLists)
   const [urgentToDosWithListInfo, setUrgentToDosWithListInfo] = useState<ToDosWithListInfo[]>()
   const [pastDueToDosWithListInfo, setPastDueToDosWithListInfo] = useState<ToDosWithListInfo[]>()
   const [upcomingToDosWithListInfo, setUpcomingToDosWithListInfo] = useState<ToDosWithListInfo[]>()
@@ -38,27 +37,26 @@ function DisplayImportantLists({ loadedLists }: Props) {
 
   return (
     <>
-      <div className='flex flex-wrap gap-8'>
-        {dueTodayToDosWithListInfo && (
-          <div className='flex-1'>
-            <TimeCriticalTodoListCard
-              toDosWithListInfo={dueTodayToDosWithListInfo}
-              ListTitle='Due Today'
-              maxWidthTailWindSize='lg'
-              daisyUIBackgroundColor='bg-warning'
-              daisyUITextColor='text-warning-content'
-            />
-          </div>
-        )}
+      <div className='flex flex-wrap gap-8 mt-4'>
 
         {pastDueToDosWithListInfo && (
           <div className='flex-1'>
             <TimeCriticalTodoListCard
               toDosWithListInfo={pastDueToDosWithListInfo}
               ListTitle='Past Due'
-              maxWidthTailWindSize='lg'
-              daisyUIBackgroundColor='bg-error'
-              daisyUITextColor='text-error-content'
+              due='past'
+              linkUrl={'pastDue'}
+            />
+          </div>
+        )}
+
+        {dueTodayToDosWithListInfo && (
+          <div className='flex-1'>
+            <TimeCriticalTodoListCard
+              toDosWithListInfo={dueTodayToDosWithListInfo}
+              ListTitle='Due Today'
+              due='today'
+              linkUrl={'dash/todos'}
             />
           </div>
         )}
@@ -68,9 +66,7 @@ function DisplayImportantLists({ loadedLists }: Props) {
             <TimeCriticalTodoListCard
               toDosWithListInfo={urgentToDosWithListInfo}
               ListTitle='Urgent'
-              maxWidthTailWindSize='lg'
-              daisyUIBackgroundColor='bg-accent-focus'
-              daisyUITextColor='text-accent-content'
+              linkUrl={'dash/todos'}
             />
           </div>
         )}
@@ -80,9 +76,7 @@ function DisplayImportantLists({ loadedLists }: Props) {
             <TimeCriticalTodoListCard
               toDosWithListInfo={importantToDosWithListInfo}
               ListTitle='Important'
-              maxWidthTailWindSize='lg'
-              daisyUIBackgroundColor='bg-success'
-              daisyUITextColor='text-success-content'
+              linkUrl={'dash/todos'}
             />
           </div>
         )}
@@ -92,15 +86,12 @@ function DisplayImportantLists({ loadedLists }: Props) {
             <TimeCriticalTodoListCard
               toDosWithListInfo={upcomingToDosWithListInfo}
               ListTitle='Upcoming'
-              maxWidthTailWindSize='lg'
-              daisyUIBackgroundColor='bg-info'
-              daisyUITextColor='text-info-content'
+              due='upcoming'
+              linkUrl={'dash/todos'}
             />
           </div>
         )}
 
-
- 
       </div>
     </>
   )

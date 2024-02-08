@@ -6,11 +6,12 @@ import { getMainFocus } from '~/models/desires.server';
 import { requireUserId } from '~/models/session.server';
 import H1WithLink from '~/components/titles/H1WithLink';
 import HabitBadges from '~/components/habits/HabitBadges';
+import { getMonthlyAmount } from '~/models/clarifying.server';
 import SavingsBadges from '~/components/savings/SavingsBadges';
 import TwoToneSubHeading from '~/components/titles/TwoToneSubHeading';
 import ThreeParaFlex from '~/components/baseContainers/ThreeParaFlex';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
-import SubHeading14WithLink from '~/components/titles/SubHeading14WithLink';
+import SubHeading16WithLink from '~/components/titles/SubHeading16WithLink';
 import DisplayListsOrRoutines from '~/components/list/DisplayListsOrRoutines';
 import MilestoneGroupsDisplay from '~/components/milestones/MilestoneGroupsDisplay';
 import { ArrayOfObjectsStrToDates, ObjectStrToDates } from '~/components/utilities/helperFunctions';
@@ -23,8 +24,6 @@ import type { OutcomeWithAllWithStringDates } from '~/types/outcomeTypes';
 import type { SavingsAndPaymentsWithStrDates } from '~/types/savingsType';
 import type { HabitWithDates, HabitWithDatesWithStrDates } from '~/types/habitTypes';
 import type { MilestoneGroupsWithMilestones, MilestoneGroupsWithMilestonesWithStringDates } from '~/types/milestoneTypes';
-import { getMonthlyAmount } from '~/models/clarifying.server';
-import SubHeading16WithLink from '~/components/titles/SubHeading16WithLink';
 
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {

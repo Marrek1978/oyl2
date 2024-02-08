@@ -1,7 +1,7 @@
 // import { parse } from 'querystring'
 import { format } from 'date-fns'
 import { useEffect, useState } from 'react'
-import { useRouteLoaderData } from '@remix-run/react'
+import { Outlet, useRouteLoaderData } from '@remix-run/react'
 import { type LoaderFunctionArgs } from '@remix-run/server-runtime'
 import type { LinksFunction } from '@remix-run/react/dist/routeModules'
 
@@ -102,6 +102,7 @@ function TodayPage() {
 
   return (
     <>
+    <Outlet />
       <article>
         <BasicTextAreaBG pageTitle={'Today'} >
           <div className='flex flex-wrap flex-col gap-8 w-full  '>
