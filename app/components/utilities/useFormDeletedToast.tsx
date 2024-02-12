@@ -11,6 +11,7 @@ interface FormDeleteProps {
 function useFormDeletedToastAndRedirect({ redirectTo, message = 'Value was delted' }: FormDeleteProps = {}) {
 
   const actionData = useActionData()
+  console.log("🚀 ~ functionuseFormDeletedToastAndRedirect({redirectTo,message ~ actionData:", actionData)
   const navigate = useNavigate()
   const isDeleted = actionData === 'deleted'
 

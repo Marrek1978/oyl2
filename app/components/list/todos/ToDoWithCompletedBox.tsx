@@ -1,7 +1,8 @@
+import { useFetcher, useSearchParams } from '@remix-run/react';
+import React, { useEffect, useState } from 'react'
+
 import { format } from 'date-fns'
 import { enUS } from 'date-fns/locale';
-import { useFetcher } from '@remix-run/react';
-import React, { useEffect, useState } from 'react'
 
 import Modal from '~/components/modals/Modal';
 import ErrorMessage from '~/components/modals/ErrorMessage';
@@ -9,23 +10,31 @@ import { ToDoItemStylesNoBg } from '~/styles/ToDoItemStyles'
 import useFetcherState from '~/components/utilities/useFetcherState';
 
 import type { ToDo } from '@prisma/client';
+import type { DaisyUIColor } from '~/types/CSSTypes';
 
 
 interface ToDoItemProps {
   todoItem: ToDo;
   setIsDisableAllBtns: React.Dispatch<React.SetStateAction<boolean>>
   isDisableAllBtns: boolean
+  daisyUIItemsColor?: DaisyUIColor;
 }
 
-const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem, setIsDisableAllBtns, isDisableAllBtns }) => {
-
+const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem, setIsDisableAllBtns, isDisableAllBtns, daisyUIItemsColor = 'text-base-content' }) => {
   const fetcher = useFetcher();
+
+  const [searchParams] = useSearchParams();
+  const type = searchParams.get('type');
+
   const [isUpdating, setIsUpdating] = useState(false)
   const [isChecked, setIsChecked] = useState(todoItem.isComplete)
   const [errorMessage, setErrorMessage] = useState<string>()
 
-  const borderClass = ToDoItemStylesNoBg({ todo: todoItem })
-
+  let textColorClass = ToDoItemStylesNoBg({ todo: todoItem })
+  if (textColorClass === 'text-base-content') {
+    if (type === '<') textColorClass = 'text-accent-focus'
+    if (type === '=') textColorClass = 'text-success'
+  }
   const { fetcherState, fetcherMessage } = useFetcherState({ fetcher })
 
   useEffect(() => {
@@ -44,6 +53,7 @@ const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem, setIsDisableAllBt
 
 
   const handleCheckboxChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('checkbox clicked')
     setIsUpdating(true); // Start progress bar
     setIsDisableAllBtns(true); // Disable all other checkboxes
     const complete = event.target.checked;
@@ -75,7 +85,7 @@ const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem, setIsDisableAllBt
         px-3 py-0 mb-0
         text-left 
         font-mont
-        ${borderClass}
+        ${textColorClass}
       `}>
         <div className={`
           wrap truncate text-ellipsis capitalize

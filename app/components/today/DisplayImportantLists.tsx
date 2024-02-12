@@ -1,16 +1,19 @@
 import { format } from 'date-fns'
 import { useEffect, useState } from 'react'
 
-import type { ListAndToDos } from '~/types/listTypes'
+import { sortTodos } from '../utilities/helperFunctions'
 import TimeCriticalTodoListCard from '../list/timeCritical/TimeCriticalTodoListCard'
 
 import type { List, ToDo } from '@prisma/client'
+import type { ListAndToDos } from '~/types/listTypes'
+
 
 type Props = {
   loadedLists: ListAndToDos[]
 }
 
-export type ToDosWithListInfo = {
+
+export type ListInfoWithToDos = {
   listTitle: List['title'];
   listId: List['id'];
   outcomeId: List['outcomeId'];
@@ -18,80 +21,78 @@ export type ToDosWithListInfo = {
 }
 
 function DisplayImportantLists({ loadedLists }: Props) {
-  const [urgentToDosWithListInfo, setUrgentToDosWithListInfo] = useState<ToDosWithListInfo[]>()
-  const [pastDueToDosWithListInfo, setPastDueToDosWithListInfo] = useState<ToDosWithListInfo[]>()
-  const [upcomingToDosWithListInfo, setUpcomingToDosWithListInfo] = useState<ToDosWithListInfo[]>()
-  const [dueTodayToDosWithListInfo, setDueTodayToDosWithListInfo] = useState<ToDosWithListInfo[]>()
-  const [importantToDosWithListInfo, setImportantToDosWithListInfo] = useState<ToDosWithListInfo[]>()
+  const [pastDueToDos, setPastDueToDos] = useState<ToDo[]>()
+  const [dueTodayToDos, setDueTodayToDos] = useState<ToDo[]>()
+  const [urgentToDos, setUrgentToDos] = useState<ToDo[]>()
+  const [importantToDos, setImportantToDos] = useState<ToDo[]>()
+  const [upcomingToDos, setUpcomingToDos] = useState<ToDo[]>()
 
   useEffect(() => {
     if (!loadedLists) return
-    setDueTodayToDosWithListInfo(getTimeCriticalTodosWithListInfoObj({ listsWithToDos: loadedLists }))
-    setPastDueToDosWithListInfo(getTimeCriticalTodosWithListInfoObj({ listsWithToDos: loadedLists, operator: '<' }))
-    setUpcomingToDosWithListInfo(getTimeCriticalTodosWithListInfoObj({ listsWithToDos: loadedLists, operator: '>' }))
-    setImportantToDosWithListInfo(getTimeCriticalTodosWithListInfoObj({ listsWithToDos: loadedLists, importance: 'important' }))
-    setUrgentToDosWithListInfo(getTimeCriticalTodosWithListInfoObj({ listsWithToDos: loadedLists, importance: 'urgent' }))
+    setPastDueToDos(getAndSortTodosFromLists({ listsWithToDos: loadedLists, operator: '<' }))
+    setDueTodayToDos(getAndSortTodosFromLists({ listsWithToDos: loadedLists , operator: '=' }))
+    setUrgentToDos(getAndSortTodosFromLists({ listsWithToDos: loadedLists, importance: 'urgent' }))
+    setImportantToDos(getAndSortTodosFromLists({ listsWithToDos: loadedLists, importance: 'important' }))
+    setUpcomingToDos(getAndSortTodosFromLists({ listsWithToDos: loadedLists, operator: '>' }))
+
   }, [loadedLists])
-
-
 
   return (
     <>
       <div className='flex flex-wrap gap-8 mt-4'>
 
-        {pastDueToDosWithListInfo && (
+        {pastDueToDos && (
           <div className='flex-1'>
             <TimeCriticalTodoListCard
-              toDosWithListInfo={pastDueToDosWithListInfo}
+              toDos={pastDueToDos}
               ListTitle='Past Due'
               due='past'
-              linkUrl={'pastDue'}
+              linkUrl={'timeCriticalToDos/?type=<'}
             />
           </div>
         )}
 
-        {dueTodayToDosWithListInfo && (
+        {dueTodayToDos && (
           <div className='flex-1'>
             <TimeCriticalTodoListCard
-              toDosWithListInfo={dueTodayToDosWithListInfo}
+              toDos={dueTodayToDos}
               ListTitle='Due Today'
               due='today'
-              linkUrl={'dash/todos'}
+              linkUrl={'timeCriticalToDos/?type=='}
             />
           </div>
         )}
 
-        {urgentToDosWithListInfo && (
+        {urgentToDos && (
           <div className='flex-1'>
             <TimeCriticalTodoListCard
-              toDosWithListInfo={urgentToDosWithListInfo}
+              toDos={urgentToDos}
               ListTitle='Urgent'
-              linkUrl={'dash/todos'}
+              linkUrl={'timeCriticalToDos/?type=urgent'}
             />
           </div>
         )}
 
-        {importantToDosWithListInfo && (
+        {importantToDos && (
           <div className='flex-1'>
             <TimeCriticalTodoListCard
-              toDosWithListInfo={importantToDosWithListInfo}
+              toDos={importantToDos}
               ListTitle='Important'
-              linkUrl={'dash/todos'}
+              linkUrl={'timeCriticalToDos/?type=important'}
             />
           </div>
         )}
 
-        {upcomingToDosWithListInfo && (
+        {upcomingToDos && (
           <div className='flex-1'>
             <TimeCriticalTodoListCard
-              toDosWithListInfo={upcomingToDosWithListInfo}
+              toDos={upcomingToDos}
               ListTitle='Upcoming'
               due='upcoming'
-              linkUrl={'dash/todos'}
+              linkUrl={'timeCriticalToDos/?type=>'}
             />
           </div>
         )}
-
       </div>
     </>
   )
@@ -102,12 +103,12 @@ export default DisplayImportantLists
 
 interface ToDosWithListInfoProps {
   listsWithToDos: ListAndToDos[];
-  operator?: '>' | '<' | '===';
+  operator?: '>' | '<' | '=';
   date?: Date;
   importance?: 'urgent' | 'important';
 }
 
-export function getTimeCriticalTodosWithListInfoObj({ listsWithToDos, operator = '===', date, importance }: ToDosWithListInfoProps): ToDosWithListInfo[] {
+export function getTimeCriticalTodosWithListInfoObj({ listsWithToDos, operator = '=', date, importance }: ToDosWithListInfoProps): ListInfoWithToDos[] {
   let now;
   !date ? now = new Date() : now = date
   const formattedNow = format(now, 'yyyy-MM-dd');
@@ -121,13 +122,13 @@ export function getTimeCriticalTodosWithListInfoObj({ listsWithToDos, operator =
         if (!todo.dueDate) return false
         if (operator === '>') return format(todo.dueDate, 'yyyy-MM-dd') > formattedNow;
         if (operator === '<') return format(todo.dueDate, 'yyyy-MM-dd') < formattedNow;
-        if (operator === '===') return format(todo.dueDate, 'yyyy-MM-dd') === formattedNow;
+        if (operator === '=') return format(todo.dueDate, 'yyyy-MM-dd') === formattedNow;
       }
       return false;
     })
     if (ToDosArray.length === 0) return null;
 
-    const ToDosWithListInfoObject: ToDosWithListInfo = {
+    const ToDosWithListInfoObject: ListInfoWithToDos = {
       listTitle: list.title,
       listId: list.id,
       outcomeId: list.outcomeId || null,
@@ -136,8 +137,20 @@ export function getTimeCriticalTodosWithListInfoObj({ listsWithToDos, operator =
     return ToDosWithListInfoObject
   })
 
-  const filteredToDosWithListInfo = ToDosWithListInfo.filter((todos) => todos !== null) as ToDosWithListInfo[]
+  const filteredToDosWithListInfo = ToDosWithListInfo.filter((todos) => todos !== null) as ListInfoWithToDos[]
   return filteredToDosWithListInfo
 }
 
 
+export function getToDosFromListsofToDos(listsWithToDos: ListInfoWithToDos[]): ToDo[] {
+  const ToDosArray = listsWithToDos.map(list => {
+    return list.todos
+  }).flat()
+
+  return ToDosArray
+}
+
+
+export function getAndSortTodosFromLists({ listsWithToDos, operator = '=', date, importance }: ToDosWithListInfoProps): ToDo[] {
+  return sortTodos(getToDosFromListsofToDos(getTimeCriticalTodosWithListInfoObj({ listsWithToDos, operator, date, importance })))
+}

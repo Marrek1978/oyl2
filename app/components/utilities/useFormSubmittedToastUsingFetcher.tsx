@@ -3,7 +3,9 @@ import { type FetcherWithComponents, useNavigate } from '@remix-run/react'
 
 import { toast } from 'sonner'
 import { toasterBtnLabel, toasterDuration, toasterPosition } from './constants'
+
 import useFetcherState from './useFetcherState';
+
 
 interface FormDeleteProps {
   fetcher: FetcherWithComponents<any>;
@@ -13,7 +15,6 @@ interface FormDeleteProps {
 
 //?    place on forms -> not routes
 function useFormSubmittedToastUsingFetcher({ fetcher, redirectTo = '../', message = 'Form was Updated' }: FormDeleteProps) {
-
   const navigate = useNavigate()
   const { fetcherMessage } = useFetcherState({ fetcher })
   const isSuccess = fetcherMessage === 'success'

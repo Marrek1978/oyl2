@@ -1,7 +1,6 @@
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { ToDoItemStylesNoBg } from '~/styles/ToDoItemStyles';
-
 import type { ToDo } from '@prisma/client';
 
 type Props = {
@@ -10,10 +9,9 @@ type Props = {
 }
 
 function ListCardToDoItem({ todoObject, due  }: Props) {
-
   let priorityStyling = ToDoItemStylesNoBg({ todo: todoObject })
-  if(due === 'past') priorityStyling = 'text-error'
-  if(due === 'today') priorityStyling = 'text-important'
+  if(due === 'past') priorityStyling = 'text-accent-focus'
+  if(due === 'today') priorityStyling = 'text-success'
   if(due === 'upcoming') priorityStyling = 'text-base-content'
 
   return (
@@ -38,7 +36,6 @@ function ListCardToDoItem({ todoObject, due  }: Props) {
           </div>
         )}
       </div>
-
     </>
   )
 }

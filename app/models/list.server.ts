@@ -47,7 +47,6 @@ export async function createList({
 }: Pick<List, "title"> & { userId: User["id"] } & { todos: CreateTodo[] } & {
   outcomeId?: List["outcomeId"];
 } & { sortOrder?: List["sortOrder"] }) {
- 
   const data: any = {
     title,
     userId,
@@ -88,11 +87,10 @@ export function getAllListsAndTodos(userId: User["id"]) {
   }
 }
 
-
 export function getAllMiscAndSpecialLists(userId: User["id"]) {
   try {
     return prisma.list.findMany({
-      where: { userId , outcomeId:null},
+      where: { userId, outcomeId: null },
       include: {
         todos: {
           orderBy: { sortOrder: "asc" },
@@ -402,7 +400,7 @@ export async function deleteCompletedToDosFromPriorityList(
       });
     });
     await Promise.all(deleteCompletedToDos);
-    return { deleteCompletedToDos };
+    return deleteCompletedToDos;
   } catch (error) {
     throw error;
   }

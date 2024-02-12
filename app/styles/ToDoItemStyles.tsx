@@ -17,7 +17,7 @@ export function ToDoItemStyles( {todo}: ToDoItemStylesProps) {
 export function ToDoItemStylesNoBg({ todo }: ToDoItemStylesProps) {
   return (
     todo['isUrgent']
-      ? 'text-accent'
+      ? 'text-accent-focus'
       : todo['isImportant'] ? ' text-success'
         : 'text-base-content'
   )

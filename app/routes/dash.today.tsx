@@ -1,8 +1,9 @@
+import { parse } from 'querystring';
 // import { parse } from 'querystring'
 import { format } from 'date-fns'
 import { useEffect, useState } from 'react'
 import { Outlet, useRouteLoaderData } from '@remix-run/react'
-import { type LoaderFunctionArgs } from '@remix-run/server-runtime'
+import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 import type { LinksFunction } from '@remix-run/react/dist/routeModules'
 
 import styleSheet from "~/styles/SchedulerCss.css";
@@ -10,12 +11,11 @@ import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 
 import Today from '~/components/today/Today'
 import HeadingH2 from '~/components/titles/HeadingH2'
-// import HeadingH3 from '~/components/titles/HeadingH3'
 // import HeadingH5 from '~/components/titles/HeadingH5'
 import { requireUserId } from '~/models/session.server'
 import { getScheduledItems } from '~/models/scheduler.server'
 // import SubHeading14px from '~/components/titles/SubHeading14px'
-import { getAllMiscAndSpecialLists } from '~/models/list.server'
+import { deleteCompletedToDosFromPriorityList, getAllMiscAndSpecialLists, updateCompletedTodos } from '~/models/list.server'
 // import TwoToneSubHeading from '~/components/titles/TwoToneSubHeading'
 // import ThreeParaFlex from '~/components/baseContainers/ThreeParaFlex'
 import { getAllMiscAndSpecialRoutines } from '~/models/routines.server'
@@ -31,6 +31,7 @@ import type { OutcomeWithListsWithStrDates } from '~/types/outcomeTypes'
 import type { ListAndToDos, ListAndTodosWithStrDates } from '~/types/listTypes'
 import type { RoutineAndTasks, RoutineAndTasksWithStrDates } from '~/types/routineTypes'
 import type { DesireWithOutcomesAndAll, DesireWithOutcomesAndListsWithStrDates, DesireWithStringDates } from '~/types/desireTypes'
+import { ServerFailureMessage, ServerSuccessMessage } from '~/components/utilities/constants';
 // import HeadingH1 from '~/components/titles/HeadingH1'
 
 
@@ -56,6 +57,29 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
 }
 
+export const commonActionFunctions = async (request: Request) => {
+  if (request.method === 'POST') {
+    const formBody = await request.text();
+    const parsedBody = parse(formBody);
+    const id = parsedBody.todoId as string;
+    const isComplete = JSON.parse(parsedBody.completeString as string);
+    try {
+      await updateCompletedTodos({ id, isComplete });
+      return ServerSuccessMessage
+    } catch (error) { return ServerFailureMessage }
+  }
+
+  if (request.method === 'DELETE') {
+    const formBody = await request.text();
+    const parsedBody = parse(formBody);
+    const toDoIds = JSON.parse(parsedBody.completedToDoIds as string);
+    try {
+      await deleteCompletedToDosFromPriorityList(toDoIds)
+      return ServerSuccessMessage
+    } catch (error) { return ServerFailureMessage }
+  }
+}
+
 
 
 
@@ -70,39 +94,38 @@ function TodayPage() {
 
   const todaysScheduledEventList = useGetTodaysItems()
   const miscAndSpecialLists: ListAndToDos[] = useGetLoadedLists(thisPath)
-  // ChangeListArrayDates
   const miscAndSpecialRoutines: RoutineAndTasks[] = useGetLoadedRoutines(thisPath)
   const desiresAndAll: DesireWithOutcomesAndAll[] = useGetLoadedDesiresWithAll(thisPath)
+
 
   useEffect(() => {
     if (!todaysScheduledEventList) return
     setTodaysEventList(todaysScheduledEventList)
   }, [todaysScheduledEventList])
 
-  const updateCurrentEvent = () => {
-    if (!todaysEventList || todaysEventList.length === 0) return
-    console.log('updating')
-    setCurrentEvent(GetCurrentEvent(todaysEventList))
-  }
-
   useEffect(() => {
     if (!todaysEventList || todaysEventList.length === 0) return
     setCurrentEvent(GetCurrentEvent(todaysEventList))
   }, [todaysEventList])
-
+  
   useEffect(() => {
     if (!todaysEventList || todaysEventList.length === 0) return
     const intervalId = setInterval(updateCurrentEvent, 1000 * 120);
     return () => clearInterval(intervalId);
   },);
+  
 
+  const updateCurrentEvent = () => {
+    if (!todaysEventList || todaysEventList.length === 0) return
+    setCurrentEvent(GetCurrentEvent(todaysEventList))
+  }
 
   // const { mainDesire, mainOutcome } = useGetMainFocus()
 
 
   return (
     <>
-    <Outlet />
+      <Outlet />
       <article>
         <BasicTextAreaBG pageTitle={'Today'} >
           <div className='flex flex-wrap flex-col gap-8 w-full  '>

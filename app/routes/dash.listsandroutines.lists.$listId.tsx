@@ -82,8 +82,6 @@ function ListPage() {
 export default ListPage
 
 
-
-
 export const useGetCurrentList = (): ListAndToDos | undefined | null => {
   const params = useParams()
   const loaderData = useGetLoaders()
