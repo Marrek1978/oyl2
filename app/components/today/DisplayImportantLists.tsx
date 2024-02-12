@@ -30,7 +30,7 @@ function DisplayImportantLists({ loadedLists }: Props) {
   useEffect(() => {
     if (!loadedLists) return
     setPastDueToDos(getAndSortTodosFromLists({ listsWithToDos: loadedLists, operator: '<' }))
-    setDueTodayToDos(getAndSortTodosFromLists({ listsWithToDos: loadedLists , operator: '=' }))
+    setDueTodayToDos(getAndSortTodosFromLists({ listsWithToDos: loadedLists, operator: '=' }))
     setUrgentToDos(getAndSortTodosFromLists({ listsWithToDos: loadedLists, importance: 'urgent' }))
     setImportantToDos(getAndSortTodosFromLists({ listsWithToDos: loadedLists, importance: 'important' }))
     setUpcomingToDos(getAndSortTodosFromLists({ listsWithToDos: loadedLists, operator: '>' }))
@@ -52,6 +52,16 @@ function DisplayImportantLists({ loadedLists }: Props) {
           </div>
         )}
 
+        {urgentToDos && (
+          <div className='flex-1'>
+            <TimeCriticalTodoListCard
+              toDos={urgentToDos}
+              ListTitle='Urgent'
+              linkUrl={'timeCriticalToDos/?type=urgent'}
+            />
+          </div>
+        )}
+
         {dueTodayToDos && (
           <div className='flex-1'>
             <TimeCriticalTodoListCard
@@ -63,15 +73,6 @@ function DisplayImportantLists({ loadedLists }: Props) {
           </div>
         )}
 
-        {urgentToDos && (
-          <div className='flex-1'>
-            <TimeCriticalTodoListCard
-              toDos={urgentToDos}
-              ListTitle='Urgent'
-              linkUrl={'timeCriticalToDos/?type=urgent'}
-            />
-          </div>
-        )}
 
         {importantToDos && (
           <div className='flex-1'>

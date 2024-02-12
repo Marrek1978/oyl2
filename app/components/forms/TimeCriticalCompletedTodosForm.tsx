@@ -7,19 +7,21 @@ import BasicFormAreaBG from './BasicFormAreaBG';
 import BtnWithProps from '../buttons/BtnWithProps';
 import { sortTodos } from '../utilities/helperFunctions';
 import ToDoWithCompletedBox from '../list/todos/ToDoWithCompletedBox';
-
-import type { ToDo } from '@prisma/client';
 import useFormSubmittedToastUsingFetcher from '../utilities/useFormSubmittedToastUsingFetcher';
 
+import type { ToDo } from '@prisma/client';
+
+
+//! take in list wtih todos,  you need to add a link to the list in the todoWithCompletedBox --- it probably needs to be a TimeCriticalToDoWithCompletedBox component.
 
 interface TodosCompletedFormProps {
-  list: ToDo[];
+  list: ToDo[];  
   formTitle: string;
 }
 
 function TimeCriticalCompletedTodosForm({ list, formTitle = 'New Title' }: TodosCompletedFormProps) {
-  const fetcher = useFetcher();
 
+  const fetcher = useFetcher();
   const [todos, setTodos] = useState<ToDo[]>([])
   const [numItemsToDelete, setNumItemsToDelete] = useState<number>(0)
   const [isDeletingToDos, setIsDeletingToDos] = useState<boolean>(false)
@@ -67,6 +69,11 @@ function TimeCriticalCompletedTodosForm({ list, formTitle = 'New Title' }: Todos
       <BasicFormAreaBG
         h2Text={formTitle}
       >
+
+
+{/* //!  probably needs to be a TimeCriticalToDoWithCompletedBox component to have a link to the list
+//!!!  pass the list id too for a link */}
+
 
         <div className='p-8  form-control gap-y-6  '>
           <div className=" max-h-[50vh] min-h-[200px] overflow-y-auto  ">

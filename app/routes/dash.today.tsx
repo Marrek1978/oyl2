@@ -107,13 +107,13 @@ function TodayPage() {
     if (!todaysEventList || todaysEventList.length === 0) return
     setCurrentEvent(GetCurrentEvent(todaysEventList))
   }, [todaysEventList])
-  
+
   useEffect(() => {
     if (!todaysEventList || todaysEventList.length === 0) return
     const intervalId = setInterval(updateCurrentEvent, 1000 * 120);
     return () => clearInterval(intervalId);
   },);
-  
+
 
   const updateCurrentEvent = () => {
     if (!todaysEventList || todaysEventList.length === 0) return
@@ -183,12 +183,14 @@ function TodayPage() {
             <div className='flex flex-wrap gap-8 mt-8'>
               <div className='w-[400px]  ' >
                 <HeadingH2 text={`Today: ${currentDate}`} />
-                <Today
-                  scheduledItems={todaysEventList}
-                  miscAndSpecialLists={miscAndSpecialLists}
-                  miscAndSpecialRoutines={miscAndSpecialRoutines}
-                  desiresAndAll={desiresAndAll}
-                />
+                <div className='mt-4'>
+                  <Today
+                    scheduledItems={todaysEventList}
+                    miscAndSpecialLists={miscAndSpecialLists}
+                    miscAndSpecialRoutines={miscAndSpecialRoutines}
+                    desiresAndAll={desiresAndAll}
+                  />
+                </div>
               </div>
 
               <div className='  '>

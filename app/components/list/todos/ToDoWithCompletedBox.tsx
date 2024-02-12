@@ -35,6 +35,7 @@ const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem, setIsDisableAllBt
     if (type === '<') textColorClass = 'text-accent-focus'
     if (type === '=') textColorClass = 'text-success'
   }
+  
   const { fetcherState, fetcherMessage } = useFetcherState({ fetcher })
 
   useEffect(() => {
@@ -102,6 +103,9 @@ const ToDoWithCheckBox: React.FC<ToDoItemProps> = ({ todoItem, setIsDisableAllBt
               {format(new Date(todoItem.dueDate), 'EEE, MMM d', { locale: enUS })}
             </div>
           )}
+
+
+{/* //!!! add link to list here */}
 
           <div className="form-control">
             <label className="cursor-pointer label">

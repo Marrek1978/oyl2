@@ -16,6 +16,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 }
 
 
+//! ********************   TimeCriticalToDosPage   ********************
+//! ********************   pass list with todos, you need to pass the list id as well   ********************
+
 function TimeCriticalToDosPage() {
   const [searchParams] = useSearchParams();
   const type = searchParams.get('type');
