@@ -10,9 +10,21 @@ export type ScheduleItemNotYetSaved = Omit<
 >;
 export type AllScheduleItems = ScheduledItem | ScheduleItemNotYetSaved;
 
-export type ScheduledItemWithStrDates = Omit<ScheduledItem, "createdAt" | "updatedAt"> & {
+export type ScheduledItemWithStrDates = Omit<
+  ScheduledItem,
+  "createdAt" | "updatedAt"
+> & {
   createdAt: string;
   updatedAt: string;
+};
+
+export type AllMiscLists = ListAndToDos[];
+export type AllMiscListsDraggableObj = {
+  id: string;
+  title: string;
+  name: string;
+  description: string;
+  lists: ListAndToDos[];
 };
 
 export type AllDraggedItems =
@@ -20,6 +32,7 @@ export type AllDraggedItems =
   | RoutineAndTasks
   | OutcomeWithAll
   | DesireWithOutcomesAndAll
+  | AllMiscListsDraggableObj
   | undefined;
 
 export type JustDroppedItem = Omit<
@@ -30,32 +43,55 @@ export type JustDroppedItem = Omit<
   | ("description" & { description: string })
 >;
 
-
-type TimeblockItem = {
-  type: 'timeblock';
+export type OutcomeListsDescription = {
+  type: "outcomeLists";
   isMainFocus: boolean;
   desireId: string;
   outcomeId: string;
+  lists: ListAndToDos[];
 };
 
-type OutcomeItem = {
-  type: 'outcome';
+type OutcomeItemDescription = {
+  type: "outcome";
   isMainFocus: boolean;
-  subType: 'list' | 'routine';
+  subType: "list" | "routine";
   outcomeId: string;
   itemId: string;
 };
 
-type ListItem = {
-  type: 'list';
+type ListItemDescription = {
+  type: "list";
   listId: string;
 };
 
-type RoutineItem = {
-  type: 'routine';
+type RoutineItemDescription = {
+  type: "routine";
   routineId: string;
 };
 
-export type DraggedItemDescription = TimeblockItem | OutcomeItem | ListItem | RoutineItem ;
+export type DraggedItemDescription =
+  | OutcomeListsDescription
+  | OutcomeItemDescription
+  | ListItemDescription
+  | RoutineItemDescription;
 
-export type DroppedItem = Omit<ScheduledItem, 'createdAt' | 'updatedAt' | 'userId' | 'description' & { description: DraggedItemDescription }>
+export type DroppedItem = {
+  id: string;
+  itemId: string;
+  title: string;
+  isDraggable: boolean;
+  start: Date;
+  end: Date;
+  description: Description;
+};
+
+export type Description = {
+  type?: "outcome" | "outcomeLists" | "list" | "routine" | "allMiscLists";
+  isMainFocus?: boolean;
+  subType?: "list" | "routine";
+  desireId?: string;
+  outcomeId?: string | null;
+  listId?: string;
+  routineId?: string;
+  itemId?: string;
+};

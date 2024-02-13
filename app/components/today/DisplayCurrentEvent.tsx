@@ -12,6 +12,8 @@ import CompletedTasksForm from '../forms/CompletedTasksForm'
 import { GetCurrentListById, GetOutcomeByIdFromDesiresArray } from '../schedule/Scheduler'
 import OutcomeListsDisplay from './OutcomeListsDisplay'
 
+//change display on clicking timeblock
+
 
 type Props = {
   event: ScheduledItem
@@ -23,6 +25,7 @@ type Props = {
 function DisplayCurrentEvent({ event, loadedRoutines, loadedLists, loadedDesiresAndAll }: Props) {
   const [output, setOutput] = useState<JSX.Element>()
   const description = event.description as DraggedItemDescription
+  console.log("🚀 ~ DisplayCurrentEvent ~ description:", description)
 
   // This would be correct
   useEffect(() => {
@@ -57,10 +60,8 @@ function DisplayCurrentEvent({ event, loadedRoutines, loadedLists, loadedDesires
         }
       }
 
-      if (type === 'timeblock') {
-
+      if (type === 'outcomeLists') {
         const outcome = GetOutcomeByIdFromDesiresArray(loadedDesiresAndAll, description.outcomeId)[0]
-
         const result = (<><div><OutcomeListsDisplay outcome={outcome} /></div></>)
         setOutput(result)
       }

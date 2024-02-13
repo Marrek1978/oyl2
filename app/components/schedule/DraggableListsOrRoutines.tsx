@@ -1,5 +1,8 @@
 import Heading16px from '../titles/Heading16px';
+import SubHeading12px from '../titles/SubHeading12px';
 import DraggableListItem from './DraggableListItem';
+import { v4 as uuidv4 } from 'uuid';
+
 
 import type { ListAndToDos } from '~/types/listTypes';
 import type { RoutineAndTasks } from '~/types/routineTypes';
@@ -8,11 +11,20 @@ type Props = {
   handleDragStart: (event: any) => void;
   listsArray: ListAndToDos[] | undefined;
   routinesArray: RoutineAndTasks[] | undefined;
+  isAllListsBlock?: boolean;
 }
 
-function DraggableListsOrRoutines({ handleDragStart, listsArray, routinesArray }: Props) {
+function DraggableListsOrRoutines({ handleDragStart, listsArray, routinesArray, isAllListsBlock = false }: Props) {
   const hasLists = listsArray && listsArray.length > 0
   const hasRoutines = routinesArray && routinesArray.length > 0
+
+  const miscListsObj = {
+    id: uuidv4(),
+    title: 'All Misc. Lists',
+    name: 'allMiscLists',
+    description: 'Auto-Loads All Misc Lists',
+    lists: listsArray
+  }
 
 
   const routineStyle = `misc-draggable-routine`
@@ -42,6 +54,19 @@ function DraggableListsOrRoutines({ handleDragStart, listsArray, routinesArray }
           <div className='my-4'>
             <Heading16px text={'Lists'} />
           </div>
+
+
+          {(hasLists && isAllListsBlock) && (
+            <div
+              className={`all-misc-lists-draggable scheduler-draggableLists-common `}
+              draggable="true"
+              onDragStart={() => handleDragStart(miscListsObj)}
+            >
+              <SubHeading12px text={'All Misc. Lists'} />
+              <div className='text-sm'> (Auto loads All Lists)</div>
+            </div>
+
+          )}
 
           {hasLists ?
             listsArray?.map(list => (

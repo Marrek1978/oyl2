@@ -20,7 +20,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     document.querySelector('html')?.setAttribute('data-theme', theme);
   }, [theme]);
 
-  const toggleTheme = () => setTheme(theme === 'night' ? 'winter' : 'night');
+  const toggleTheme = () => setTheme(theme === 'winter' ? 'night' : 'winter');
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

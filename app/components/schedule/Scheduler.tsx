@@ -1,26 +1,28 @@
 import moment from 'moment'
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from '@remix-run/react';
-import type { Task, ToDo, } from '@prisma/client';
 import React, { useCallback, useMemo, } from 'react'
+
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 import { Calendar, momentLocalizer, Views, } from 'react-big-calendar'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 
-import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
+import { ArrayOfObjectsStrToDates } from '../utilities/helperFunctions';
+import { useGetLoadedDesiresWithAll, useGetLoadedLists, useGetLoadedMiscAndSpecialLists, useGetLoadedRoutines } from '~/routes/dash.schedule';
 
-import { useGetLoadedDesiresWithAll, useGetLoadedLists, useGetLoadedRoutines } from '~/routes/dash.schedule';
-
+import type { Task, ToDo, } from '@prisma/client';
 import type { ListAndToDos } from '~/types/listTypes'
 import type { RoutineAndTasks } from '~/types/routineTypes'
 import type { OutcomeWithAll, } from '~/types/outcomeTypes';
 import type { DesireWithOutcomesAndAll } from '~/types/desireTypes';
 import type { DragFromOutsideItemArgs, EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop'
-import type { AllDraggedItems, AllScheduleItems, DroppedItem, ScheduleItemNotYetSaved } from '~/types/schedulerTypes';
-import { ArrayOfObjectsStrToDates } from '../utilities/helperFunctions';
+import type { AllDraggedItems, AllScheduleItems, DroppedItem, ScheduleItemNotYetSaved, Description } from '~/types/schedulerTypes';
 
 
 const localizer = momentLocalizer(moment)
 const DragAndDropCalendar = withDragAndDrop(Calendar)
+
+
 
 
 interface SchedulerProps {
@@ -50,6 +52,7 @@ function Scheduler({
   const miscAndSpecialRoutines = useGetLoadedRoutines()
   const mainFocusOutcomeId = useGetMainFocusOutcomeId(desiresAndAll);
 
+  const { miscLists, specialLists } = useGetLoadedMiscAndSpecialLists()
 
   //? ***********   CUSTOM DragAndDropCalendar FUNCTIONS   ***************** */
   const dragFromOutsideItem = useCallback(() => {
@@ -74,16 +77,31 @@ function Scheduler({
   }, [setScheduleItems, setIsSaveScheduledItems])
 
 
+
+
+  // drop objects from outside
+  //convert to dropped item
+  // add to schedule
+  //standardize description for tool tips
+
+
   const onDrdopFromOutside = useCallback(({ start: startDate, end: endDate }: DragFromOutsideItemArgs) => {
     if (draggedItem === undefined) return
+
+    console.log(' dragged item is ', draggedItem)
+
     const start = typeof startDate === 'string' ? new Date(startDate) : startDate;
     const end = typeof endDate === 'string' ? new Date(endDate) : endDate;
 
-    let description = {};
+    let description: Description = {};
+
+    //? ***********   Outcome LISTS   ***************** */
     if ('desireId' in draggedItem) {
       const isMainFocus = draggedItem.id === mainFocusOutcomeId;
-      (description = { type: 'timeblock', isMainFocus: isMainFocus, desireId: draggedItem.desireId, outcomeId: draggedItem.id })
+      description = { type: 'outcomeLists', isMainFocus: isMainFocus, desireId: draggedItem.desireId, outcomeId: draggedItem.id }
     }
+
+    //? ***********   SPECIFIC LIST OR ROUTINES   ***************** */
     if ('outcomeId' in draggedItem && draggedItem.outcomeId !== null) {
       const isMainFocus = draggedItem.outcomeId === mainFocusOutcomeId;
       if ('todos' in draggedItem) { (description = { type: 'outcome', isMainFocus: isMainFocus, subType: 'list', outcomeId: draggedItem.outcomeId, itemId: draggedItem.id }) }
@@ -92,6 +110,12 @@ function Scheduler({
 
     'outcomeId' in draggedItem && draggedItem.outcomeId === null && 'todos' in draggedItem && (description = { type: 'list', listId: draggedItem.id })
     'outcomeId' in draggedItem && draggedItem.outcomeId === null && 'tasks' in draggedItem && (description = { type: 'routine', routineId: draggedItem.id })
+
+
+    //? ***********   All MISC LISTS  ***************** */
+    if ('name' in draggedItem && draggedItem.name === 'allMiscLists') {
+      (description = { type: 'allMiscLists' })
+    }
 
     const droppedItem: DroppedItem = {
       id: uuidv4(),
@@ -206,7 +230,7 @@ function Scheduler({
 
 
   function handleToolTipAccessor(event: any) {
-    return CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutines, desiresAndAll })
+    return CreateToolTip({ event, miscAndSpecialLists, miscLists, miscAndSpecialRoutines, desiresAndAll })
   }
 
 
@@ -265,16 +289,16 @@ interface ToolTipType {
   miscAndSpecialLists: ListAndToDos[] | undefined;
   miscAndSpecialRoutines: RoutineAndTasks[] | undefined;
   desiresAndAll: DesireWithOutcomesAndAll[] | undefined;
+  miscLists: ListAndToDos[] | undefined;
 }
 
 
-export function CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutines, desiresAndAll }: ToolTipType): string {
-  // console.log("🚀 ~ file: Scheduler.tsx:272 ~ CreateToolTip ~ desiresAndAll:", desiresAndAll)
-  // console.log("🚀 ~ file: Scheduler.tsx:272 ~ CreateToolTip ~ miscAndSpecialRoutines:", miscAndSpecialRoutines)
-  // console.log("🚀 ~ file: Scheduler.tsx:272 ~ CreateToolTip ~ miscAndSpecialLists:", miscAndSpecialLists)
+export function CreateToolTip({ event, miscAndSpecialLists, miscLists, miscAndSpecialRoutines, desiresAndAll }: ToolTipType): string {
+  console.log("🚀 ~ CreateToolTip ~ miscAndSpecialLists:", miscAndSpecialLists)
   // console.log('create tool tip in scheudler')
   const description = event.description
   const type = description.type
+  console.log("🚀 ~ CreateToolTip ~ type:", type)
   let toolTipHeaderText = ''
   let outcomeName: string;
 
@@ -332,7 +356,7 @@ export function CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutin
     return `\n${toolTipHeaderText}: \n  ${currentToDos?.map((todo: any) => todo.body).join('\n  ')} `
   }
 
-  if (type === 'timeblock') {
+  if (type === 'outcomeLists') {
     const lists = desiresAndAll as DesireWithOutcomesAndAll[]
     const outcomeById = GetOutcomeByIdFromDesiresArray(lists, description.outcomeId)
     if (outcomeById.length === 0) return ' '
@@ -350,6 +374,22 @@ export function CreateToolTip({ event, miscAndSpecialLists, miscAndSpecialRoutin
           return (`${todo.body}`)
         })
         return (`\n  ${listTitle}\n      ${todos}`)
+      }).join('')}  `
+  }
+
+
+  if (type === 'allMiscLists') {
+    const lists = miscLists as ListAndToDos[]
+    toolTipHeaderText = `All Misc. Lists`
+
+    return `\n${toolTipHeaderText}:` +
+      `\nTo-Do Lists` +
+      ` ${lists?.map((todo: any) => {
+        const listTitle = todo.title
+        const todos = todo.todos.map((todo: any) => {
+          return (`${todo.body} `)
+        })
+        return (`\n  ${listTitle}\n      ${todos} \n`)
       }).join('')}  `
   }
 

@@ -4,7 +4,7 @@ import { type ActionFunctionArgs, redirect } from '@remix-run/server-runtime';
 
 import Modal from '~/components/modals/Modal';
 import { deleteList } from '~/models/list.server';
-import { useGetCurrentList } from './dash.listsandroutines.lists.$listId';
+import { useGetCurrentList } from './xxx-dash.listsandroutines.lists.$listId';
 import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
 
 

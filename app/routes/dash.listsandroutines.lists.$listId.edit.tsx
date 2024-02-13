@@ -8,7 +8,7 @@ import ListForm from '~/components/forms/ListForm'
 import { requireUserId } from '~/models/session.server';
 import { updateListAndTodos } from '~/models/list.server';
 import { sortTodos } from '~/components/utilities/helperFunctions';
-import { useGetCurrentList } from './dash.listsandroutines.lists.$listId';
+import { useGetCurrentList } from './xxx-dash.listsandroutines.lists.$listId';
 
 import type { ListAndToDos } from '~/types/listTypes'
 

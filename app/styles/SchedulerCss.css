@@ -94,6 +94,12 @@
   text-base  text-base-content;
 }
 
+.all-misc-lists-draggable {
+  @apply border-2 border-accent 
+  bg-accent/90
+  text-base text-accent-content
+}
+
 .misc-draggable-routine {
   @apply border-2 border-warning-content/30
   bg-warning

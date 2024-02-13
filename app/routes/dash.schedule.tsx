@@ -24,7 +24,6 @@ import DesiresAndOutcomesWithListsAndRoutinesAsDraggables from '~/components/sch
 
 import type { Item } from '~/types/itemTypes'
 import type { ListAndToDos } from '~/types/listTypes'
-import type { OutcomeWithAll } from '~/types/outcomeTypes'
 import type { RoutineAndTasks } from '~/types/routineTypes'
 import type { AllDraggedItems } from '~/types/schedulerTypes'
 import type { DesireWithOutcomesAndAll } from '~/types/desireTypes'
@@ -37,8 +36,6 @@ import type { TodayAndScheduleLoadersDataType } from './dash.today'
 //!  stop propgation to day view, so that it doesnt open the day view when clicking a day
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styleSheet }];
-
-export type DraggedItem = ListAndToDos | RoutineAndTasks | OutcomeWithAll | undefined
 
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -105,7 +102,7 @@ function Schedule() {
   }, [thisWeeksScheduledItems])
 
 
-  const handleDragStart = useCallback((item: DraggedItem) => {
+  const handleDragStart = useCallback((item: AllDraggedItems) => {
     setDraggedItem(item)
   }, [])
 
@@ -200,6 +197,7 @@ function Schedule() {
                   handleDragStart={handleDragStart}
                   listsArray={miscLists}
                   routinesArray={miscRoutines}
+                  isAllListsBlock={true}
                 />
               </div>
             </div>

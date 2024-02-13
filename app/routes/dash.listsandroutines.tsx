@@ -7,7 +7,7 @@ import { requireUserId } from '~/models/session.server';
 import { getAllRoutines } from '~/models/routines.server';
 import { getAllListsAndTodos } from '~/models/list.server';
 import BtnWithProps from '~/components/buttons/BtnWithProps';
-import SubHeading14px from '~/components/titles/SubHeading14px';
+// import SubHeading14px from '~/components/titles/SubHeading14px';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 import { ChangeListArrayDates  } from '~/components/utilities/helperFunctions';
 
@@ -68,9 +68,9 @@ function ListsPage() {
                   />
                 </Link>
               </div>
-              <div className='mt-4 text-success'>
+              {/* <div className='mt-4 text-success'>
                 <SubHeading14px text='Misc. Lists' />
-              </div>
+              </div> */}
               <div className='mt-4'>
                 <DisplayListsOrRoutines lists={miscLists} />
               </div>
@@ -102,9 +102,9 @@ function ListsPage() {
                   />
                 </Link>
               </div>
-              <div className='mt-4 '>
+              {/* <div className='mt-4 '>
                 <SubHeading14px text='Misc. Routines' />
-              </div>
+              </div> */}
               <DisplayListsOrRoutines lists={miscRoutines} listType={'routine'} />
             </div>
           </div>
@@ -126,9 +126,9 @@ function ListsPage() {
                 </Link>
               </div>
 
-              <div className='mt-4 '>
+              {/* <div className='mt-4 '>
                 <SubHeading14px text='Special Lists' />
-              </div>
+              </div> */}
               <DisplayListsOrRoutines lists={specialLists} />
             </div>
 
@@ -145,9 +145,9 @@ function ListsPage() {
                   />
                 </Link>
               </div>
-              <div className='mt-4 '>
+              {/* <div className='mt-4 '>
                 <SubHeading14px text='Special Routines' />
-              </div>
+              </div> */}
               <DisplayListsOrRoutines lists={specialRoutines} listType={'routine'} />
             </div>
           </div>

@@ -175,9 +175,12 @@ function TodayPage() {
 
 
             <div className='w-full'>
-              <DisplayImportantLists
-                loadedLists={miscAndSpecialLists}
-              />
+              <DisplayImportantLists loadedLists={miscAndSpecialLists} />
+            </div>
+
+            <div className='w-full flex flex-wrap gap-x-8 '>
+              <div>Appointments</div>
+              <div>Vacations</div>
             </div>
 
             <div className='flex flex-wrap gap-8 mt-8'>
