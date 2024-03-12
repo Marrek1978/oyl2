@@ -1,25 +1,34 @@
 
 // [
 //   {
-//     name:string
+//     needName:string
 //     description:string
-//     subNeeds: [
+//     categories: [
 //       {
-//         name:string
+//         category:string
 //         criteria: string[]
 //       }
 //     ]
 //   }
 // ] 
 
+export type MaslowsNeedsType = {
+  needName: string,
+  description: string,
+  categories: {
+    categoryName: string,
+    criteria: string[]
+  }[]
+}
+
 
 export const MaslowsNeeds = [
   {
-    name: 'Physiological',
+    needName: 'Physiological',
     description: 'These are the basic needs of the human body. They include food, water, warmth, rest, and air.',
-    subNeeds: [
+    categories: [
       {
-        name: "Air",
+        categoryName: "Air",
         criteria: [
           "Regular, unlabored breathing without distress.",
           "Ability to engage in physical activities without abnormal breathlessness.",
@@ -27,23 +36,23 @@ export const MaslowsNeeds = [
         ]
       },
       {
-        name: "Water",
+        categoryName: "Water",
         criteria: [
-          "	Regular consumption of water, leading to adequate hydration.",
-          "	Clear or light-colored urine, indicating proper hydration.",
-          "	Absence of physical symptoms of dehydration, such as dry mouth, excessive thirst, or dizziness.",
+          "Regular consumption of water, leading to adequate hydration.",
+          "Clear or light-colored urine, indicating proper hydration.",
+          "Absence of physical symptoms of dehydration, such as dry mouth, excessive thirst, or dizziness.",
         ]
       },
       {
-        name: "Food",
+        categoryName: "Food",
         criteria: [
-          "	Consistent access to and consumption of a variety of nutritious foods.",
-          "	Maintenance of a healthy body weight and nutrient levels.",
-          "	Absence of symptoms related to malnutrition or over-nutrition.",
+          "Consistent access to and consumption of a variety of nutritious foods.",
+          "Maintenance of a healthy body weight and nutrient levels.",
+          "Absence of symptoms related to malnutrition or over-nutrition.",
         ]
       },
       {
-        name: "Shelter",
+        categoryName: "Shelter",
         criteria: [
           "Secure and stable living conditions that provide protection from the elements and environmental hazards.",
           "A sense of privacy and personal space.",
@@ -51,7 +60,7 @@ export const MaslowsNeeds = [
         ]
       },
       {
-        name: "Clothing",
+        categoryName: "Clothing",
         criteria: [
           "Access to and use of appropriate clothing for different weather conditions and social situations.",
           "Clothing that protects against environmental hazards and supports physical comfort.",
@@ -59,7 +68,7 @@ export const MaslowsNeeds = [
         ]
       },
       {
-        name: "Warmth",
+        categoryName: "Warmth",
         criteria: [
           "Ability to maintain a comfortable body temperature in various environments.",
           "Access to heating in cold weather and cooling in hot weather to prevent extreme discomfort or health risks.",
@@ -67,7 +76,7 @@ export const MaslowsNeeds = [
         ]
       },
       {
-        name: "Sleep",
+        categoryName: "Sleep",
         criteria: [
           "Regular sleep patterns that provide sufficient rest, typically 7-9 hours per night for most adults.",
           "Waking up feeling rested and rejuvenated.",
@@ -75,7 +84,7 @@ export const MaslowsNeeds = [
         ]
       },
       {
-        name: "Sex",
+        categoryName: "Sex",
         criteria: [
           "Achieving physical satisfaction and release through sexual activity, which could include sexual intercourse, other sexual activities, or masturbation, leading to a sense of physical well-being.",
           "Engaging in sexual activities at a frequency that feels satisfactory and fulfilling for the individual's physical desires, acknowledging that this frequency can vary widely among individuals.",
@@ -87,11 +96,11 @@ export const MaslowsNeeds = [
     ],
   },
   {
-    name: 'Safety',
+    needName: 'Safety',
     description: 'These needs are about keeping us safe from harm. They include personal security, financial security, health and well-being, and safety nets against accidents and illness.',
-    subNeeds: [
+    categories: [
       {
-        name: 'Personal Security',
+        categoryName: 'Personal Security',
         criteria: [
           "Feeling safe in one's home and community.",
           "Being free from physical violence, abuse, and harassment.",
@@ -99,31 +108,7 @@ export const MaslowsNeeds = [
         ]
       },
       {
-        name: 'Financial Security',
-        criteria: [
-          "Having a stable income and the ability to meet basic needs.",
-          "Feeling secure in one's job and career prospects.",
-          "Having access to financial resources to address emergencies and unexpected expenses.",
-        ]
-      },
-      {
-        name: 'Health and Well-Being',
-        criteria: [
-          "Access to healthcare services and preventive care.",
-          "Feeling physically and mentally healthy and free from chronic illness.",
-          "Having access to resources and information that support overall well-being, such as healthy food, exercise, and mental health support.",
-        ]
-      },
-      {
-        name: 'Safety Nets',
-        criteria: [
-          "Having insurance and other protections against accidents, illness, and other unexpected events.",
-          "Feeling secure in one's living situation and having a plan for emergencies.",
-          "Having access to social services and support networks that can provide assistance in times of need.",
-        ]
-      },
-      {
-        name: 'Safety Against Accidents and Illness',
+        categoryName: 'Safety Against Accidents and Illness',
         criteria: [
           "Living and working in environments that are free from hazards and risks to physical safety.",
           "Having access to safety equipment and resources to prevent accidents and injuries.",
@@ -131,29 +116,45 @@ export const MaslowsNeeds = [
         ]
       },
       {
-        name: "Consistency and Predictability",
+        categoryName: 'Health and Well-Being',
+        criteria: [
+          "Access to healthcare services and preventive care.",
+          "Feeling physically and mentally healthy and free from chronic illness.",
+          "Having access to resources and information that support overall well-being, such as healthy food, exercise, and mental health support.",
+        ]
+      },
+      {
+        categoryName: 'Financial Security',
+        criteria: [
+          "Having a stable income and the ability to meet basic needs.",
+          "Feeling secure in one's job and career prospects.",
+          "Having access to financial resources to address emergencies and unexpected expenses.",
+        ]
+      },
+      {
+        categoryName: "Consistency and Predictability",
         criteria: [
           "Having a stable and predictable routine in daily life.",
           "Feeling secure in one's relationships and social environment.",
           "Having access to reliable and consistent resources, such as food, shelter, and transportation.",
         ]
       },
+      {
+        categoryName: 'Safety Nets',
+        criteria: [
+          "Having insurance and other protections against accidents, illness, and other unexpected events.",
+          "Feeling secure in one's living situation and having a plan for emergencies.",
+          "Having access to social services and support networks that can provide assistance in times of need.",
+        ]
+      },
     ],
   },
   {
-    name: 'Love and Belonging',
+    needName: 'Love and Belonging',
     description: 'After the first two needs have been satisfied, human beings begin to crave relationships and a sense of belonging.',
-    subNeeds: [
+    categories: [
       {
-        name: 'Emotional Connections',
-        criteria: [
-          "Feeling loved and cared for by others.",
-          "Having close, supportive relationships with friends and family.",
-          "Feeling connected to others and having a sense of belonging.",
-        ]
-      },
-      {
-        name: 'Sense of Belonging',
+        categoryName: 'Sense of Belonging',
         criteria: [
           "Feeling valued and respected by others.",
           "Having a sense of belonging and acceptance in social groups and communities.",
@@ -161,7 +162,7 @@ export const MaslowsNeeds = [
         ]
       },
       {
-        name: 'Mutual Support',
+        categoryName: 'Mutual Support',
         criteria: [
           "Feeling supported and encouraged by others.",
           "Having a sense of camaraderie and teamwork in relationships and social groups.",
@@ -169,7 +170,7 @@ export const MaslowsNeeds = [
         ]
       },
       {
-        name: 'Acceptance and Inclusion',
+        categoryName: 'Acceptance and Inclusion',
         criteria: [
           "Feeling accepted and included in social and professional circles.",
           "Being treated with fairness and respect by others.",
@@ -177,29 +178,37 @@ export const MaslowsNeeds = [
         ]
       },
       {
-        name: 'Intimate Relationship',
-        criteria: [
-          "Feeling loved and appreciated in romantic relationships.",
-          "Having a sense of intimacy and connection with a partner.",
-          "Receiving emotional and physical support from a partner.",
-        ]
-      },
-      {
-        name: 'Positive Social Interactions',
+        categoryName: 'Positive Social Interactions',
         criteria: [
           "Having enjoyable and fulfilling interactions with others.",
           "Feeling comfortable and confident in social situations.",
           "Having opportunities for socializing and connecting with others.",
         ]
       },
+      {
+        categoryName: 'Emotional Connections',
+        criteria: [
+          "Feeling loved and cared for by others.",
+          "Having close, supportive relationships with friends and family.",
+          "Feeling connected to others and having a sense of belonging.",
+        ]
+      },
+      {
+        categoryName: 'Intimate Relationship',
+        criteria: [
+          "Feeling loved and appreciated in romantic relationships.",
+          "Having a sense of intimacy and connection with a partner.",
+          "Receiving emotional and physical support from a partner.",
+        ]
+      },
     ],
   },
   {
-    name: 'Esteem',
+    needName: 'Esteem',
     description: 'Esteem needs are about being respected and successful. These needs include things that reflect self-esteem, personal worth, social recognition, and accomplishment.',
-    subNeeds: [
+    categories: [
       {
-        name: 'Self-Respect',
+        categoryName: 'Self-Respect',
         criteria: [
           "Feeling confident and proud of one's abilities and accomplishments.",
           "Having a positive self-image and a relistic sense of self-worth.",
@@ -207,15 +216,7 @@ export const MaslowsNeeds = [
         ]
       },
       {
-        name: 'Achievement',
-        criteria: [
-          "Setting and reaching personal and professional goals.",
-          "Feeling successful and accomplished in one's endeavors.",
-          "Valuing one's own efforts and successes.",
-        ]
-      },
-      {
-        name: 'Confidence',
+        categoryName: 'Confidence',
         criteria: [
           "Exhibiting confidence in one's abilities and in facing new challenges",
           "Feeling secure in one's decisions and actions.",
@@ -223,77 +224,37 @@ export const MaslowsNeeds = [
         ]
       },
       {
-        name: 'Competence and Mastery',
-        criteria: [
-          "Developing and using skills and talents to achieve success.",
-          "Feeling competent and capable in one's professional and personal life.",
-          "Mastering new skills and knowledge.",
-        ]
-      },
-      {
-        name: 'Independence and Autonomy',
+        categoryName: 'Independence and Autonomy',
         criteria: [
           "Feeling self-reliant and capable of making independent decisions.",
           "Having control over one's own life and choices.",
           "Experiencing freedom and autonomy in personal and professional pursuits.",
         ]
       },
+      {
+        categoryName: 'Achievement',
+        criteria: [
+          "Setting and reaching personal and professional goals.",
+          "Feeling successful and accomplished in one's endeavors.",
+          "Valuing one's own efforts and successes.",
+        ]
+      },
+      {
+        categoryName: 'Competence and Mastery',
+        criteria: [
+          "Developing and using skills and talents to achieve success.",
+          "Feeling competent and capable in one's professional and personal life.",
+          "Mastering new skills and knowledge.",
+        ]
+      },
     ],
   },
   {
-    name: 'Self-Actualization',
+    needName: 'Self-Actualization',
     description: 'This is the highest level of Maslow’s hierarchy of needs. Self-actualizing people are self-aware, concerned with personal growth, less concerned with the opinions of others, and interested in fulfilling their potential.',
-    subNeeds: [
+    categories: [
       {
-        name: 'Personal Growth',
-        criteria: [
-          "Pursuing personal and professional development.",
-          "Seeking opportunities for learning and self-improvement.",
-          "Feeling motivated to grow and evolve as an individual.",
-        ]
-      },
-      {
-        name: 'Creativity',
-        criteria: [
-          "Expressing originality and creativity in one's work and personal pursuits.",
-          "Seeking opportunities for innovative thinking and problem-solving.",
-          "Engaging in artistic and intellectual pursuits.",
-        ],
-      },
-      {
-        name: 'Authenticity',
-        criteria: [
-          "Living in alignment with one's true self and values.",
-          "Being honest and genuine in interactions with others.",
-          "Feeling comfortable expressing one's true thoughts and emotions.",
-        ]
-      },
-      {
-        name: 'Problem-Solving and Critical Thinking',
-        criteria: [
-          "Approaching challenges with curiosity and a desire to find solutions.",
-          "Using critical thinking skills to analyze and solve problems.",
-          "Feeling confident in one's ability to overcome obstacles.",
-        ]
-      },
-      {
-        name: 'Purpose and Meaning',
-        criteria: [
-          "Seeking meaning and purpose in life.",
-          "Feeling connected to a greater sense of purpose or spirituality.",
-          "Engaging in activities that align with one's values and beliefs.",
-        ]
-      },
-      {
-        name: 'Peak Experiences',
-        criteria: [
-          "Experiencing moments of intense joy, creativity, and connection.",
-          "Feeling a sense of transcendence and awe.",
-          "Seeking out experiences that bring a sense of fulfillment and unity with the larger world.",
-        ]
-      },
-      {
-        name: 'Acceptance of Self and Others',
+        categoryName: 'Acceptance of Self and Others',
         criteria: [
           "Accepting oneself and others without judgment or criticism.",
           "Embracing one's strengths and weaknesses.",
@@ -301,7 +262,39 @@ export const MaslowsNeeds = [
         ]
       },
       {
-        name: "Interpersonal Relationships",
+        categoryName: 'Personal Growth',
+        criteria: [
+          "Pursuing personal and professional development.",
+          "Seeking opportunities for learning and self-improvement.",
+          "Feeling motivated to grow and evolve as an individual.",
+        ]
+      },
+      {
+        categoryName: 'Authenticity',
+        criteria: [
+          "Living in alignment with one's true self and values.",
+          "Being honest and genuine in interactions with others.",
+          "Feeling comfortable expressing one's true thoughts and emotions.",
+        ]
+      },
+      {
+        categoryName: 'Self-Expression',
+        criteria: [
+          "Expressing one's unique identity and individuality.",
+          "Feeling free to express thoughts, emotions, and ideas.",
+          "Pursuing creative and artistic endeavors.",
+        ]
+      },
+      {
+        categoryName: 'Creativity',
+        criteria: [
+          "Expressing originality and creativity in one's work and personal pursuits.",
+          "Seeking opportunities for innovative thinking and problem-solving.",
+          "Engaging in artistic and intellectual pursuits.",
+        ],
+      },
+      {
+        categoryName: "Interpersonal Relationships",
         criteria: [
           "Having deep and meaningful connections with others.",
           "Feeling empathy and compassion for others.",
@@ -309,16 +302,23 @@ export const MaslowsNeeds = [
         ]
       },
       {
-        name: 'Mastery and Competence',
+        categoryName: 'Problem-Solving and Critical Thinking',
         criteria: [
-          "Developing and using skills and talents to achieve success.",
-          "Feeling competent and capable in one's professional and personal life.",
-          "Mastering new skills and knowledge.",
+          "Approaching challenges with curiosity and a desire to find solutions.",
+          "Using critical thinking skills to analyze and solve problems.",
+          "Feeling confident in one's ability to overcome obstacles.",
         ]
       },
-
       {
-        name: 'Fulfillment of Potential',
+        categoryName: 'Purpose and Meaning',
+        criteria: [
+          "Seeking meaning and purpose in life.",
+          "Feeling connected to a greater sense of purpose or spirituality.",
+          "Engaging in activities that align with one's values and beliefs.",
+        ]
+      },
+      {
+        categoryName: 'Fulfillment of Potential',
         criteria: [
           "Using one's talents and abilities to the fullest extent.",
           "Feeling a sense of purpose and fulfillment in life.",
@@ -326,14 +326,21 @@ export const MaslowsNeeds = [
         ]
       },
       {
-        name: 'Self-Expression',
+        categoryName: 'Mastery and Competence',
         criteria: [
-          "Expressing one's unique identity and individuality.",
-          "Feeling free to express thoughts, emotions, and ideas.",
-          "Pursuing creative and artistic endeavors.",
+          "Developing and using skills and talents to achieve success.",
+          "Feeling competent and capable in one's professional and personal life.",
+          "Mastering new skills and knowledge.",
         ]
       },
-
+      {
+        categoryName: 'Peak Experiences',
+        criteria: [
+          "Experiencing moments of intense joy, creativity, and connection.",
+          "Feeling a sense of transcendence and awe.",
+          "Seeking out experiences that bring a sense of fulfillment and unity with the larger world.",
+        ]
+      },
     ],
   },
 ];
