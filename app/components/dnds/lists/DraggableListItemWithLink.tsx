@@ -3,7 +3,7 @@ import { Link } from '@remix-run/react';
 
 import { EditIcon } from '~/components/utilities/icons';
 import BtnWithProps from '~/components/buttons/BtnWithProps';
-import Heading16pxWithLink from '~/components/titles/Heading16pxWithLink';
+import Heading16pxWithLink from '~/components/headers/Heading16pxWithLink';
 
 import type { MouseEventHandler, ReactNode } from 'react'
 import type { BtnType, DaisyUIBtnColor, DaisyUIBtnSize, DaisyUIColor, TWTextSizes } from '~/types/CSSTypes';

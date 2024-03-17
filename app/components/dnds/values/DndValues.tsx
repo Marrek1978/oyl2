@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react'
 import { useFetcher } from '@remix-run/react';
 
 import DndInfo from '~/components/dnds/DndInfo';
-import PageTitle from '~/components/titles/PageTitle';
+import PageTitle from '~/components/headers/PageTitle';
 import useFetcherState from '~/components/utilities/useFetcherState';
-import useServerMessages from '~/components/modals/useServerMessages';
+import useServerMessages from '~/components/displays/modals/useServerMessages';
 import DndSortableGeneric from '~/components/dnds/values/DndSortableGeneric';
 import DndAndSortableContexts from '~/components/dnds/DndAndSortableContexts';
 import useDndDropOrderSaveFunctions from '~/components/dnds/useDndDropOrderSaveFunctions';
 
 import type { Value } from '@prisma/client'
-import ToggleWithLabelAndGuideLineLink from '~/components/forms/ToggleWithLabelAndGuideLineLink';
+import ToggleWithLabelAndGuideLineLink from '~/components/forms/inputs/ToggleWithLabelAndGuideLineLink';
 
 
 interface Props {

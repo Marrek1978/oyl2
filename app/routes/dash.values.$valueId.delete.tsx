@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, } from '@remix-run/react';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import { useGetSpecificValue } from './dash.values';
 import { deleteValue } from '~/models/values.server';
-import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
+import AreYouSureDeleteModal from '~/components/displays/modals/AreYouSureDeleteModal';
 import useFormDeletedToastAndRedirect from '~/components/utilities/useFormDeletedToast';
 
 import type { Value } from '@prisma/client';

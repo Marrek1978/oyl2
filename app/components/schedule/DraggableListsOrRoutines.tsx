@@ -1,5 +1,5 @@
-import Heading16px from '../titles/Heading16px';
-import SubHeading12px from '../titles/SubHeading12px';
+import Heading16px from '../headers/Heading16px';
+import SubHeading12px from '../headers/SubHeading12px';
 import DraggableListItem from './DraggableListItem';
 import { v4 as uuidv4 } from 'uuid';
 

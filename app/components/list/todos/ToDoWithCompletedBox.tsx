@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { enUS } from 'date-fns/locale';
 
-import Modal from '~/components/modals/Modal';
-import ErrorMessage from '~/components/modals/ErrorMessage';
+import Modal from '~/components/displays/modals/Modal';
+import ErrorMessage from '~/components/displays/modals/ErrorMessage';
 import { ToDoItemStylesNoBg } from '~/styles/ToDoItemStyles'
 import useFetcherState from '~/components/utilities/useFetcherState';
 

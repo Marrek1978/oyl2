@@ -1,7 +1,7 @@
 import { Outlet, useLoaderData } from '@remix-run/react';
 import { redirect, type ActionFunctionArgs, type LoaderFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal';
+import Modal from '~/components/displays/modals/Modal';
 import { updateDesire } from '~/models/desires.server';
 import { requireUserId } from '~/models/session.server';
 import DesiresForm from '~/components/forms/DesiresForm';

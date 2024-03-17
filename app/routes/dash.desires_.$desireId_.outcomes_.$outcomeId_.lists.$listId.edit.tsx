@@ -3,7 +3,7 @@ import { Outlet } from '@remix-run/react';
 import { useEffect, useState } from 'react'
 import { redirect, type ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import ListForm from '~/components/forms/ListForm'
 import { requireUserId } from '~/models/session.server';
 import { updateListAndTodos } from '~/models/list.server';

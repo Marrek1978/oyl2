@@ -1,5 +1,4 @@
-import React from 'react'
-import InputLabel from './inputFieldLabel'
+import InputLabel from './InputLabel'
 import type { Dispatch, SetStateAction } from 'react'
 
 
@@ -14,7 +13,7 @@ type Props = {
 
 function TextAreaInputField({ inputFieldLabel, fieldName, defaultValue, placeholder, validationErrors , onChangeSetter}: Props) {
 
-  const inputFieldLabelComponent = InputLabel({ inputLabel: inputFieldLabel })
+  const inputFieldLabelComponent = InputLabel({ inputTitle: inputFieldLabel })
 
   return (
     <>

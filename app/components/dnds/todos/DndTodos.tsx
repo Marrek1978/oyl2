@@ -6,9 +6,9 @@ import type { CreationTodo } from '~/types/listTypes';
 import DndInfo from '../DndInfo';
 import SortableToDo from './SortableTodo';
 import DndAndSortableContexts from '../DndAndSortableContexts';
-import SubHeading14px from "~/components/titles/SubHeading14px";
+import SubHeading14px from "~/components/headers/SubHeading14px";
 import useFetcherState from '~/components/utilities/useFetcherState';
-import useServerMessages from '~/components/modals/useServerMessages';
+import useServerMessages from '~/components/displays/modals/useServerMessages';
 import useDndDropOrderSaveFunctions from '../useDndDropOrderSaveFunctions';
 
 interface DndTodosProps {

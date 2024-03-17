@@ -1,11 +1,11 @@
 import { Form } from '@remix-run/react'
 import { useCallback, useEffect, useState } from 'react'
 
-import FormButtons from '../FormButtons'
+import FormButtons from '../../buttons/FormButtons'
 import { setAsCurrency } from './SavingForm'
-import BasicFormAreaBG from '../BasicFormAreaBG'
+import BasicFormAreaBG from '../util/BasicFormAreaBG'
 import { CoreValue } from '~/components/utilities/Guidelines'
-import InputLabelWithGuideLineLink from '../InputLabelWithGuideLineLink'
+import InputLabelWithGuideLineLink from '../inputs/InputLabelWithGuideLineLink'
 import useGetNavigationState from '~/components/utilities/useNavigationState'
 import { useGetMonthlySavingsAmount } from '~/routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings'
 

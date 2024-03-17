@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { useFetcher } from '@remix-run/react';
 
 import DndInfo from '~/components/dnds/DndInfo';
-import Heading14px from '~/components/titles/Heading14px';
-import useServerMessages from '~/components/modals/useServerMessages';
+import Heading14px from '~/components/headers/Heading14px';
+import useServerMessages from '~/components/displays/modals/useServerMessages';
 import useDndDropOrderSaveFunctions from '../useDndDropOrderSaveFunctions';
 import DndAndSortableContexts from '~/components/dnds/DndAndSortableContexts';
 import DndMilestonesSortable from '~/components/dnds/milestones/DndMilestonesSortable';

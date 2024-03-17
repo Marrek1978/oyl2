@@ -14,9 +14,9 @@ import {
   useRouteError,
 } from "@remix-run/react";
 
-import Navbar from './components/nav/Navbar';
+import Navbar from './components/displays/nav/Navbar';
 import navSytles from '~/styles/SideNav.css'
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import FormStyles from '~/styles/FormCss.css';
 import Error from '~/components/utilities/Error'
 import { getUser } from "~/models/session.server";

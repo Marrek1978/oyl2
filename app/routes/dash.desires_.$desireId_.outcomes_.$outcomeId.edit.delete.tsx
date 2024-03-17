@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { type ActionFunctionArgs } from '@remix-run/server-runtime';
-import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
+import AreYouSureDeleteModal from '~/components/displays/modals/AreYouSureDeleteModal';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import { deleteOutcomeById } from '~/models/outcome.server';
 import { useGetOutcomeIdLoaderData } from './dash.desires_.$desireId_.outcomes_.$outcomeId';
 

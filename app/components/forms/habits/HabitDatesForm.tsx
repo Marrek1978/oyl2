@@ -1,11 +1,11 @@
 import { Form } from '@remix-run/react'
 import { useState, useEffect, } from 'react';
 
-import FormButtons from '~/components/forms/FormButtons';
-import DateCheckBox from '~/components/habits/DateCheckBox';
+import FormButtons from '~/components/buttons/FormButtons';
+import DateCheckBox from '~/components/displays/habits/DateCheckBox';
 import BtnWithProps from '~/components/buttons/BtnWithProps';
-import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
-import useServerMessages from '~/components/modals/useServerMessages';
+import BasicFormAreaBG from '~/components/forms/util/BasicFormAreaBG';
+import useServerMessages from '~/components/displays/modals/useServerMessages';
 import useGetNavigationState from '~/components/utilities/useNavigationState';
 
 import type { HabitWithDates } from '~/types/habitTypes';

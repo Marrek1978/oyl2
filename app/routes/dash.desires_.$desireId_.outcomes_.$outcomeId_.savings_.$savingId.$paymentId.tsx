@@ -2,7 +2,7 @@ import { parse } from 'querystring';
 import { Outlet, useParams } from '@remix-run/react';
 import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import { updatePayment } from '~/models/payment.server';
 import PaymentForm from '~/components/forms/savings/PaymentForm'
 import { currStringToNum } from '~/routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings';

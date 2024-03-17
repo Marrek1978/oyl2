@@ -1,13 +1,13 @@
 import { Form } from '@remix-run/react'
 import { useState, useEffect, useMemo } from 'react';
 
-import FormButtons from '~/components/forms/FormButtons';
-import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
-import useServerMessages from '~/components/modals/useServerMessages';
+import FormButtons from '~/components/buttons/FormButtons';
+import BasicFormAreaBG from '~/components/forms/util/BasicFormAreaBG';
+import useServerMessages from '~/components/displays/modals/useServerMessages';
 import useGetNavigationState from '~/components/utilities/useNavigationState';
 import { CoreValue, CoreValueStatement } from '~/components/utilities/Guidelines';
-import { headerText, useSaveBtnText } from '~/components/forms/FormsCommonFunctions';
-import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
+import { headerText, useSaveBtnText } from '~/components/forms/util/FormsCommonFunctions';
+import InputLabelWithGuideLineLink from '~/components/forms/inputs/InputLabelWithGuideLineLink';
 
 import type { Value } from '@prisma/client';
 

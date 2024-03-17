@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react'
 import { Outlet, useParams } from '@remix-run/react'
 import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import CompletedTodosForm from '~/components/forms/CompletedTodosForm'
 import { useGetListsWithTodos } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.lists'
-import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect'
+import useInvalidItemIdAlertAndRedirect from '~/components/displays/modals/InvalidItemIdAlertAndRedirect'
 import { deleteCompletedToDosFromList, reorderCompletedToDos, updateCompletedTodos } from '~/models/list.server'
 
 import type { ListAndToDos } from '~/types/listTypes'

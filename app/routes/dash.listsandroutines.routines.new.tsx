@@ -1,7 +1,7 @@
 import { parse } from 'querystring';
 import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal';
+import Modal from '~/components/displays/modals/Modal';
 import { requireUserId } from '~/models/session.server';
 import RoutineForm from '~/components/forms/RoutineForm';
 import { createRoutineAndTasks } from '~/models/routines.server';

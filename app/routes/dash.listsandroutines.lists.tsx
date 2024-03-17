@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Outlet, useSearchParams, } from '@remix-run/react';
 import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal';
+import Modal from '~/components/displays/modals/Modal';
 import { updateListsOrder } from '~/models/list.server';
 import DndItemsForm from '~/components/dnds/listsOrRoutinesByTitles/DndItems';
 import { useGetMiscLists, useGetSpecialLists } from './dash.listsandroutines';

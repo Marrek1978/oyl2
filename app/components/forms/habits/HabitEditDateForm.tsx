@@ -1,9 +1,9 @@
 import { Form } from '@remix-run/react'
 
-import FormButtons from '../FormButtons'
+import FormButtons from '../../buttons/FormButtons'
 import { useEffect, useState } from 'react'
-import BasicFormAreaBG from '../BasicFormAreaBG'
-import DateCheckBox from '~/components/habits/DateCheckBox'
+import BasicFormAreaBG from '../util/BasicFormAreaBG'
+import DateCheckBox from '~/components/displays/habits/DateCheckBox'
 
 import type { HabitDate } from '@prisma/client'
 import useGetNavigationState from '~/components/utilities/useNavigationState'

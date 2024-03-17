@@ -1,6 +1,6 @@
 import React from 'react';
 import { v4 as uuid } from 'uuid';
-import SubHeading12px from '../titles/SubHeading12px';
+import SubHeading12px from '../headers/SubHeading12px';
 
 import type { OutcomeWithAll } from '~/types/outcomeTypes';
 import type { DesireWithOutcomesAndAll } from '~/types/desireTypes';

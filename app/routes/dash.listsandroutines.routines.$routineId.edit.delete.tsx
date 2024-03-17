@@ -2,8 +2,8 @@ import { parse } from 'querystring';
 import { useEffect, useState } from 'react';
 import { type ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal';
-import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
+import Modal from '~/components/displays/modals/Modal';
+import AreYouSureDeleteModal from '~/components/displays/modals/AreYouSureDeleteModal';
 import { deleteRoutine } from '~/models/routines.server';
 import { useGetCurrentRoutine } from './dash.listsandroutines.routines.$routineId';
 import useFormDeletedToastAndRedirect from '~/components/utilities/useFormDeletedToast';

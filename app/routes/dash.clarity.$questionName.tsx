@@ -1,11 +1,11 @@
 import { useParams } from '@remix-run/react';
 import { type ActionFunctionArgs, redirect } from '@remix-run/server-runtime'
 
-import Modal from '~/components/modals/Modal';
+import Modal from '~/components/displays/modals/Modal';
 import { requireUserId } from '~/models/session.server';
 import { useGetClarityLoaderData } from './dash.clarity';
 import { upsertClarifyingQuestions } from '~/models/clarifying.server';
-import ClarityQuestionsEditModal, { type QuestionNameTypes } from '~/components/modals/ClarityQuestionsEditModal';
+import ClarityQuestionsEditModal, { type QuestionNameTypes } from '~/components/displays/modals/ClarityQuestionsEditModal';
 
 import type { ClarifyingQuestionsWithStringDates } from '~/types/clarityTypes';
 

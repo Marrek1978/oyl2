@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { Link, useFetcher, useMatches, useParams } from '@remix-run/react';
 
 import DndInfo from '~/components/dnds/DndInfo';
-import PageTitle from '~/components/titles/PageTitle';
+import PageTitle from '~/components/headers/PageTitle';
 import BtnWithProps from '~/components/buttons/BtnWithProps';
 import useFetcherState from '~/components/utilities/useFetcherState';
-import useServerMessages from '~/components/modals/useServerMessages';
+import useServerMessages from '~/components/displays/modals/useServerMessages';
 import DndAndSortableContexts from '~/components/dnds/DndAndSortableContexts';
 import useDndDropOrderSaveFunctions from '~/components/dnds/useDndDropOrderSaveFunctions';
 

@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react'
 import { useFetcher, useParams } from '@remix-run/react'
 import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import HabitEditDateForm from '~/components/forms/habits/HabitEditDateForm'
 // import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect'
 
 import { updateStreakSuccessById } from '~/models/habits.server';
 import useFetcherState from '~/components/utilities/useFetcherState';
-import useServerMessages from '~/components/modals/useServerMessages';
+import useServerMessages from '~/components/displays/modals/useServerMessages';
 import useFormSubmittedToastAndRedirect from '~/components/utilities/useFormSubmittedToast';
 
 import type { Streak } from '@prisma/client'

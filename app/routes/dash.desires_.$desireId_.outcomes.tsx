@@ -13,8 +13,8 @@ import { createOutcome, updateOutcomesOrder } from '~/models/outcome.server';
 import { useGetSpecificDesireWithValuesAndOutcomes } from './dash.desires_.$desireId';
 
 import type { Outcome } from '@prisma/client';
-import Modal from '~/components/modals/Modal';
-import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
+import Modal from '~/components/displays/modals/Modal';
+import useInvalidItemIdAlertAndRedirect from '~/components/displays/modals/InvalidItemIdAlertAndRedirect';
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import Modal from '../modals/Modal'
+import Modal from '../displays/modals/Modal'
 import TextBtn from '../buttons/TextBtn'
 import { EditIcon } from '../utilities/icons'
 

@@ -1,13 +1,13 @@
 import { Form, } from '@remix-run/react';
 import { useEffect, useMemo, useState } from 'react'
 
-import FormButtons from '~/components/forms/FormButtons';
-import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
+import FormButtons from '~/components/buttons/FormButtons';
+import BasicFormAreaBG from '~/components/forms/util/BasicFormAreaBG';
 import useGetNavigationState from '~/components/utilities/useNavigationState';
 import { DesireCurrentSituation } from '~/components/utilities/PlaceHolderTexts';
 import { DesireCurrentSituationGuideLine } from '~/components/utilities/Guidelines';
-import { headerText, useSaveBtnText } from '~/components/forms/FormsCommonFunctions';
-import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
+import { headerText, useSaveBtnText } from '~/components/forms/util/FormsCommonFunctions';
+import InputLabelWithGuideLineLink from '~/components/forms/inputs/InputLabelWithGuideLineLink';
 
 import type { Desire } from '@prisma/client';
 

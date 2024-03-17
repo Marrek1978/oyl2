@@ -2,9 +2,9 @@ import type { Task } from '@prisma/client';
 import { useEffect, useState } from 'react'
 import { useMatches } from '@remix-run/react';
 
-import FormButtons from './FormButtons';
-import BasicFormAreaBG from './BasicFormAreaBG';
-import TaskWithCompletedBox from '../routines/TaskWithCompletedBox';
+import FormButtons from '../buttons/FormButtons';
+import BasicFormAreaBG from './util/BasicFormAreaBG';
+import TaskWithCompletedBox from '../displays/routines/TaskWithCompletedBox';
 
 import type { RoutineAndTasks } from '~/types/routineTypes'
 import { sortTasks } from '../utilities/helperFunctions';

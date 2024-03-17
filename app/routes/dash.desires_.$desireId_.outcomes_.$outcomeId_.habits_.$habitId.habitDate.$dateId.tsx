@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react'
 import { useFetcher, useParams } from '@remix-run/react'
 import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import { updateHabitDateSuccessById } from '~/models/habits.server';
 import useFetcherState from '~/components/utilities/useFetcherState';
-import useServerMessages from '~/components/modals/useServerMessages';
+import useServerMessages from '~/components/displays/modals/useServerMessages';
 import HabitEditDateForm from '~/components/forms/habits/HabitEditDateForm'
 import { useSplitLoaderData } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.habits_.$habitId'
 import useFormSubmittedToastAndRedirect from '~/components/utilities/useFormSubmittedToast';

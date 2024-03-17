@@ -1,7 +1,7 @@
 import { parse } from 'querystring';
 import { Outlet, redirect, useRouteLoaderData } from '@remix-run/react';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import { requireUserId } from '~/models/session.server';
 import SavingForm from '~/components/forms/savings/SavingForm'
 import { getSavingById, updateSaving } from '~/models/saving.server';

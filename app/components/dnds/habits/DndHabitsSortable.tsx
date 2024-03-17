@@ -2,10 +2,10 @@ import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from '@dnd-kit/sortable';
 
 import DndSortableStyling from "../DndSortableStyling";
-import H2WithLink from "~/components/titles/H2WithLink";
+import H2WithLink from "~/components/headers/H2WithLink";
 import TextProseWidth from "~/components/text/TextProseWidth";
-import SubHeading14px from "~/components/titles/SubHeading14px";
-import SubHeading12px from "~/components/titles/SubHeading12px";
+import SubHeading14px from "~/components/headers/SubHeading14px";
+import SubHeading12px from "~/components/headers/SubHeading12px";
 
 interface SortableGenericProps {
   id: string;

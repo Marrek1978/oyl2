@@ -2,11 +2,11 @@
 import { Form, } from '@remix-run/react';
 import { useEffect, useMemo, useState } from 'react'
 
-import FormButtons from './FormButtons';
-import BasicFormAreaBG from "~/components/forms/BasicFormAreaBG";
+import FormButtons from '../buttons/FormButtons';
+import BasicFormAreaBG from "~/components/forms/util/BasicFormAreaBG";
 import useGetNavigationState from '../utilities/useNavigationState';
-import { headerText, useSaveBtnText } from './FormsCommonFunctions';
-import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
+import { headerText, useSaveBtnText } from './util/FormsCommonFunctions';
+import InputLabelWithGuideLineLink from '~/components/forms/inputs/InputLabelWithGuideLineLink';
 import { OutcomeDescriptionDefaultText, OutcomeVisionDefaultText } from '~/components/utilities/PlaceHolderTexts';
 import { DesireOutcomeGuideline, ProperDesireOutcomeVision, ProperDesireOutcomes } from "~/components/utilities/Guidelines";
 

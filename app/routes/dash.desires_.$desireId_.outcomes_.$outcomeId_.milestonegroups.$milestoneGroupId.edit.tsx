@@ -4,7 +4,7 @@ import { redirect } from '@remix-run/node';
 import { useEffect, useState } from 'react';
 import type { LoaderFunctionArgs } from '@remix-run/node';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import { updateMilestoneGroupById } from '~/models/milestoneGroup.server';
 import MilestoneGroupForm from '~/components/forms/milestones/MilestoneGroupForm'
 import { useGetMilestoneGroupWithMilestones } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId';

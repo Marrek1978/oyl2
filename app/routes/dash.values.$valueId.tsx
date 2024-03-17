@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react'
 import { Outlet, useParams } from '@remix-run/react'
 import { redirect, type ActionFunctionArgs } from '@remix-run/server-runtime'
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import { updateValue } from '~/models/values.server'
 import ValueForm from '~/components/forms/ValueForm'
 import { useGetArrayLength, useGetSpecificValue } from './dash.values'
-import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect'
+import useInvalidItemIdAlertAndRedirect from '~/components/displays/modals/InvalidItemIdAlertAndRedirect'
 
 import type { Value } from '@prisma/client';
 

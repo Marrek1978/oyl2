@@ -1,12 +1,12 @@
 import { Form } from '@remix-run/react';
 import { useEffect, useMemo, useState } from 'react'
 
-import FormButtons from './FormButtons';
-import BasicFormAreaBG from './BasicFormAreaBG';
-import CheckboxWithLabel from './CheckboxWithLabel';
-import { headerText, useSaveBtnText } from './FormsCommonFunctions';
+import FormButtons from '../buttons/FormButtons';
+import BasicFormAreaBG from './util/BasicFormAreaBG';
+import CheckboxWithLabel from './inputs/CheckboxWithLabel';
+import { headerText, useSaveBtnText } from './util/FormsCommonFunctions';
 import useGetNavigationState from '../utilities/useNavigationState';
-import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
+import InputLabelWithGuideLineLink from './inputs/InputLabelWithGuideLineLink';
 import { DesireDescription, DesireTitle, DesireValuesServed } from '../utilities/Guidelines';
 
 import type { Value } from '@prisma/client';

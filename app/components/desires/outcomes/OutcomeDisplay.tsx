@@ -1,4 +1,4 @@
-import Heading20px from '~/components/titles/Heading20px';
+import Heading20px from '~/components/headers/Heading20px';
 
 import type {  Outcome } from '@prisma/client';
 

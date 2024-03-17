@@ -6,14 +6,14 @@ import { toasterBtnLabel, toasterDuration, toasterPosition } from './constants'
 interface FormDeleteProps {
   redirectTo?: string
   message?: string;
+  fetcherMessage? : string
 }
 
-function useFormDeletedToastAndRedirect({ redirectTo, message = 'Value was delted' }: FormDeleteProps = {}) {
+function useFormDeletedToastAndRedirect({ redirectTo, message = 'Value was delted', fetcherMessage }: FormDeleteProps = {}) {
 
   const actionData = useActionData()
-  console.log("🚀 ~ functionuseFormDeletedToastAndRedirect({redirectTo,message ~ actionData:", actionData)
   const navigate = useNavigate()
-  const isDeleted = actionData === 'deleted'
+  const isDeleted = fetcherMessage === 'deleted' ?? actionData === 'deleted'
 
 
   useEffect(() => {

@@ -8,7 +8,7 @@ import { getDesireById } from '~/models/desires.server';
 import { requireUserId } from '~/models/session.server';
 import { createPayment } from '~/models/payment.server';
 import { getOutcomeByOutcomeId } from '~/models/outcome.server';
-import SavingDisplay from '~/components/savings/SavingDisplay';
+import SavingDisplay from '~/components/displays/savings/SavingDisplay';
 import PaymentForm from '~/components/forms/savings/PaymentForm';
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs'
 import { getSavingWithPaymentsById } from '~/models/saving.server';

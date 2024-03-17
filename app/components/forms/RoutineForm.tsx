@@ -3,20 +3,20 @@ import { useEffect, useMemo, useState } from 'react'
 import { Form, useFetcher, useParams } from '@remix-run/react';
 
 import Divider from '~/components/utilities/Divider';
-import HeadingH2 from '~/components/titles/HeadingH2';
-import FormButtons from "~/components/forms/FormButtons";
+import HeadingH2 from '~/components/headers/HeadingH2';
+import FormButtons from "~/components/buttons/FormButtons";
 import DndTasks from '~/components/dnds/routines/DndTasks';
 import BtnWithProps from "~/components/buttons/BtnWithProps";
-import EditTaskModal from '~/components/modals/EditTaskModal';
+import EditTaskModal from '~/components/displays/modals/EditTaskModal';
 import { ArrowIcon45deg } from '~/components/utilities/icons';
-import SubHeading14px from '~/components/titles/SubHeading14px';
-import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
-import useServerMessages from "~/components/modals/useServerMessages";
+import SubHeading14px from '~/components/headers/SubHeading14px';
+import BasicFormAreaBG from '~/components/forms/util/BasicFormAreaBG';
+import useServerMessages from "~/components/displays/modals/useServerMessages";
 import { DesireOutcomeGuideline } from '~/components/utilities/Guidelines';
 import useGetNavigationState from "~/components/utilities/useNavigationState";
 import { resetTasksSortOrder } from '~/components/utilities/helperFunctions';
-import { headerText, useSaveBtnText } from "~/components/forms/FormsCommonFunctions";
-import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
+import { headerText, useSaveBtnText } from "~/components/forms/util/FormsCommonFunctions";
+import InputLabelWithGuideLineLink from '~/components/forms/inputs/InputLabelWithGuideLineLink';
 
 import type { CreationTask, RoutineAndTasks } from '~/types/routineTypes'
 

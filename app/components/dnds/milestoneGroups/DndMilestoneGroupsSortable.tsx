@@ -1,7 +1,7 @@
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from '@dnd-kit/sortable';
 
-import H2WithLink from '~/components/titles/H2WithLink';
+import H2WithLink from '~/components/headers/H2WithLink';
 import TextProseWidth from '~/components/text/TextProseWidth';
 
 import { useEffect, useState } from "react";

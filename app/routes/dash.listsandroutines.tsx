@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { Link, Outlet, useRouteLoaderData } from '@remix-run/react';
 
-import HeadingH2 from '~/components/titles/HeadingH2';
+import HeadingH2 from '~/components/headers/HeadingH2';
 import { requireUserId } from '~/models/session.server';
 import { getAllRoutines } from '~/models/routines.server';
 import { getAllListsAndTodos } from '~/models/list.server';

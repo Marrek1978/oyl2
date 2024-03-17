@@ -1,6 +1,6 @@
 import React from 'react'
 import TextProseWidth from './TextProseWidth'
-import HeadingH2 from '../titles/HeadingH2';
+import HeadingH2 from '../headers/HeadingH2';
 
 type Props = {
   title: string;

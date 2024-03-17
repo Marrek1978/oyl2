@@ -6,7 +6,7 @@ import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/server-r
 
 import { requireUserId } from '~/models/session.server';
 import { getDesireById } from "~/models/desires.server";
-import HabitDisplay from "~/components/habits/HabitDisplay";
+import HabitDisplay from "~/components/displays/habits/HabitDisplay";
 import { getOutcomeByOutcomeId } from '~/models/outcome.server';
 import BreadCrumbs from "~/components/breadCrumbTrail/BreadCrumbs";
 import HabitDatesForm from "~/components/forms/habits/HabitDatesForm";

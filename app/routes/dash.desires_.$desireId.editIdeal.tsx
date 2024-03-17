@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { useActionData } from '@remix-run/react';
 import { type ActionFunctionArgs, redirect } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal';
+import Modal from '~/components/displays/modals/Modal';
 import DesiresIdealForm from '~/components/forms/DesiresIdealForm';
 import { updateDesireIdealScenario } from '~/models/desires.server';
-import useServerMessages, { FetcherMessageType } from '~/components/modals/useServerMessages';
+import useServerMessages, { FetcherMessageType } from '~/components/displays/modals/useServerMessages';
 import useNavigationState from '~/components/utilities/useNavigationState';
 import { useGetSpecificDesireWithValuesAndOutcomes } from './dash.desires_.$desireId';
 

@@ -3,7 +3,7 @@ import { Link, Outlet, isRouteErrorResponse, useRouteError } from '@remix-run/re
 
 import { Toaster } from 'sonner';
 
-import SideNav from '~/components/nav/SideNav';
+import SideNav from '~/components/displays/nav/SideNav';
 import SolidBtn from '~/components/buttons/SolidBtn';
 import { requireUserId } from '~/models/session.server';
 import { ListProvider } from '~/components/list/ListContext';

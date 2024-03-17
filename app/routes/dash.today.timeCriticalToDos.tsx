@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from '@remix-run/react';
 import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import { useGetLoadedLists } from './dash.schedule'
 import { commonActionFunctions } from './dash.today';
-import { getAndSortTodosFromLists } from '~/components/today/DisplayImportantLists'
+import { getAndSortTodosFromLists } from '~/components/displays/today/DisplayImportantLists'
 import TimeCriticalCompletedTodosForm from '~/components/forms/TimeCriticalCompletedTodosForm'
 
 import type { ToDo } from '@prisma/client';

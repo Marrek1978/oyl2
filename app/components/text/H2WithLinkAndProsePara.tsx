@@ -1,7 +1,7 @@
 import React from 'react'
-import H2WithLink from '../titles/H2WithLink'
+import H2WithLink from '../headers/H2WithLink'
 import TextProseWidth from './TextProseWidth'
-import HeadingH2 from '../titles/HeadingH2';
+import HeadingH2 from '../headers/HeadingH2';
 
 interface H2WithLinkAndProseParaProps {
   title: string;
@@ -12,12 +12,9 @@ interface H2WithLinkAndProseParaProps {
 }
 
 function H2WithLinkAndProsePara({ title, linkDestination, linkText, paragraph, isTextBtn = true }: H2WithLinkAndProseParaProps) {
-
-
   return (
     <>
       <div>
-
         {linkText && linkDestination ? (
           <H2WithLink
             h2Text={title}

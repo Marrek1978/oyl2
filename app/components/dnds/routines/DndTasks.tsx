@@ -3,7 +3,7 @@ import { useFetcher } from '@remix-run/react';
 
 import SortableTask from './SortableTask';
 import useFetcherState from '~/components/utilities/useFetcherState';
-import useServerMessages from '~/components/modals/useServerMessages';
+import useServerMessages from '~/components/displays/modals/useServerMessages';
 import DndAndSortableContexts from '~/components/dnds/DndAndSortableContexts';
 import useDndDropOrderSaveFunctions from '~/components/dnds/useDndDropOrderSaveFunctions';
 

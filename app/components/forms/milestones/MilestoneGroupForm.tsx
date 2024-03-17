@@ -1,13 +1,13 @@
 import { useState, useEffect, useMemo, } from 'react';
 import { Form, useParams, } from '@remix-run/react'
 
-import FormButtons from '../FormButtons';
-import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
-import { headerText, useSaveBtnText } from '../FormsCommonFunctions';
+import FormButtons from '../../buttons/FormButtons';
+import BasicFormAreaBG from '~/components/forms/util/BasicFormAreaBG';
+import { headerText, useSaveBtnText } from '../util/FormsCommonFunctions';
 import useGetNavigationState from '~/components/utilities/useNavigationState';
 import { CoreValue, CoreValueStatement } from '~/components/utilities/Guidelines';
 import { MilestoneGroupDefaultText } from '~/components/utilities/PlaceHolderTexts';
-import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
+import InputLabelWithGuideLineLink from '~/components/forms/inputs/InputLabelWithGuideLineLink';
 import { useGetAllMilestoneGroupsForOutcome } from '~/routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups';
 
 import type { MilestoneGroup } from '@prisma/client';

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Outlet, useParams } from '@remix-run/react'
 import { redirect, type ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import { updateOutcome } from '~/models/outcome.server';
 import OutcomesForm from '~/components/forms/OutcomesForm'
 import { useGetOutcomeOnlyWithProperDates } from './dash.desires_.$desireId_.outcomes_.$outcomeId'

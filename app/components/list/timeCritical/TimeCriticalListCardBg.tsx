@@ -1,6 +1,6 @@
 import React from 'react'
-import { GetHeaderBgColor } from '../../forms/GetHeaderBgColor';
-import Heading14pxWithLink from '../../titles/Heading14pxWithLink';
+import { GetHeaderBgColor } from '../../baseContainers/GetHeaderBgColor';
+import Heading14pxWithLink from '../../headers/Heading14pxWithLink';
 
 import type { maxWidthTW } from '~/types/CSSTypes';
 

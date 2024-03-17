@@ -3,11 +3,11 @@ import { Outlet, useRouteLoaderData } from '@remix-run/react'
 import { type LoaderFunctionArgs } from '@remix-run/server-runtime';
 
 import { requireUserId } from '~/models/session.server';
-import TimeLeft from '~/components/clarifyingQuestions/TimeLeft';
+import TimeLeft from '~/components/displays/clarifyingQuestions/TimeLeft';
 import { getClarifyingQuestions } from '~/models/clarifying.server';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 import { ArrayOfObjectsStrToDates } from '~/components/utilities/helperFunctions';
-import ClarifyingQuestionsDisplay from '~/components/clarifyingQuestions/ClarifyingQuestionsDisplay';
+import ClarifyingQuestionsDisplay from '~/components/displays/clarifyingQuestions/ClarifyingQuestionsDisplay';
 
 import type { ClarifyingQuestions } from '@prisma/client';
 import type { ClarifyingQuestionsWithStringDates } from '~/types/clarityTypes';

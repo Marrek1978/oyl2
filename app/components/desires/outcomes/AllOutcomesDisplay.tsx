@@ -1,7 +1,7 @@
 import { Link } from '@remix-run/react';
 
 import TextBtn from '~/components/buttons/TextBtn';
-import HeadingH1 from '~/components/titles/HeadingH1';
+import HeadingH1 from '~/components/headers/HeadingH1';
 import { EditIcon } from '~/components/utilities/icons';
 import OutcomeDisplay from '~/components/desires/outcomes/OutcomeDisplay';
 

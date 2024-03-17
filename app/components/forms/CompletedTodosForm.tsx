@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useFetcher, useMatches } from '@remix-run/react';
 
-import FormButtons from '~/components/forms/FormButtons';
+import FormButtons from '~/components/buttons/FormButtons';
 import { trashIcon } from '~/components/utilities/icons';
 import BtnWithProps from '~/components/buttons/BtnWithProps';
-import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
+import BasicFormAreaBG from '~/components/forms/util/BasicFormAreaBG';
 import { sortTodos } from '~/components/utilities/helperFunctions';
 import ToDoWithCompletedBox from '~/components/list/todos/ToDoWithCompletedBox';
 

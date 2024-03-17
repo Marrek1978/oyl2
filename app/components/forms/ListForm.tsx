@@ -3,22 +3,22 @@ import { Form, useFetcher, useParams } from '@remix-run/react';
 import React, { useEffect, useMemo, useState } from 'react'
 
 import Divider from '~/components/utilities/Divider';
-import DatePicker from '~/components/list/DatePicker';
-import HeadingH2 from "~/components/titles/HeadingH2";
+import DatePicker from '~/components/forms/inputs/DatePicker';
+import HeadingH2 from "~/components/headers/HeadingH2";
 import DndTodos from '~/components/dnds/todos/DndTodos';
-import FormButtons from "~/components/forms/FormButtons";
+import FormButtons from "~/components/buttons/FormButtons";
 import BtnWithProps from "~/components/buttons/BtnWithProps";
 import { ArrowIcon45deg } from "~/components/utilities/icons";
-import SubHeading14px from "~/components/titles/SubHeading14px";
-import BasicFormAreaBG from "~/components/forms/BasicFormAreaBG";
-import EditListToDoModal from '~/components/modals/EditListToDoModal';
-import useServerMessages from "~/components/modals/useServerMessages";
+import SubHeading14px from "~/components/headers/SubHeading14px";
+import BasicFormAreaBG from "~/components/forms/util/BasicFormAreaBG";
+import EditListToDoModal from '~/components/displays/modals/EditListToDoModal';
+import useServerMessages from "~/components/displays/modals/useServerMessages";
 import { DesireOutcomeGuideline } from "~/components/utilities/Guidelines";
 import useGetNavigationState from "~/components/utilities/useNavigationState";
-import { headerText, useSaveBtnText } from "~/components/forms/FormsCommonFunctions";
+import { headerText, useSaveBtnText } from "~/components/forms/util/FormsCommonFunctions";
 import { sortTodos, resetTodoSortOrder } from '~/components/utilities/helperFunctions';
-import InputLabelWithGuideLineLink from "~/components/forms/InputLabelWithGuideLineLink";
-import ToggleWithLabelAndGuideLineLink from "~/components/forms/ToggleWithLabelAndGuideLineLink";
+import InputLabelWithGuideLineLink from "~/components/forms/inputs/InputLabelWithGuideLineLink";
+import ToggleWithLabelAndGuideLineLink from "~/components/forms/inputs/ToggleWithLabelAndGuideLineLink";
 
 import type { CreationTodo, ListAndToDos } from '~/types/listTypes';
 

@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react'
 import { useFetcher, useRouteLoaderData } from '@remix-run/react'
 import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import { requireUserId } from '~/models/session.server';
 import useFetcherState from '~/components/utilities/useFetcherState';
-import useServerMessages from '~/components/modals/useServerMessages';
+import useServerMessages from '~/components/displays/modals/useServerMessages';
 import MonthlyAmtForm from '~/components/forms/savings/MonthlyAmtForm';
 import useFormSubmittedToastAndRedirect from '~/components/utilities/useFormSubmittedToast';
 import { getClarifyingQIdForUserByUserId, updateMonthlySavingsAmount } from '~/models/clarifying.server';

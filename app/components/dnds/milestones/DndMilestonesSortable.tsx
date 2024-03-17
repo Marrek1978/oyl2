@@ -7,7 +7,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { formatDateDayDate } from '~/utils/functions';
 import BtnWithProps from "~/components/buttons/BtnWithProps";
 import useFetcherState from "~/components/utilities/useFetcherState";
-import useServerMessages from "~/components/modals/useServerMessages";
+import useServerMessages from "~/components/displays/modals/useServerMessages";
 
 import type { Milestone } from "@prisma/client";
 import type { FetcherStateProps } from "~/components/utilities/useFetcherState";

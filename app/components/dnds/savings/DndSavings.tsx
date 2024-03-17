@@ -2,16 +2,16 @@ import { useEffect, useState } from 'react'
 import { Link, useFetcher, useParams } from '@remix-run/react';
 
 import DndInfo from '../DndInfo';
-import PageTitle from '~/components/titles/PageTitle';
+import PageTitle from '~/components/headers/PageTitle';
 import DndSavingsSortable from './DndSavingsSortable';
 import BtnWithProps from '~/components/buttons/BtnWithProps';
 import DndAndSortableContexts from '../DndAndSortableContexts';
-import SubHeading14px from '~/components/titles/SubHeading14px';
-import SubHeading16px from '~/components/titles/SubHeading16px';
+import SubHeading14px from '~/components/headers/SubHeading14px';
+import SubHeading16px from '~/components/headers/SubHeading16px';
 import useFetcherState from '~/components/utilities/useFetcherState';
-import useServerMessages from '~/components/modals/useServerMessages';
+import useServerMessages from '~/components/displays/modals/useServerMessages';
 import useDndDropOrderSaveFunctions from '../useDndDropOrderSaveFunctions';
-import ToggleWithLabelAndGuideLineLink from '~/components/forms/ToggleWithLabelAndGuideLineLink';
+import ToggleWithLabelAndGuideLineLink from '~/components/forms/inputs/ToggleWithLabelAndGuideLineLink';
 import { useGetMonthlySavingsAmount } from '~/routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings';
 
 import type { SavingsAndPayments } from '~/types/savingsType';

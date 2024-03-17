@@ -35,9 +35,6 @@ model Password {
   userId String @unique
 }
 
-
-
-
 model Value {
   id   String @id @default(cuid())
   createdAt DateTime @default(now())
@@ -75,6 +72,7 @@ model Desire {
   title String
   description String
   sortOrder Int @default(0)
+  maslowOrder Int? @default(0)
   ideal String?
   current String?
   achieved Boolean @default(false)

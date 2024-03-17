@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react';
 import type { LoaderFunctionArgs } from '@remix-run/node';
 import { Outlet, useRouteLoaderData } from '@remix-run/react';
 
-import Modal from '~/components/modals/Modal';
-import HeadingH1 from '~/components/titles/HeadingH1';
+import Modal from '~/components/displays/modals/Modal';
+import HeadingH1 from '~/components/headers/HeadingH1';
 import BreadCrumbs from '~/components/breadCrumbTrail/BreadCrumbs';
 import ThreeParaFlex from '~/components/baseContainers/ThreeParaFlex';
-import TwoToneSubHeading from '~/components/titles/TwoToneSubHeading';
+import TwoToneSubHeading from '~/components/headers/TwoToneSubHeading';
 import { getDesireById, getDesireWithValuesAndOutcomes } from '~/models/desires.server';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
 import AllOutcomesDisplay from '~/components/desires/outcomes/AllOutcomesDisplay';
-import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
+import useInvalidItemIdAlertAndRedirect from '~/components/displays/modals/InvalidItemIdAlertAndRedirect';
 import { DesireCurrentDefaultText, DesireIdealPlaceholderText } from '~/components/utilities/PlaceHolderTexts';
 import { ArrayOfObjectsStrToDates, ObjectStrToDates, varsForPluralText } from '~/components/utilities/helperFunctions';
 

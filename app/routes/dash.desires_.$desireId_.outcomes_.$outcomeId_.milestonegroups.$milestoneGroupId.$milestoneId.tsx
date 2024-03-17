@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react';
 import { redirect } from '@remix-run/server-runtime'
 import { Outlet, useParams } from '@remix-run/react';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import { updateMilestone } from '~/models/milestone.server';
 import MilestoneForm from '~/components/forms/milestones/MilestoneForm';
-import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
+import useInvalidItemIdAlertAndRedirect from '~/components/displays/modals/InvalidItemIdAlertAndRedirect';
 import { useGetMilestoneGroupWithMilestones } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups.$milestoneGroupId';
 
 import type { Milestone } from '@prisma/client';

@@ -4,16 +4,16 @@ import { redirect, type LoaderFunctionArgs } from '@remix-run/server-runtime'
 
 import { getMainFocus } from '~/models/desires.server';
 import { requireUserId } from '~/models/session.server';
-import H1WithLink from '~/components/titles/H1WithLink';
-import HabitBadges from '~/components/habits/HabitBadges';
+import H1WithLink from '~/components/headers/H1WithLink';
+import HabitBadges from '~/components/displays/habits/HabitBadges';
 import { getMonthlyAmount } from '~/models/clarifying.server';
-import SavingsBadges from '~/components/savings/SavingsBadges';
-import TwoToneSubHeading from '~/components/titles/TwoToneSubHeading';
+import SavingsBadges from '~/components/displays/savings/SavingsBadges';
+import TwoToneSubHeading from '~/components/headers/TwoToneSubHeading';
 import ThreeParaFlex from '~/components/baseContainers/ThreeParaFlex';
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG';
-import SubHeading16WithLink from '~/components/titles/SubHeading16WithLink';
+import SubHeading16WithLink from '~/components/headers/SubHeading16WithLink';
 import DisplayListsOrRoutines from '~/components/list/DisplayListsOrRoutines';
-import MilestoneGroupsDisplay from '~/components/milestones/MilestoneGroupsDisplay';
+import MilestoneGroupsDisplay from '~/components/displays/milestones/MilestoneGroupsDisplay';
 import { ArrayOfObjectsStrToDates, ObjectStrToDates } from '~/components/utilities/helperFunctions';
 
 import type { DesireWithStringDates } from '~/types/desireTypes';

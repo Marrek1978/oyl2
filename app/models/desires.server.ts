@@ -8,6 +8,7 @@ type CreateDesireType = {
   userId: User["id"];
   sortOrder: Desire["sortOrder"];
   valueIds: DesireValue["valueId"][];
+  maslowOrder?: Desire["maslowOrder"];
 };
 
 type EditDesireType = {
@@ -56,6 +57,7 @@ export const createDesire = async (desire: CreateDesireType) => {
         description: desire.description,
         sortOrder: desire.sortOrder,
         userId: desire.userId,
+        maslowOrder:desire.maslowOrder,
         desireValues: {
           create: desire.valueIds.map((valueId) => ({
             value: { connect: { id: valueId } },

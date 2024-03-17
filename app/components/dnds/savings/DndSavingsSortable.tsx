@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import { useSortable } from '@dnd-kit/sortable';
 
 import DndSortableStyling from "../DndSortableStyling";
-import H2WithLink from "~/components/titles/H2WithLink";
+import H2WithLink from "~/components/headers/H2WithLink";
 import TextProseWidth from "~/components/text/TextProseWidth";
 
 import type { Savings } from "@prisma/client";
-import HeadingH1 from "~/components/titles/HeadingH1";
+import HeadingH1 from "~/components/headers/HeadingH1";
 import { currStringToNum } from "~/routes/dash.desires_.$desireId_.outcomes_.$outcomeId_.savings";
 
 

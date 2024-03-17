@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { useParams, } from '@remix-run/react';
 import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import { deleteSaving } from '~/models/saving.server';
-import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal';
+import AreYouSureDeleteModal from '~/components/displays/modals/AreYouSureDeleteModal';
 import { useGetLoaderData } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.savings_.$savingId.edit';
 import useFormDeletedToastAndRedirect from '~/components/utilities/useFormDeletedToast';
 

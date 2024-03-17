@@ -1,7 +1,7 @@
 import React from 'react'
-import { GetHeaderBgColor } from '../forms/GetHeaderBgColor';
-import Heading14pxWithLink from '../titles/Heading14pxWithLink';
-import Heading14px from '../titles/Heading14px';
+import { GetHeaderBgColor } from '../baseContainers/GetHeaderBgColor';
+import Heading14pxWithLink from '../headers/Heading14pxWithLink';
+import Heading14px from '../headers/Heading14px';
 
 type Props = {
   children: React.ReactNode;
@@ -34,7 +34,7 @@ function ListCardBg({ children, title, maxWidthTailWindSize = 'md', linkUrl }: P
           <Heading14pxWithLink
             title={title?.toLocaleString() || ''}
             linkDestination={linkUrl}
-            textColorDaisyUI={'info'}
+            linkTextColorDaisyUI={'info'}
             linkText={'OPEN'}
           />
         ):(

@@ -2,12 +2,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Form, } from '@remix-run/react';
 
-import FormButtons from './FormButtons';
-import BasicFormAreaBG from './BasicFormAreaBG';
+import FormButtons from '../buttons/FormButtons';
+import BasicFormAreaBG from './util/BasicFormAreaBG';
 import { DesireIdealGuideline } from '../utilities/Guidelines';
 import useGetNavigationState from '../utilities/useNavigationState';
-import { headerText, useSaveBtnText } from './FormsCommonFunctions';
-import InputLabelWithGuideLineLink from './InputLabelWithGuideLineLink';
+import { headerText, useSaveBtnText } from './util/FormsCommonFunctions';
+import InputLabelWithGuideLineLink from './inputs/InputLabelWithGuideLineLink';
 import { OutcomeDescriptionDefaultText } from '../utilities/PlaceHolderTexts';
 
 import type { DesireWithValues } from '~/types/desireTypes'

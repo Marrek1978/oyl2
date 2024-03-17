@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import { deleteDesire } from '~/models/desires.server';
-import AreYouSureDeleteModal from '~/components/modals/AreYouSureDeleteModal'
+import AreYouSureDeleteModal from '~/components/displays/modals/AreYouSureDeleteModal'
 import { useGetSpecificDesireWithValuesAndOutcomes } from './dash.desires_.$desireId';
 import useFormDeletedToastAndRedirect from '~/components/utilities/useFormDeletedToast';
 

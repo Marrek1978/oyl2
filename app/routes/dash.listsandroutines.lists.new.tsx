@@ -1,7 +1,7 @@
 import { parse } from 'querystring';
 import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal';
+import Modal from '~/components/displays/modals/Modal';
 import { createList } from '~/models/list.server';
 import ListForm from '~/components/forms/ListForm'
 import { requireUserId } from '~/models/session.server';

@@ -1,5 +1,5 @@
 import React from 'react'
-import PageTitle from '../titles/PageTitle';
+import PageTitle from '../headers/PageTitle';
 
 interface basicTextAreaBGProps {
   children: React.ReactNode

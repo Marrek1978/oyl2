@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from '@dnd-kit/sortable';
 
-import H2WithLink from "~/components/titles/H2WithLink";
-import SubHeading12px from "~/components/titles/SubHeading12px";
+import H2WithLink from "~/components/headers/H2WithLink";
+import SubHeading12px from "~/components/headers/SubHeading12px";
 import { varsForPluralText } from '~/components/utilities/helperFunctions';
 
 import type { Outcome, Value } from '@prisma/client';

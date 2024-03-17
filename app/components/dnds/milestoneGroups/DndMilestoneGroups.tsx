@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useFetcher } from '@remix-run/react';
 
 import DndInfo from '~/components/dnds/DndInfo';
-import PageTitle from '~/components/titles/PageTitle';
+import PageTitle from '~/components/headers/PageTitle';
 import DndAndSortableContexts from '~/components/dnds/DndAndSortableContexts';
 import useDndDropOrderSaveFunctions from '~/components/dnds/useDndDropOrderSaveFunctions';
 import DndMilestoneGroupsSortable from '~/components/dnds/milestoneGroups/DndMilestoneGroupsSortable';

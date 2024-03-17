@@ -1,14 +1,14 @@
 import { useState, useEffect, useMemo, } from 'react';
 import { Form, useFetcher, useParams, } from '@remix-run/react'
 
-import FormButtons from '../FormButtons';
-import DatePicker from '~/components/list/DatePicker';
-import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
-import { headerText, useSaveBtnText } from '../FormsCommonFunctions';
+import FormButtons from '../../buttons/FormButtons';
+import DatePicker from '~/components/forms/inputs/DatePicker';
+import BasicFormAreaBG from '~/components/forms/util/BasicFormAreaBG';
+import { headerText, useSaveBtnText } from '../util/FormsCommonFunctions';
 import useGetNavigationState from '~/components/utilities/useNavigationState';
 import { CoreValue, CoreValueStatement } from '~/components/utilities/Guidelines';
 import { MilestoneGroupDefaultText } from '~/components/utilities/PlaceHolderTexts';
-import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink';
+import InputLabelWithGuideLineLink from '~/components/forms/inputs/InputLabelWithGuideLineLink';
 import useFormSubmittedToastUsingFetcher from '~/components/utilities/useFormSubmittedToastUsingFetcher';
 
 import type { Habit } from '@prisma/client';

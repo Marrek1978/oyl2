@@ -1,7 +1,7 @@
 import { parse } from 'querystring';
 import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import { updateHabit } from '~/models/habits.server';
 import HabitForm from '~/components/forms/habits/HabitForm'
 import { useGetHabit } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.habits_.$habitId';

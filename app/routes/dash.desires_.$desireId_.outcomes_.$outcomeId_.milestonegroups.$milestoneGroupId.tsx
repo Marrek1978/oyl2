@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react';
 import { Outlet, useParams } from '@remix-run/react'
 import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal'
+import Modal from '~/components/displays/modals/Modal'
 import { updateMilestoneCompleted, updateMilestonesOrder } from '~/models/milestone.server'
-import useInvalidItemIdAlertAndRedirect from '~/components/modals/InvalidItemIdAlertAndRedirect';
-import MilestoneGroupHorizontalDisplayWithDnd from '~/components/milestones/MilestoneGroupHorizontalDisplayWithDnd';
+import useInvalidItemIdAlertAndRedirect from '~/components/displays/modals/InvalidItemIdAlertAndRedirect';
+import MilestoneGroupHorizontalDisplayWithDnd from '~/components/displays/milestones/MilestoneGroupHorizontalDisplayWithDnd';
 import { useGetAllMilestoneGroupsForOutcome } from './dash.desires_.$desireId_.outcomes_.$outcomeId_.milestonegroups';
 
 import type { MilestoneGroupsWithMilestones } from '~/types/milestoneTypes';

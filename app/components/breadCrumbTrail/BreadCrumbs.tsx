@@ -1,6 +1,6 @@
 import { Link, useLocation } from '@remix-run/react'
 import React from 'react'
-import SubHeading12px from '../titles/SubHeading12px';
+import SubHeading12px from '../headers/SubHeading12px';
 
 interface BreadCrumbProps {
   secondCrumb?: string;

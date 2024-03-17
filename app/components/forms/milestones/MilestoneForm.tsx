@@ -1,15 +1,15 @@
 import { useState, useEffect, useMemo, } from 'react';
 import { Form, useParams, useFetcher } from '@remix-run/react'
 
-import FormButtons from '../FormButtons'
-import DatePicker from '~/components/list/DatePicker'
-import BasicFormAreaBG from '~/components/forms/BasicFormAreaBG';
+import FormButtons from '../../buttons/FormButtons'
+import DatePicker from '~/components/forms/inputs/DatePicker'
+import BasicFormAreaBG from '~/components/forms/util/BasicFormAreaBG';
 import useGetNavigationState from '~/components/utilities/useNavigationState';
 import { CoreValue, CoreValueStatement } from '~/components/utilities/Guidelines'
 import { MilestoneGroupDefaultText } from '~/components/utilities/PlaceHolderTexts'
-import { headerText, useSaveBtnText } from '~/components/forms/FormsCommonFunctions';
-import InputLabelWithGuideLineLink from '~/components/forms/InputLabelWithGuideLineLink'
-import ToggleWithLabelAndGuideLineLink from '~/components/forms/ToggleWithLabelAndGuideLineLink'
+import { headerText, useSaveBtnText } from '~/components/forms/util/FormsCommonFunctions';
+import InputLabelWithGuideLineLink from '~/components/forms/inputs/InputLabelWithGuideLineLink'
+import ToggleWithLabelAndGuideLineLink from '~/components/forms/inputs/ToggleWithLabelAndGuideLineLink'
 
 import type { Milestone } from '@prisma/client'
 import type { CreateMilestone } from '~/types/milestoneTypes';

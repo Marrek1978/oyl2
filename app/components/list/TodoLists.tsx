@@ -2,12 +2,12 @@ import { Link } from '@remix-run/react'
 import React from 'react'
 // import TodoLists from './TodoLists';
 import { EditIcon } from '../utilities/icons';
-import ListCardV2 from '~/components/list/ListCardV2'
+import ListCardV2 from '~/components/card/ListCardV2'
 
 import type { ListAndToDos } from '~/types/listTypes';
-import HeadingH1 from '../titles/HeadingH1';
+import HeadingH1 from '../headers/HeadingH1';
 import TextBtn from '../buttons/TextBtn';
-import HeadingH2 from '../titles/HeadingH2';
+import HeadingH2 from '../headers/HeadingH2';
 
 interface TodoListsProps {
   lists: ListAndToDos[],

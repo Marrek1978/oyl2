@@ -9,8 +9,8 @@ import type { LinksFunction } from '@remix-run/react/dist/routeModules'
 import styleSheet from "~/styles/SchedulerCss.css";
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 
-import Today from '~/components/today/Today'
-import HeadingH2 from '~/components/titles/HeadingH2'
+import Today from '~/components/displays/today/Today'
+import HeadingH2 from '~/components/headers/HeadingH2'
 // import HeadingH5 from '~/components/titles/HeadingH5'
 import { requireUserId } from '~/models/session.server'
 import { getScheduledItems } from '~/models/scheduler.server'
@@ -19,9 +19,9 @@ import { deleteCompletedToDosFromPriorityList, getAllMiscAndSpecialLists, update
 // import TwoToneSubHeading from '~/components/titles/TwoToneSubHeading'
 // import ThreeParaFlex from '~/components/baseContainers/ThreeParaFlex'
 import { getAllMiscAndSpecialRoutines } from '~/models/routines.server'
-import DisplayCurrentEvent from '~/components/today/DisplayCurrentEvent'
+import DisplayCurrentEvent from '~/components/displays/today/DisplayCurrentEvent'
 import BasicTextAreaBG from '~/components/baseContainers/BasicTextAreaBG'
-import DisplayImportantLists from '~/components/today/DisplayImportantLists'
+import DisplayImportantLists from '~/components/displays/today/DisplayImportantLists'
 import { getDesiresWithOutcomesListsRoutines } from '~/models/desires.server'
 import { updateScheduledListsDatesToCurrentWeek, useGetLoadedDesiresWithAll, useGetLoadedLists, useGetLoadedRoutines, useGetLoadedScheduledItems } from './dash.schedule'
 

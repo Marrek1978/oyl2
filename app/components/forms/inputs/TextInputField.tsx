@@ -1,4 +1,4 @@
-import InputLabel from './inputFieldLabel'
+import InputLabel from './InputLabel'
 import type { Dispatch, SetStateAction } from 'react'
 
 type Props = {

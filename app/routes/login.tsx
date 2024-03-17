@@ -2,7 +2,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from "@remi
 import { json, redirect } from "@remix-run/node";
 import { handleUserCreationAndSession, verifyLogin } from "~/models/user.server";
 import { getUserId } from "~/models/session.server";
-import AuthForm from "~/components/auth/AuthForm";
+import AuthForm from "~/components/forms/AuthForm";
 import { validateCredentials } from "~/models/validation.server";
 import { useSearchParams } from "@remix-run/react";
 

@@ -3,12 +3,12 @@ import { useFetcher } from '@remix-run/react';
 
 import DndInfo from '../DndInfo';
 import DndSortableDesire from './DndSortableDesire';
-import PageTitle from '~/components/titles/PageTitle';
+import PageTitle from '~/components/headers/PageTitle';
 import DndAndSortableContexts from '../DndAndSortableContexts';
 import useDndDropOrderSaveFunctions from '../useDndDropOrderSaveFunctions';
 
 import type { DesireWithValuesAndOutcomes } from '~/types/desireTypes'
-import ToggleWithLabelAndGuideLineLink from '~/components/forms/ToggleWithLabelAndGuideLineLink';
+import ToggleWithLabelAndGuideLineLink from '~/components/forms/inputs/ToggleWithLabelAndGuideLineLink';
 
 
 interface Props {

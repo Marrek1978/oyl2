@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useActionData, } from '@remix-run/react';
 import { type ActionFunctionArgs, redirect } from '@remix-run/server-runtime';
 
-import Modal from '~/components/modals/Modal';
-import useServerMessages from '~/components/modals/useServerMessages';
+import Modal from '~/components/displays/modals/Modal';
+import useServerMessages from '~/components/displays/modals/useServerMessages';
 import DesiresCurrentForm from '~/components/forms/DesiresCurrentStateForm'
 import { updateDesireCurrentSituation } from '~/models/desires.server';
 import useNavigationState from '~/components/utilities/useNavigationState';

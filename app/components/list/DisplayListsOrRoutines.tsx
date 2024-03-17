@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 
 import useIsInOrder from '../dnds/useInOrder'
 import BtnWithProps from '../buttons/BtnWithProps'
-import Heading16pxWithLink from '../titles/Heading16pxWithLink'
+import Heading16pxWithLink from '../headers/Heading16pxWithLink'
 import ListRoutineCard from '../baseContainers/ListRoutineCard'
 import useSetSortOrderToNewIndex from '../dnds/useSetSortOrderToNewIndex'
 

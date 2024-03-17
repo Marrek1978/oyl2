@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import Heading16px from '../titles/Heading16px';
+import Heading16px from '../headers/Heading16px';
 import DraggableListItem from './DraggableListItem';
-import SubHeading12px from '../titles/SubHeading12px';
+import SubHeading12px from '../headers/SubHeading12px';
 
 import type { RoutineAndTasks } from '~/types/routineTypes';
 import type { ListAndToDos } from '~/types/listTypes';
